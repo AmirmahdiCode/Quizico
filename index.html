@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quizico</title>
+    <script src="https://developer.eitaa.com/eitaa-web-app.js"></script>
+</head>
+<body>
+    <script>
+        (function() {
+            const webApp = window.Eitaa?.WebApp;
+            
+            if (webApp) {
+                webApp.ready();
+            }
+
+            const validPages = ['dashboard', 'ranking', 'profile', 'setting'];
+            const lastPage = localStorage.getItem('lastPage');
+            const targetPage = validPages.includes(lastPage) ? lastPage : 'dashboard';
+
+            window.location.href = `./${targetPage}/`;
+        })();
+    </script>
+</body>
+</html>
