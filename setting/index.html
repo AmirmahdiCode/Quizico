@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>تنظیمات | Quizico</title>
     <script src="https://developer.eitaa.com/eitaa-web-app.js"></script>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/gh/rastikerdar/iran-sans-font@v1.0.0/dist/font-face.css" rel="stylesheet">
     <style>
@@ -25,7 +24,6 @@
             --shadow: 4px 4px 0 #000000;
             --shadow-sm: 2px 2px 0 #000000;
             --header-bg: #ffffff;
-            --animation-speed: 0.3s;
         }
 
         [data-theme="dark"] {
@@ -157,8 +155,6 @@
         .settings-card:nth-child(1) { animation-delay: 0.1s; }
         .settings-card:nth-child(2) { animation-delay: 0.2s; }
         .settings-card:nth-child(3) { animation-delay: 0.3s; }
-        .settings-card:nth-child(4) { animation-delay: 0.4s; }
-        .settings-card:nth-child(5) { animation-delay: 0.5s; }
 
         @keyframes fadeInUp {
             from { transform: translateY(20px); opacity: 0; }
@@ -314,85 +310,6 @@
             50% { outline-width: 4px; }
         }
 
-        .font-options {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            padding: 10px 0;
-        }
-
-        .font-option {
-            padding: 10px 14px;
-            border: 2px solid #000000;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-            box-shadow: 2px 2px 0 #000000;
-            background: var(--bg2);
-            font-size: 12px;
-            font-weight: 600;
-            color: var(--dark);
-        }
-
-        .font-option:hover {
-            transform: translateX(-5px);
-            box-shadow: 3px 3px 0 #000000;
-        }
-
-        .font-option.active {
-            background: var(--primary);
-            color: #ffffff;
-        }
-
-        .icon-options {
-            display: flex;
-            gap: 10px;
-            padding: 10px 0;
-        }
-
-        .icon-option {
-            flex: 1;
-            padding: 12px;
-            border: 2px solid #000000;
-            border-radius: 4px;
-            cursor: pointer;
-            text-align: center;
-            transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-            box-shadow: 2px 2px 0 #000000;
-            background: var(--bg2);
-        }
-
-        .icon-option:hover {
-            transform: translateY(-3px);
-            box-shadow: 3px 3px 0 #000000;
-        }
-
-        .icon-option:active {
-            transform: translate(2px, 2px);
-            box-shadow: 0px 0px 0 #000000;
-        }
-
-        .icon-option.active {
-            background: var(--primary);
-            color: #ffffff;
-        }
-
-        .icon-option i {
-            font-size: 22px;
-            display: block;
-            margin-bottom: 6px;
-            transition: transform 0.3s ease;
-        }
-
-        .icon-option:hover i {
-            transform: scale(1.2) rotate(5deg);
-        }
-
-        .icon-option span {
-            font-size: 9px;
-            font-weight: 600;
-        }
-
         .preview-box {
             padding: 16px;
             background: var(--bg2);
@@ -473,10 +390,9 @@
             font-family: inherit;
         }
 
-        .nav-item i, .nav-item .nav-icon {
+        .nav-item i {
             font-size: 16px;
             transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-            font-style: normal;
         }
 
         .nav-item span {
@@ -485,7 +401,7 @@
             transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
         }
 
-        .nav-item:hover .nav-icon {
+        .nav-item:hover i {
             transform: translateY(-2px) scale(1.1);
         }
 
@@ -493,7 +409,7 @@
             color: var(--primary);
         }
 
-        .nav-item.active .nav-icon {
+        .nav-item.active i {
             animation: navBounce 0.5s ease;
         }
 
@@ -525,12 +441,12 @@
     <main class="main-container">
         <div class="settings-card">
             <div class="settings-title">
-                <i class="bi bi-moon-stars"></i>
+                <i class="fa-solid fa-moon"></i>
                 حالت نمایش
             </div>
             <div class="setting-item">
                 <div class="setting-info">
-                    <i class="bi bi-circle-half"></i>
+                    <i class="fa-solid fa-circle-half-stroke"></i>
                     <div>
                         <div class="setting-label">دارک مود</div>
                         <div class="setting-desc">تغییر به حالت تاریک</div>
@@ -542,7 +458,7 @@
 
         <div class="settings-card">
             <div class="settings-title">
-                <i class="bi bi-palette"></i>
+                <i class="fa-solid fa-palette"></i>
                 تم رنگ
             </div>
             <div class="color-options" id="colorOptions">
@@ -561,43 +477,12 @@
 
         <div class="settings-card">
             <div class="settings-title">
-                <i class="bi bi-fonts"></i>
-                فونت
-            </div>
-            <div class="font-options" id="fontOptions">
-                <div class="font-option active" data-font="IRANSans">ایران‌سنس</div>
-            </div>
-        </div>
-
-        <div class="settings-card">
-            <div class="settings-title">
-                <i class="bi bi-grid"></i>
-                نوع آیکون
-            </div>
-            <div class="icon-options" id="iconOptions">
-                <div class="icon-option" data-icons="bootstrap">
-                    <i class="bi bi-bootstrap"></i>
-                    <span>بوت‌استرپ</span>
-                </div>
-                <div class="icon-option" data-icons="fontawesome">
-                    <i class="bi bi-flag"></i>
-                    <span>فونت‌آسوم</span>
-                </div>
-                <div class="icon-option" data-icons="emoji">
-                    <i class="bi bi-emoji-smile"></i>
-                    <span>ایموجی</span>
-                </div>
-            </div>
-        </div>
-
-        <div class="settings-card">
-            <div class="settings-title">
-                <i class="bi bi-sliders"></i>
+                <i class="fa-solid fa-sliders"></i>
                 سایر تنظیمات
             </div>
             <div class="setting-item">
                 <div class="setting-info">
-                    <i class="bi bi-lightning-charge"></i>
+                    <i class="fa-solid fa-bolt"></i>
                     <div>
                         <div class="setting-label">انیمیشن‌ها</div>
                         <div class="setting-desc">افکت‌های حرکتی</div>
@@ -607,7 +492,7 @@
             </div>
             <div class="setting-item">
                 <div class="setting-info">
-                    <i class="bi bi-phone-vibrate"></i>
+                    <i class="fa-solid fa-mobile-screen"></i>
                     <div>
                         <div class="setting-label">لرزش (هاپتیک)</div>
                         <div class="setting-desc">بازخورد لمسی</div>
@@ -620,19 +505,19 @@
 
     <nav class="bottom-nav">
         <a href="../dashboard/" class="nav-item" onclick="savePage('dashboard')">
-            <i class="nav-icon bi bi-house"></i>
+            <i class="fa-solid fa-house"></i>
             <span>صفحه اصلی</span>
         </a>
         <a href="../ranking/" class="nav-item" onclick="savePage('ranking')">
-            <i class="nav-icon bi bi-trophy"></i>
+            <i class="fa-solid fa-trophy"></i>
             <span>رتبه بندی</span>
         </a>
         <a href="../profile/" class="nav-item" onclick="savePage('profile')">
-            <i class="nav-icon bi bi-person"></i>
+            <i class="fa-solid fa-user"></i>
             <span>پروفایل من</span>
         </a>
         <a href="../setting/" class="nav-item active" onclick="savePage('setting')">
-            <i class="nav-icon bi bi-gear"></i>
+            <i class="fa-solid fa-gear"></i>
             <span>تنظیمات</span>
         </a>
     </nav>
@@ -686,124 +571,6 @@
                 document.documentElement.style.setProperty('--primary-light', shadeColor(color, 30));
             }
 
-            function applyFont(font) {
-                document.body.style.fontFamily = 'IRANSans, Tahoma, sans-serif';
-            }
-
-            function applyIcons(type) {
-                const allIcons = document.querySelectorAll('.nav-icon, .settings-title i, .setting-info i, .icon-option i');
-                
-                const iconMap = {
-                    bootstrap: {
-                        'bi-house': 'bi bi-house',
-                        'bi-trophy': 'bi bi-trophy',
-                        'bi-person': 'bi bi-person',
-                        'bi-gear': 'bi bi-gear',
-                        'bi-moon-stars': 'bi bi-moon-stars',
-                        'bi-palette': 'bi bi-palette',
-                        'bi-fonts': 'bi bi-fonts',
-                        'bi-grid': 'bi bi-grid',
-                        'bi-sliders': 'bi bi-sliders',
-                        'bi-circle-half': 'bi bi-circle-half',
-                        'bi-lightning-charge': 'bi bi-lightning-charge',
-                        'bi-phone-vibrate': 'bi bi-phone-vibrate',
-                        'bi-bootstrap': 'bi bi-bootstrap',
-                        'bi-flag': 'bi bi-flag',
-                        'bi-emoji-smile': 'bi bi-emoji-smile'
-                    },
-                    fontawesome: {
-                        'bi-house': 'fa-solid fa-house',
-                        'bi-trophy': 'fa-solid fa-trophy',
-                        'bi-person': 'fa-solid fa-user',
-                        'bi-gear': 'fa-solid fa-gear',
-                        'bi-moon-stars': 'fa-solid fa-moon',
-                        'bi-palette': 'fa-solid fa-palette',
-                        'bi-fonts': 'fa-solid fa-font',
-                        'bi-grid': 'fa-solid fa-table-cells',
-                        'bi-sliders': 'fa-solid fa-sliders',
-                        'bi-circle-half': 'fa-solid fa-circle-half-stroke',
-                        'bi-lightning-charge': 'fa-solid fa-bolt',
-                        'bi-phone-vibrate': 'fa-solid fa-mobile-screen',
-                        'bi-bootstrap': 'fa-brands fa-bootstrap',
-                        'bi-flag': 'fa-solid fa-flag',
-                        'bi-emoji-smile': 'fa-solid fa-face-smile'
-                    },
-                    emoji: {
-                        'bi-house': '🏠',
-                        'bi-trophy': '🏆',
-                        'bi-person': '👤',
-                        'bi-gear': '⚙️',
-                        'bi-moon-stars': '🌙',
-                        'bi-palette': '🎨',
-                        'bi-fonts': '✍️',
-                        'bi-grid': '🔲',
-                        'bi-sliders': '🎛️',
-                        'bi-circle-half': '🌓',
-                        'bi-lightning-charge': '⚡',
-                        'bi-phone-vibrate': '📳',
-                        'bi-bootstrap': '🅱️',
-                        'bi-flag': '🚩',
-                        'bi-emoji-smile': '😊'
-                    }
-                };
-                
-                allIcons.forEach(icon => {
-                    const currentBiClass = Array.from(icon.classList).find(c => c.startsWith('bi-'));
-                    const currentFaClass = Array.from(icon.classList).find(c => c.startsWith('fa-'));
-                    const currentText = icon.textContent.trim();
-                    
-                    if (type === 'emoji') {
-                        if (currentBiClass && iconMap.emoji[currentBiClass]) {
-                            icon.textContent = iconMap.emoji[currentBiClass];
-                            icon.className = icon.className.replace(/bi bi-[a-z-]+/g, '').replace(/fa-solid fa-[a-z-]+/g, '').replace(/fa-brands fa-[a-z-]+/g, '').trim();
-                            icon.style.fontSize = '18px';
-                            icon.style.fontStyle = 'normal';
-                        } else if (currentFaClass) {
-                            const biKey = Object.keys(iconMap.fontawesome).find(key => iconMap.fontawesome[key] === currentFaClass);
-                            if (biKey && iconMap.emoji[biKey]) {
-                                icon.textContent = iconMap.emoji[biKey];
-                                icon.className = '';
-                                icon.style.fontSize = '18px';
-                                icon.style.fontStyle = 'normal';
-                            }
-                        }
-                    } else if (type === 'fontawesome') {
-                        if (currentBiClass && iconMap.fontawesome[currentBiClass]) {
-                            icon.className = iconMap.fontawesome[currentBiClass];
-                            icon.style.fontSize = '';
-                            icon.style.fontStyle = '';
-                        } else if (currentText && Object.values(iconMap.emoji).includes(currentText)) {
-                            const biKey = Object.keys(iconMap.emoji).find(key => iconMap.emoji[key] === currentText);
-                            if (biKey && iconMap.fontawesome[biKey]) {
-                                icon.className = iconMap.fontawesome[biKey];
-                                icon.style.fontSize = '';
-                                icon.style.fontStyle = '';
-                            }
-                        }
-                    } else {
-                        if (currentFaClass) {
-                            const biKey = Object.keys(iconMap.fontawesome).find(key => iconMap.fontawesome[key] === currentFaClass);
-                            if (biKey && iconMap.bootstrap[biKey]) {
-                                icon.className = iconMap.bootstrap[biKey];
-                                icon.style.fontSize = '';
-                                icon.style.fontStyle = '';
-                            }
-                        } else if (currentText && Object.values(iconMap.emoji).includes(currentText)) {
-                            const biKey = Object.keys(iconMap.emoji).find(key => iconMap.emoji[key] === currentText);
-                            if (biKey && iconMap.bootstrap[biKey]) {
-                                icon.className = iconMap.bootstrap[biKey];
-                                icon.style.fontSize = '';
-                                icon.style.fontStyle = '';
-                            }
-                        } else if (currentBiClass) {
-                            icon.className = currentBiClass;
-                            icon.style.fontSize = '';
-                            icon.style.fontStyle = '';
-                        }
-                    }
-                });
-            }
-
             function applyAnimation(enabled) {
                 if (enabled) {
                     document.documentElement.removeAttribute('data-animation');
@@ -835,17 +602,6 @@
                     });
                 } else {
                     document.querySelector('.color-option[data-color="#a855f7"]').classList.add('active');
-                }
-                
-                if (settings.icons) {
-                    applyIcons(settings.icons);
-                    document.querySelectorAll('.icon-option').forEach(o => {
-                        if (o.dataset.icons === settings.icons) {
-                            o.classList.add('active');
-                        }
-                    });
-                } else {
-                    document.querySelector('.icon-option[data-icons="bootstrap"]').classList.add('active');
                 }
                 
                 if (settings.animation === false) {
@@ -891,17 +647,6 @@
                     if (webApp) {
                         webApp.setHeaderColor(color);
                     }
-                });
-            });
-
-            document.querySelectorAll('.icon-option').forEach(option => {
-                option.addEventListener('click', function() {
-                    triggerHaptic();
-                    document.querySelectorAll('.icon-option').forEach(o => o.classList.remove('active'));
-                    this.classList.add('active');
-                    const icons = this.dataset.icons;
-                    applyIcons(icons);
-                    saveSettings('icons', icons);
                 });
             });
 
