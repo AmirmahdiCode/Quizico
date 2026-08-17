@@ -564,7 +564,7 @@
     <script>
         (function() {
             const webApp = window.Eitaa?.WebApp;
-            const API_URL = 'https://script.google.com/macros/s/AKfycbx34bNcwqg5JHqOI6DFbV41d-w0yjdS76kuemQYZcCpuNQqFoMWM7ipFF7zxJFG0EW6-w/exec';
+            const API_URL = 'https://script.google.com/macros/s/AKfycbyIdM2qTCVtQYDyG37NyHgtRuiDKjPliIi3x32NZzIGvWQiQTMSuKNYSyx1XAf5IRE1nw/exec';
             
             function savePage(page) {
                 localStorage.setItem('lastPage', page);
@@ -669,45 +669,131 @@
                     });
                     return await response.json();
                 } catch(e) {
+                    console.error('Fetch error:', e);
                     return { success: false, message: 'Network error' };
                 }
             }
 
             async function ensureUserExists() {
                 const user = getEitaaUser();
-                if (!user) return null;
                 
-                const username = String(user.id);
-                
-                try {
-                    let userData = await fetchData('getUser', { username: username });
-                    
-                    if (!userData.success) {
-                        const createResult = await fetchData('createUser', {
-                            user: {
-                                username: username,
-                                name: (user.first_name || '') + ' ' + (user.last_name || ''),
-                                score: 0,
-                                coins: 0,
-                                diamonds: 0,
-                                stats: '',
-                                status: 'active'
-                            }
-                        });
-                        
-                        if (!createResult.success) {
-                            console.error('Failed to create user:', createResult);
-                            return null;
-                        }
-                        
-                        userData = await fetchData('getUser', { username: username });
-                    }
-                    
-                    return userData;
-                } catch(e) {
-                    console.error('Error during user check:', e);
+                if (!user) {
+                    console.warn('No Eitaa user found');
                     return null;
                 }
+                
+                const username = String(user.id);
+                const fullName = (user.first_name || '') + ' ' + (user.last_name || '');
+                
+                try {
+                    // بررسی وجود کاربر
+                    console.log('Checking user:', username);
+                    const userData = await fetchData('getUser', { username: username });
+                    
+                    if (userData.success) {
+                        console.log('User exists:', userData.data);
+                        return userData;
+                    }
+                    
+                    // اگر کاربر وجود نداشت، ایجاد کن
+                    console.log('User not found, creating...');
+                    const createResult = await fetchData('createUser', {
+                        user: {
+                            username: username,
+                            name: fullName.trim() || 'کاربر',
+                            score: 0,
+                            coins: 0,
+                            diamonds: 0,
+                            stats: '',
+                            status: 'active'
+                        }
+                    });
+                    
+                    if (createResult.success) {
+                        console.log('User created successfully');
+                        
+                        // دریافت اطلاعات کاربر جدید
+                        const newUserData = await fetchData('getUser', { username: username });
+                        return newUserData;
+                    } else {
+                        console.error('Failed to create user:', createResult);
+                        return null;
+                    }
+                } catch(e) {
+                    console.error('Error in ensureUserExists:', e);
+                    return null;
+                }
+            }
+
+            function parseRoundData(roundData) {
+                if (!roundData || roundData === '') return null;
+                
+                try {
+                    const str = String(roundData);
+                    const matches = str.match(/\[([^\]]+)\]/g);
+                    if (!matches || matches.length < 3) return null;
+                    
+                    const questions = matches[0]
+                        .replace('[', '')
+                        .replace(']', '')
+                        .split(',')
+                        .map(q => q.trim());
+                    
+                    const p1Answers = matches[1]
+                        .replace('[', '')
+                        .replace(']', '')
+                        .split(',')
+                        .map(a => a.trim() === 'T' || a.trim() === 'true');
+                    
+                    const p2Answers = matches[2]
+                        .replace('[', '')
+                        .replace(']', '')
+                        .split(',')
+                        .map(a => a.trim() === 'T' || a.trim() === 'true');
+                    
+                    return { questions, p1Answers, p2Answers };
+                } catch (e) {
+                    console.error('Error parsing round:', e);
+                    return null;
+                }
+            }
+
+            function calculatePlayerScore(game, playerNumber) {
+                let score = 0;
+                
+                for (let i = 1; i <= 5; i++) {
+                    const roundData = parseRoundData(game[`round${i}`]);
+                    if (!roundData) continue;
+                    
+                    const answers = playerNumber === 1 ? roundData.p1Answers : roundData.p2Answers;
+                    score += answers.filter(a => a === true).length;
+                }
+                
+                return score;
+            }
+
+            function getGameResult(game, username) {
+                const isPlayer1 = String(game.player1) === String(username);
+                const player1Score = calculatePlayerScore(game, 1);
+                const player2Score = calculatePlayerScore(game, 2);
+                
+                let result = 'draw';
+                let resultText = 'مساوی';
+                let resultClass = 'draw';
+                const myScore = isPlayer1 ? player1Score : player2Score;
+                const opponentScore = isPlayer1 ? player2Score : player1Score;
+                
+                if (myScore > opponentScore) {
+                    result = 'win';
+                    resultText = 'برد';
+                    resultClass = 'win';
+                } else if (myScore < opponentScore) {
+                    result = 'loss';
+                    resultText = 'باخت';
+                    resultClass = 'loss';
+                }
+                
+                return { result, resultText, resultClass, myScore, opponentScore };
             }
 
             function startGame(mode) {
@@ -735,109 +821,94 @@
             }
 
             async function loadDashboard() {
-                const userData = await ensureUserExists();
-                
-                if (userData && userData.success) {
-                    document.getElementById('coinsHeader').textContent = userData.data.coins || 0;
-                    document.getElementById('diamondsHeader').textContent = userData.data.diamonds || 0;
-                }
-                
-                const user = getEitaaUser();
-                const username = String(user ? user.id : '');
-                
-                const gamesData = await fetchData('getGamesByPlayer', { username: username });
-                
-                if (gamesData.success) {
-                    const games = gamesData.data;
-                    const inProgress = games.filter(g => g.status === 'in_progress');
-                    const finished = games.filter(g => g.status === 'finished');
+                try {
+                    // اطمینان از وجود کاربر
+                    const userData = await ensureUserExists();
                     
-                    const inProgressList = document.getElementById('inProgressGames');
-                    const finishedList = document.getElementById('finishedGames');
-                    
-                    if (inProgress.length === 0) {
-                        inProgressList.innerHTML = `
-                            <div class="empty-state">
-                                <i class="fa-solid fa-hourglass-half"></i>
-                                <p>مسابقه در حال برگزاری نیست</p>
-                            </div>
-                        `;
+                    if (userData && userData.success) {
+                        document.getElementById('coinsHeader').textContent = userData.data.coins || 0;
+                        document.getElementById('diamondsHeader').textContent = userData.data.diamonds || 0;
                     } else {
-                        inProgressList.innerHTML = inProgress.slice(0, 5).map(game => {
-                            const isPlayer1 = game.player1 === username;
-                            const opponent = isPlayer1 ? game.player2 : game.player1;
-                            
-                            return `
-                                <div class="game-item" onclick="continueGame('${game.id}')">
-                                    <div class="game-item-left">
-                                        <div class="game-item-icon"><i class="fa-solid fa-gamepad"></i></div>
-                                        <div class="game-item-info">
-                                            <div class="game-item-title">${opponent || 'ناشناس'}</div>
-                                            <div class="game-item-subtitle">مسابقه نیمه‌تمام</div>
-                                        </div>
-                                    </div>
-                                    <span class="game-item-status in_progress">ادامه</span>
-                                </div>
-                            `;
-                        }).join('');
+                        console.warn('Could not load user data');
                     }
                     
-                    if (finished.length === 0) {
-                        finishedList.innerHTML = `
-                            <div class="empty-state">
-                                <i class="fa-solid fa-clock-rotate-left"></i>
-                                <p>مسابقه‌ای یافت نشد</p>
-                            </div>
-                        `;
-                    } else {
-                        finishedList.innerHTML = finished.slice(0, 10).map(game => {
-                            const isPlayer1 = game.player1 === username;
-                            const opponent = isPlayer1 ? game.player2 : game.player1;
-                            
-                            let result = 'draw';
-                            let resultText = 'مساوی';
-                            let resultClass = 'draw';
-                            
-                            if (isPlayer1) {
-                                if (game.player1Score > game.player2Score) {
-                                    result = 'win';
-                                    resultText = 'برد';
-                                    resultClass = 'win';
-                                } else if (game.player1Score < game.player2Score) {
-                                    result = 'loss';
-                                    resultText = 'باخت';
-                                    resultClass = 'loss';
-                                }
-                            } else {
-                                if (game.player2Score > game.player1Score) {
-                                    result = 'win';
-                                    resultText = 'برد';
-                                    resultClass = 'win';
-                                } else if (game.player2Score < game.player1Score) {
-                                    result = 'loss';
-                                    resultText = 'باخت';
-                                    resultClass = 'loss';
-                                }
-                            }
-                            
-                            return `
-                                <div class="game-item">
-                                    <div class="game-item-left">
-                                        <div class="game-item-icon"><i class="fa-solid fa-flag-checkered"></i></div>
-                                        <div class="game-item-info">
-                                            <div class="game-item-title">${opponent || 'ناشناس'}</div>
-                                            <div class="game-item-subtitle">مسابقه گذشته</div>
-                                        </div>
-                                    </div>
-                                    <span class="game-item-status ${resultClass}">${resultText}</span>
+                    const user = getEitaaUser();
+                    const username = String(user ? user.id : '');
+                    
+                    // دریافت بازی‌ها
+                    const gamesData = await fetchData('getGamesByPlayer', { username: username });
+                    
+                    if (gamesData.success && Array.isArray(gamesData.data)) {
+                        const games = gamesData.data;
+                        const inProgress = games.filter(g => g.status === 'in_progress');
+                        const finished = games.filter(g => g.status === 'finished');
+                        
+                        const inProgressList = document.getElementById('inProgressGames');
+                        const finishedList = document.getElementById('finishedGames');
+                        
+                        if (inProgress.length === 0) {
+                            inProgressList.innerHTML = `
+                                <div class="empty-state">
+                                    <i class="fa-solid fa-hourglass-half"></i>
+                                    <p>مسابقه در حال برگزاری نیست</p>
                                 </div>
                             `;
-                        }).join('');
+                        } else {
+                            inProgressList.innerHTML = inProgress.slice(0, 5).map(game => {
+                                const isPlayer1 = String(game.player1) === String(username);
+                                const opponent = isPlayer1 ? game.player2 : game.player1;
+                                
+                                return `
+                                    <div class="game-item" onclick="continueGame('${game.id}')">
+                                        <div class="game-item-left">
+                                            <div class="game-item-icon"><i class="fa-solid fa-gamepad"></i></div>
+                                            <div class="game-item-info">
+                                                <div class="game-item-title">${opponent || 'ناشناس'}</div>
+                                                <div class="game-item-subtitle">مسابقه نیمه‌تمام</div>
+                                            </div>
+                                        </div>
+                                        <span class="game-item-status in_progress">ادامه</span>
+                                    </div>
+                                `;
+                            }).join('');
+                        }
+                        
+                        if (finished.length === 0) {
+                            finishedList.innerHTML = `
+                                <div class="empty-state">
+                                    <i class="fa-solid fa-clock-rotate-left"></i>
+                                    <p>مسابقه‌ای یافت نشد</p>
+                                </div>
+                            `;
+                        } else {
+                            finishedList.innerHTML = finished.slice(0, 10).map(game => {
+                                const isPlayer1 = String(game.player1) === String(username);
+                                const opponent = isPlayer1 ? game.player2 : game.player1;
+                                const gameResult = getGameResult(game, username);
+                                
+                                return `
+                                    <div class="game-item">
+                                        <div class="game-item-left">
+                                            <div class="game-item-icon"><i class="fa-solid fa-flag-checkered"></i></div>
+                                            <div class="game-item-info">
+                                                <div class="game-item-title">${opponent || 'ناشناس'}</div>
+                                                <div class="game-item-subtitle">${gameResult.myScore} - ${gameResult.opponentScore}</div>
+                                            </div>
+                                        </div>
+                                        <span class="game-item-status ${gameResult.resultClass}">${gameResult.resultText}</span>
+                                    </div>
+                                `;
+                            }).join('');
+                        }
+                    } else {
+                        console.warn('No games data or invalid format');
                     }
+                } catch (e) {
+                    console.error('Error in loadDashboard:', e);
+                } finally {
+                    document.getElementById('loaderWrapper').style.display = 'none';
+                    document.getElementById('dashboardContent').classList.add('show');
                 }
-                
-                document.getElementById('loaderWrapper').style.display = 'none';
-                document.getElementById('dashboardContent').classList.add('show');
             }
 
             window.startGame = startGame;
