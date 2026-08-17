@@ -536,6 +536,11 @@
                 webApp.ready();
                 webApp.setHeaderColor('#a855f7');
                 webApp.setBackgroundColor('#faf5ff');
+                
+                webApp.BackButton.show();
+                webApp.BackButton.onClick(() => {
+                    window.location.href = '../dashboard/';
+                });
             }
 
             function savePage(page) {
