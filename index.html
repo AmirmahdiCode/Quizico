@@ -31,48 +31,48 @@
                 }
             }
             
+            function redirectToLastPage() {
+                const validPages = ['dashboard', 'ranking', 'profile', 'setting'];
+                const lastPage = localStorage.getItem('lastPage');
+                const targetPage = validPages.includes(lastPage) ? lastPage : 'dashboard';
+                window.location.href = `./${targetPage}/`;
+            }
+            
             async function initUser() {
+                if (webApp) {
+                    webApp.ready();
+                }
+                
                 if (webApp && webApp.initDataUnsafe && webApp.initDataUnsafe.user) {
                     const user = webApp.initDataUnsafe.user;
                     const username = String(user.id);
                     
-                    // چک کردن کاربر
-                    const userData = await fetchData('getUser', { username: username });
-                    
-                    if (!userData.success) {
-                        // ساخت کاربر جدید
-                        await fetchData('createUser', {
-                            user: {
-                                username: username,
-                                name: (user.first_name || '') + ' ' + (user.last_name || ''),
-                                score: 0,
-                                coins: 0,
-                                diamonds: 0,
-                                stats: '',
-                                status: 'active'
-                            }
-                        });
+                    try {
+                        const userData = await fetchData('getUser', { username: username });
                         
-                        // ساخت رکورد لیگ
-                        await fetchData('createLeague', {
-                            username: username,
-                            wins: 0,
-                            draws: 0,
-                            losses: 0
-                        });
+                        if (!userData.success) {
+                            const createResult = await fetchData('createUser', {
+                                user: {
+                                    username: username,
+                                    name: (user.first_name || '') + ' ' + (user.last_name || ''),
+                                    score: 0,
+                                    coins: 0,
+                                    diamonds: 0,
+                                    stats: '',
+                                    status: 'active'
+                                }
+                            });
+                            
+                            if (!createResult.success) {
+                                console.error('Failed to create user:', createResult);
+                            }
+                        }
+                    } catch(e) {
+                        console.error('Error during user check:', e);
                     }
                 }
                 
-                // ریدایرکت
-                const validPages = ['dashboard', 'ranking', 'profile', 'setting'];
-                const lastPage = localStorage.getItem('lastPage');
-                const targetPage = validPages.includes(lastPage) ? lastPage : 'dashboard';
-                
-                window.location.href = `./${targetPage}/`;
-            }
-            
-            if (webApp) {
-                webApp.ready();
+                redirectToLastPage();
             }
             
             initUser();
