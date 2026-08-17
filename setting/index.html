@@ -508,14 +508,14 @@
         <div class="settings-card">
             <div class="settings-title">
                 <i class="fa-solid fa-moon"></i>
-                حالت نمایش
+                حالت نمایش سایت
             </div>
             <div class="theme-options">
                 <div class="theme-option" data-theme-mode="auto">
                     <i class="fa-solid fa-circle-half-stroke"></i>
                     <div>
                         <div class="theme-option-label">هماهنگ با ایتا</div>
-                        <div class="theme-option-desc">تم به صورت خودکار از ایتا تنظیم می‌شود</div>
+                        <div class="theme-option-desc">تم سایت از ایتا تنظیم می‌شود</div>
                     </div>
                 </div>
                 <div class="theme-option" data-theme-mode="light">
@@ -644,6 +644,12 @@
                 return `#${((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1)}`;
             }
 
+            function isDarkColor(hex) {
+                const rgb = hexToRgb(hex);
+                const brightness = (rgb.r * 299 + rgb.g * 587 + rgb.b * 114) / 1000;
+                return brightness < 128;
+            }
+
             function applyColor(color) {
                 const rgb = hexToRgb(color);
                 document.documentElement.style.setProperty('--primary', color);
@@ -657,7 +663,13 @@
                 let theme;
                 
                 if (mode === 'auto') {
-                    theme = webApp ? (webApp.colorScheme || 'light') : 'light';
+                    if (webApp && webApp.themeParams && webApp.themeParams.bg_color) {
+                        theme = isDarkColor(webApp.themeParams.bg_color) ? 'dark' : 'light';
+                    } else if (webApp && webApp.colorScheme) {
+                        theme = webApp.colorScheme;
+                    } else {
+                        theme = 'light';
+                    }
                 } else {
                     theme = mode;
                 }
