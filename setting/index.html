@@ -721,14 +721,17 @@
                 webApp.ready();
                 
                 webApp.BackButton.show();
-                webApp.BackButton.onClick(() => {
+                webApp.BackButton.onClick(function() {
                     window.location.href = '../dashboard/';
                 });
                 
                 webApp.onEvent('themeChanged', function() {
                     const mode = localStorage.getItem('themeMode') || 'auto';
                     if (mode === 'auto') {
-                        applyTheme();
+                        const theme = this.colorScheme;
+                        document.documentElement.setAttribute('data-theme', theme);
+                        this.setHeaderColor(theme === 'dark' ? '#000000' : '#ffffff');
+                        this.setBackgroundColor(theme === 'dark' ? '#1e1b2e' : '#faf5ff');
                     }
                 });
             }
