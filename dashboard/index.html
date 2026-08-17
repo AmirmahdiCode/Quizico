@@ -673,6 +673,43 @@
                 }
             }
 
+            async function ensureUserExists() {
+                const user = getEitaaUser();
+                if (!user) return null;
+                
+                const username = String(user.id);
+                
+                try {
+                    let userData = await fetchData('getUser', { username: username });
+                    
+                    if (!userData.success) {
+                        const createResult = await fetchData('createUser', {
+                            user: {
+                                username: username,
+                                name: (user.first_name || '') + ' ' + (user.last_name || ''),
+                                score: 0,
+                                coins: 0,
+                                diamonds: 0,
+                                stats: '',
+                                status: 'active'
+                            }
+                        });
+                        
+                        if (!createResult.success) {
+                            console.error('Failed to create user:', createResult);
+                            return null;
+                        }
+                        
+                        userData = await fetchData('getUser', { username: username });
+                    }
+                    
+                    return userData;
+                } catch(e) {
+                    console.error('Error during user check:', e);
+                    return null;
+                }
+            }
+
             function startGame(mode) {
                 if (webApp) {
                     webApp.HapticFeedback?.impactOccurred('light');
@@ -682,11 +719,7 @@
                 
                 switch(mode) {
                     case 'single':
-                        window.location.href = '../game/';
-                        break;
                     case 'offline':
-                        window.location.href = '../game/';
-                        break;
                     case 'online':
                         window.location.href = '../game/';
                         break;
@@ -696,19 +729,23 @@
                 }
             }
 
+            function continueGame(id) {
+                localStorage.setItem('continueGameId', id);
+                window.location.href = '../game/';
+            }
+
             async function loadDashboard() {
-                const user = getEitaaUser();
-                const username = String(user ? user.id : '');
+                const userData = await ensureUserExists();
                 
-                const [userData, gamesData] = await Promise.all([
-                    fetchData('getUser', { username: username }),
-                    fetchData('getGamesByPlayer', { username: username })
-                ]);
-                
-                if (userData.success) {
+                if (userData && userData.success) {
                     document.getElementById('coinsHeader').textContent = userData.data.coins || 0;
                     document.getElementById('diamondsHeader').textContent = userData.data.diamonds || 0;
                 }
+                
+                const user = getEitaaUser();
+                const username = String(user ? user.id : '');
+                
+                const gamesData = await fetchData('getGamesByPlayer', { username: username });
                 
                 if (gamesData.success) {
                     const games = gamesData.data;
@@ -804,10 +841,7 @@
             }
 
             window.startGame = startGame;
-            window.continueGame = function(id) {
-                localStorage.setItem('continueGameId', id);
-                window.location.href = '../game/';
-            };
+            window.continueGame = continueGame;
 
             if (webApp) {
                 webApp.ready();
