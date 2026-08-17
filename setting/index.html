@@ -22,7 +22,6 @@
             --white: #ffffff;
             --card-bg: #ffffff;
             --header-bg: #ffffff;
-            --logo-hue: 0deg;
         }
 
         [data-theme="dark"] {
@@ -99,7 +98,7 @@
             width: 42px;
             height: 42px;
             border-radius: 4px;
-            background: var(--header-bg);
+            background: var(--primary);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -119,8 +118,6 @@
             height: 100%;
             object-fit: contain;
             transform: scale(1.3);
-            filter: hue-rotate(var(--logo-hue));
-            transition: filter 0.5s ease;
         }
 
         .header-title {
@@ -429,7 +426,7 @@
         <div class="header-inner">
             <div class="header-right">
                 <div class="header-logo">
-                    <img src="https://cdn.imgurl.ir/uploads/y398765_InShot_20260816_163308887.png" alt="Quizico">
+                    <img src="https://cdn.imgurl.ir/uploads/r102593_InShot_20260817_115945628.png" alt="Quizico">
                 </div>
                 <div>
                     <div class="header-title">تنظیمات</div>
@@ -572,40 +569,12 @@
                 return `#${((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1)}`;
             }
 
-            function rgbToHue(rgb) {
-                const r = rgb.r / 255;
-                const g = rgb.g / 255;
-                const b = rgb.b / 255;
-                const max = Math.max(r, g, b);
-                const min = Math.min(r, g, b);
-                const diff = max - min;
-                
-                let hue = 0;
-                if (diff === 0) {
-                    hue = 0;
-                } else if (max === r) {
-                    hue = ((g - b) / diff) % 6;
-                } else if (max === g) {
-                    hue = (b - r) / diff + 2;
-                } else {
-                    hue = (r - g) / diff + 4;
-                }
-                
-                hue = Math.round(hue * 60);
-                return hue;
-            }
-
             function applyColor(color) {
                 const rgb = hexToRgb(color);
                 document.documentElement.style.setProperty('--primary', color);
                 document.documentElement.style.setProperty('--primary-rgb', `${rgb.r}, ${rgb.g}, ${rgb.b}`);
                 document.documentElement.style.setProperty('--primary-dark', shadeColor(color, -30));
                 document.documentElement.style.setProperty('--primary-light', shadeColor(color, 30));
-                
-                const hue = rgbToHue(rgb);
-                const currentHue = rgbToHue(hexToRgb('#a855f7'));
-                const hueDiff = hue - currentHue;
-                document.documentElement.style.setProperty('--logo-hue', `${hueDiff}deg`);
             }
 
             function applyAnimation(enabled) {
