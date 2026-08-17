@@ -757,46 +757,30 @@
                 return `#${((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1)}`;
             }
 
-            function isDarkColor(hex) {
-                const rgb = hexToRgb(hex);
-                const brightness = (rgb.r * 299 + rgb.g * 587 + rgb.b * 114) / 1000;
-                return brightness < 128;
-            }
-
             function applyTheme() {
-                const mode = localStorage.getItem('themeMode') || 'auto';
-                let theme;
-                
-                if (mode === 'auto') {
-                    if (webApp && webApp.themeParams && webApp.themeParams.bg_color) {
-                        theme = isDarkColor(webApp.themeParams.bg_color) ? 'dark' : 'light';
-                    } else if (webApp && webApp.colorScheme) {
-                        theme = webApp.colorScheme;
-                    } else {
-                        theme = 'light';
-                    }
-                } else {
-                    theme = mode;
-                }
+                const mode = localStorage.getItem('themeMode') || 'light';
+                const theme = mode;
+                const settings = getSettings();
+                const primaryColor = settings.primaryColor || '#a855f7';
                 
                 document.documentElement.setAttribute('data-theme', theme);
                 
                 if (theme === 'dark') {
+                    const darkPrimary = shadeColor(primaryColor, 40);
+                    
                     document.documentElement.style.setProperty('--bg', '#1e1b2e');
                     document.documentElement.style.setProperty('--bg2', '#2d2a3e');
                     document.documentElement.style.setProperty('--bg3', '#3d3a4e');
-                    document.documentElement.style.setProperty('--primary', '#c084fc');
-                    document.documentElement.style.setProperty('--primary-dark', '#a855f7');
-                    document.documentElement.style.setProperty('--primary-light', '#d8b4fe');
-                    document.documentElement.style.setProperty('--primary-rgb', '192, 132, 252');
+                    document.documentElement.style.setProperty('--primary', darkPrimary);
+                    document.documentElement.style.setProperty('--primary-dark', primaryColor);
+                    document.documentElement.style.setProperty('--primary-light', shadeColor(primaryColor, 60));
+                    document.documentElement.style.setProperty('--primary-rgb', `${hexToRgb(darkPrimary).r}, ${hexToRgb(darkPrimary).g}, ${hexToRgb(darkPrimary).b}`);
                     document.documentElement.style.setProperty('--dark', '#f1f5f9');
                     document.documentElement.style.setProperty('--text', '#cbd5e1');
                     document.documentElement.style.setProperty('--text-light', '#94a3b8');
                     document.documentElement.style.setProperty('--card-bg', '#2d2a3e');
                     document.documentElement.style.setProperty('--header-bg', '#2d2a3e');
                 } else {
-                    const settings = getSettings();
-                    const primaryColor = settings.primaryColor || '#a855f7';
                     const rgb = hexToRgb(primaryColor);
                     
                     document.documentElement.style.setProperty('--bg', '#faf5ff');
@@ -990,13 +974,6 @@
                 webApp.BackButton.show();
                 webApp.BackButton.onClick(function() {
                     window.location.href = '../dashboard/';
-                });
-                
-                webApp.onEvent('themeChanged', function() {
-                    const mode = localStorage.getItem('themeMode') || 'auto';
-                    if (mode === 'auto') {
-                        applyTheme();
-                    }
                 });
             }
 
