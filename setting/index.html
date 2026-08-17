@@ -189,6 +189,153 @@
             50% { transform: scale(1.15); }
         }
 
+        .theme-options {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            padding: 10px 0;
+        }
+
+        .theme-option {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 14px;
+            border: 2px solid #000000;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            box-shadow: 2px 2px 0 #000000;
+            background: var(--bg2);
+        }
+
+        .theme-option:hover {
+            transform: translateX(-5px);
+            box-shadow: 3px 3px 0 #000000;
+        }
+
+        .theme-option:active {
+            transform: translate(2px, 2px);
+            box-shadow: 0px 0px 0 #000000;
+        }
+
+        .theme-option.active {
+            background: var(--primary);
+        }
+
+        .theme-option.active .theme-option-label {
+            color: #ffffff;
+        }
+
+        .theme-option.active .theme-option-desc {
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .theme-option.active i {
+            color: #ffffff;
+        }
+
+        .theme-option i {
+            font-size: 18px;
+            color: var(--primary);
+            width: 24px;
+            text-align: center;
+            transition: color 0.3s ease;
+        }
+
+        .theme-option-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--dark);
+            transition: color 0.3s ease;
+        }
+
+        .theme-option-desc {
+            font-size: 9px;
+            color: var(--text-light);
+            margin-top: 2px;
+            transition: color 0.3s ease;
+        }
+
+        .color-options {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            padding: 10px 0;
+        }
+
+        .color-option {
+            width: 38px;
+            height: 38px;
+            border-radius: 4px;
+            border: 2px solid #000000;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            box-shadow: none;
+        }
+
+        .color-option:hover {
+            transform: translateY(-3px) rotate(5deg);
+        }
+
+        .color-option:active {
+            transform: translate(2px, 2px);
+        }
+
+        .color-option.active {
+            outline: 3px solid var(--primary);
+            outline-offset: 2px;
+            animation: selectedPulse 1.5s ease-in-out infinite;
+        }
+
+        @keyframes selectedPulse {
+            0%, 100% { outline-width: 2px; }
+            50% { outline-width: 4px; }
+        }
+
+        .preview-box {
+            padding: 16px;
+            background: var(--bg2);
+            border: 2px dashed #000000;
+            border-radius: 4px;
+            text-align: center;
+            margin-top: 12px;
+            transition: all 0.5s ease;
+        }
+
+        .preview-text {
+            font-size: 13px;
+            color: var(--dark);
+            font-weight: 600;
+            transition: color 0.5s ease;
+        }
+
+        .preview-button {
+            display: inline-block;
+            margin-top: 10px;
+            padding: 8px 20px;
+            background: var(--primary);
+            color: #ffffff;
+            border: 2px solid #000000;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 700;
+            box-shadow: 2px 2px 0 #000000;
+            font-family: inherit;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        .preview-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 3px 3px 0 #000000;
+        }
+
+        .preview-button:active {
+            transform: translate(2px, 2px);
+            box-shadow: 0px 0px 0 #000000;
+        }
+
         .setting-item {
             display: flex;
             align-items: center;
@@ -270,85 +417,6 @@
 
         .toggle-switch.active::after {
             right: 2px;
-        }
-
-        .color-options {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-            padding: 10px 0;
-        }
-
-        .color-option {
-            width: 38px;
-            height: 38px;
-            border-radius: 4px;
-            border: 2px solid #000000;
-            cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-            box-shadow: none;
-        }
-
-        .color-option:hover {
-            transform: translateY(-3px) rotate(5deg);
-        }
-
-        .color-option:active {
-            transform: translate(2px, 2px);
-        }
-
-        .color-option.active {
-            outline: 3px solid var(--primary);
-            outline-offset: 2px;
-            animation: selectedPulse 1.5s ease-in-out infinite;
-        }
-
-        @keyframes selectedPulse {
-            0%, 100% { outline-width: 2px; }
-            50% { outline-width: 4px; }
-        }
-
-        .preview-box {
-            padding: 16px;
-            background: var(--bg2);
-            border: 2px dashed #000000;
-            border-radius: 4px;
-            text-align: center;
-            margin-top: 12px;
-            transition: all 0.5s ease;
-        }
-
-        .preview-text {
-            font-size: 13px;
-            color: var(--dark);
-            font-weight: 600;
-            transition: color 0.5s ease;
-        }
-
-        .preview-button {
-            display: inline-block;
-            margin-top: 10px;
-            padding: 8px 20px;
-            background: var(--primary);
-            color: #ffffff;
-            border: 2px solid #000000;
-            border-radius: 4px;
-            font-size: 12px;
-            font-weight: 700;
-            box-shadow: 2px 2px 0 #000000;
-            font-family: inherit;
-            cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-        }
-
-        .preview-button:hover {
-            transform: translateY(-2px);
-            box-shadow: 3px 3px 0 #000000;
-        }
-
-        .preview-button:active {
-            transform: translate(2px, 2px);
-            box-shadow: 0px 0px 0 #000000;
         }
 
         .bottom-nav {
@@ -442,15 +510,28 @@
                 <i class="fa-solid fa-moon"></i>
                 حالت نمایش
             </div>
-            <div class="setting-item">
-                <div class="setting-info">
+            <div class="theme-options">
+                <div class="theme-option" data-theme-mode="auto">
                     <i class="fa-solid fa-circle-half-stroke"></i>
                     <div>
-                        <div class="setting-label">دارک مود</div>
-                        <div class="setting-desc">تغییر به حالت تاریک</div>
+                        <div class="theme-option-label">هماهنگ با ایتا</div>
+                        <div class="theme-option-desc">تم به صورت خودکار از ایتا تنظیم می‌شود</div>
                     </div>
                 </div>
-                <div class="toggle-switch" id="darkModeToggle"></div>
+                <div class="theme-option" data-theme-mode="light">
+                    <i class="fa-solid fa-sun"></i>
+                    <div>
+                        <div class="theme-option-label">حالت روشن</div>
+                        <div class="theme-option-desc">همیشه روشن</div>
+                    </div>
+                </div>
+                <div class="theme-option" data-theme-mode="dark">
+                    <i class="fa-solid fa-moon"></i>
+                    <div>
+                        <div class="theme-option-label">حالت تاریک</div>
+                        <div class="theme-option-desc">همیشه تاریک</div>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -534,12 +615,22 @@
             
             if (webApp) {
                 webApp.ready();
-                webApp.setHeaderColor('#a855f7');
-                webApp.setBackgroundColor('#faf5ff');
+                
+                const themeMode = localStorage.getItem('themeMode') || 'auto';
+                const currentTheme = themeMode === 'auto' ? (webApp.colorScheme || 'light') : themeMode;
+                webApp.setHeaderColor(currentTheme === 'dark' ? '#000000' : '#ffffff');
+                webApp.setBackgroundColor(currentTheme === 'dark' ? '#1e1b2e' : '#faf5ff');
                 
                 webApp.BackButton.show();
                 webApp.BackButton.onClick(() => {
                     window.location.href = '../dashboard/';
+                });
+                
+                webApp.onEvent('themeChanged', () => {
+                    const mode = localStorage.getItem('themeMode') || 'auto';
+                    if (mode === 'auto') {
+                        applyTheme();
+                    }
                 });
             }
 
@@ -582,6 +673,18 @@
                 document.documentElement.style.setProperty('--primary-light', shadeColor(color, 30));
             }
 
+            function applyTheme() {
+                const mode = localStorage.getItem('themeMode') || 'auto';
+                const theme = mode === 'auto' ? (webApp ? webApp.colorScheme : 'light') : mode;
+                
+                document.documentElement.setAttribute('data-theme', theme);
+                
+                if (webApp) {
+                    webApp.setHeaderColor(theme === 'dark' ? '#000000' : '#ffffff');
+                    webApp.setBackgroundColor(theme === 'dark' ? '#1e1b2e' : '#faf5ff');
+                }
+            }
+
             function applyAnimation(enabled) {
                 if (enabled) {
                     document.documentElement.removeAttribute('data-animation');
@@ -599,10 +702,12 @@
             function loadSettings() {
                 const settings = getSettings();
                 
-                if (settings.darkMode) {
-                    document.documentElement.setAttribute('data-theme', 'dark');
-                    document.getElementById('darkModeToggle').classList.add('active');
-                }
+                const themeMode = localStorage.getItem('themeMode') || 'auto';
+                document.querySelectorAll('.theme-option').forEach(o => {
+                    if (o.dataset.themeMode === themeMode) {
+                        o.classList.add('active');
+                    }
+                });
                 
                 if (settings.primaryColor) {
                     applyColor(settings.primaryColor);
@@ -623,29 +728,18 @@
                 if (settings.haptic === false) {
                     document.getElementById('hapticToggle').classList.remove('active');
                 }
+                
+                applyTheme();
             }
 
-            document.getElementById('darkModeToggle').addEventListener('click', function() {
-                const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-                triggerHaptic();
-                
-                if (isDark) {
-                    document.documentElement.removeAttribute('data-theme');
-                    this.classList.remove('active');
-                    saveSettings('darkMode', false);
-                    if (webApp) {
-                        webApp.setBackgroundColor('#faf5ff');
-                        webApp.setHeaderColor(getSettings().primaryColor || '#a855f7');
-                    }
-                } else {
-                    document.documentElement.setAttribute('data-theme', 'dark');
+            document.querySelectorAll('.theme-option').forEach(option => {
+                option.addEventListener('click', function() {
+                    triggerHaptic();
+                    document.querySelectorAll('.theme-option').forEach(o => o.classList.remove('active'));
                     this.classList.add('active');
-                    saveSettings('darkMode', true);
-                    if (webApp) {
-                        webApp.setBackgroundColor('#1e1b2e');
-                        webApp.setHeaderColor('#1e1b2e');
-                    }
-                }
+                    localStorage.setItem('themeMode', this.dataset.themeMode);
+                    applyTheme();
+                });
             });
 
             document.querySelectorAll('.color-option').forEach(option => {
@@ -656,9 +750,6 @@
                     const color = this.dataset.color;
                     applyColor(color);
                     saveSettings('primaryColor', color);
-                    if (webApp) {
-                        webApp.setHeaderColor(color);
-                    }
                 });
             });
 
