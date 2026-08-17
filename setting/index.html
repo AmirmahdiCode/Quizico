@@ -488,4 +488,293 @@
             transform: translateY(1px);
         }
     </style>
-</
+</head>
+<body>
+    <header class="header">
+        <div class="header-inner">
+            <div class="header-right">
+                <div class="header-logo">
+                    <img src="https://cdn.imgurl.ir/uploads/r102593_InShot_20260817_115945628.png" alt="Quizico">
+                </div>
+                <div>
+                    <div class="header-title">تنظیمات</div>
+                    <div class="header-subtitle">Quizico</div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="main-container">
+        <div class="settings-card">
+            <div class="settings-title">
+                <i class="fa-solid fa-moon"></i>
+                حالت نمایش
+            </div>
+            <div class="theme-options">
+                <div class="theme-option" data-theme-mode="auto">
+                    <i class="fa-solid fa-circle-half-stroke"></i>
+                    <div>
+                        <div class="theme-option-label">هماهنگ با ایتا</div>
+                        <div class="theme-option-desc">تم به صورت خودکار از ایتا تنظیم می‌شود</div>
+                    </div>
+                </div>
+                <div class="theme-option" data-theme-mode="light">
+                    <i class="fa-solid fa-sun"></i>
+                    <div>
+                        <div class="theme-option-label">حالت روشن</div>
+                        <div class="theme-option-desc">همیشه روشن</div>
+                    </div>
+                </div>
+                <div class="theme-option" data-theme-mode="dark">
+                    <i class="fa-solid fa-moon"></i>
+                    <div>
+                        <div class="theme-option-label">حالت تاریک</div>
+                        <div class="theme-option-desc">همیشه تاریک</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="settings-card">
+            <div class="settings-title">
+                <i class="fa-solid fa-palette"></i>
+                تم رنگ
+            </div>
+            <div class="color-options" id="colorOptions">
+                <div class="color-option" data-color="#ef4444" style="background: #ef4444;"></div>
+                <div class="color-option" data-color="#f97316" style="background: #f97316;"></div>
+                <div class="color-option" data-color="#f59e0b" style="background: #f59e0b;"></div>
+                <div class="color-option" data-color="#84cc16" style="background: #84cc16;"></div>
+                <div class="color-option" data-color="#10b981" style="background: #10b981;"></div>
+                <div class="color-option" data-color="#14b8a6" style="background: #14b8a6;"></div>
+                <div class="color-option" data-color="#06b6d4" style="background: #06b6d4;"></div>
+                <div class="color-option" data-color="#3b82f6" style="background: #3b82f6;"></div>
+                <div class="color-option" data-color="#6366f1" style="background: #6366f1;"></div>
+                <div class="color-option" data-color="#a855f7" style="background: #a855f7;"></div>
+                <div class="color-option" data-color="#8b5cf6" style="background: #8b5cf6;"></div>
+                <div class="color-option" data-color="#d946ef" style="background: #d946ef;"></div>
+                <div class="color-option" data-color="#ec4899" style="background: #ec4899;"></div>
+                <div class="color-option" data-color="#f43f5e" style="background: #f43f5e;"></div>
+            </div>
+            <div class="preview-box">
+                <div class="preview-text">پیش‌نمایش زنده</div>
+                <button class="preview-button">دکمه نمونه</button>
+            </div>
+        </div>
+
+        <div class="settings-card">
+            <div class="settings-title">
+                <i class="fa-solid fa-sliders"></i>
+                سایر تنظیمات
+            </div>
+            <div class="setting-item">
+                <div class="setting-info">
+                    <i class="fa-solid fa-bolt"></i>
+                    <div>
+                        <div class="setting-label">انیمیشن‌ها</div>
+                        <div class="setting-desc">افکت‌های حرکتی</div>
+                    </div>
+                </div>
+                <div class="toggle-switch active" id="animationToggle"></div>
+            </div>
+            <div class="setting-item">
+                <div class="setting-info">
+                    <i class="fa-solid fa-mobile-screen"></i>
+                    <div>
+                        <div class="setting-label">لرزش (هاپتیک)</div>
+                        <div class="setting-desc">بازخورد لمسی</div>
+                    </div>
+                </div>
+                <div class="toggle-switch active" id="hapticToggle"></div>
+            </div>
+        </div>
+    </main>
+
+    <nav class="bottom-nav">
+        <a href="../dashboard/" class="nav-item" onclick="savePage('dashboard')">
+            <i class="fa-solid fa-house"></i>
+            <span>صفحه اصلی</span>
+        </a>
+        <a href="../ranking/" class="nav-item" onclick="savePage('ranking')">
+            <i class="fa-solid fa-trophy"></i>
+            <span>رتبه بندی</span>
+        </a>
+        <a href="../profile/" class="nav-item" onclick="savePage('profile')">
+            <i class="fa-solid fa-user"></i>
+            <span>پروفایل من</span>
+        </a>
+        <a href="../setting/" class="nav-item active" onclick="savePage('setting')">
+            <i class="fa-solid fa-gear"></i>
+            <span>تنظیمات</span>
+        </a>
+    </nav>
+
+    <script>
+        (function() {
+            const webApp = window.Eitaa?.WebApp;
+            
+            function savePage(page) {
+                localStorage.setItem('lastPage', page);
+            }
+
+            function getSettings() {
+                return JSON.parse(localStorage.getItem('quizicoSettings') || '{}');
+            }
+
+            function saveSettings(key, value) {
+                const settings = getSettings();
+                settings[key] = value;
+                localStorage.setItem('quizicoSettings', JSON.stringify(settings));
+            }
+
+            function hexToRgb(hex) {
+                const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+                return result ? {
+                    r: parseInt(result[1], 16),
+                    g: parseInt(result[2], 16),
+                    b: parseInt(result[3], 16)
+                } : { r: 168, g: 85, b: 247 };
+            }
+
+            function shadeColor(color, percent) {
+                const rgb = hexToRgb(color);
+                const r = Math.max(0, Math.min(255, rgb.r + percent));
+                const g = Math.max(0, Math.min(255, rgb.g + percent));
+                const b = Math.max(0, Math.min(255, rgb.b + percent));
+                return `#${((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1)}`;
+            }
+
+            function applyColor(color) {
+                const rgb = hexToRgb(color);
+                document.documentElement.style.setProperty('--primary', color);
+                document.documentElement.style.setProperty('--primary-rgb', `${rgb.r}, ${rgb.g}, ${rgb.b}`);
+                document.documentElement.style.setProperty('--primary-dark', shadeColor(color, -30));
+                document.documentElement.style.setProperty('--primary-light', shadeColor(color, 30));
+            }
+
+            function applyTheme() {
+                const mode = localStorage.getItem('themeMode') || 'auto';
+                let theme;
+                
+                if (mode === 'auto') {
+                    theme = webApp ? (webApp.colorScheme || 'light') : 'light';
+                    if (webApp) {
+                        webApp.setHeaderColor('bg_color');
+                        webApp.setBackgroundColor('bg_color');
+                    }
+                } else {
+                    theme = mode;
+                    if (webApp) {
+                        webApp.setHeaderColor(theme === 'dark' ? '#000000' : '#ffffff');
+                        webApp.setBackgroundColor(theme === 'dark' ? '#1e1b2e' : '#faf5ff');
+                    }
+                }
+                
+                document.documentElement.setAttribute('data-theme', theme);
+            }
+
+            function applyAnimation(enabled) {
+                if (enabled) {
+                    document.documentElement.removeAttribute('data-animation');
+                } else {
+                    document.documentElement.setAttribute('data-animation', 'off');
+                }
+            }
+
+            function triggerHaptic() {
+                if (getSettings().haptic !== false && webApp) {
+                    webApp.HapticFeedback?.impactOccurred('light');
+                }
+            }
+
+            function loadSettings() {
+                const settings = getSettings();
+                
+                const themeMode = localStorage.getItem('themeMode') || 'auto';
+                document.querySelectorAll('.theme-option').forEach(o => {
+                    if (o.dataset.themeMode === themeMode) {
+                        o.classList.add('active');
+                    }
+                });
+                
+                if (settings.primaryColor) {
+                    applyColor(settings.primaryColor);
+                    document.querySelectorAll('.color-option').forEach(o => {
+                        if (o.dataset.color === settings.primaryColor) {
+                            o.classList.add('active');
+                        }
+                    });
+                } else {
+                    document.querySelector('.color-option[data-color="#a855f7"]').classList.add('active');
+                }
+                
+                if (settings.animation === false) {
+                    document.getElementById('animationToggle').classList.remove('active');
+                    applyAnimation(false);
+                }
+                
+                if (settings.haptic === false) {
+                    document.getElementById('hapticToggle').classList.remove('active');
+                }
+                
+                applyTheme();
+            }
+
+            if (webApp) {
+                webApp.ready();
+                
+                webApp.BackButton.show();
+                webApp.BackButton.onClick(function() {
+                    window.location.href = '../dashboard/';
+                });
+                
+                webApp.onEvent('themeChanged', function() {
+                    const mode = localStorage.getItem('themeMode') || 'auto';
+                    if (mode === 'auto') {
+                        const theme = this.colorScheme;
+                        document.documentElement.setAttribute('data-theme', theme);
+                        this.setHeaderColor('bg_color');
+                        this.setBackgroundColor('bg_color');
+                    }
+                });
+            }
+
+            document.querySelectorAll('.theme-option').forEach(option => {
+                option.addEventListener('click', function() {
+                    triggerHaptic();
+                    document.querySelectorAll('.theme-option').forEach(o => o.classList.remove('active'));
+                    this.classList.add('active');
+                    localStorage.setItem('themeMode', this.dataset.themeMode);
+                    applyTheme();
+                });
+            });
+
+            document.querySelectorAll('.color-option').forEach(option => {
+                option.addEventListener('click', function() {
+                    triggerHaptic();
+                    document.querySelectorAll('.color-option').forEach(o => o.classList.remove('active'));
+                    this.classList.add('active');
+                    const color = this.dataset.color;
+                    applyColor(color);
+                    saveSettings('primaryColor', color);
+                });
+            });
+
+            document.getElementById('animationToggle').addEventListener('click', function() {
+                triggerHaptic();
+                this.classList.toggle('active');
+                const enabled = this.classList.contains('active');
+                applyAnimation(enabled);
+                saveSettings('animation', enabled);
+            });
+
+            document.getElementById('hapticToggle').addEventListener('click', function() {
+                this.classList.toggle('active');
+                saveSettings('haptic', this.classList.contains('active'));
+            });
+
+            loadSettings();
+        })();
+    </script>
+</body>
+</html>
