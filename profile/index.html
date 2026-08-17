@@ -732,45 +732,12 @@
             const webApp = window.Eitaa?.WebApp;
             const API_URL = 'https://script.google.com/macros/s/AKfycbx34bNcwqg5JHqOI6DFbV41d-w0yjdS76kuemQYZcCpuNQqFoMWM7ipFF7zxJFG0EW6-w/exec';
             
-            if (webApp) {
-                webApp.ready();
-                
-                const themeMode = localStorage.getItem('themeMode') || 'auto';
-                const currentTheme = themeMode === 'auto' ? (webApp.colorScheme || 'light') : themeMode;
-                webApp.setHeaderColor(currentTheme === 'dark' ? '#000000' : '#ffffff');
-                webApp.setBackgroundColor(currentTheme === 'dark' ? '#1e1b2e' : '#faf5ff');
-                
-                webApp.BackButton.show();
-                webApp.BackButton.onClick(() => {
-                    window.location.href = '../dashboard/';
-                });
-                
-                webApp.onEvent('themeChanged', () => {
-                    const mode = localStorage.getItem('themeMode') || 'auto';
-                    if (mode === 'auto') {
-                        applyTheme();
-                    }
-                });
-            }
-
             function savePage(page) {
                 localStorage.setItem('lastPage', page);
             }
 
             function getSettings() {
                 return JSON.parse(localStorage.getItem('quizicoSettings') || '{}');
-            }
-
-            function applyTheme() {
-                const mode = localStorage.getItem('themeMode') || 'auto';
-                const theme = mode === 'auto' ? (webApp ? webApp.colorScheme : 'light') : mode;
-                
-                document.documentElement.setAttribute('data-theme', theme);
-                
-                if (webApp) {
-                    webApp.setHeaderColor(theme === 'dark' ? '#000000' : '#ffffff');
-                    webApp.setBackgroundColor(theme === 'dark' ? '#1e1b2e' : '#faf5ff');
-                }
             }
 
             function hexToRgb(hex) {
@@ -788,6 +755,27 @@
                 const g = Math.max(0, Math.min(255, rgb.g + percent));
                 const b = Math.max(0, Math.min(255, rgb.b + percent));
                 return `#${((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1)}`;
+            }
+
+            function applyTheme() {
+                const mode = localStorage.getItem('themeMode') || 'auto';
+                let theme;
+                
+                if (mode === 'auto') {
+                    theme = webApp ? (webApp.colorScheme || 'light') : 'light';
+                    if (webApp) {
+                        webApp.setHeaderColor('bg_color');
+                        webApp.setBackgroundColor('bg_color');
+                    }
+                } else {
+                    theme = mode;
+                    if (webApp) {
+                        webApp.setHeaderColor(theme === 'dark' ? '#000000' : '#ffffff');
+                        webApp.setBackgroundColor(theme === 'dark' ? '#1e1b2e' : '#faf5ff');
+                    }
+                }
+                
+                document.documentElement.setAttribute('data-theme', theme);
             }
 
             function applySettings() {
@@ -961,6 +949,25 @@
                 
                 document.getElementById('loaderWrapper').style.display = 'none';
                 document.getElementById('profileContent').classList.add('show');
+            }
+
+            if (webApp) {
+                webApp.ready();
+                
+                webApp.BackButton.show();
+                webApp.BackButton.onClick(function() {
+                    window.location.href = '../dashboard/';
+                });
+                
+                webApp.onEvent('themeChanged', function() {
+                    const mode = localStorage.getItem('themeMode') || 'auto';
+                    if (mode === 'auto') {
+                        const theme = this.colorScheme;
+                        document.documentElement.setAttribute('data-theme', theme);
+                        this.setHeaderColor('bg_color');
+                        this.setBackgroundColor('bg_color');
+                    }
+                });
             }
 
             applySettings();
