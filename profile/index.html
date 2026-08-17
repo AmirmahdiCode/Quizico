@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>پروفایل من | Quizico</title>
+    <title>تنظیمات | Quizico</title>
     <script src="https://developer.eitaa.com/eitaa-web-app.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/gh/rastikerdar/iran-sans-font@v1.0.0/dist/font-face.css" rel="stylesheet">
@@ -141,119 +141,47 @@
             padding: 0 12px 80px;
         }
 
-        .profile-header-card {
-            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-            border: 2px solid #000000;
+        .settings-card {
+            background: var(--card-bg);
+            border: 1px solid #000000;
             border-radius: 4px;
             padding: 16px;
-            margin-bottom: 16px;
-            box-shadow: 4px 4px 0 #000000;
-            animation: fadeInUp 0.5s ease backwards;
-        }
-
-        .profile-top {
-            display: flex;
-            align-items: center;
-            gap: 14px;
-            margin-bottom: 12px;
-        }
-
-        .profile-avatar {
-            width: 56px;
-            height: 56px;
-            border-radius: 50%;
-            background: #ffffff;
-            border: 3px solid #000000;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 2px 2px 0 #000000;
-            overflow: hidden;
-            font-size: 24px;
-            color: var(--primary);
-            flex-shrink: 0;
-        }
-
-        .profile-info {
-            flex: 1;
-            min-width: 0;
-        }
-
-        .profile-name {
-            font-size: 15px;
-            font-weight: 700;
-            color: #ffffff;
-            margin-bottom: 2px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .profile-username {
-            font-size: 10px;
-            color: rgba(255, 255, 255, 0.7);
-            direction: ltr;
-            text-align: right;
-        }
-
-        .profile-badges {
-            display: flex;
-            justify-content: flex-start;
-            gap: 8px;
-            flex-wrap: wrap;
-            border-top: 1px solid rgba(255, 255, 255, 0.2);
-            padding-top: 10px;
-        }
-
-        .badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-            background: rgba(255, 255, 255, 0.15);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            border-radius: 4px;
-            padding: 3px 8px;
-            font-size: 9px;
-            color: #ffffff;
-            font-weight: 600;
-        }
-
-        .badge i {
-            font-size: 10px;
-        }
-
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-            margin-bottom: 16px;
-        }
-
-        .stat-card {
-            background: var(--card-bg);
-            border: 2px solid #000000;
-            border-radius: 4px;
-            padding: 14px 10px;
-            text-align: center;
+            margin-bottom: 14px;
             box-shadow: 3px 3px 0 #000000;
-            transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
             animation: fadeInUp 0.5s ease backwards;
         }
 
-        .stat-card:nth-child(1) { animation-delay: 0.1s; }
-        .stat-card:nth-child(2) { animation-delay: 0.15s; }
-        .stat-card:nth-child(3) { animation-delay: 0.2s; }
+        .settings-card:nth-child(1) { animation-delay: 0.1s; }
+        .settings-card:nth-child(2) { animation-delay: 0.2s; }
+        .settings-card:nth-child(3) { animation-delay: 0.3s; }
 
-        .stat-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 4px 4px 0 #000000;
+        @keyframes fadeInUp {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
         }
 
-        .stat-icon {
-            font-size: 20px;
-            margin-bottom: 6px;
+        .settings-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 5px 5px 0 #000000;
+        }
+
+        .settings-title {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: color 0.5s ease;
+        }
+
+        .settings-title i {
             color: var(--primary);
+            font-size: 15px;
             animation: iconPulse 2s ease-in-out infinite;
+            transition: color 0.5s ease;
         }
 
         @keyframes iconPulse {
@@ -261,236 +189,234 @@
             50% { transform: scale(1.15); }
         }
 
-        .stat-value {
-            font-size: 18px;
-            font-weight: 700;
-            color: var(--dark);
-            margin-bottom: 2px;
+        .theme-options {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            padding: 10px 0;
         }
 
-        .stat-label {
-            font-size: 9px;
-            color: var(--text-light);
-            font-weight: 600;
-        }
-
-        .league-card {
-            background: var(--card-bg);
-            border: 2px solid #000000;
-            border-radius: 4px;
-            padding: 14px;
-            margin-bottom: 16px;
-            box-shadow: 3px 3px 0 #000000;
-            animation: fadeInUp 0.5s ease 0.25s backwards;
-        }
-
-        .league-title {
-            font-size: 13px;
-            font-weight: 700;
-            color: var(--dark);
-            margin-bottom: 10px;
+        .theme-option {
             display: flex;
             align-items: center;
-            gap: 8px;
-        }
-
-        .league-title i {
-            color: var(--primary);
-        }
-
-        .league-stats {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 8px;
-        }
-
-        .league-item {
-            text-align: center;
-            padding: 10px;
+            gap: 10px;
+            padding: 12px 14px;
+            border: 2px solid #000000;
             border-radius: 4px;
-            border: 1px solid #000000;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            box-shadow: 2px 2px 0 #000000;
             background: var(--bg2);
         }
 
-        .league-item.win {
-            background: #10b981;
+        .theme-option:hover {
+            transform: translateX(-5px);
+            box-shadow: 3px 3px 0 #000000;
+        }
+
+        .theme-option:active {
+            transform: translate(2px, 2px);
+            box-shadow: 0px 0px 0 #000000;
+        }
+
+        .theme-option.active {
+            background: var(--primary);
+        }
+
+        .theme-option.active .theme-option-label {
             color: #ffffff;
         }
 
-        .league-item.draw {
-            background: #f59e0b;
+        .theme-option.active .theme-option-desc {
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .theme-option.active i {
             color: #ffffff;
         }
 
-        .league-item.loss {
-            background: #ef4444;
-            color: #ffffff;
-        }
-
-        .league-item-value {
+        .theme-option i {
             font-size: 18px;
-            font-weight: 700;
-            display: block;
-        }
-
-        .league-item-label {
-            font-size: 9px;
-            font-weight: 600;
-            margin-top: 2px;
-            display: block;
-        }
-
-        .chart-card {
-            background: var(--card-bg);
-            border: 2px solid #000000;
-            border-radius: 4px;
-            padding: 14px;
-            margin-bottom: 16px;
-            box-shadow: 3px 3px 0 #000000;
-            animation: fadeInUp 0.5s ease 0.3s backwards;
-        }
-
-        .chart-title {
-            font-size: 13px;
-            font-weight: 700;
-            color: var(--dark);
-            margin-bottom: 10px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .chart-title i {
             color: var(--primary);
+            width: 24px;
+            text-align: center;
+            transition: color 0.3s ease;
         }
 
-        .chart-container {
-            display: flex;
-            align-items: flex-end;
-            justify-content: center;
-            gap: 16px;
-            height: 120px;
-            padding: 8px;
-        }
-
-        .chart-bar-wrapper {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 6px;
-            flex: 1;
-            max-width: 70px;
-        }
-
-        .chart-bar {
-            width: 100%;
-            border-radius: 4px;
-            border: 2px solid #000000;
-            transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-            animation: barGrow 1s ease backwards;
-            min-height: 8px;
-        }
-
-        .chart-bar.win {
-            background: #10b981;
-            animation-delay: 0.3s;
-        }
-
-        .chart-bar.draw {
-            background: #f59e0b;
-            animation-delay: 0.4s;
-        }
-
-        .chart-bar.loss {
-            background: #ef4444;
-            animation-delay: 0.5s;
-        }
-
-        @keyframes barGrow {
-            from { height: 0; }
-        }
-
-        .chart-bar-label {
-            font-size: 9px;
+        .theme-option-label {
+            font-size: 12px;
             font-weight: 600;
             color: var(--dark);
+            transition: color 0.3s ease;
         }
 
-        .chart-bar-value {
-            font-size: 11px;
-            font-weight: 700;
+        .theme-option-desc {
+            font-size: 9px;
+            color: var(--text-light);
+            margin-top: 2px;
+            transition: color 0.3s ease;
+        }
+
+        .color-options {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            padding: 10px 0;
+        }
+
+        .color-option {
+            width: 38px;
+            height: 38px;
+            border-radius: 4px;
+            border: 2px solid #000000;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            box-shadow: none;
+        }
+
+        .color-option:hover {
+            transform: translateY(-3px) rotate(5deg);
+        }
+
+        .color-option:active {
+            transform: translate(2px, 2px);
+        }
+
+        .color-option.active {
+            outline: 3px solid var(--primary);
+            outline-offset: 2px;
+            animation: selectedPulse 1.5s ease-in-out infinite;
+        }
+
+        @keyframes selectedPulse {
+            0%, 100% { outline-width: 2px; }
+            50% { outline-width: 4px; }
+        }
+
+        .preview-box {
+            padding: 16px;
+            background: var(--bg2);
+            border: 2px dashed #000000;
+            border-radius: 4px;
+            text-align: center;
+            margin-top: 12px;
+            transition: all 0.5s ease;
+        }
+
+        .preview-text {
+            font-size: 13px;
             color: var(--dark);
+            font-weight: 600;
+            transition: color 0.5s ease;
         }
 
-        .games-history-card {
-            background: var(--card-bg);
+        .preview-button {
+            display: inline-block;
+            margin-top: 10px;
+            padding: 8px 20px;
+            background: var(--primary);
+            color: #ffffff;
             border: 2px solid #000000;
             border-radius: 4px;
-            padding: 14px;
+            font-size: 12px;
+            font-weight: 700;
+            box-shadow: 2px 2px 0 #000000;
+            font-family: inherit;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        .preview-button:hover {
+            transform: translateY(-2px);
             box-shadow: 3px 3px 0 #000000;
-            animation: fadeInUp 0.5s ease 0.35s backwards;
         }
 
-        .games-list {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-            max-height: 250px;
-            overflow-y: auto;
+        .preview-button:active {
+            transform: translate(2px, 2px);
+            box-shadow: 0px 0px 0 #000000;
         }
 
-        .game-item {
+        .setting-item {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 8px 10px;
-            border: 1px solid #000000;
-            border-radius: 4px;
-            background: var(--bg2);
-            transition: all 0.3s ease;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--bg3);
+            transition: border-color 0.5s ease;
         }
 
-        .game-item:hover {
-            transform: translateX(-3px);
+        .setting-item:last-child {
+            border-bottom: none;
         }
 
-        .game-players {
+        .setting-info {
             display: flex;
             align-items: center;
-            gap: 6px;
-            font-size: 10px;
+            gap: 10px;
+        }
+
+        .setting-info i {
+            font-size: 17px;
+            color: var(--primary);
+            width: 24px;
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .setting-item:hover .setting-info i {
+            transform: rotate(10deg) scale(1.1);
+        }
+
+        .setting-label {
+            font-size: 12px;
             font-weight: 600;
             color: var(--dark);
+            transition: color 0.5s ease;
         }
 
-        .game-score {
-            font-size: 10px;
-            font-weight: 700;
-            padding: 3px 8px;
-            border-radius: 4px;
-            border: 1px solid #000000;
-        }
-
-        .game-score.win {
-            background: #10b981;
-            color: #ffffff;
-        }
-
-        .game-score.loss {
-            background: #ef4444;
-            color: #ffffff;
-        }
-
-        .game-score.draw {
-            background: #f59e0b;
-            color: #ffffff;
-        }
-
-        .empty-state {
-            text-align: center;
-            padding: 16px;
+        .setting-desc {
+            font-size: 9px;
             color: var(--text-light);
-            font-size: 11px;
+            margin-top: 2px;
+            transition: color 0.5s ease;
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 44px;
+            height: 24px;
+            background: var(--bg3);
+            border: 2px solid #000000;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            box-shadow: 2px 2px 0 #000000;
+            flex-shrink: 0;
+        }
+
+        .toggle-switch:hover {
+            transform: scale(1.05);
+        }
+
+        .toggle-switch.active {
+            background: var(--primary);
+        }
+
+        .toggle-switch::after {
+            content: '';
+            position: absolute;
+            top: 2px;
+            right: 22px;
+            width: 14px;
+            height: 14px;
+            background: #ffffff;
+            border: 2px solid #000000;
+            border-radius: 50%;
+            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        .toggle-switch.active::after {
+            right: 2px;
         }
 
         .bottom-nav {
@@ -571,7 +497,7 @@
                     <img src="https://cdn.imgurl.ir/uploads/r102593_InShot_20260817_115945628.png" alt="Quizico">
                 </div>
                 <div>
-                    <div class="header-title">پروفایل من</div>
+                    <div class="header-title">تنظیمات</div>
                     <div class="header-subtitle">Quizico</div>
                 </div>
             </div>
@@ -579,95 +505,87 @@
     </header>
 
     <main class="main-container">
-        <div class="profile-header-card">
-            <div class="profile-top">
-                <div class="profile-avatar">
-                    <i class="fa-solid fa-user"></i>
+        <div class="settings-card">
+            <div class="settings-title">
+                <i class="fa-solid fa-moon"></i>
+                حالت نمایش
+            </div>
+            <div class="theme-options">
+                <div class="theme-option" data-theme-mode="auto">
+                    <i class="fa-solid fa-circle-half-stroke"></i>
+                    <div>
+                        <div class="theme-option-label">هماهنگ با ایتا</div>
+                        <div class="theme-option-desc">تم به صورت خودکار از ایتا تنظیم می‌شود</div>
+                    </div>
                 </div>
-                <div class="profile-info">
-                    <div class="profile-name" id="profileName">در حال بارگذاری...</div>
-                    <div class="profile-username" id="profileUsername"></div>
+                <div class="theme-option" data-theme-mode="light">
+                    <i class="fa-solid fa-sun"></i>
+                    <div>
+                        <div class="theme-option-label">حالت روشن</div>
+                        <div class="theme-option-desc">همیشه روشن</div>
+                    </div>
                 </div>
-            </div>
-            <div class="profile-badges" id="profileBadges">
-                <span class="badge"><i class="fa-solid fa-coins"></i> <span id="coinsValue">0</span> سکه</span>
-                <span class="badge"><i class="fa-solid fa-gem"></i> <span id="diamondsValue">0</span> الماس</span>
-            </div>
-        </div>
-
-        <div class="stats-grid">
-            <div class="stat-card">
-                <div class="stat-icon"><i class="fa-solid fa-star"></i></div>
-                <div class="stat-value" id="totalScore">0</div>
-                <div class="stat-label">امتیاز کل</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon"><i class="fa-solid fa-gamepad"></i></div>
-                <div class="stat-value" id="totalGames">0</div>
-                <div class="stat-label">تعداد بازی</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon"><i class="fa-solid fa-chart-line"></i></div>
-                <div class="stat-value" id="winRate">0%</div>
-                <div class="stat-label">درصد برد</div>
-            </div>
-        </div>
-
-        <div class="league-card">
-            <div class="league-title">
-                <i class="fa-solid fa-trophy"></i>
-                آمار لیگ
-            </div>
-            <div class="league-stats">
-                <div class="league-item win">
-                    <span class="league-item-value" id="winsCount">0</span>
-                    <span class="league-item-label">برد</span>
-                </div>
-                <div class="league-item draw">
-                    <span class="league-item-value" id="drawsCount">0</span>
-                    <span class="league-item-label">مساوی</span>
-                </div>
-                <div class="league-item loss">
-                    <span class="league-item-value" id="lossesCount">0</span>
-                    <span class="league-item-label">باخت</span>
+                <div class="theme-option" data-theme-mode="dark">
+                    <i class="fa-solid fa-moon"></i>
+                    <div>
+                        <div class="theme-option-label">حالت تاریک</div>
+                        <div class="theme-option-desc">همیشه تاریک</div>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <div class="chart-card">
-            <div class="chart-title">
-                <i class="fa-solid fa-chart-column"></i>
-                نمودار عملکرد
+        <div class="settings-card">
+            <div class="settings-title">
+                <i class="fa-solid fa-palette"></i>
+                تم رنگ
             </div>
-            <div class="chart-container">
-                <div class="chart-bar-wrapper">
-                    <div class="chart-bar win" id="winBar" style="height: 8px;"></div>
-                    <span class="chart-bar-value" id="winBarValue">0</span>
-                    <span class="chart-bar-label">برد</span>
-                </div>
-                <div class="chart-bar-wrapper">
-                    <div class="chart-bar draw" id="drawBar" style="height: 8px;"></div>
-                    <span class="chart-bar-value" id="drawBarValue">0</span>
-                    <span class="chart-bar-label">مساوی</span>
-                </div>
-                <div class="chart-bar-wrapper">
-                    <div class="chart-bar loss" id="lossBar" style="height: 8px;"></div>
-                    <span class="chart-bar-value" id="lossBarValue">0</span>
-                    <span class="chart-bar-label">باخت</span>
-                </div>
+            <div class="color-options" id="colorOptions">
+                <div class="color-option" data-color="#ef4444" style="background: #ef4444;"></div>
+                <div class="color-option" data-color="#f97316" style="background: #f97316;"></div>
+                <div class="color-option" data-color="#f59e0b" style="background: #f59e0b;"></div>
+                <div class="color-option" data-color="#84cc16" style="background: #84cc16;"></div>
+                <div class="color-option" data-color="#10b981" style="background: #10b981;"></div>
+                <div class="color-option" data-color="#14b8a6" style="background: #14b8a6;"></div>
+                <div class="color-option" data-color="#06b6d4" style="background: #06b6d4;"></div>
+                <div class="color-option" data-color="#3b82f6" style="background: #3b82f6;"></div>
+                <div class="color-option" data-color="#6366f1" style="background: #6366f1;"></div>
+                <div class="color-option" data-color="#a855f7" style="background: #a855f7;"></div>
+                <div class="color-option" data-color="#8b5cf6" style="background: #8b5cf6;"></div>
+                <div class="color-option" data-color="#d946ef" style="background: #d946ef;"></div>
+                <div class="color-option" data-color="#ec4899" style="background: #ec4899;"></div>
+                <div class="color-option" data-color="#f43f5e" style="background: #f43f5e;"></div>
+            </div>
+            <div class="preview-box">
+                <div class="preview-text">پیش‌نمایش زنده</div>
+                <button class="preview-button">دکمه نمونه</button>
             </div>
         </div>
 
-        <div class="games-history-card">
-            <div class="chart-title">
-                <i class="fa-solid fa-clock-rotate-left"></i>
-                تاریخچه بازی‌ها
+        <div class="settings-card">
+            <div class="settings-title">
+                <i class="fa-solid fa-sliders"></i>
+                سایر تنظیمات
             </div>
-            <div class="games-list" id="gamesList">
-                <div class="empty-state">
-                    <i class="fa-solid fa-spinner fa-spin"></i>
-                    در حال بارگذاری...
+            <div class="setting-item">
+                <div class="setting-info">
+                    <i class="fa-solid fa-bolt"></i>
+                    <div>
+                        <div class="setting-label">انیمیشن‌ها</div>
+                        <div class="setting-desc">افکت‌های حرکتی</div>
+                    </div>
                 </div>
+                <div class="toggle-switch active" id="animationToggle"></div>
+            </div>
+            <div class="setting-item">
+                <div class="setting-info">
+                    <i class="fa-solid fa-mobile-screen"></i>
+                    <div>
+                        <div class="setting-label">لرزش (هاپتیک)</div>
+                        <div class="setting-desc">بازخورد لمسی</div>
+                    </div>
+                </div>
+                <div class="toggle-switch active" id="hapticToggle"></div>
             </div>
         </div>
     </main>
@@ -681,11 +599,11 @@
             <i class="fa-solid fa-trophy"></i>
             <span>رتبه بندی</span>
         </a>
-        <a href="../profile/" class="nav-item active" onclick="savePage('profile')">
+        <a href="../profile/" class="nav-item" onclick="savePage('profile')">
             <i class="fa-solid fa-user"></i>
             <span>پروفایل من</span>
         </a>
-        <a href="../setting/" class="nav-item" onclick="savePage('setting')">
+        <a href="../setting/" class="nav-item active" onclick="savePage('setting')">
             <i class="fa-solid fa-gear"></i>
             <span>تنظیمات</span>
         </a>
@@ -694,16 +612,25 @@
     <script>
         (function() {
             const webApp = window.Eitaa?.WebApp;
-            const API_URL = 'https://script.google.com/macros/s/AKfycbx34bNcwqg5JHqOI6DFbV41d-w0yjdS76kuemQYZcCpuNQqFoMWM7ipFF7zxJFG0EW6-w/exec';
             
             if (webApp) {
                 webApp.ready();
-                webApp.setHeaderColor('#a855f7');
-                webApp.setBackgroundColor('#faf5ff');
+                
+                const themeMode = localStorage.getItem('themeMode') || 'auto';
+                const currentTheme = themeMode === 'auto' ? (webApp.colorScheme || 'light') : themeMode;
+                webApp.setHeaderColor(currentTheme === 'dark' ? '#000000' : '#ffffff');
+                webApp.setBackgroundColor(currentTheme === 'dark' ? '#1e1b2e' : '#faf5ff');
                 
                 webApp.BackButton.show();
                 webApp.BackButton.onClick(() => {
                     window.location.href = '../dashboard/';
+                });
+                
+                webApp.onEvent('themeChanged', () => {
+                    const mode = localStorage.getItem('themeMode') || 'auto';
+                    if (mode === 'auto') {
+                        applyTheme();
+                    }
                 });
             }
 
@@ -715,24 +642,10 @@
                 return JSON.parse(localStorage.getItem('quizicoSettings') || '{}');
             }
 
-            function applySettings() {
+            function saveSettings(key, value) {
                 const settings = getSettings();
-                
-                if (settings.darkMode) {
-                    document.documentElement.setAttribute('data-theme', 'dark');
-                }
-                
-                if (settings.primaryColor) {
-                    const rgb = hexToRgb(settings.primaryColor);
-                    document.documentElement.style.setProperty('--primary', settings.primaryColor);
-                    document.documentElement.style.setProperty('--primary-rgb', `${rgb.r}, ${rgb.g}, ${rgb.b}`);
-                    document.documentElement.style.setProperty('--primary-dark', shadeColor(settings.primaryColor, -30));
-                    document.documentElement.style.setProperty('--primary-light', shadeColor(settings.primaryColor, 30));
-                }
-                
-                if (settings.animation === false) {
-                    document.documentElement.setAttribute('data-animation', 'off');
-                }
+                settings[key] = value;
+                localStorage.setItem('quizicoSettings', JSON.stringify(settings));
             }
 
             function hexToRgb(hex) {
@@ -752,155 +665,108 @@
                 return `#${((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1)}`;
             }
 
-            function getEitaaUser() {
-                if (webApp && webApp.initDataUnsafe && webApp.initDataUnsafe.user) {
-                    return webApp.initDataUnsafe.user;
-                }
-                return null;
+            function applyColor(color) {
+                const rgb = hexToRgb(color);
+                document.documentElement.style.setProperty('--primary', color);
+                document.documentElement.style.setProperty('--primary-rgb', `${rgb.r}, ${rgb.g}, ${rgb.b}`);
+                document.documentElement.style.setProperty('--primary-dark', shadeColor(color, -30));
+                document.documentElement.style.setProperty('--primary-light', shadeColor(color, 30));
             }
 
-            async function fetchData(action, params = {}) {
-                try {
-                    const response = await fetch(API_URL, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({
-                            token: '77781793:?4r]T}h-UXSic6Q-uBG@ZJg-WE*GqQL-8OZOSzR-~ehNGgr-6l7Hn6L-{yNSFm0-lbohCpI-soEMY(7-)v~$I22-JCNAVXj-,^x05PQ-&tQ5FQD-5ZXU5fK-iN4{fkz-FYIkfj5-sZ9bizd-sqfOUbw-CJindBM-FvlZYt1-pETvfRr-Vm)aHlo-OyptiU%',
-                            action: action,
-                            ...params
-                        })
-                    });
-                    return await response.json();
-                } catch(e) {
-                    return { success: false, message: 'Network error' };
+            function applyTheme() {
+                const mode = localStorage.getItem('themeMode') || 'auto';
+                const theme = mode === 'auto' ? (webApp ? webApp.colorScheme : 'light') : mode;
+                
+                document.documentElement.setAttribute('data-theme', theme);
+                
+                if (webApp) {
+                    webApp.setHeaderColor(theme === 'dark' ? '#000000' : '#ffffff');
+                    webApp.setBackgroundColor(theme === 'dark' ? '#1e1b2e' : '#faf5ff');
                 }
             }
 
-            function updateCharts(wins, draws, losses) {
-                const total = wins + draws + losses;
-                if (total === 0) return;
-                
-                const maxVal = Math.max(wins, draws, losses);
-                const maxHeight = 90;
-                
-                const winHeight = (wins / maxVal) * maxHeight;
-                const drawHeight = (draws / maxVal) * maxHeight;
-                const lossHeight = (losses / maxVal) * maxHeight;
-                
-                const winBar = document.getElementById('winBar');
-                const drawBar = document.getElementById('drawBar');
-                const lossBar = document.getElementById('lossBar');
-                
-                winBar.style.height = Math.max(winHeight, 8) + 'px';
-                drawBar.style.height = Math.max(drawHeight, 8) + 'px';
-                lossBar.style.height = Math.max(lossHeight, 8) + 'px';
-                
-                document.getElementById('winBarValue').textContent = wins;
-                document.getElementById('drawBarValue').textContent = draws;
-                document.getElementById('lossBarValue').textContent = losses;
+            function applyAnimation(enabled) {
+                if (enabled) {
+                    document.documentElement.removeAttribute('data-animation');
+                } else {
+                    document.documentElement.setAttribute('data-animation', 'off');
+                }
             }
 
-            async function loadProfile() {
-                const user = getEitaaUser();
-                
-                if (user) {
-                    const fullName = (user.first_name || '') + ' ' + (user.last_name || '');
-                    document.getElementById('profileName').textContent = fullName.trim() || 'کاربر';
-                    document.getElementById('profileUsername').textContent = 'ID: ' + user.id;
+            function triggerHaptic() {
+                if (getSettings().haptic !== false && webApp) {
+                    webApp.HapticFeedback?.impactOccurred('light');
                 }
+            }
+
+            function loadSettings() {
+                const settings = getSettings();
                 
-                const username = String(user ? user.id : '');
-                
-                const [userData, leagueData, gamesData] = await Promise.all([
-                    fetchData('getUser', { username: username }),
-                    fetchData('getLeague', { username: username }),
-                    fetchData('getGamesByPlayer', { username: username })
-                ]);
-                
-                if (userData.success) {
-                    const data = userData.data;
-                    document.getElementById('totalScore').textContent = data.score || 0;
-                    document.getElementById('coinsValue').textContent = data.coins || 0;
-                    document.getElementById('diamondsValue').textContent = data.diamonds || 0;
-                }
-                
-                let wins = 0, draws = 0, losses = 0;
-                
-                if (leagueData.success) {
-                    wins = leagueData.data.wins || 0;
-                    draws = leagueData.data.draws || 0;
-                    losses = leagueData.data.losses || 0;
-                    
-                    document.getElementById('winsCount').textContent = wins;
-                    document.getElementById('drawsCount').textContent = draws;
-                    document.getElementById('lossesCount').textContent = losses;
-                    
-                    updateCharts(wins, draws, losses);
-                    
-                    const totalLeague = wins + draws + losses;
-                    const winRate = totalLeague > 0 ? Math.round((wins / totalLeague) * 100) : 0;
-                    document.getElementById('winRate').textContent = winRate + '%';
-                }
-                
-                if (gamesData.success) {
-                    const games = gamesData.data;
-                    document.getElementById('totalGames').textContent = games.length;
-                    
-                    const gamesList = document.getElementById('gamesList');
-                    
-                    if (games.length === 0) {
-                        gamesList.innerHTML = '<div class="empty-state">هنوز بازی‌ای انجام نشده است</div>';
-                    } else {
-                        gamesList.innerHTML = games.slice(0, 10).reverse().map(game => {
-                            const isPlayer1 = game.player1 === username;
-                            const opponent = isPlayer1 ? game.player2 : game.player1;
-                            
-                            let result = 'draw';
-                            let resultText = 'مساوی';
-                            let resultClass = 'draw';
-                            
-                            if (game.status === 'finished') {
-                                if (isPlayer1) {
-                                    if (game.player1Score > game.player2Score) {
-                                        result = 'win';
-                                        resultText = 'برد';
-                                        resultClass = 'win';
-                                    } else if (game.player1Score < game.player2Score) {
-                                        result = 'loss';
-                                        resultText = 'باخت';
-                                        resultClass = 'loss';
-                                    }
-                                } else {
-                                    if (game.player2Score > game.player1Score) {
-                                        result = 'win';
-                                        resultText = 'برد';
-                                        resultClass = 'win';
-                                    } else if (game.player2Score < game.player1Score) {
-                                        result = 'loss';
-                                        resultText = 'باخت';
-                                        resultClass = 'loss';
-                                    }
-                                }
-                            }
-                            
-                            return `
-                                <div class="game-item">
-                                    <div class="game-players">
-                                        <i class="fa-solid fa-user"></i>
-                                        <span>${opponent || 'ناشناس'}</span>
-                                    </div>
-                                    <span class="game-score ${resultClass}">${resultText}</span>
-                                </div>
-                            `;
-                        }).join('');
+                const themeMode = localStorage.getItem('themeMode') || 'auto';
+                document.querySelectorAll('.theme-option').forEach(o => {
+                    if (o.dataset.themeMode === themeMode) {
+                        o.classList.add('active');
                     }
+                });
+                
+                if (settings.primaryColor) {
+                    applyColor(settings.primaryColor);
+                    document.querySelectorAll('.color-option').forEach(o => {
+                        if (o.dataset.color === settings.primaryColor) {
+                            o.classList.add('active');
+                        }
+                    });
+                } else {
+                    document.querySelector('.color-option[data-color="#a855f7"]').classList.add('active');
                 }
+                
+                if (settings.animation === false) {
+                    document.getElementById('animationToggle').classList.remove('active');
+                    applyAnimation(false);
+                }
+                
+                if (settings.haptic === false) {
+                    document.getElementById('hapticToggle').classList.remove('active');
+                }
+                
+                applyTheme();
             }
 
-            applySettings();
-            loadProfile();
+            document.querySelectorAll('.theme-option').forEach(option => {
+                option.addEventListener('click', function() {
+                    triggerHaptic();
+                    document.querySelectorAll('.theme-option').forEach(o => o.classList.remove('active'));
+                    this.classList.add('active');
+                    localStorage.setItem('themeMode', this.dataset.themeMode);
+                    applyTheme();
+                });
+            });
+
+            document.querySelectorAll('.color-option').forEach(option => {
+                option.addEventListener('click', function() {
+                    triggerHaptic();
+                    document.querySelectorAll('.color-option').forEach(o => o.classList.remove('active'));
+                    this.classList.add('active');
+                    const color = this.dataset.color;
+                    applyColor(color);
+                    saveSettings('primaryColor', color);
+                });
+            });
+
+            document.getElementById('animationToggle').addEventListener('click', function() {
+                triggerHaptic();
+                this.classList.toggle('active');
+                const enabled = this.classList.contains('active');
+                applyAnimation(enabled);
+                saveSettings('animation', enabled);
+            });
+
+            document.getElementById('hapticToggle').addEventListener('click', function() {
+                this.classList.toggle('active');
+                saveSettings('haptic', this.classList.contains('active'));
+            });
+
+            loadSettings();
         })();
     </script>
 </body>
