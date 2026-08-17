@@ -763,31 +763,48 @@
                 
                 if (mode === 'auto') {
                     theme = webApp ? (webApp.colorScheme || 'light') : 'light';
-                    if (webApp) {
-                        webApp.setHeaderColor('bg_color');
-                        webApp.setBackgroundColor('bg_color');
-                    }
                 } else {
                     theme = mode;
-                    if (webApp) {
-                        webApp.setHeaderColor(theme === 'dark' ? '#000000' : '#ffffff');
-                        webApp.setBackgroundColor(theme === 'dark' ? '#1e1b2e' : '#faf5ff');
-                    }
                 }
                 
                 document.documentElement.setAttribute('data-theme', theme);
+                
+                if (theme === 'dark') {
+                    document.documentElement.style.setProperty('--bg', '#1e1b2e');
+                    document.documentElement.style.setProperty('--bg2', '#2d2a3e');
+                    document.documentElement.style.setProperty('--bg3', '#3d3a4e');
+                    document.documentElement.style.setProperty('--primary', '#c084fc');
+                    document.documentElement.style.setProperty('--primary-dark', '#a855f7');
+                    document.documentElement.style.setProperty('--primary-light', '#d8b4fe');
+                    document.documentElement.style.setProperty('--primary-rgb', '192, 132, 252');
+                    document.documentElement.style.setProperty('--dark', '#f1f5f9');
+                    document.documentElement.style.setProperty('--text', '#cbd5e1');
+                    document.documentElement.style.setProperty('--text-light', '#94a3b8');
+                    document.documentElement.style.setProperty('--card-bg', '#2d2a3e');
+                    document.documentElement.style.setProperty('--header-bg', '#2d2a3e');
+                } else {
+                    document.documentElement.style.setProperty('--bg', '#faf5ff');
+                    document.documentElement.style.setProperty('--bg2', '#f3e8ff');
+                    document.documentElement.style.setProperty('--bg3', '#e9d5ff');
+                    document.documentElement.style.setProperty('--primary', getSettings().primaryColor || '#a855f7');
+                    document.documentElement.style.setProperty('--primary-dark', shadeColor(getSettings().primaryColor || '#a855f7', -30));
+                    document.documentElement.style.setProperty('--primary-light', shadeColor(getSettings().primaryColor || '#a855f7', 30));
+                    document.documentElement.style.setProperty('--primary-rgb', `${hexToRgb(getSettings().primaryColor || '#a855f7').r}, ${hexToRgb(getSettings().primaryColor || '#a855f7').g}, ${hexToRgb(getSettings().primaryColor || '#a855f7').b}`);
+                    document.documentElement.style.setProperty('--dark', '#1e1b2e');
+                    document.documentElement.style.setProperty('--text', '#4a4458');
+                    document.documentElement.style.setProperty('--text-light', '#6b7280');
+                    document.documentElement.style.setProperty('--card-bg', '#ffffff');
+                    document.documentElement.style.setProperty('--header-bg', '#ffffff');
+                }
+                
+                if (webApp) {
+                    webApp.setHeaderColor('bg_color');
+                    webApp.setBackgroundColor('bg_color');
+                }
             }
 
             function applySettings() {
                 const settings = getSettings();
-                
-                if (settings.primaryColor) {
-                    const rgb = hexToRgb(settings.primaryColor);
-                    document.documentElement.style.setProperty('--primary', settings.primaryColor);
-                    document.documentElement.style.setProperty('--primary-rgb', `${rgb.r}, ${rgb.g}, ${rgb.b}`);
-                    document.documentElement.style.setProperty('--primary-dark', shadeColor(settings.primaryColor, -30));
-                    document.documentElement.style.setProperty('--primary-light', shadeColor(settings.primaryColor, 30));
-                }
                 
                 if (settings.animation === false) {
                     document.documentElement.setAttribute('data-animation', 'off');
@@ -962,10 +979,7 @@
                 webApp.onEvent('themeChanged', function() {
                     const mode = localStorage.getItem('themeMode') || 'auto';
                     if (mode === 'auto') {
-                        const theme = this.colorScheme;
-                        document.documentElement.setAttribute('data-theme', theme);
-                        this.setHeaderColor('bg_color');
-                        this.setBackgroundColor('bg_color');
+                        applyTheme();
                     }
                 });
             }
