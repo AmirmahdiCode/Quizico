@@ -613,27 +613,6 @@
         (function() {
             const webApp = window.Eitaa?.WebApp;
             
-            if (webApp) {
-                webApp.ready();
-                
-                const themeMode = localStorage.getItem('themeMode') || 'auto';
-                const currentTheme = themeMode === 'auto' ? (webApp.colorScheme || 'light') : themeMode;
-                webApp.setHeaderColor(currentTheme === 'dark' ? '#000000' : '#ffffff');
-                webApp.setBackgroundColor(currentTheme === 'dark' ? '#1e1b2e' : '#faf5ff');
-                
-                webApp.BackButton.show();
-                webApp.BackButton.onClick(() => {
-                    window.location.href = '../dashboard/';
-                });
-                
-                webApp.onEvent('themeChanged', () => {
-                    const mode = localStorage.getItem('themeMode') || 'auto';
-                    if (mode === 'auto') {
-                        applyTheme();
-                    }
-                });
-            }
-
             function savePage(page) {
                 localStorage.setItem('lastPage', page);
             }
@@ -675,7 +654,13 @@
 
             function applyTheme() {
                 const mode = localStorage.getItem('themeMode') || 'auto';
-                const theme = mode === 'auto' ? (webApp ? webApp.colorScheme : 'light') : mode;
+                let theme;
+                
+                if (mode === 'auto') {
+                    theme = webApp ? (webApp.colorScheme || 'light') : 'light';
+                } else {
+                    theme = mode;
+                }
                 
                 document.documentElement.setAttribute('data-theme', theme);
                 
@@ -730,6 +715,22 @@
                 }
                 
                 applyTheme();
+            }
+
+            if (webApp) {
+                webApp.ready();
+                
+                webApp.BackButton.show();
+                webApp.BackButton.onClick(() => {
+                    window.location.href = '../dashboard/';
+                });
+                
+                webApp.onEvent('themeChanged', function() {
+                    const mode = localStorage.getItem('themeMode') || 'auto';
+                    if (mode === 'auto') {
+                        applyTheme();
+                    }
+                });
             }
 
             document.querySelectorAll('.theme-option').forEach(option => {
