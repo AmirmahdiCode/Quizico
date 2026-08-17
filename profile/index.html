@@ -236,6 +236,13 @@
         .stat-icon {
             font-size: 24px;
             margin-bottom: 8px;
+            color: var(--primary);
+            animation: iconPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes iconPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.15); }
         }
 
         .stat-value {
@@ -570,17 +577,17 @@
 
         <div class="stats-grid">
             <div class="stat-card">
-                <div class="stat-icon">🎯</div>
+                <div class="stat-icon"><i class="fa-solid fa-star"></i></div>
                 <div class="stat-value" id="totalScore">0</div>
                 <div class="stat-label">امتیاز کل</div>
             </div>
             <div class="stat-card">
-                <div class="stat-icon">🎮</div>
+                <div class="stat-icon"><i class="fa-solid fa-gamepad"></i></div>
                 <div class="stat-value" id="totalGames">0</div>
                 <div class="stat-label">تعداد بازی</div>
             </div>
             <div class="stat-card">
-                <div class="stat-icon">📊</div>
+                <div class="stat-icon"><i class="fa-solid fa-chart-line"></i></div>
                 <div class="stat-value" id="winRate">0%</div>
                 <div class="stat-label">درصد برد</div>
             </div>
