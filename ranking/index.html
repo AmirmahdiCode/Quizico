@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>رتبه‌بندی | Quizico</title>
+    <script src="https://developer.eitaa.com/eitaa-web-app.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/gh/rastikerdar/iran-sans-font@v1.0.0/dist/font-face.css" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #faf5ff;
+            --bg2: #f3e8ff;
+            --bg3: #e9d5ff;
+            --primary: #a855f7;
+            --primary-dark: #9333ea;
+            --primary-light: #c084fc;
+            --primary-rgb: 168, 85, 247;
+            --dark: #1e1b2e;
+            --text: #4a4458;
+            --text-light: #6b7280;
+            --white: #ffffff;
+            --card-bg: #ffffff;
+            --header-bg: #ffffff;
+            --shadow: 3px 3px 0 #000000;
+            --radius: 4px;
+            --border: 1px solid #000000;
+        }
+
+        [data-theme="dark"] {
+            --bg: #1e1b2e;
+            --bg2: #2d2a3e;
+            --bg3: #3d3a4e;
+            --primary: #c084fc;
+            --primary-dark: #a855f7;
+            --primary-light: #d8b4fe;
+            --primary-rgb: 192, 132, 252;
+            --dark: #f1f5f9;
+            --text: #cbd5e1;
+            --text-light: #94a3b8;
+            --white: #2d2a3e;
+            --card-bg: #2d2a3e;
+            --header-bg: #2d2a3e;
+            --shadow: 3px 3px 0 #000000;
+            --border: 1px solid #000000;
+        }
+
+        [data-animation="off"] * {
+            animation: none !important;
+            transition: none !important;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'IRANSans', Tahoma, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            transition: background 0.5s ease, color 0.5s ease;
+        }
+
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 0;
+            background: linear-gradient(135deg, var(--bg) 0%, var(--bg2) 40%, var(--bg3) 80%);
+            background-size: 400% 400%;
+            animation: gradientMove 15s ease infinite;
+            transition: background 0.8s ease;
+        }
+
+        @keyframes gradientMove {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .bg-particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 1;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .particle {
+            position: absolute;
+            border-radius: 50%;
+            background: var(--primary);
+            opacity: 0.1;
+            animation: floatUp linear infinite;
+        }
+
+        @keyframes floatUp {
+            0% { transform: translateY(100vh) scale(0); opacity: 0; }
+            10% { opacity: 0.1; }
+            90% { opacity: 0.1; }
+            100% { transform: translateY(-10vh) scale(1); opacity: 0; }
+        }
+
+        .header {
+            position: relative;
+            z-index: 10;
+            background: var(--header-bg);
+            border-bottom: var(--border);
+            padding: 12px 20px;
+            position: sticky;
+            top: 0;
+            box-shadow: var(--shadow);
+            animation: slideDown 0.5s ease;
+            transition: all 0.5s ease;
+        }
+
+        @keyframes slideDown {
+            from { transform: translateY(-100%); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .header-inner {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .header-logo {
+            width: 42px;
+            height: 42px;
+            border-radius: var(--radius);
+            background: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            padding: 2px;
+            border: var(--border);
+            transition: transform 0.3s ease, background 0.5s ease;
+        }
+
+        .header-logo:hover {
+            transform: scale(1.05) rotate(-3deg);
+        }
+
+        .header-logo img {
+            width: 85%;
+            height: 85%;
+            object-fit: contain;
+            transform: scale(1.15);
+        }
+
+        .header-title {
+            font-size: 18px;
+            font-weight: 800;
+            color: var(--dark);
+            letter-spacing: -0.5px;
+            transition: color 0.5s ease;
+            font-family: 'IRANSans', Tahoma, sans-serif;
+        }
+
+        .header-title span {
+            color: var(--primary);
+        }
+
+        .header-subtitle {
+            font-size: 9px;
+            color: var(--text-light);
+            margin-top: -2px;
+            transition: color 0.5s ease;
+        }
+
+        .main-container {
+            position: relative;
+            z-index: 5;
+            max-width: 600px;
+            width: 100%;
+            margin: 16px auto;
+            padding: 0 12px 80px;
+        }
+
+        .loader-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 50vh;
+        }
+
+        .loader {
+            width: 48px;
+            height: 48px;
+            border: 4px solid #000000;
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .ranking-content { display: none; animation: fadeInUp 0.5s ease; }
+        .ranking-content.show { display: block; }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .my-rank-card {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            border: var(--border);
+            border-radius: var(--radius);
+            padding: 14px 18px;
+            margin-bottom: 16px;
+            box-shadow: var(--shadow);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .my-rank-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .my-rank-number {
+            font-size: 24px;
+            font-weight: 800;
+            color: #ffffff;
+            min-width: 40px;
+        }
+
+        .my-rank-info {
+            color: #ffffff;
+        }
+
+        .my-rank-name {
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        .my-rank-score {
+            font-size: 10px;
+            opacity: 0.8;
+        }
+
+        .my-rank-badge {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 4px 12px;
+            border-radius: var(--radius);
+            font-size: 10px;
+            font-weight: 600;
+            color: #ffffff;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .rank-list {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .rank-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 12px;
+            background: var(--card-bg);
+            border: var(--border);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            transition: all 0.3s ease;
+        }
+
+        .rank-item:hover {
+            transform: translateX(-3px);
+            box-shadow: 4px 4px 0 #000000;
+        }
+
+        .rank-item.is-me {
+            border-color: var(--primary);
+            border-width: 2px;
+            background: var(--bg2);
+        }
+
+        .rank-number {
+            font-size: 14px;
+            font-weight: 800;
+            color: var(--text-light);
+            min-width: 32px;
+            text-align: center;
+        }
+
+        .rank-number.gold { color: #f59e0b; font-size: 18px; }
+        .rank-number.silver { color: #94a3b8; font-size: 18px; }
+        .rank-number.bronze { color: #d97706; font-size: 18px; }
+
+        .rank-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--bg2);
+            border: var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            color: var(--primary);
+            flex-shrink: 0;
+        }
+
+        .rank-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .rank-name {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--dark);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .rank-score {
+            font-size: 10px;
+            color: var(--text-light);
+        }
+
+        .rank-badge-me {
+            font-size: 8px;
+            font-weight: 700;
+            color: var(--primary);
+            background: var(--bg2);
+            padding: 2px 8px;
+            border-radius: var(--radius);
+            border: var(--border);
+        }
+
+        .rank-empty {
+            text-align: center;
+            padding: 30px;
+            color: var(--text-light);
+            font-size: 12px;
+            background: var(--card-bg);
+            border: var(--border);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+        }
+
+        .rank-empty i {
+            font-size: 40px;
+            display: block;
+            margin-bottom: 10px;
+            color: var(--primary-light);
+        }
+
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            right: 0;
+            left: 0;
+            background: var(--header-bg);
+            border-top: var(--border);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            padding: 6px 0;
+            z-index: 999;
+            transition: all 0.5s ease;
+            animation: slideUp 0.5s ease;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(100%); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
+            cursor: pointer;
+            text-decoration: none;
+            color: var(--text-light);
+            transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            padding: 4px 12px;
+            border-radius: var(--radius);
+            background: none;
+            border: none;
+            font-family: inherit;
+        }
+
+        .nav-item i {
+            font-size: 18px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-item span {
+            font-size: 8px;
+            font-weight: 600;
+        }
+
+        .nav-item.active {
+            color: var(--primary);
+        }
+
+        .nav-item.active i {
+            transform: translateY(-2px);
+        }
+
+        .nav-item:active {
+            transform: scale(0.9);
+        }
+
+        @media (max-width: 480px) {
+            .header-title { font-size: 15px; }
+            .my-rank-card { flex-wrap: wrap; gap: 8px; }
+            .my-rank-left { flex: 1; min-width: 0; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="bg-animation"></div>
+    <div class="bg-particles" id="particles"></div>
+
+    <header class="header">
+        <div class="header-inner">
+            <div class="header-right">
+                <div class="header-logo">
+                    <img src="https://cdn.imgurl.ir/uploads/r102593_InShot_20260817_115945628.png" alt="Quizico">
+                </div>
+                <div>
+                    <div class="header-title">Quiz<span>ico</span></div>
+                    <div class="header-subtitle">رتبه‌بندی</div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="main-container">
+        <div class="loader-wrapper" id="loaderWrapper">
+            <div class="loader"></div>
+        </div>
+
+        <div class="ranking-content" id="rankingContent">
+
+            <div class="my-rank-card" id="myRankCard">
+                <div class="my-rank-left">
+                    <div class="my-rank-number" id="myRankNumber">-</div>
+                    <div class="my-rank-info">
+                        <div class="my-rank-name" id="myRankName">در حال بارگذاری...</div>
+                        <div class="my-rank-score" id="myRankScore">امتیاز: 0</div>
+                    </div>
+                </div>
+                <div class="my-rank-badge" id="myRankBadge">رتبه شما</div>
+            </div>
+
+            <div class="rank-list" id="rankList"></div>
+
+        </div>
+    </main>
+
+    <nav class="bottom-nav">
+        <a href="../dashboard/" class="nav-item">
+            <i class="fa-solid fa-house"></i>
+            <span>خانه</span>
+        </a>
+        <a href="../ranking/" class="nav-item active">
+            <i class="fa-solid fa-trophy"></i>
+            <span>رتبه</span>
+        </a>
+        <a href="../profile/" class="nav-item">
+            <i class="fa-solid fa-user"></i>
+            <span>پروفایل</span>
+        </a>
+        <a href="../setting/" class="nav-item">
+            <i class="fa-solid fa-gear"></i>
+            <span>تنظیمات</span>
+        </a>
+    </nav>
+
+    <script>
+        (function() {
+            var webApp = window.Eitaa?.WebApp;
+            var API_URL = 'https://script.google.com/macros/s/AKfycbwwLzjFTIApDGSOljaZKHw3BgcMeIMWn_SljVJL9yt-DfkGxcxxjgP7hTf6dyjMkuk6fQ/exec';
+
+            function createParticles() {
+                var container = document.getElementById('particles');
+                for (var i = 0; i < 20; i++) {
+                    var p = document.createElement('div');
+                    p.className = 'particle';
+                    var size = 3 + Math.random() * 8;
+                    p.style.width = size + 'px';
+                    p.style.height = size + 'px';
+                    p.style.left = Math.random() * 100 + '%';
+                    p.style.animationDuration = 15 + Math.random() * 25 + 's';
+                    p.style.animationDelay = Math.random() * 20 + 's';
+                    container.appendChild(p);
+                }
+            }
+            createParticles();
+
+            function getSettings() {
+                try {
+                    var raw = localStorage.getItem('quizicoSettings');
+                    if (!raw) {
+                        var defaultSettings = {
+                            theme: 'light',
+                            primaryColor: '#a855f7',
+                            animation: true,
+                            haptic: true
+                        };
+                        localStorage.setItem('quizicoSettings', JSON.stringify(defaultSettings));
+                        return defaultSettings;
+                    }
+                    var parsed = JSON.parse(raw);
+                    if (!parsed.theme) parsed.theme = 'light';
+                    if (!parsed.primaryColor) parsed.primaryColor = '#a855f7';
+                    if (parsed.animation === undefined) parsed.animation = true;
+                    if (parsed.haptic === undefined) parsed.haptic = true;
+                    return parsed;
+                } catch(e) {
+                    return { theme: 'light', primaryColor: '#a855f7', animation: true, haptic: true };
+                }
+            }
+
+            function hexToRgb(hex) {
+                var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+                return result ? {
+                    r: parseInt(result[1], 16),
+                    g: parseInt(result[2], 16),
+                    b: parseInt(result[3], 16)
+                } : { r: 168, g: 85, b: 247 };
+            }
+
+            function shadeColor(color, percent) {
+                var rgb = hexToRgb(color);
+                var r = Math.max(0, Math.min(255, rgb.r + percent));
+                var g = Math.max(0, Math.min(255, rgb.g + percent));
+                var b = Math.max(0, Math.min(255, rgb.b + percent));
+                return '#' + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
+            }
+
+            function applyTheme() {
+                var settings = getSettings();
+                var theme = settings.theme || 'light';
+                var primaryColor = settings.primaryColor || '#a855f7';
+
+                document.documentElement.setAttribute('data-theme', theme);
+
+                if (theme === 'dark') {
+                    var darkPrimary = shadeColor(primaryColor, 40);
+                    document.documentElement.style.setProperty('--primary', darkPrimary);
+                    document.documentElement.style.setProperty('--primary-rgb', hexToRgb(darkPrimary).r + ', ' + hexToRgb(darkPrimary).g + ', ' + hexToRgb(darkPrimary).b);
+                } else {
+                    document.documentElement.style.setProperty('--primary', primaryColor);
+                    document.documentElement.style.setProperty('--primary-rgb', hexToRgb(primaryColor).r + ', ' + hexToRgb(primaryColor).g + ', ' + hexToRgb(primaryColor).b);
+                }
+
+                if (settings.animation === false) {
+                    document.documentElement.setAttribute('data-animation', 'off');
+                } else {
+                    document.documentElement.removeAttribute('data-animation');
+                }
+
+                if (webApp) {
+                    webApp.setHeaderColor('bg_color');
+                    webApp.setBackgroundColor('bg_color');
+                }
+            }
+
+            function getEitaaUser() {
+                if (webApp && webApp.initDataUnsafe && webApp.initDataUnsafe.user) {
+                    return webApp.initDataUnsafe.user;
+                }
+                return null;
+            }
+
+            async function fetchData(action, params) {
+                try {
+                    var initData = webApp?.initData || '';
+                    var payload = { action: action, initData: initData };
+                    for (var key in params) {
+                        if (params.hasOwnProperty(key)) {
+                            payload[key] = params[key];
+                        }
+                    }
+                    var response = await fetch(API_URL, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+                    return await response.json();
+                } catch(e) {
+                    return { ok: false, error: 'Network error' };
+                }
+            }
+
+            function getRankIcon(index) {
+                if (index === 0) return '<i class="fa-solid fa-crown" style="color:#f59e0b;"></i>';
+                if (index === 1) return '<i class="fa-solid fa-medal" style="color:#94a3b8;"></i>';
+                if (index === 2) return '<i class="fa-solid fa-medal" style="color:#d97706;"></i>';
+                return '#' + (index + 1);
+            }
+
+            function getRankClass(index) {
+                if (index === 0) return 'gold';
+                if (index === 1) return 'silver';
+                if (index === 2) return 'bronze';
+                return '';
+            }
+
+            function renderEmptyState(icon, text) {
+                return '<div class="rank-empty"><i class="fa-solid ' + icon + '"></i><p>' + text + '</p></div>';
+            }
+
+            async function loadRanking() {
+                var user = getEitaaUser();
+                var myUsername = String(user ? user.id : '');
+                var myName = user ? (user.first_name || '') + ' ' + (user.last_name || '') : 'کاربر';
+
+                try {
+                    var result = await fetchData('getLeaderboard', { limit: 30 });
+
+                    if (result.ok && Array.isArray(result.data) && result.data.length > 0) {
+                        var list = result.data;
+                        var myRank = null;
+                        var myScore = 0;
+
+                        var rankList = document.getElementById('rankList');
+                        var items = list.map(function(item, index) {
+                            var isMe = String(item.username) === String(myUsername);
+                            var rankNum = index + 1;
+                            var rankDisplay = getRankIcon(index);
+                            var rankClass = getRankClass(index);
+                            var score = item.score || 0;
+
+                            if (isMe) {
+                                myRank = rankNum;
+                                myScore = score;
+                            }
+
+                            return '<div class="rank-item' + (isMe ? ' is-me' : '') + '">' +
+                                '<div class="rank-number ' + rankClass + '">' + rankDisplay + '</div>' +
+                                '<div class="rank-avatar"><i class="fa-solid fa-user"></i></div>' +
+                                '<div class="rank-info">' +
+                                '<div class="rank-name">' + (item.name || item.username || 'ناشناس') + '</div>' +
+                                '<div class="rank-score">امتیاز: ' + score + '</div>' +
+                                '</div>' +
+                                (isMe ? '<span class="rank-badge-me">شما</span>' : '') +
+                                '</div>';
+                        }).join('');
+
+                        rankList.innerHTML = items;
+
+                        if (myRank === null) {
+                            var userResult = await fetchData('getUser', { username: myUsername });
+                            if (userResult.ok && userResult.data) {
+                                myScore = userResult.data.score || 0;
+                                var allUsers = await fetchData('getLeaderboard', { limit: 100 });
+                                if (allUsers.ok && Array.isArray(allUsers.data)) {
+                                    var found = false;
+                                    for (var i = 0; i < allUsers.data.length; i++) {
+                                        if (String(allUsers.data[i].username) === String(myUsername)) {
+                                            myRank = i + 1;
+                                            found = true;
+                                            break;
+                                        }
+                                    }
+                                    if (!found) {
+                                        var sorted = allUsers.data.slice().sort(function(a, b) { return (b.score || 0) - (a.score || 0); });
+                                        var position = 1;
+                                        for (var j = 0; j < sorted.length; j++) {
+                                            if (myScore > (sorted[j].score || 0)) {
+                                                position = j + 1;
+                                                break;
+                                            }
+                                            if (j === sorted.length - 1) position = sorted.length + 1;
+                                        }
+                                        myRank = position;
+                                    }
+                                }
+                            }
+                        }
+
+                        document.getElementById('myRankNumber').textContent = myRank ? '#' + myRank : '-';
+                        document.getElementById('myRankName').textContent = myName.trim() || 'شما';
+                        document.getElementById('myRankScore').textContent = 'امتیاز: ' + myScore;
+
+                    } else {
+                        document.getElementById('rankList').innerHTML = renderEmptyState('fa-trophy', 'هیچ کاربری در رتبه‌بندی ثبت نشده');
+                        document.getElementById('myRankNumber').textContent = '-';
+                        document.getElementById('myRankName').textContent = myName.trim() || 'شما';
+                        document.getElementById('myRankScore').textContent = 'امتیاز: 0';
+                    }
+
+                } catch(e) {
+                    console.error('Error loading ranking:', e);
+                    document.getElementById('rankList').innerHTML = renderEmptyState('fa-triangle-exclamation', 'خطا در دریافت اطلاعات');
+                } finally {
+                    document.getElementById('loaderWrapper').style.display = 'none';
+                    document.getElementById('rankingContent').classList.add('show');
+                }
+            }
+
+            if (webApp) {
+                webApp.ready();
+                webApp.BackButton.show();
+                webApp.BackButton.onClick(function() {
+                    window.location.href = '../dashboard/';
+                });
+            }
+
+            applyTheme();
+            loadRanking();
+        })();
+    </script>
+</body>
+</html>
