@@ -329,6 +329,7 @@
             cursor: pointer;
             transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
             box-shadow: var(--shadow);
+            position: relative;
         }
 
         .color-option:hover {
@@ -342,52 +343,8 @@
         }
 
         .color-option.active {
-            outline: 2px solid var(--dark);
-            outline-offset: 2px;
-        }
-
-        .preview-box {
-            padding: 14px;
-            background: var(--bg2);
-            border: var(--border);
-            border-radius: var(--radius);
-            text-align: center;
-            margin-top: 12px;
-            box-shadow: var(--shadow);
-            transition: all 0.5s ease;
-        }
-
-        .preview-text {
-            font-size: 12px;
-            color: var(--dark);
-            font-weight: 600;
-            transition: color 0.5s ease;
-        }
-
-        .preview-button {
-            display: inline-block;
-            margin-top: 8px;
-            padding: 6px 20px;
-            background: var(--primary);
-            color: #ffffff;
-            border: var(--border);
-            border-radius: var(--radius);
-            font-size: 12px;
-            font-weight: 700;
-            box-shadow: var(--shadow);
-            font-family: inherit;
-            cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-        }
-
-        .preview-button:hover {
-            transform: translateY(-2px);
-            box-shadow: 4px 4px 0 #000000;
-        }
-
-        .preview-button:active {
-            transform: translate(1px, 1px);
-            box-shadow: 1px 1px 0 #000000;
+            box-shadow: 0 0 20px var(--primary), 0 0 40px var(--primary), 3px 3px 0 #000000;
+            transform: translateY(-3px) scale(1.05);
         }
 
         .setting-item {
@@ -548,8 +505,8 @@
                     <img src="https://cdn.imgurl.ir/uploads/r102593_InShot_20260817_115945628.png" alt="Quizico">
                 </div>
                 <div>
-                    <div class="header-title">تنظیمات</div>
-                    <div class="header-subtitle">Quizico</div>
+                    <div class="header-title">Quiz<span>ico</span></div>
+                    <div class="header-subtitle">تنظیمات</div>
                 </div>
             </div>
         </div>
@@ -599,10 +556,6 @@
                 <div class="color-option" data-color="#d946ef" style="background: #d946ef;"></div>
                 <div class="color-option" data-color="#ec4899" style="background: #ec4899;"></div>
                 <div class="color-option" data-color="#f43f5e" style="background: #f43f5e;"></div>
-            </div>
-            <div class="preview-box">
-                <div class="preview-text">پیش‌نمایش زنده</div>
-                <button class="preview-button">دکمه نمونه</button>
             </div>
         </div>
 
