@@ -335,6 +335,11 @@
             background: var(--bg2);
         }
 
+        .btn-secondary:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
         .loader-small {
             display: inline-block;
             width: 16px;
@@ -349,7 +354,6 @@
             to { transform: rotate(360deg); }
         }
 
-        /* ===== Notification Toast ===== */
         .toast-container {
             position: fixed;
             bottom: 80px;
@@ -388,24 +392,13 @@
             font-size: 18px;
         }
 
-        .toast.success {
-            border-color: #10b981;
-        }
+        .toast.success { border-color: #10b981; }
         .toast.success i { color: #10b981; }
-
-        .toast.error {
-            border-color: #ef4444;
-        }
+        .toast.error { border-color: #ef4444; }
         .toast.error i { color: #ef4444; }
-
-        .toast.info {
-            border-color: var(--primary);
-        }
+        .toast.info { border-color: var(--primary); }
         .toast.info i { color: var(--primary); }
-
-        .toast.loading {
-            border-color: var(--text-light);
-        }
+        .toast.loading { border-color: var(--text-light); }
         .toast.loading i { color: var(--text-light); }
 
         .toast.hiding {
@@ -521,7 +514,7 @@
                 ثبت اطلاعات
             </button>
 
-            <button class="btn-secondary" id="skipBtn">
+            <button class="btn-secondary" id="skipBtn" disabled>
                 <i class="fa-solid fa-arrow-left"></i>
                 رفتن به داشبورد
             </button>
@@ -547,6 +540,7 @@
             var API_URL = 'https://script.google.com/macros/s/AKfycbwwLzjFTIApDGSOljaZKHw3BgcMeIMWn_SljVJL9yt-DfkGxcxxjgP7hTf6dyjMkuk6fQ/exec';
             var isRegistered = false;
             var toastTimeout = null;
+            var currentUser = null;
 
             function createParticles() {
                 var container = document.getElementById('particles');
@@ -708,22 +702,17 @@
                 }
             }
 
-            async function checkUserExists(username) {
-                var result = await fetchData('getUser', { username: username });
-                return result.ok && result.data;
-            }
-
             async function registerUser() {
                 var btn = document.getElementById('registerBtn');
-                var user = getEitaaUser();
+                var skipBtn = document.getElementById('skipBtn');
 
-                if (!user) {
-                    showToast('کاربر ایتا شناسایی نشد. لطفاً از داخل ایتا وارد شوید.', 'error', 5000);
+                if (!currentUser) {
+                    showToast('کاربر ایتا شناسایی نشد.', 'error', 5000);
                     return;
                 }
 
-                var username = String(user.id);
-                var fullName = (user.first_name || '') + ' ' + (user.last_name || '');
+                var username = String(currentUser.id);
+                var fullName = (currentUser.first_name || '') + ' ' + (currentUser.last_name || '');
 
                 btn.disabled = true;
                 btn.innerHTML = '<span class="loader-small"></span> در حال ثبت...';
@@ -746,6 +735,7 @@
                         showToast('اطلاعات شما با موفقیت ثبت شد!', 'success', 2000);
                         btn.innerHTML = '<i class="fa-solid fa-check"></i> ثبت شد';
                         btn.style.background = '#10b981';
+                        skipBtn.disabled = false;
 
                         setTimeout(function() {
                             window.location.href = './dashboard/';
@@ -770,27 +760,28 @@
                     webApp.expand();
                 }
 
-                var user = getEitaaUser();
+                currentUser = getEitaaUser();
 
-                if (user) {
-                    var fullName = (user.first_name || '') + ' ' + (user.last_name || '');
+                if (currentUser) {
+                    var fullName = (currentUser.first_name || '') + ' ' + (currentUser.last_name || '');
                     document.getElementById('previewName').textContent = fullName.trim() || 'کاربر ایتا';
-                    document.getElementById('previewId').textContent = 'ID: ' + user.id;
+                    document.getElementById('previewId').textContent = 'ID: ' + currentUser.id;
 
                     try {
-                        var exists = await checkUserExists(String(user.id));
+                        var exists = await checkUserExists(String(currentUser.id));
                         if (exists) {
                             isRegistered = true;
                             var btn = document.getElementById('registerBtn');
                             btn.innerHTML = '<i class="fa-solid fa-check"></i> قبلاً ثبت شده‌اید';
                             btn.style.background = '#10b981';
                             btn.disabled = true;
-
-                            showToast('شما قبلاً ثبت نام کرده‌اید. به داشبورد بروید.', 'success', 2500);
-
+                            document.getElementById('skipBtn').disabled = false;
+                            showToast('شما قبلاً ثبت نام کرده‌اید.', 'success', 2000);
                             setTimeout(function() {
                                 window.location.href = './dashboard/';
-                            }, 2500);
+                            }, 2000);
+                        } else {
+                            document.getElementById('skipBtn').disabled = true;
                         }
                     } catch(e) {
                         console.error('Error checking user:', e);
@@ -798,16 +789,27 @@
                 } else {
                     document.getElementById('previewName').textContent = 'کاربر مهمان';
                     document.getElementById('previewId').textContent = 'وارد ایتا شوید';
+                    document.getElementById('registerBtn').disabled = true;
+                    document.getElementById('skipBtn').disabled = true;
                     showToast('لطفاً از داخل پیام‌رسان ایتا وارد شوید.', 'error', 5000);
                 }
 
                 applyTheme();
             }
 
+            async function checkUserExists(username) {
+                var result = await fetchData('getUser', { username: username });
+                return result.ok && result.data;
+            }
+
             document.getElementById('registerBtn').addEventListener('click', registerUser);
 
             document.getElementById('skipBtn').addEventListener('click', function() {
-                window.location.href = './dashboard/';
+                if (isRegistered) {
+                    window.location.href = './dashboard/';
+                } else {
+                    showToast('لطفاً ابتدا ثبت نام کنید.', 'error', 3000);
+                }
             });
 
             if (webApp) {
