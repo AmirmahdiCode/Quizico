@@ -322,121 +322,30 @@
             opacity: 0.15;
         }
 
-        .challenge-card {
-            background: var(--card-bg);
-            border-radius: var(--radius);
-            padding: 16px 20px;
-            margin-bottom: 16px;
-            border: 2px solid var(--primary);
-            box-shadow: var(--shadow);
-            cursor: pointer;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .challenge-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 5px 5px 0 #000000;
-        }
-
-        .challenge-card .challenge-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 8px;
-        }
-
-        .challenge-card .challenge-label {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 13px;
-            font-weight: 700;
-            color: var(--primary);
-        }
-
-        .challenge-card .challenge-label i {
-            animation: pulse 2s ease-in-out infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.2); }
-        }
-
-        .challenge-card .challenge-timer {
-            font-size: 11px;
-            color: var(--text-light);
-            background: var(--bg2);
-            padding: 2px 10px;
-            border-radius: var(--radius);
-            border: var(--border);
-        }
-
-        .challenge-card .challenge-question {
-            font-size: 15px;
-            font-weight: 600;
-            color: var(--dark);
-            margin-bottom: 8px;
-            padding-right: 8px;
-        }
-
-        .challenge-card .challenge-options {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-        }
-
-        .challenge-card .challenge-options span {
-            background: var(--bg2);
-            padding: 4px 14px;
-            border-radius: var(--radius);
-            font-size: 11px;
-            color: var(--text);
-            border: var(--border);
-            transition: all 0.3s ease;
-        }
-
-        .challenge-card .challenge-options span:hover {
-            border-color: var(--primary);
-            color: var(--primary);
-            box-shadow: var(--shadow);
-        }
-
-        .challenge-card .challenge-reward {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-top: 10px;
-            padding-top: 10px;
-            border-top: var(--border);
-            font-size: 11px;
-            color: var(--text-light);
-        }
-
-        .challenge-card .challenge-reward i {
-            color: #f59e0b;
-        }
-
         .section-title {
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 700;
             color: var(--dark);
             margin-bottom: 12px;
+            margin-top: 16px;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
             transition: color 0.5s ease;
+            border-bottom: 1px dashed var(--text-light);
+            padding-bottom: 6px;
         }
 
         .section-title i { color: var(--primary); }
+        .section-title .sep { color: var(--text-light); font-size: 11px; letter-spacing: 2px; }
+
+        .section-title:first-of-type { margin-top: 0; }
 
         .game-modes-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
             gap: 10px;
-            margin-bottom: 20px;
+            margin-bottom: 4px;
         }
 
         .game-mode-card {
@@ -476,39 +385,6 @@
             font-size: 8px;
             color: var(--text-light);
             margin-top: 2px;
-        }
-
-        .quick-stats {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 8px;
-            margin-bottom: 20px;
-        }
-
-        .stat-mini {
-            background: var(--card-bg);
-            border: var(--border);
-            border-radius: var(--radius);
-            padding: 12px 8px;
-            text-align: center;
-            box-shadow: var(--shadow);
-            transition: all 0.3s ease;
-        }
-
-        .stat-mini:hover {
-            transform: translateY(-2px);
-            box-shadow: 4px 4px 0 #000000;
-        }
-
-        .stat-mini .num {
-            font-size: 20px;
-            font-weight: 800;
-            color: var(--primary);
-        }
-
-        .stat-mini .label {
-            font-size: 8px;
-            color: var(--text-light);
         }
 
         .games-list {
@@ -576,7 +452,7 @@
 
         .empty-state {
             text-align: center;
-            padding: 24px;
+            padding: 20px;
             color: var(--text-light);
             font-size: 11px;
             background: var(--card-bg);
@@ -586,9 +462,9 @@
         }
 
         .empty-state i {
-            font-size: 32px;
+            font-size: 28px;
             display: block;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
             color: var(--primary-light);
         }
 
@@ -646,10 +522,8 @@
 
         @media (max-width: 480px) {
             .game-modes-grid { grid-template-columns: repeat(2, 1fr); }
-            .quick-stats { grid-template-columns: repeat(2, 1fr); }
             .header-title { font-size: 15px; }
             .banner-card h2 { font-size: 15px; }
-            .challenge-card .challenge-question { font-size: 13px; }
         }
     </style>
 </head>
@@ -696,31 +570,10 @@
                 <div class="banner-icon"><i class="fa-solid fa-trophy"></i></div>
             </div>
 
-            <div class="challenge-card" onclick="goToPlay('challenge')">
-                <div class="challenge-header">
-                    <div class="challenge-label">
-                        <i class="fa-solid fa-bolt"></i>
-                        چالش روزانه
-                    </div>
-                    <div class="challenge-timer">
-                        <i class="fa-regular fa-clock"></i> 4:32 باقی‌مانده
-                    </div>
-                </div>
-                <div class="challenge-question">پایتخت فرانسه کدام شهر است؟</div>
-                <div class="challenge-options">
-                    <span>لندن</span>
-                    <span style="border-color:var(--primary);color:var(--primary)">پاریس</span>
-                    <span>برلین</span>
-                    <span>مادرید</span>
-                </div>
-                <div class="challenge-reward">
-                    <span><i class="fa-solid fa-coins"></i> 50 سکه</span>
-                    <span><i class="fa-solid fa-gem"></i> 5 الماس</span>
-                    <span style="margin-right:auto;color:var(--primary);font-weight:700">شرکت کن <i class="fa-solid fa-arrow-left"></i></span>
-                </div>
+            <div class="section-title">
+                <i class="fa-solid fa-gamepad"></i> شروع مسابقه
+                <span class="sep">——————————</span>
             </div>
-
-            <div class="section-title"><i class="fa-solid fa-gamepad"></i> شروع مسابقه</div>
             <div class="game-modes-grid">
                 <div class="game-mode-card" onclick="goToPlay('single')">
                     <div class="game-mode-icon"><i class="fa-solid fa-user"></i></div>
@@ -744,29 +597,16 @@
                 </div>
             </div>
 
-            <div class="quick-stats" id="quickStats">
-                <div class="stat-mini">
-                    <div class="num" id="statGames">0</div>
-                    <div class="label">بازی امروز</div>
-                </div>
-                <div class="stat-mini">
-                    <div class="num" id="statWins">0</div>
-                    <div class="label">برد</div>
-                </div>
-                <div class="stat-mini">
-                    <div class="num" id="statLosses">0</div>
-                    <div class="label">باخت</div>
-                </div>
-                <div class="stat-mini">
-                    <div class="num" id="statStreak">0</div>
-                    <div class="label">پیاپی</div>
-                </div>
+            <div class="section-title">
+                <i class="fa-solid fa-hourglass-half"></i> در حال برگزاری
+                <span class="sep">——————————</span>
             </div>
-
-            <div class="section-title"><i class="fa-solid fa-hourglass-half"></i> در حال برگزاری</div>
             <div class="games-list" id="inProgressGames"></div>
 
-            <div class="section-title" style="margin-top:16px;"><i class="fa-solid fa-clock-rotate-left"></i> مسابقات گذشته</div>
+            <div class="section-title">
+                <i class="fa-solid fa-clock-rotate-left"></i> مسابقات گذشته
+                <span class="sep">——————————</span>
+            </div>
             <div class="games-list" id="finishedGames"></div>
 
         </div>
@@ -793,8 +633,8 @@
 
     <script>
         (function() {
-            const webApp = window.Eitaa?.WebApp;
-            const API_URL = 'https://script.google.com/macros/s/AKfycbwwLzjFTIApDGSOljaZKHw3BgcMeIMWn_SljVJL9yt-DfkGxcxxjgP7hTf6dyjMkuk6fQ/exec';
+            var webApp = window.Eitaa?.WebApp;
+            var API_URL = 'https://script.google.com/macros/s/AKfycbwwLzjFTIApDGSOljaZKHw3BgcMeIMWn_SljVJL9yt-DfkGxcxxjgP7hTf6dyjMkuk6fQ/exec';
 
             function goToPlay(mode) {
                 if (webApp) webApp.HapticFeedback?.impactOccurred('light');
@@ -803,11 +643,11 @@
             }
 
             function createParticles() {
-                const container = document.getElementById('particles');
-                for (let i = 0; i < 20; i++) {
-                    const p = document.createElement('div');
+                var container = document.getElementById('particles');
+                for (var i = 0; i < 20; i++) {
+                    var p = document.createElement('div');
                     p.className = 'particle';
-                    const size = 3 + Math.random() * 8;
+                    var size = 3 + Math.random() * 8;
                     p.style.width = size + 'px';
                     p.style.height = size + 'px';
                     p.style.left = Math.random() * 100 + '%';
@@ -824,14 +664,28 @@
 
             function getSettings() {
                 try {
-                    return JSON.parse(localStorage.getItem('quizicoSettings') || '{}');
+                    var raw = localStorage.getItem('quizicoSettings');
+                    if (!raw) {
+                        var defaultSettings = {
+                            theme: 'light',
+                            primaryColor: '#a855f7',
+                            animation: true
+                        };
+                        localStorage.setItem('quizicoSettings', JSON.stringify(defaultSettings));
+                        return defaultSettings;
+                    }
+                    var parsed = JSON.parse(raw);
+                    if (!parsed.theme) parsed.theme = 'light';
+                    if (!parsed.primaryColor) parsed.primaryColor = '#a855f7';
+                    if (parsed.animation === undefined) parsed.animation = true;
+                    return parsed;
                 } catch(e) {
-                    return {};
+                    return { theme: 'light', primaryColor: '#a855f7', animation: true };
                 }
             }
 
             function hexToRgb(hex) {
-                const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+                var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
                 return result ? {
                     r: parseInt(result[1], 16),
                     g: parseInt(result[2], 16),
@@ -840,22 +694,22 @@
             }
 
             function shadeColor(color, percent) {
-                const rgb = hexToRgb(color);
-                const r = Math.max(0, Math.min(255, rgb.r + percent));
-                const g = Math.max(0, Math.min(255, rgb.g + percent));
-                const b = Math.max(0, Math.min(255, rgb.b + percent));
+                var rgb = hexToRgb(color);
+                var r = Math.max(0, Math.min(255, rgb.r + percent));
+                var g = Math.max(0, Math.min(255, rgb.g + percent));
+                var b = Math.max(0, Math.min(255, rgb.b + percent));
                 return '#' + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
             }
 
             function applyTheme() {
-                const settings = getSettings();
-                const theme = settings.theme || 'light';
-                const primaryColor = settings.primaryColor || '#a855f7';
+                var settings = getSettings();
+                var theme = settings.theme || 'light';
+                var primaryColor = settings.primaryColor || '#a855f7';
                 
                 document.documentElement.setAttribute('data-theme', theme);
                 
                 if (theme === 'dark') {
-                    const darkPrimary = shadeColor(primaryColor, 40);
+                    var darkPrimary = shadeColor(primaryColor, 40);
                     document.documentElement.style.setProperty('--primary', darkPrimary);
                     document.documentElement.style.setProperty('--primary-rgb', hexToRgb(darkPrimary).r + ', ' + hexToRgb(darkPrimary).g + ', ' + hexToRgb(darkPrimary).b);
                 } else {
@@ -882,13 +736,19 @@
                 return null;
             }
 
-            async function fetchData(action, params = {}) {
+            async function fetchData(action, params) {
                 try {
-                    const initData = webApp?.initData || '';
-                    const response = await fetch(API_URL, {
+                    var initData = webApp?.initData || '';
+                    var payload = { action: action, initData: initData };
+                    for (var key in params) {
+                        if (params.hasOwnProperty(key)) {
+                            payload[key] = params[key];
+                        }
+                    }
+                    var response = await fetch(API_URL, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ action, initData, ...params })
+                        body: JSON.stringify(payload)
                     });
                     return await response.json();
                 } catch(e) {
@@ -897,15 +757,15 @@
             }
 
             async function ensureUserExists() {
-                const user = getEitaaUser();
+                var user = getEitaaUser();
                 if (!user) return null;
-                const username = String(user.id);
-                const fullName = (user.first_name || '') + ' ' + (user.last_name || '');
+                var username = String(user.id);
+                var fullName = (user.first_name || '') + ' ' + (user.last_name || '');
                 try {
-                    const userData = await fetchData('getUser', { username });
+                    var userData = await fetchData('getUser', { username: username });
                     if (userData.ok) return userData;
-                    const createResult = await fetchData('updateUser', {
-                        username,
+                    var createResult = await fetchData('updateUser', {
+                        username: username,
                         name: fullName.trim() || 'کاربر',
                         score: 0,
                         coins: 0,
@@ -914,7 +774,7 @@
                         status: 'active'
                     });
                     if (createResult.ok) {
-                        return await fetchData('getUser', { username });
+                        return await fetchData('getUser', { username: username });
                     }
                     return null;
                 } catch(e) {
@@ -922,26 +782,30 @@
                 }
             }
 
+            function renderEmptyState(icon, text) {
+                return '<div class="empty-state"><i class="fa-solid ' + icon + '"></i><p>' + text + '</p></div>';
+            }
+
             async function loadDashboard() {
                 try {
-                    const userData = await ensureUserExists();
-                    if (userData?.ok) {
+                    var userData = await ensureUserExists();
+                    if (userData && userData.ok) {
                         document.getElementById('coinsHeader').textContent = userData.data.coins || 0;
                         document.getElementById('diamondsHeader').textContent = userData.data.diamonds || 0;
                     }
 
-                    const user = getEitaaUser();
-                    const username = String(user ? user.id : '');
+                    var user = getEitaaUser();
+                    var username = String(user ? user.id : '');
 
-                    const gamesData = await fetchData('getGamesByPlayer', { username });
+                    var gamesData = await fetchData('getGamesByPlayer', { username: username });
                     if (gamesData.ok && Array.isArray(gamesData.data)) {
-                        const games = gamesData.data;
-                        const inProgress = games.filter(function(g) { return g.status === 'in_progress'; });
-                        const finished = games.filter(function(g) { return g.status === 'finished'; });
+                        var games = gamesData.data;
+                        var inProgress = games.filter(function(g) { return g.status === 'in_progress'; });
+                        var finished = games.filter(function(g) { return g.status === 'finished'; });
 
                         var ipList = document.getElementById('inProgressGames');
                         if (inProgress.length === 0) {
-                            ipList.innerHTML = '<div class="empty-state"><i class="fa-solid fa-hourglass-half"></i><p>مسابقه‌ای در حال برگزاری نیست</p></div>';
+                            ipList.innerHTML = renderEmptyState('fa-hourglass-half', 'مسابقه‌ای در حال برگزاری نیست');
                         } else {
                             ipList.innerHTML = inProgress.slice(0, 5).map(function(g) {
                                 var isP1 = String(g.player1) === String(username);
@@ -957,7 +821,7 @@
 
                         var fList = document.getElementById('finishedGames');
                         if (finished.length === 0) {
-                            fList.innerHTML = '<div class="empty-state"><i class="fa-solid fa-clock-rotate-left"></i><p>مسابقه‌ای یافت نشد</p></div>';
+                            fList.innerHTML = renderEmptyState('fa-clock-rotate-left', 'مسابقه‌ای یافت نشد');
                         } else {
                             fList.innerHTML = finished.slice(0, 10).map(function(g) {
                                 var isP1 = String(g.player1) === String(username);
@@ -974,12 +838,10 @@
                                     '<span class="game-item-status ' + resultClass + '">' + resultText + '</span></div>';
                             }).join('');
                         }
+                    } else {
+                        document.getElementById('inProgressGames').innerHTML = renderEmptyState('fa-hourglass-half', 'مسابقه‌ای در حال برگزاری نیست');
+                        document.getElementById('finishedGames').innerHTML = renderEmptyState('fa-clock-rotate-left', 'مسابقه‌ای یافت نشد');
                     }
-
-                    document.getElementById('statGames').textContent = Math.floor(Math.random() * 20) + 3;
-                    document.getElementById('statWins').textContent = Math.floor(Math.random() * 12) + 1;
-                    document.getElementById('statLosses').textContent = Math.floor(Math.random() * 8);
-                    document.getElementById('statStreak').textContent = Math.floor(Math.random() * 5) + 1;
 
                 } catch(e) {
                     console.error('Error:', e);
