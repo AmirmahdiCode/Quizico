@@ -21,7 +21,10 @@
             --text-light: #6b7280;
             --white: #ffffff;
             --card-bg: #ffffff;
-            --header-bg: #ffffff;
+            --header-bg: rgba(255, 255, 255, 0.85);
+            --shadow: 3px 3px 0 #000000;
+            --radius: 4px;
+            --border: 1px solid #000000;
         }
 
         [data-theme="dark"] {
@@ -37,7 +40,9 @@
             --text-light: #94a3b8;
             --white: #2d2a3e;
             --card-bg: #2d2a3e;
-            --header-bg: #2d2a3e;
+            --header-bg: rgba(15, 14, 26, 0.9);
+            --shadow: 3px 3px 0 #000000;
+            --border: 1px solid #000000;
         }
 
         [data-animation="off"] * {
@@ -59,18 +64,67 @@
             display: flex;
             flex-direction: column;
             transition: background 0.5s ease, color 0.5s ease;
+            overflow-x: hidden;
+        }
+
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 0;
+            background: linear-gradient(135deg, var(--bg) 0%, var(--bg2) 40%, var(--bg3) 80%);
+            background-size: 400% 400%;
+            animation: gradientMove 15s ease infinite;
+            transition: background 0.8s ease;
+        }
+
+        @keyframes gradientMove {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .bg-particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 1;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .particle {
+            position: absolute;
+            border-radius: 50%;
+            background: var(--primary);
+            opacity: 0.1;
+            animation: floatUp linear infinite;
+        }
+
+        @keyframes floatUp {
+            0% { transform: translateY(100vh) scale(0); opacity: 0; }
+            10% { opacity: 0.1; }
+            90% { opacity: 0.1; }
+            100% { transform: translateY(-10vh) scale(1); opacity: 0; }
         }
 
         .header {
+            position: relative;
+            z-index: 10;
             background: var(--header-bg);
-            box-shadow: 0 2px 0 #000000;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: var(--border);
             padding: 12px 20px;
             position: sticky;
             top: 0;
-            z-index: 100;
-            border-bottom: 1px solid #000000;
-            transition: all 0.5s ease;
+            box-shadow: var(--shadow);
             animation: slideDown 0.5s ease;
+            transition: all 0.5s ease;
         }
 
         @keyframes slideDown {
@@ -81,11 +135,10 @@
         .header-inner {
             display: flex;
             align-items: center;
-            justify-content: flex-start;
+            justify-content: space-between;
             gap: 12px;
             max-width: 600px;
             margin: 0 auto;
-            width: 100%;
         }
 
         .header-right {
@@ -97,20 +150,20 @@
         .header-logo {
             width: 42px;
             height: 42px;
-            border-radius: 4px;
+            border-radius: var(--radius);
             background: var(--primary);
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 2px 2px 0 #000000;
+            box-shadow: var(--shadow);
             overflow: hidden;
             padding: 2px;
-            border: 1px solid #000000;
+            border: var(--border);
             transition: transform 0.3s ease, background 0.5s ease;
         }
 
         .header-logo:hover {
-            transform: rotate(5deg) scale(1.05);
+            transform: scale(1.05) rotate(-3deg);
         }
 
         .header-logo img {
@@ -121,23 +174,31 @@
         }
 
         .header-title {
-            font-size: 17px;
-            font-weight: 700;
+            font-size: 18px;
+            font-weight: 800;
             color: var(--dark);
+            letter-spacing: -0.5px;
             transition: color 0.5s ease;
+            font-family: 'IRANSans', Tahoma, sans-serif;
+        }
+
+        .header-title span {
+            color: var(--primary);
         }
 
         .header-subtitle {
             font-size: 9px;
             color: var(--text-light);
+            margin-top: -2px;
             transition: color 0.5s ease;
         }
 
         .main-container {
-            flex: 1;
+            position: relative;
+            z-index: 5;
             max-width: 600px;
             width: 100%;
-            margin: 20px auto;
+            margin: 16px auto;
             padding: 0 12px 80px;
         }
 
@@ -145,7 +206,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            min-height: 60vh;
+            min-height: 50vh;
         }
 
         .loader {
@@ -157,33 +218,30 @@
             animation: spin 0.8s linear infinite;
         }
 
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
+        @keyframes spin { to { transform: rotate(360deg); } }
 
-        .profile-content {
-            display: none;
-        }
+        .profile-content { display: none; animation: fadeInUp 0.5s ease; }
+        .profile-content.show { display: block; }
 
-        .profile-content.show {
-            display: block;
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .profile-header-card {
             background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-            border: 2px solid #000000;
-            border-radius: 4px;
+            border: var(--border);
+            border-radius: var(--radius);
             padding: 16px;
             margin-bottom: 16px;
-            box-shadow: 4px 4px 0 #000000;
-            animation: fadeInUp 0.5s ease backwards;
+            box-shadow: var(--shadow);
         }
 
         .profile-top {
             display: flex;
             align-items: center;
             gap: 14px;
-            margin-bottom: 12px;
+            margin-bottom: 10px;
         }
 
         .profile-avatar {
@@ -191,11 +249,11 @@
             height: 56px;
             border-radius: 50%;
             background: #ffffff;
-            border: 3px solid #000000;
+            border: var(--border);
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 2px 2px 0 #000000;
+            box-shadow: var(--shadow);
             overflow: hidden;
             font-size: 24px;
             color: var(--primary);
@@ -239,7 +297,7 @@
             gap: 4px;
             background: rgba(255, 255, 255, 0.15);
             border: 1px solid rgba(255, 255, 255, 0.3);
-            border-radius: 4px;
+            border-radius: var(--radius);
             padding: 3px 8px;
             font-size: 9px;
             color: #ffffff;
@@ -259,18 +317,13 @@
 
         .stat-card {
             background: var(--card-bg);
-            border: 2px solid #000000;
-            border-radius: 4px;
+            border: var(--border);
+            border-radius: var(--radius);
             padding: 14px 10px;
             text-align: center;
-            box-shadow: 3px 3px 0 #000000;
+            box-shadow: var(--shadow);
             transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-            animation: fadeInUp 0.5s ease backwards;
         }
-
-        .stat-card:nth-child(1) { animation-delay: 0.1s; }
-        .stat-card:nth-child(2) { animation-delay: 0.15s; }
-        .stat-card:nth-child(3) { animation-delay: 0.2s; }
 
         .stat-card:hover {
             transform: translateY(-3px);
@@ -281,12 +334,6 @@
             font-size: 20px;
             margin-bottom: 6px;
             color: var(--primary);
-            animation: iconPulse 2s ease-in-out infinite;
-        }
-
-        @keyframes iconPulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.15); }
         }
 
         .stat-value {
@@ -304,12 +351,11 @@
 
         .league-card {
             background: var(--card-bg);
-            border: 2px solid #000000;
-            border-radius: 4px;
+            border: var(--border);
+            border-radius: var(--radius);
             padding: 14px;
             margin-bottom: 16px;
-            box-shadow: 3px 3px 0 #000000;
-            animation: fadeInUp 0.5s ease 0.25s backwards;
+            box-shadow: var(--shadow);
         }
 
         .league-title {
@@ -335,8 +381,8 @@
         .league-item {
             text-align: center;
             padding: 10px;
-            border-radius: 4px;
-            border: 1px solid #000000;
+            border-radius: var(--radius);
+            border: var(--border);
             background: var(--bg2);
         }
 
@@ -370,12 +416,11 @@
 
         .chart-card {
             background: var(--card-bg);
-            border: 2px solid #000000;
-            border-radius: 4px;
+            border: var(--border);
+            border-radius: var(--radius);
             padding: 14px;
             margin-bottom: 16px;
-            box-shadow: 3px 3px 0 #000000;
-            animation: fadeInUp 0.5s ease 0.3s backwards;
+            box-shadow: var(--shadow);
         }
 
         .chart-title {
@@ -412,30 +457,22 @@
 
         .chart-bar {
             width: 100%;
-            border-radius: 4px;
-            border: 2px solid #000000;
+            border-radius: var(--radius);
+            border: var(--border);
             transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-            animation: barGrow 1s ease backwards;
             min-height: 8px;
         }
 
         .chart-bar.win {
             background: #10b981;
-            animation-delay: 0.3s;
         }
 
         .chart-bar.draw {
             background: #f59e0b;
-            animation-delay: 0.4s;
         }
 
         .chart-bar.loss {
             background: #ef4444;
-            animation-delay: 0.5s;
-        }
-
-        @keyframes barGrow {
-            from { height: 0; }
         }
 
         .chart-bar-label {
@@ -452,11 +489,10 @@
 
         .games-history-card {
             background: var(--card-bg);
-            border: 2px solid #000000;
-            border-radius: 4px;
+            border: var(--border);
+            border-radius: var(--radius);
             padding: 14px;
-            box-shadow: 3px 3px 0 #000000;
-            animation: fadeInUp 0.5s ease 0.35s backwards;
+            box-shadow: var(--shadow);
         }
 
         .games-list {
@@ -472,8 +508,8 @@
             align-items: center;
             justify-content: space-between;
             padding: 8px 10px;
-            border: 1px solid #000000;
-            border-radius: 4px;
+            border: var(--border);
+            border-radius: var(--radius);
             background: var(--bg2);
             transition: all 0.3s ease;
         }
@@ -495,8 +531,8 @@
             font-size: 10px;
             font-weight: 700;
             padding: 3px 8px;
-            border-radius: 4px;
-            border: 1px solid #000000;
+            border-radius: var(--radius);
+            border: var(--border);
         }
 
         .game-score.win {
@@ -534,7 +570,9 @@
             right: 0;
             left: 0;
             background: var(--header-bg);
-            border-top: 1px solid #000000;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-top: var(--border);
             display: flex;
             justify-content: space-around;
             align-items: center;
@@ -559,25 +597,20 @@
             color: var(--text-light);
             transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
             padding: 4px 12px;
-            border-radius: 4px;
+            border-radius: var(--radius);
             background: none;
             border: none;
             font-family: inherit;
         }
 
         .nav-item i {
-            font-size: 16px;
-            transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            font-size: 18px;
+            transition: all 0.3s ease;
         }
 
         .nav-item span {
             font-size: 8px;
             font-weight: 600;
-            transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-        }
-
-        .nav-item:hover i {
-            transform: translateY(-2px) scale(1.1);
         }
 
         .nav-item.active {
@@ -585,20 +618,25 @@
         }
 
         .nav-item.active i {
-            animation: navBounce 0.5s ease;
-        }
-
-        @keyframes navBounce {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-4px); }
+            transform: translateY(-2px);
         }
 
         .nav-item:active {
-            transform: translateY(1px);
+            transform: scale(0.9);
+        }
+
+        @media (max-width: 480px) {
+            .header-title { font-size: 15px; }
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+            .league-stats { grid-template-columns: repeat(3, 1fr); }
         }
     </style>
 </head>
 <body>
+
+    <div class="bg-animation"></div>
+    <div class="bg-particles" id="particles"></div>
+
     <header class="header">
         <div class="header-inner">
             <div class="header-right">
@@ -606,8 +644,8 @@
                     <img src="https://cdn.imgurl.ir/uploads/r102593_InShot_20260817_115945628.png" alt="Quizico">
                 </div>
                 <div>
-                    <div class="header-title">پروفایل من</div>
-                    <div class="header-subtitle">Quizico</div>
+                    <div class="header-title">Quiz<span>ico</span></div>
+                    <div class="header-subtitle">پروفایل من</div>
                 </div>
             </div>
         </div>
@@ -619,6 +657,7 @@
         </div>
 
         <div class="profile-content" id="profileContent">
+
             <div class="profile-header-card">
                 <div class="profile-top">
                     <div class="profile-avatar">
@@ -705,23 +744,24 @@
                 </div>
                 <div class="games-list" id="gamesList"></div>
             </div>
+
         </div>
     </main>
 
     <nav class="bottom-nav">
-        <a href="../dashboard/" class="nav-item" onclick="savePage('dashboard')">
+        <a href="../dashboard/" class="nav-item">
             <i class="fa-solid fa-house"></i>
-            <span>صفحه اصلی</span>
+            <span>خانه</span>
         </a>
-        <a href="../ranking/" class="nav-item" onclick="savePage('ranking')">
+        <a href="../ranking/" class="nav-item">
             <i class="fa-solid fa-trophy"></i>
-            <span>رتبه بندی</span>
+            <span>رتبه</span>
         </a>
-        <a href="../profile/" class="nav-item active" onclick="savePage('profile')">
+        <a href="../profile/" class="nav-item active">
             <i class="fa-solid fa-user"></i>
-            <span>پروفایل من</span>
+            <span>پروفایل</span>
         </a>
-        <a href="../setting/" class="nav-item" onclick="savePage('setting')">
+        <a href="../setting/" class="nav-item">
             <i class="fa-solid fa-gear"></i>
             <span>تنظیمات</span>
         </a>
@@ -729,19 +769,59 @@
 
     <script>
         (function() {
-            const webApp = window.Eitaa?.WebApp;
-            const API_URL = 'https://script.google.com/macros/s/AKfycbx34bNcwqg5JHqOI6DFbV41d-w0yjdS76kuemQYZcCpuNQqFoMWM7ipFF7zxJFG0EW6-w/exec';
-            
+            var webApp = window.Eitaa?.WebApp;
+            var API_URL = 'https://script.google.com/macros/s/AKfycbwwLzjFTIApDGSOljaZKHw3BgcMeIMWn_SljVJL9yt-DfkGxcxxjgP7hTf6dyjMkuk6fQ/exec';
+
+            function createParticles() {
+                var container = document.getElementById('particles');
+                for (var i = 0; i < 20; i++) {
+                    var p = document.createElement('div');
+                    p.className = 'particle';
+                    var size = 3 + Math.random() * 8;
+                    p.style.width = size + 'px';
+                    p.style.height = size + 'px';
+                    p.style.left = Math.random() * 100 + '%';
+                    p.style.animationDuration = 15 + Math.random() * 25 + 's';
+                    p.style.animationDelay = Math.random() * 20 + 's';
+                    container.appendChild(p);
+                }
+            }
+            createParticles();
+
             function savePage(page) {
                 localStorage.setItem('lastPage', page);
             }
 
             function getSettings() {
-                return JSON.parse(localStorage.getItem('quizicoSettings') || '{}');
+                try {
+                    var raw = localStorage.getItem('quizicoSettings');
+                    if (!raw) {
+                        var defaultSettings = {
+                            theme: 'light',
+                            primaryColor: '#a855f7',
+                            animation: true,
+                            haptic: true
+                        };
+                        localStorage.setItem('quizicoSettings', JSON.stringify(defaultSettings));
+                        return defaultSettings;
+                    }
+                    var parsed = JSON.parse(raw);
+                    if (!parsed.theme) parsed.theme = 'light';
+                    if (!parsed.primaryColor) parsed.primaryColor = '#a855f7';
+                    if (parsed.animation === undefined) parsed.animation = true;
+                    if (parsed.haptic === undefined) parsed.haptic = true;
+                    return parsed;
+                } catch(e) {
+                    return { theme: 'light', primaryColor: '#a855f7', animation: true, haptic: true };
+                }
+            }
+
+            function saveSettings(settings) {
+                localStorage.setItem('quizicoSettings', JSON.stringify(settings));
             }
 
             function hexToRgb(hex) {
-                const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+                var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
                 return result ? {
                     r: parseInt(result[1], 16),
                     g: parseInt(result[2], 16),
@@ -750,67 +830,39 @@
             }
 
             function shadeColor(color, percent) {
-                const rgb = hexToRgb(color);
-                const r = Math.max(0, Math.min(255, rgb.r + percent));
-                const g = Math.max(0, Math.min(255, rgb.g + percent));
-                const b = Math.max(0, Math.min(255, rgb.b + percent));
-                return `#${((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1)}`;
+                var rgb = hexToRgb(color);
+                var r = Math.max(0, Math.min(255, rgb.r + percent));
+                var g = Math.max(0, Math.min(255, rgb.g + percent));
+                var b = Math.max(0, Math.min(255, rgb.b + percent));
+                return '#' + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
             }
 
             function applyTheme() {
-                const mode = localStorage.getItem('themeMode') || 'light';
-                const theme = mode;
-                const settings = getSettings();
-                const primaryColor = settings.primaryColor || '#a855f7';
-                
+                var settings = getSettings();
+                var theme = settings.theme || 'light';
+                var primaryColor = settings.primaryColor || '#a855f7';
+
                 document.documentElement.setAttribute('data-theme', theme);
-                
+
                 if (theme === 'dark') {
-                    const darkPrimary = shadeColor(primaryColor, 40);
-                    
-                    document.documentElement.style.setProperty('--bg', '#1e1b2e');
-                    document.documentElement.style.setProperty('--bg2', '#2d2a3e');
-                    document.documentElement.style.setProperty('--bg3', '#3d3a4e');
+                    var darkPrimary = shadeColor(primaryColor, 40);
                     document.documentElement.style.setProperty('--primary', darkPrimary);
-                    document.documentElement.style.setProperty('--primary-dark', primaryColor);
-                    document.documentElement.style.setProperty('--primary-light', shadeColor(primaryColor, 60));
-                    document.documentElement.style.setProperty('--primary-rgb', `${hexToRgb(darkPrimary).r}, ${hexToRgb(darkPrimary).g}, ${hexToRgb(darkPrimary).b}`);
-                    document.documentElement.style.setProperty('--dark', '#f1f5f9');
-                    document.documentElement.style.setProperty('--text', '#cbd5e1');
-                    document.documentElement.style.setProperty('--text-light', '#94a3b8');
-                    document.documentElement.style.setProperty('--card-bg', '#2d2a3e');
-                    document.documentElement.style.setProperty('--header-bg', '#2d2a3e');
+                    document.documentElement.style.setProperty('--primary-rgb', hexToRgb(darkPrimary).r + ', ' + hexToRgb(darkPrimary).g + ', ' + hexToRgb(darkPrimary).b);
                 } else {
-                    const rgb = hexToRgb(primaryColor);
-                    
-                    document.documentElement.style.setProperty('--bg', '#faf5ff');
-                    document.documentElement.style.setProperty('--bg2', '#f3e8ff');
-                    document.documentElement.style.setProperty('--bg3', '#e9d5ff');
                     document.documentElement.style.setProperty('--primary', primaryColor);
-                    document.documentElement.style.setProperty('--primary-dark', shadeColor(primaryColor, -30));
-                    document.documentElement.style.setProperty('--primary-light', shadeColor(primaryColor, 30));
-                    document.documentElement.style.setProperty('--primary-rgb', `${rgb.r}, ${rgb.g}, ${rgb.b}`);
-                    document.documentElement.style.setProperty('--dark', '#1e1b2e');
-                    document.documentElement.style.setProperty('--text', '#4a4458');
-                    document.documentElement.style.setProperty('--text-light', '#6b7280');
-                    document.documentElement.style.setProperty('--card-bg', '#ffffff');
-                    document.documentElement.style.setProperty('--header-bg', '#ffffff');
+                    document.documentElement.style.setProperty('--primary-rgb', hexToRgb(primaryColor).r + ', ' + hexToRgb(primaryColor).g + ', ' + hexToRgb(primaryColor).b);
                 }
-                
+
+                if (settings.animation === false) {
+                    document.documentElement.setAttribute('data-animation', 'off');
+                } else {
+                    document.documentElement.removeAttribute('data-animation');
+                }
+
                 if (webApp) {
                     webApp.setHeaderColor('bg_color');
                     webApp.setBackgroundColor('bg_color');
                 }
-            }
-
-            function applySettings() {
-                const settings = getSettings();
-                
-                if (settings.animation === false) {
-                    document.documentElement.setAttribute('data-animation', 'off');
-                }
-                
-                applyTheme();
             }
 
             function getEitaaUser() {
@@ -820,164 +872,182 @@
                 return null;
             }
 
-            async function fetchData(action, params = {}) {
+            async function fetchData(action, params) {
                 try {
-                    const response = await fetch(API_URL, {
+                    var initData = webApp?.initData || '';
+                    var payload = { action: action, initData: initData };
+                    for (var key in params) {
+                        if (params.hasOwnProperty(key)) {
+                            payload[key] = params[key];
+                        }
+                    }
+                    var response = await fetch(API_URL, {
                         method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({
-                            token: '77781793:?4r]T}h-UXSic6Q-uBG@ZJg-WE*GqQL-8OZOSzR-~ehNGgr-6l7Hn6L-{yNSFm0-lbohCpI-soEMY(7-)v~$I22-JCNAVXj-,^x05PQ-&tQ5FQD-5ZXU5fK-iN4{fkz-FYIkfj5-sZ9bizd-sqfOUbw-CJindBM-FvlZYt1-pETvfRr-Vm)aHlo-OyptiU%',
-                            action: action,
-                            ...params
-                        })
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
                     });
                     return await response.json();
                 } catch(e) {
-                    return { success: false, message: 'Network error' };
+                    return { ok: false, error: 'Network error' };
                 }
             }
 
             function updateCharts(wins, draws, losses) {
-                const total = wins + draws + losses;
+                var total = wins + draws + losses;
                 if (total === 0) return;
-                
-                const maxVal = Math.max(wins, draws, losses);
-                const maxHeight = 90;
-                
-                const winHeight = (wins / maxVal) * maxHeight;
-                const drawHeight = (draws / maxVal) * maxHeight;
-                const lossHeight = (losses / maxVal) * maxHeight;
-                
-                const winBar = document.getElementById('winBar');
-                const drawBar = document.getElementById('drawBar');
-                const lossBar = document.getElementById('lossBar');
-                
-                winBar.style.height = Math.max(winHeight, 8) + 'px';
-                drawBar.style.height = Math.max(drawHeight, 8) + 'px';
-                lossBar.style.height = Math.max(lossHeight, 8) + 'px';
-                
+
+                var maxVal = Math.max(wins, draws, losses);
+                var maxHeight = 90;
+
+                var winHeight = (wins / maxVal) * maxHeight;
+                var drawHeight = (draws / maxVal) * maxHeight;
+                var lossHeight = (losses / maxVal) * maxHeight;
+
+                document.getElementById('winBar').style.height = Math.max(winHeight, 8) + 'px';
+                document.getElementById('drawBar').style.height = Math.max(drawHeight, 8) + 'px';
+                document.getElementById('lossBar').style.height = Math.max(lossHeight, 8) + 'px';
+
                 document.getElementById('winBarValue').textContent = wins;
                 document.getElementById('drawBarValue').textContent = draws;
                 document.getElementById('lossBarValue').textContent = losses;
             }
 
+            function renderEmptyState(icon, text) {
+                return '<div class="empty-state"><i class="fa-solid ' + icon + '"></i><p>' + text + '</p></div>';
+            }
+
             async function loadProfile() {
-                const user = getEitaaUser();
-                
+                var user = getEitaaUser();
+                var username = String(user ? user.id : '');
+
                 if (user) {
-                    const fullName = (user.first_name || '') + ' ' + (user.last_name || '');
+                    var fullName = (user.first_name || '') + ' ' + (user.last_name || '');
                     document.getElementById('profileName').textContent = fullName.trim() || 'کاربر';
                     document.getElementById('profileUsername').textContent = 'ID: ' + user.id;
                 }
-                
-                const username = String(user ? user.id : '');
-                
-                const [userData, leagueData, gamesData] = await Promise.all([
-                    fetchData('getUser', { username: username }),
-                    fetchData('getLeague', { username: username }),
-                    fetchData('getGamesByPlayer', { username: username })
-                ]);
-                
-                if (userData.success) {
-                    const data = userData.data;
-                    document.getElementById('totalScore').textContent = data.score || 0;
-                    document.getElementById('coinsValue').textContent = data.coins || 0;
-                    document.getElementById('diamondsValue').textContent = data.diamonds || 0;
-                }
-                
-                let wins = 0, draws = 0, losses = 0;
-                
-                if (leagueData.success) {
-                    wins = leagueData.data.wins || 0;
-                    draws = leagueData.data.draws || 0;
-                    losses = leagueData.data.losses || 0;
-                    
+
+                try {
+                    var userData = await fetchData('getUser', { username: username });
+                    if (userData.ok) {
+                        var data = userData.data;
+                        document.getElementById('totalScore').textContent = data.score || 0;
+                        document.getElementById('coinsValue').textContent = data.coins || 0;
+                        document.getElementById('diamondsValue').textContent = data.diamonds || 0;
+                    }
+
+                    var leagueData = await fetchData('getLeague', { username: username });
+                    var wins = 0,
+                        draws = 0,
+                        losses = 0;
+
+                    if (leagueData.ok && leagueData.data) {
+                        wins = leagueData.data.wins || 0;
+                        draws = leagueData.data.draws || 0;
+                        losses = leagueData.data.losses || 0;
+                    } else {
+                        var leagueResult = await fetchData('getUser', { username: username });
+                        if (leagueResult.ok && leagueResult.data) {
+                            var stats = JSON.parse(leagueResult.data.stats || '{}');
+                            wins = stats.wins || 0;
+                            draws = stats.draws || 0;
+                            losses = stats.losses || 0;
+                        }
+                    }
+
                     document.getElementById('winsCount').textContent = wins;
                     document.getElementById('drawsCount').textContent = draws;
                     document.getElementById('lossesCount').textContent = losses;
-                    
+
                     updateCharts(wins, draws, losses);
-                    
-                    const totalLeague = wins + draws + losses;
-                    const winRate = totalLeague > 0 ? Math.round((wins / totalLeague) * 100) : 0;
+
+                    var totalLeague = wins + draws + losses;
+                    var winRate = totalLeague > 0 ? Math.round((wins / totalLeague) * 100) : 0;
                     document.getElementById('winRate').textContent = winRate + '%';
-                }
-                
-                if (gamesData.success) {
-                    const games = gamesData.data;
-                    document.getElementById('totalGames').textContent = games.length;
-                    
-                    const gamesList = document.getElementById('gamesList');
-                    
-                    if (games.length === 0) {
-                        gamesList.innerHTML = `
-                            <div class="empty-state">
-                                <i class="fa-solid fa-gamepad"></i>
-                                <p>مسابقه‌ای یافت نشد</p>
-                            </div>
-                        `;
-                    } else {
-                        gamesList.innerHTML = games.slice(0, 10).reverse().map(game => {
-                            const isPlayer1 = game.player1 === username;
-                            const opponent = isPlayer1 ? game.player2 : game.player1;
-                            
-                            let result = 'draw';
-                            let resultText = 'مساوی';
-                            let resultClass = 'draw';
-                            
-                            if (game.status === 'finished') {
-                                if (isPlayer1) {
-                                    if (game.player1Score > game.player2Score) {
-                                        result = 'win';
-                                        resultText = 'برد';
-                                        resultClass = 'win';
-                                    } else if (game.player1Score < game.player2Score) {
-                                        result = 'loss';
-                                        resultText = 'باخت';
-                                        resultClass = 'loss';
+
+                    var gamesData = await fetchData('getGamesByPlayer', { username: username });
+                    if (gamesData.ok && Array.isArray(gamesData.data)) {
+                        var games = gamesData.data;
+                        document.getElementById('totalGames').textContent = games.length;
+
+                        var gamesList = document.getElementById('gamesList');
+
+                        if (games.length === 0) {
+                            gamesList.innerHTML = renderEmptyState('fa-gamepad', 'مسابقه‌ای یافت نشد');
+                        } else {
+                            var items = games.slice(0, 10).reverse().map(function(game) {
+                                var isPlayer1 = String(game.player1) === String(username);
+                                var opponent = isPlayer1 ? game.player2 : game.player1;
+
+                                var result = 'draw';
+                                var resultText = 'مساوی';
+                                var resultClass = 'draw';
+
+                                if (game.status === 'finished') {
+                                    var p1Score = 0;
+                                    var p2Score = 0;
+                                    for (var i = 1; i <= 5; i++) {
+                                        var round = game['round' + i];
+                                        if (round) {
+                                            try {
+                                                var parts = round.match(/\[([^\]]+)\]/g);
+                                                if (parts && parts.length >= 3) {
+                                                    var p1Ans = parts[1].replace('[', '').replace(']', '').split(',').map(function(a) { return a.trim() === 'T'; });
+                                                    var p2Ans = parts[2].replace('[', '').replace(']', '').split(',').map(function(a) { return a.trim() === 'T'; });
+                                                    p1Score += p1Ans.filter(function(a) { return a; }).length;
+                                                    p2Score += p2Ans.filter(function(a) { return a; }).length;
+                                                }
+                                            } catch(e) {}
+                                        }
                                     }
-                                } else {
-                                    if (game.player2Score > game.player1Score) {
-                                        result = 'win';
-                                        resultText = 'برد';
-                                        resultClass = 'win';
-                                    } else if (game.player2Score < game.player1Score) {
-                                        result = 'loss';
-                                        resultText = 'باخت';
-                                        resultClass = 'loss';
+                                    if (isPlayer1) {
+                                        if (p1Score > p2Score) { result = 'win';
+                                            resultText = 'برد';
+                                            resultClass = 'win'; } else if (p1Score < p2Score) { result = 'loss';
+                                            resultText = 'باخت';
+                                            resultClass = 'loss'; } else { result = 'draw';
+                                            resultText = 'مساوی';
+                                            resultClass = 'draw'; }
+                                    } else {
+                                        if (p2Score > p1Score) { result = 'win';
+                                            resultText = 'برد';
+                                            resultClass = 'win'; } else if (p2Score < p1Score) { result = 'loss';
+                                            resultText = 'باخت';
+                                            resultClass = 'loss'; } else { result = 'draw';
+                                            resultText = 'مساوی';
+                                            resultClass = 'draw'; }
                                     }
                                 }
-                            }
-                            
-                            return `
-                                <div class="game-item">
-                                    <div class="game-players">
-                                        <i class="fa-solid fa-user"></i>
-                                        <span>${opponent || 'ناشناس'}</span>
-                                    </div>
-                                    <span class="game-score ${resultClass}">${resultText}</span>
-                                </div>
-                            `;
-                        }).join('');
+
+                                return '<div class="game-item">' +
+                                    '<div class="game-players"><i class="fa-solid fa-user"></i><span>' + (opponent || 'ناشناس') + '</span></div>' +
+                                    '<span class="game-score ' + resultClass + '">' + resultText + '</span></div>';
+                            }).join('');
+
+                            gamesList.innerHTML = items;
+                        }
+                    } else {
+                        document.getElementById('gamesList').innerHTML = renderEmptyState('fa-gamepad', 'مسابقه‌ای یافت نشد');
                     }
+
+                } catch(e) {
+                    console.error('Error loading profile:', e);
+                } finally {
+                    document.getElementById('loaderWrapper').style.display = 'none';
+                    document.getElementById('profileContent').classList.add('show');
                 }
-                
-                document.getElementById('loaderWrapper').style.display = 'none';
-                document.getElementById('profileContent').classList.add('show');
             }
+
+            window.savePage = savePage;
 
             if (webApp) {
                 webApp.ready();
-                
                 webApp.BackButton.show();
                 webApp.BackButton.onClick(function() {
                     window.location.href = '../dashboard/';
                 });
             }
 
-            applySettings();
+            applyTheme();
             loadProfile();
         })();
     </script>
