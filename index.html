@@ -10,24 +10,27 @@
     <script>
         (function() {
             const webApp = window.Eitaa?.WebApp;
-            const API_URL = 'https://script.google.com/macros/s/AKfycbx34bNcwqg5JHqOI6DFbV41d-w0yjdS76kuemQYZcCpuNQqFoMWM7ipFF7zxJFG0EW6-w/exec';
+            const API_URL = 'https://script.google.com/macros/s/AKfycbwwLzjFTIApDGSOljaZKHw3BgcMeIMWn_SljVJL9yt-DfkGxcxxjgP7hTf6dyjMkuk6fQ/exec';
             
             async function fetchData(action, params = {}) {
                 try {
+                    const initData = webApp?.initData || '';
+                    const payload = {
+                        action: action,
+                        initData: initData,
+                        ...params
+                    };
+                    
                     const response = await fetch(API_URL, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'
                         },
-                        body: JSON.stringify({
-                            token: '77781793:?4r]T}h-UXSic6Q-uBG@ZJg-WE*GqQL-8OZOSzR-~ehNGgr-6l7Hn6L-{yNSFm0-lbohCpI-soEMY(7-)v~$I22-JCNAVXj-,^x05PQ-&tQ5FQD-5ZXU5fK-iN4{fkz-FYIkfj5-sZ9bizd-sqfOUbw-CJindBM-FvlZYt1-pETvfRr-Vm)aHlo-OyptiU%',
-                            action: action,
-                            ...params
-                        })
+                        body: JSON.stringify(payload)
                     });
                     return await response.json();
                 } catch(e) {
-                    return { success: false, message: 'Network error' };
+                    return { ok: false, error: 'Network error' };
                 }
             }
             
@@ -41,6 +44,7 @@
             async function initUser() {
                 if (webApp) {
                     webApp.ready();
+                    webApp.expand();
                 }
                 
                 if (webApp && webApp.initDataUnsafe && webApp.initDataUnsafe.user) {
@@ -50,26 +54,30 @@
                     try {
                         const userData = await fetchData('getUser', { username: username });
                         
-                        if (!userData.success) {
-                            const createResult = await fetchData('createUser', {
-                                user: {
-                                    username: username,
-                                    name: (user.first_name || '') + ' ' + (user.last_name || ''),
-                                    score: 0,
-                                    coins: 0,
-                                    diamonds: 0,
-                                    stats: '',
-                                    status: 'active'
-                                }
+                        if (!userData.ok) {
+                            const createResult = await fetchData('updateUser', {
+                                username: username,
+                                name: (user.first_name || '') + ' ' + (user.last_name || ''),
+                                score: 0,
+                                coins: 0,
+                                diamonds: 0,
+                                stats: '{}',
+                                status: 'active'
                             });
                             
-                            if (!createResult.success) {
+                            if (!createResult.ok) {
                                 console.error('Failed to create user:', createResult);
+                            } else {
+                                console.log('User created successfully');
                             }
+                        } else {
+                            console.log('User found:', userData.data);
                         }
                     } catch(e) {
                         console.error('Error during user check:', e);
                     }
+                } else {
+                    console.warn('No user data from SDK');
                 }
                 
                 redirectToLastPage();
