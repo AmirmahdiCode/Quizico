@@ -8,8 +8,6 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/gh/rastikerdar/iran-sans-font@v1.0.0/dist/font-face.css" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap');
-
         :root {
             --bg: #faf5ff;
             --bg2: #f3e8ff;
@@ -23,14 +21,16 @@
             --text-light: #6b7280;
             --white: #ffffff;
             --card-bg: #ffffff;
-            --header-bg: rgba(255, 255, 255, 0.85);
-            --shadow: 0 4px 20px rgba(0,0,0,0.08);
+            --header-bg: #ffffff;
+            --shadow: 3px 3px 0 #000000;
+            --radius: 4px;
+            --border: 1px solid #000000;
         }
 
         [data-theme="dark"] {
-            --bg: #0f0e1a;
-            --bg2: #1a1730;
-            --bg3: #2a2744;
+            --bg: #1e1b2e;
+            --bg2: #2d2a3e;
+            --bg3: #3d3a4e;
             --primary: #c084fc;
             --primary-dark: #a855f7;
             --primary-light: #d8b4fe;
@@ -38,10 +38,16 @@
             --dark: #f1f5f9;
             --text: #cbd5e1;
             --text-light: #94a3b8;
-            --white: #1a1730;
-            --card-bg: #1a1730;
-            --header-bg: rgba(15, 14, 26, 0.9);
-            --shadow: 0 4px 20px rgba(0,0,0,0.4);
+            --white: #2d2a3e;
+            --card-bg: #2d2a3e;
+            --header-bg: #2d2a3e;
+            --shadow: 3px 3px 0 #000000;
+            --border: 1px solid #000000;
+        }
+
+        [data-animation="off"] * {
+            animation: none !important;
+            transition: none !important;
         }
 
         * {
@@ -55,8 +61,9 @@
             background: var(--bg);
             color: var(--text);
             min-height: 100vh;
-            transition: background 0.8s ease, color 0.5s ease;
-            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+            transition: background 0.5s ease, color 0.5s ease;
         }
 
         .bg-animation {
@@ -108,13 +115,13 @@
             position: relative;
             z-index: 10;
             background: var(--header-bg);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border-bottom: 1px solid rgba(255,255,255,0.1);
+            border-bottom: var(--border);
             padding: 12px 20px;
             position: sticky;
             top: 0;
+            box-shadow: var(--shadow);
             animation: slideDown 0.5s ease;
+            transition: all 0.5s ease;
         }
 
         @keyframes slideDown {
@@ -140,19 +147,20 @@
         .header-logo {
             width: 42px;
             height: 42px;
-            border-radius: 12px;
+            border-radius: var(--radius);
             background: var(--primary);
             display: flex;
             align-items: center;
             justify-content: center;
+            box-shadow: var(--shadow);
             overflow: hidden;
             padding: 2px;
-            transition: transform 0.3s ease;
-            box-shadow: 0 0 30px rgba(var(--primary-rgb), 0.3);
+            border: var(--border);
+            transition: transform 0.3s ease, background 0.5s ease;
         }
 
         .header-logo:hover {
-            transform: scale(1.05) rotate(-5deg);
+            transform: scale(1.05) rotate(-3deg);
         }
 
         .header-logo img {
@@ -167,6 +175,8 @@
             font-weight: 800;
             color: var(--dark);
             letter-spacing: -0.5px;
+            transition: color 0.5s ease;
+            font-family: 'IRANSans', Tahoma, sans-serif;
         }
 
         .header-title span {
@@ -177,6 +187,7 @@
             font-size: 9px;
             color: var(--text-light);
             margin-top: -2px;
+            transition: color 0.5s ease;
         }
 
         .header-currency {
@@ -190,18 +201,19 @@
             align-items: center;
             gap: 4px;
             background: var(--bg2);
-            border-radius: 20px;
+            border: var(--border);
+            border-radius: var(--radius);
             padding: 4px 10px 4px 8px;
             font-size: 10px;
             font-weight: 700;
             color: var(--dark);
+            box-shadow: var(--shadow);
             transition: all 0.3s ease;
-            border: 1px solid transparent;
         }
 
         .currency-badge:hover {
-            border-color: var(--primary);
-            transform: scale(1.05);
+            transform: translateY(-2px);
+            box-shadow: 4px 4px 0 #000000;
         }
 
         .currency-badge i {
@@ -230,7 +242,7 @@
         .loader {
             width: 48px;
             height: 48px;
-            border: 4px solid var(--bg2);
+            border: 4px solid #000000;
             border-top-color: var(--primary);
             border-radius: 50%;
             animation: spin 0.8s linear infinite;
@@ -238,7 +250,7 @@
 
         @keyframes spin { to { transform: rotate(360deg); } }
 
-        .dashboard-content { display: none; animation: fadeInUp 0.6s ease; }
+        .dashboard-content { display: none; animation: fadeInUp 0.5s ease; }
         .dashboard-content.show { display: block; }
 
         @keyframes fadeInUp {
@@ -248,18 +260,22 @@
 
         .banner-card {
             background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-            border-radius: 16px;
+            border-radius: var(--radius);
             padding: 20px 24px;
             margin-bottom: 20px;
             color: #fff;
             position: relative;
             overflow: hidden;
-            box-shadow: 0 8px 30px rgba(var(--primary-rgb), 0.3);
+            border: var(--border);
+            box-shadow: var(--shadow);
             cursor: pointer;
-            transition: transform 0.3s ease;
+            transition: all 0.3s ease;
         }
 
-        .banner-card:hover { transform: translateY(-3px); }
+        .banner-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 5px 5px 0 #000000;
+        }
 
         .banner-card::after {
             content: '';
@@ -308,11 +324,11 @@
 
         .challenge-card {
             background: var(--card-bg);
-            border-radius: 16px;
+            border-radius: var(--radius);
             padding: 16px 20px;
             margin-bottom: 16px;
             border: 2px solid var(--primary);
-            box-shadow: 0 4px 20px rgba(var(--primary-rgb), 0.12);
+            box-shadow: var(--shadow);
             cursor: pointer;
             transition: all 0.3s ease;
             position: relative;
@@ -321,7 +337,7 @@
 
         .challenge-card:hover {
             transform: translateY(-3px);
-            box-shadow: 0 8px 30px rgba(var(--primary-rgb), 0.2);
+            box-shadow: 5px 5px 0 #000000;
         }
 
         .challenge-card .challenge-header {
@@ -354,7 +370,8 @@
             color: var(--text-light);
             background: var(--bg2);
             padding: 2px 10px;
-            border-radius: 20px;
+            border-radius: var(--radius);
+            border: var(--border);
         }
 
         .challenge-card .challenge-question {
@@ -374,16 +391,17 @@
         .challenge-card .challenge-options span {
             background: var(--bg2);
             padding: 4px 14px;
-            border-radius: 20px;
+            border-radius: var(--radius);
             font-size: 11px;
             color: var(--text);
-            border: 1px solid transparent;
+            border: var(--border);
             transition: all 0.3s ease;
         }
 
         .challenge-card .challenge-options span:hover {
             border-color: var(--primary);
             color: var(--primary);
+            box-shadow: var(--shadow);
         }
 
         .challenge-card .challenge-reward {
@@ -392,7 +410,7 @@
             gap: 12px;
             margin-top: 10px;
             padding-top: 10px;
-            border-top: 1px solid var(--bg2);
+            border-top: var(--border);
             font-size: 11px;
             color: var(--text-light);
         }
@@ -409,6 +427,7 @@
             display: flex;
             align-items: center;
             gap: 8px;
+            transition: color 0.5s ease;
         }
 
         .section-title i { color: var(--primary); }
@@ -422,23 +441,23 @@
 
         .game-mode-card {
             background: var(--card-bg);
-            border-radius: 16px;
+            border: var(--border);
+            border-radius: var(--radius);
             padding: 16px 8px;
             text-align: center;
             cursor: pointer;
             box-shadow: var(--shadow);
             transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-            border: 1px solid transparent;
         }
 
         .game-mode-card:hover {
-            transform: translateY(-5px);
-            border-color: var(--primary);
-            box-shadow: 0 8px 30px rgba(var(--primary-rgb), 0.15);
+            transform: translateY(-4px);
+            box-shadow: 5px 5px 0 #000000;
         }
 
         .game-mode-card:active {
-            transform: scale(0.95);
+            transform: translate(2px, 2px);
+            box-shadow: 1px 1px 0 #000000;
         }
 
         .game-mode-icon {
@@ -468,14 +487,18 @@
 
         .stat-mini {
             background: var(--card-bg);
-            border-radius: 12px;
+            border: var(--border);
+            border-radius: var(--radius);
             padding: 12px 8px;
             text-align: center;
             box-shadow: var(--shadow);
-            transition: transform 0.3s ease;
+            transition: all 0.3s ease;
         }
 
-        .stat-mini:hover { transform: translateY(-2px); }
+        .stat-mini:hover {
+            transform: translateY(-2px);
+            box-shadow: 4px 4px 0 #000000;
+        }
 
         .stat-mini .num {
             font-size: 20px;
@@ -499,7 +522,8 @@
             align-items: center;
             justify-content: space-between;
             padding: 12px 14px;
-            border-radius: 12px;
+            border: var(--border);
+            border-radius: var(--radius);
             background: var(--card-bg);
             box-shadow: var(--shadow);
             transition: all 0.3s ease;
@@ -508,7 +532,7 @@
 
         .game-item:hover {
             transform: translateX(-4px);
-            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            box-shadow: 4px 4px 0 #000000;
         }
 
         .game-item-left {
@@ -539,7 +563,8 @@
             font-size: 9px;
             font-weight: 700;
             padding: 3px 12px;
-            border-radius: 20px;
+            border-radius: var(--radius);
+            border: var(--border);
             flex-shrink: 0;
         }
 
@@ -555,7 +580,8 @@
             color: var(--text-light);
             font-size: 11px;
             background: var(--card-bg);
-            border-radius: 12px;
+            border: var(--border);
+            border-radius: var(--radius);
             box-shadow: var(--shadow);
         }
 
@@ -572,14 +598,19 @@
             right: 0;
             left: 0;
             background: var(--header-bg);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border-top: 1px solid rgba(255,255,255,0.06);
+            border-top: var(--border);
             display: flex;
             justify-content: space-around;
             align-items: center;
             padding: 6px 0;
             z-index: 999;
+            transition: all 0.5s ease;
+            animation: slideUp 0.5s ease;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(100%); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
         }
 
         .nav-item {
@@ -590,9 +621,9 @@
             cursor: pointer;
             text-decoration: none;
             color: var(--text-light);
-            transition: all 0.3s ease;
+            transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
             padding: 4px 12px;
-            border-radius: 12px;
+            border-radius: var(--radius);
             background: none;
             border: none;
             font-family: inherit;
@@ -635,7 +666,7 @@
                 </div>
                 <div>
                     <div class="header-title">Quiz<span>ico</span></div>
-                    <div class="header-subtitle">آماده‌ای؟</div>
+                    <div class="header-subtitle">اطلاعات خودت رو محک بزن</div>
                 </div>
             </div>
             <div class="header-currency">
@@ -658,14 +689,14 @@
 
         <div class="dashboard-content" id="dashboardContent">
 
-            <div class="banner-card" onclick="window.location.href='../play/challenge/'">
+            <div class="banner-card" onclick="goToPlay('challenge')">
                 <div class="banner-badge"><i class="fa-solid fa-fire"></i> ویژه امروز</div>
                 <h2>مسابقه روزانه</h2>
                 <p>با شرکت در مسابقه روزانه برنده جایزه شوید</p>
                 <div class="banner-icon"><i class="fa-solid fa-trophy"></i></div>
             </div>
 
-            <div class="challenge-card" onclick="window.location.href='../play/challenge/'">
+            <div class="challenge-card" onclick="goToPlay('challenge')">
                 <div class="challenge-header">
                     <div class="challenge-label">
                         <i class="fa-solid fa-bolt"></i>
@@ -792,7 +823,11 @@
             }
 
             function getSettings() {
-                return JSON.parse(localStorage.getItem('quizicoSettings') || '{}');
+                try {
+                    return JSON.parse(localStorage.getItem('quizicoSettings') || '{}');
+                } catch(e) {
+                    return {};
+                }
             }
 
             function hexToRgb(hex) {
@@ -813,11 +848,13 @@
             }
 
             function applyTheme() {
-                const mode = localStorage.getItem('themeMode') || 'light';
                 const settings = getSettings();
+                const theme = settings.theme || 'light';
                 const primaryColor = settings.primaryColor || '#a855f7';
-                document.documentElement.setAttribute('data-theme', mode);
-                if (mode === 'dark') {
+                
+                document.documentElement.setAttribute('data-theme', theme);
+                
+                if (theme === 'dark') {
                     const darkPrimary = shadeColor(primaryColor, 40);
                     document.documentElement.style.setProperty('--primary', darkPrimary);
                     document.documentElement.style.setProperty('--primary-rgb', hexToRgb(darkPrimary).r + ', ' + hexToRgb(darkPrimary).g + ', ' + hexToRgb(darkPrimary).b);
@@ -825,6 +862,13 @@
                     document.documentElement.style.setProperty('--primary', primaryColor);
                     document.documentElement.style.setProperty('--primary-rgb', hexToRgb(primaryColor).r + ', ' + hexToRgb(primaryColor).g + ', ' + hexToRgb(primaryColor).b);
                 }
+                
+                if (settings.animation === false) {
+                    document.documentElement.setAttribute('data-animation', 'off');
+                } else {
+                    document.documentElement.removeAttribute('data-animation');
+                }
+                
                 if (webApp) {
                     webApp.setHeaderColor('bg_color');
                     webApp.setBackgroundColor('bg_color');
@@ -949,7 +993,7 @@
             window.savePage = savePage;
 
             if (webApp) webApp.ready();
-            applySettings();
+            applyTheme();
             loadDashboard();
         })();
     </script>
