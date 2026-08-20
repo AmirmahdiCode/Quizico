@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Quizico</title>
     <script src="https://developer.eitaa.com/eitaa-web-app.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/gh/rastikerdar/iran-sans-font@v1.0.0/dist/font-face.css" rel="stylesheet">
     <style>
@@ -652,7 +653,7 @@
 
             function generateSignature(username, initData) {
                 var data = username + '|' + initData + '|' + SECRET_KEY;
-                return btoa(unescape(encodeURIComponent(data)));
+                return CryptoJS.SHA256(data).toString(CryptoJS.enc.Hex);
             }
 
             function showToast(message, type, duration) {
@@ -746,7 +747,7 @@
                         }, 2000);
                     } else {
                         hideToast();
-                        showToast('خطا در ثبت اطلاعات: ' + (result.error || 'نامشخص'), 'error', 5000);
+                        showToast('خطا در ثبت اطلاعات', 'error', 5000);
                         btn.disabled = false;
                         btn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> ثبت اطلاعات';
                     }
