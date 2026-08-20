@@ -537,10 +537,11 @@
     <script>
         (function() {
             var webApp = window.Eitaa?.WebApp;
-            var API_URL = 'https://script.google.com/macros/s/AKfycbwwLzjFTIApDGSOljaZKHw3BgcMeIMWn_SljVJL9yt-DfkGxcxxjgP7hTf6dyjMkuk6fQ/exec';
+            var API_URL = 'https://script.google.com/macros/s/AKfycbwPu-AuPNYMhmbjbjbozBK4oxRm8HjsU37jYmHY1atQUAm8BV-G3RMh8yIeacVfOHkhug/exec';
             var isRegistered = false;
             var toastTimeout = null;
             var currentUser = null;
+            var SECRET_KEY = 'QUIZICO_SECRET_KEY_2024';
 
             function createParticles() {
                 var container = document.getElementById('particles');
@@ -649,6 +650,11 @@
                 }
             }
 
+            function generateSignature(username, initData) {
+                var data = username + '|' + initData + '|' + SECRET_KEY;
+                return btoa(unescape(encodeURIComponent(data)));
+            }
+
             function showToast(message, type, duration) {
                 var container = document.getElementById('toastContainer');
                 duration = duration || 4000;
@@ -713,20 +719,18 @@
 
                 var username = String(currentUser.id);
                 var fullName = (currentUser.first_name || '') + ' ' + (currentUser.last_name || '');
+                var initData = webApp?.initData || '';
+                var signature = generateSignature(username, initData);
 
                 btn.disabled = true;
                 btn.innerHTML = '<span class="loader-small"></span> در حال ثبت...';
                 showToast('در حال ثبت اطلاعات در سرور...', 'loading', 0);
 
                 try {
-                    var result = await fetchData('updateUser', {
+                    var result = await fetchData('registerUser', {
                         username: username,
                         name: fullName.trim() || 'کاربر',
-                        score: 0,
-                        coins: 0,
-                        diamonds: 0,
-                        stats: '{}',
-                        status: 'active'
+                        signature: signature
                     });
 
                     if (result.ok) {
@@ -752,6 +756,11 @@
                     btn.disabled = false;
                     btn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> ثبت اطلاعات';
                 }
+            }
+
+            async function checkUserExists(username) {
+                var result = await fetchData('getUser', { username: username });
+                return result.ok && result.data;
             }
 
             async function initPage() {
@@ -795,11 +804,6 @@
                 }
 
                 applyTheme();
-            }
-
-            async function checkUserExists(username) {
-                var result = await fetchData('getUser', { username: username });
-                return result.ok && result.data;
             }
 
             document.getElementById('registerBtn').addEventListener('click', registerUser);
