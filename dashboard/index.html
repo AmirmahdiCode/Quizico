@@ -289,6 +289,15 @@
             border-radius: 50%;
         }
 
+        .banner-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+            position: relative;
+            z-index: 2;
+        }
+
         .banner-card .banner-badge {
             display: inline-block;
             background: rgba(255,255,255,0.2);
@@ -296,26 +305,15 @@
             border-radius: 20px;
             font-size: 10px;
             font-weight: 700;
-            margin-bottom: 8px;
             backdrop-filter: blur(10px);
-            position: relative;
-            z-index: 2;
         }
 
         .banner-card h2 {
             font-size: 18px;
             font-weight: 800;
-            margin-bottom: 4px;
+            margin: 0;
             position: relative;
             z-index: 2;
-        }
-
-        .banner-card p {
-            font-size: 12px;
-            opacity: 0.85;
-            position: relative;
-            z-index: 2;
-            max-width: 50%;
         }
 
         .banner-card .banner-icon {
@@ -595,9 +593,10 @@
         <div class="dashboard-content" id="dashboardContent">
 
             <div class="banner-card" onclick="goToPlay('challenge')">
-                <div class="banner-badge"><i class="fa-solid fa-fire"></i> ویژه امروز</div>
-                <h2>مسابقه روزانه</h2>
-                <p>با شرکت در مسابقه روزانه برنده جایزه شوید</p>
+                <div class="banner-header">
+                    <h2>مسابقه روزانه</h2>
+                    <div class="banner-badge"><i class="fa-solid fa-fire"></i> ویژه امروز</div>
+                </div>
                 <div class="banner-icon"><img src="https://cdn.imgurl.ir/uploads/n93424_InShot_20260821_172611812.png" alt=""></div>
             </div>
 
@@ -764,35 +763,25 @@
             }
 
             function getEitaaUser() {
-                console.log('Eitaa WebApp:', webApp);
-                console.log('InitData:', webApp?.initData);
-                console.log('InitDataUnsafe:', webApp?.initDataUnsafe);
-                
                 if (webApp && webApp.initDataUnsafe && webApp.initDataUnsafe.user) {
                     return webApp.initDataUnsafe.user;
                 }
-                
-                if (webApp && webApp.initData) {
-                    try {
-                        var decoded = decodeURIComponent(webApp.initData);
-                        var userMatch = decoded.match(/user=([^&]+)/);
-                        if (userMatch) {
-                            var userJson = JSON.parse(decodeURIComponent(userMatch[1]));
-                            console.log('Parsed user from initData:', userJson);
-                            return userJson;
-                        }
-                    } catch(e) {
-                        console.error('Error parsing initData:', e);
-                    }
-                }
-                
                 return null;
+            }
+
+            function getUserId() {
+                var user = getEitaaUser();
+                if (!user) return '';
+                
+                if (typeof user.id === 'number') {
+                    return user.id.toString();
+                }
+                return String(user.id || '');
             }
 
             async function fetchData(action, params) {
                 try {
-                    var user = getEitaaUser();
-                    var username = user ? String(user.id) : '';
+                    var username = getUserId();
                     var initData = webApp?.initData || '';
 
                     var payload = {
@@ -809,6 +798,7 @@
                         }
                     }
 
+                    console.log('Username:', username);
                     console.log('Sending payload:', payload);
 
                     var response = await fetch(API_URL, {
@@ -836,53 +826,44 @@
             async function loadDashboard() {
                 try {
                     var eitaaUser = getEitaaUser();
-                    console.log('Eitaa user:', eitaaUser);
+                    var username = getUserId();
                     
-                    if (!eitaaUser) {
+                    console.log('=== DEBUG INFO ===');
+                    console.log('Eitaa user object:', eitaaUser);
+                    console.log('User ID:', username);
+                    console.log('User ID type:', typeof (eitaaUser ? eitaaUser.id : null));
+                    console.log('==================');
+                    
+                    if (!eitaaUser || !username) {
                         console.error('No Eitaa user found');
                         document.getElementById('coinsHeader').textContent = '0';
                         document.getElementById('diamondsHeader').textContent = '0';
-                        document.getElementById('inProgressGames').innerHTML = renderEmptyState('fa-hourglass-half', 'اطلاعات کاربر یافت نشد');
-                        document.getElementById('finishedGames').innerHTML = renderEmptyState('fa-clock-rotate-left', 'اطلاعات کاربر یافت نشد');
                         return;
                     }
                     
-                    var username = String(eitaaUser.id);
                     var fullName = (eitaaUser.first_name || '') + ' ' + (eitaaUser.last_name || '');
                     
-                    console.log('Username:', username);
-                    console.log('Full name:', fullName);
-                    
                     var userData = await fetchData('getUser', {});
-                    console.log('User data response:', userData);
                     
                     if (userData.ok && userData.data) {
-                        console.log('User found in sheet:', userData.data);
                         document.getElementById('coinsHeader').textContent = userData.data.coins || 0;
                         document.getElementById('diamondsHeader').textContent = userData.data.diamonds || 0;
                     } else {
-                        console.log('User not found, registering...');
                         var createResult = await fetchData('registerUser', {
                             name: fullName.trim() || 'کاربر'
                         });
-                        console.log('Register result:', createResult);
                         
                         if (createResult.ok) {
                             var newUserData = await fetchData('getUser', {});
-                            console.log('New user data:', newUserData);
                             
                             if (newUserData.ok && newUserData.data) {
                                 document.getElementById('coinsHeader').textContent = newUserData.data.coins || 0;
                                 document.getElementById('diamondsHeader').textContent = newUserData.data.diamonds || 0;
                             }
-                        } else {
-                            document.getElementById('coinsHeader').textContent = '0';
-                            document.getElementById('diamondsHeader').textContent = '0';
                         }
                     }
 
                     var gamesData = await fetchData('getGamesByPlayer', {});
-                    console.log('Games data response:', gamesData);
                     
                     if (gamesData.ok && Array.isArray(gamesData.data)) {
                         var games = gamesData.data;
@@ -927,8 +908,6 @@
 
                 } catch(e) {
                     console.error('Error in loadDashboard:', e);
-                    document.getElementById('inProgressGames').innerHTML = renderEmptyState('fa-hourglass-half', 'خطا در بارگذاری');
-                    document.getElementById('finishedGames').innerHTML = renderEmptyState('fa-clock-rotate-left', 'خطا در بارگذاری');
                 } finally {
                     document.getElementById('loaderWrapper').style.display = 'none';
                     document.getElementById('dashboardContent').classList.add('show');
