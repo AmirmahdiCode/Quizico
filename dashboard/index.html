@@ -145,8 +145,8 @@
         }
 
         .header-logo {
-            width: 42px;
-            height: 42px;
+            width: 52px;
+            height: 52px;
             border-radius: var(--radius);
             background: var(--primary);
             display: flex;
@@ -164,10 +164,10 @@
         }
 
         .header-logo img {
-            width: 90%;
-            height: 90%;
+            width: 95%;
+            height: 95%;
             object-fit: contain;
-            transform: scale(1.1);
+            transform: scale(1.15);
         }
 
         .header-title {
@@ -270,7 +270,7 @@
             box-shadow: var(--shadow);
             cursor: pointer;
             transition: all 0.3s ease;
-            min-height: 140px;
+            min-height: 160px;
         }
 
         .banner-card:hover {
@@ -315,15 +315,15 @@
             opacity: 0.85;
             position: relative;
             z-index: 2;
-            max-width: 60%;
+            max-width: 50%;
         }
 
         .banner-card .banner-icon {
             position: absolute;
             left: 12px;
             bottom: 0;
-            width: 110px;
-            height: 110px;
+            width: 220px;
+            height: 220px;
             opacity: 1;
             display: flex;
             align-items: flex-end;
@@ -548,8 +548,12 @@
             .header-title { font-size: 15px; }
             .banner-card h2 { font-size: 15px; }
             .banner-card .banner-icon {
-                width: 90px;
-                height: 90px;
+                width: 160px;
+                height: 160px;
+            }
+            .header-logo {
+                width: 44px;
+                height: 44px;
             }
         }
     </style>
@@ -804,57 +808,46 @@
                 }
             }
 
-            async function ensureUserExists() {
-                var user = getEitaaUser();
-                if (!user) return null;
-                
-                var username = String(user.id);
-                var fullName = (user.first_name || '') + ' ' + (user.last_name || '');
-                
-                try {
-                    var userData = await fetchData('getUser', {});
-                    
-                    if (userData.ok && userData.data) {
-                        return userData;
-                    }
-                    
-                    var createResult = await fetchData('registerUser', {
-                        name: fullName.trim() || 'کاربر'
-                    });
-                    
-                    if (createResult.ok) {
-                        return await fetchData('getUser', {});
-                    }
-                    
-                    return null;
-                } catch(e) {
-                    console.error('ensureUserExists error:', e);
-                    return null;
-                }
-            }
-
             function renderEmptyState(icon, text) {
                 return '<div class="empty-state"><i class="fa-solid ' + icon + '"></i><p>' + text + '</p></div>';
             }
 
             async function loadDashboard() {
                 try {
-                    var userData = await ensureUserExists();
-                    
-                    if (userData && userData.ok && userData.data) {
-                        var user = userData.data;
-                        document.getElementById('coinsHeader').textContent = user.coins || 0;
-                        document.getElementById('diamondsHeader').textContent = user.diamonds || 0;
-                    } else {
+                    var eitaaUser = getEitaaUser();
+                    if (!eitaaUser) {
                         document.getElementById('coinsHeader').textContent = '0';
                         document.getElementById('diamondsHeader').textContent = '0';
+                        return;
+                    }
+                    
+                    var username = String(eitaaUser.id);
+                    var fullName = (eitaaUser.first_name || '') + ' ' + (eitaaUser.last_name || '');
+                    
+                    var userData = await fetchData('getUser', {});
+                    console.log('User data:', userData);
+                    
+                    if (userData.ok && userData.data) {
+                        document.getElementById('coinsHeader').textContent = userData.data.coins || 0;
+                        document.getElementById('diamondsHeader').textContent = userData.data.diamonds || 0;
+                    } else {
+                        var createResult = await fetchData('registerUser', {
+                            name: fullName.trim() || 'کاربر'
+                        });
+                        console.log('Create result:', createResult);
+                        
+                        if (createResult.ok) {
+                            var newUserData = await fetchData('getUser', {});
+                            console.log('New user data:', newUserData);
+                            
+                            if (newUserData.ok && newUserData.data) {
+                                document.getElementById('coinsHeader').textContent = newUserData.data.coins || 0;
+                                document.getElementById('diamondsHeader').textContent = newUserData.data.diamonds || 0;
+                            }
+                        }
                     }
 
-                    var eitaaUser = getEitaaUser();
-                    var username = String(eitaaUser ? eitaaUser.id : '');
-
                     var gamesData = await fetchData('getGamesByPlayer', {});
-                    
                     console.log('Games data:', gamesData);
                     
                     if (gamesData.ok && Array.isArray(gamesData.data)) {
