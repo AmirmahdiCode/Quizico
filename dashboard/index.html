@@ -320,7 +320,7 @@
             position: absolute;
             left: 0;
             bottom: 0;
-            width: 100%;
+            width: 50%;
             height: 100%;
             z-index: 1;
         }
@@ -357,11 +357,11 @@
             overflow: hidden;
             position: relative;
             transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
             min-height: 160px;
             flex: 1;
+            display: flex;
+            align-items: flex-end;
+            justify-content: flex-start;
         }
 
         .wheel-card::after {
@@ -385,26 +385,32 @@
             box-shadow: 1px 1px 0 #000000;
         }
 
-        .wheel-card img {
+        .wheel-card .wheel-image {
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 50%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        .wheel-card .wheel-image img {
             width: 100%;
             height: 100%;
-            object-fit: cover;
-            position: absolute;
-            top: 0;
-            left: 0;
-            z-index: 1;
+            object-fit: contain;
+            object-position: left bottom;
+            filter: drop-shadow(2px 2px 0 rgba(0,0,0,0.2));
         }
 
         .wheel-card .wheel-label {
             position: absolute;
             bottom: 8px;
             right: 8px;
-            left: 8px;
             background: rgba(255,255,255,0.2);
             color: #fff;
             font-size: 9px;
             font-weight: 700;
-            padding: 4px 8px;
+            padding: 4px 12px;
             border-radius: 20px;
             text-align: center;
             z-index: 2;
@@ -540,9 +546,6 @@
 
         .game-item-status.in_progress { background: #f59e0b; color: #fff; }
         .game-item-status.finished { background: #10b981; color: #fff; }
-        .game-item-status.win { background: #10b981; color: #fff; }
-        .game-item-status.loss { background: #ef4444; color: #fff; }
-        .game-item-status.draw { background: #f59e0b; color: #fff; }
 
         .empty-state {
             text-align: center;
@@ -670,7 +673,9 @@
                 </div>
                 
                 <div class="wheel-card" onclick="goToWheel()">
-                    <img src="https://cdn.imgurl.ir/uploads/m526299_InShot_20260821_182752507.png" alt="گردونه شانس">
+                    <div class="wheel-image">
+                        <img src="https://cdn.imgurl.ir/uploads/m526299_InShot_20260821_182752507.png" alt="گردونه شانس">
+                    </div>
                     <div class="wheel-label"><i class="fa-solid fa-wand-magic-sparkles"></i> گردونه شانس</div>
                 </div>
             </div>
@@ -878,9 +883,6 @@
                         }
                     }
 
-                    console.log('Username:', username);
-                    console.log('Sending payload:', payload);
-
                     var response = await fetch(API_URL, {
                         method: 'POST',
                         headers: { 
@@ -890,7 +892,6 @@
                     });
 
                     var result = await response.json();
-                    console.log('Response:', result);
                     return result;
                     
                 } catch(e) {
@@ -909,7 +910,6 @@
                     var username = getUserId();
                     
                     if (!eitaaUser || !username) {
-                        console.error('No Eitaa user found');
                         document.getElementById('coinsHeader').textContent = '0';
                         document.getElementById('diamondsHeader').textContent = '0';
                         document.getElementById('loaderWrapper').style.display = 'none';
