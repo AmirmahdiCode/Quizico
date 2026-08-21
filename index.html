@@ -538,7 +538,7 @@
     <script>
         (function() {
             var webApp = window.Eitaa?.WebApp;
-            var API_URL = 'https://script.google.com/macros/s/AKfycbzWEeXhstdpOyZQLuYxJIlmlgsIq5Li7XDfvlD7h_qK8fsqpQsy6NjmGk1QnMJzWXrVFw/exec';
+            var API_URL = 'https://script.google.com/macros/s/AKfycbzbpRclkNdR2Rc6wnZy5a5AlQWCeoze3yAG3BHgJq4_8yAkNsL0JZGWJ2xL6HXkgllxJA/exec';
             var isRegistered = false;
             var toastTimeout = null;
             var currentUser = null;
@@ -634,12 +634,27 @@
             async function fetchData(action, params) {
                 try {
                     var initData = webApp?.initData || '';
-                    var payload = { action: action, initData: initData };
+                    var signature = '';
+                    var username = '';
+                    var user = getEitaaUser();
+                    if (user) {
+                        username = String(user.id);
+                        signature = generateSignature(username, initData);
+                    }
+
+                    var payload = {
+                        action: action,
+                        initData: initData,
+                        signature: signature,
+                        username: username
+                    };
+
                     for (var key in params) {
                         if (params.hasOwnProperty(key)) {
                             payload[key] = params[key];
                         }
                     }
+
                     var response = await fetch(API_URL, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
@@ -737,7 +752,8 @@
                     var result = await fetchData('registerUser', {
                         username: username,
                         name: fullName.trim() || 'کاربر',
-                        signature: signature
+                        signature: signature,
+                        initData: initData
                     });
 
                     if (result.ok) {
@@ -766,7 +782,14 @@
             }
 
             async function checkUserExists(username) {
-                var result = await fetchData('getUser', { username: username });
+                var user = getEitaaUser();
+                var initData = webApp?.initData || '';
+                var signature = generateSignature(String(user.id), initData);
+                var result = await fetchData('getUser', {
+                    username: username,
+                    signature: signature,
+                    initData: initData
+                });
                 return result.ok && result.data;
             }
 
