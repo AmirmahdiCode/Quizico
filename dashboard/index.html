@@ -164,10 +164,10 @@
         }
 
         .header-logo img {
-            width: 85%;
-            height: 85%;
+            width: 90%;
+            height: 90%;
             object-fit: contain;
-            transform: scale(1.15);
+            transform: scale(1.1);
         }
 
         .header-title {
@@ -270,6 +270,7 @@
             box-shadow: var(--shadow);
             cursor: pointer;
             transition: all 0.3s ease;
+            min-height: 140px;
         }
 
         .banner-card:hover {
@@ -297,6 +298,8 @@
             font-weight: 700;
             margin-bottom: 8px;
             backdrop-filter: blur(10px);
+            position: relative;
+            z-index: 2;
         }
 
         .banner-card h2 {
@@ -312,14 +315,29 @@
             opacity: 0.85;
             position: relative;
             z-index: 2;
+            max-width: 60%;
         }
 
         .banner-card .banner-icon {
             position: absolute;
-            left: 16px;
-            bottom: 16px;
-            font-size: 48px;
-            opacity: 0.15;
+            left: 12px;
+            bottom: 0;
+            width: 110px;
+            height: 110px;
+            opacity: 1;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .banner-card .banner-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            object-position: bottom;
+            filter: drop-shadow(2px 2px 0 rgba(0,0,0,0.2));
         }
 
         .section-title {
@@ -529,6 +547,10 @@
             .game-modes-grid { grid-template-columns: repeat(2, 1fr); }
             .header-title { font-size: 15px; }
             .banner-card h2 { font-size: 15px; }
+            .banner-card .banner-icon {
+                width: 90px;
+                height: 90px;
+            }
         }
     </style>
 </head>
@@ -541,7 +563,7 @@
         <div class="header-inner">
             <div class="header-right">
                 <div class="header-logo">
-                    <img src="https://cdn.imgurl.ir/uploads/r102593_InShot_20260817_115945628.png" alt="Quizico">
+                    <img src="https://cdn.imgurl.ir/uploads/f30974_InShot_20260821_174101103.png" alt="Quizico">
                 </div>
                 <div>
                     <div class="header-title">Quiz<span>ico</span></div>
@@ -572,7 +594,7 @@
                 <div class="banner-badge"><i class="fa-solid fa-fire"></i> ویژه امروز</div>
                 <h2>مسابقه روزانه</h2>
                 <p>با شرکت در مسابقه روزانه برنده جایزه شوید</p>
-                <div class="banner-icon"><i class="fa-solid fa-trophy"></i></div>
+                <div class="banner-icon"><img src="https://cdn.imgurl.ir/uploads/n93424_InShot_20260821_172611812.png" alt=""></div>
             </div>
 
             <div class="section-title">
@@ -642,7 +664,7 @@
     <script>
         (function() {
             var webApp = window.Eitaa?.WebApp;
-            var API_URL = 'https://script.google.com/macros/s/AKfycbwwLzjFTIApDGSOljaZKHw3BgcMeIMWn_SljVJL9yt-DfkGxcxxjgP7hTf6dyjMkuk6fQ/exec';
+            var API_URL = 'https://script.google.com/macros/s/AKfycbzvh-z_tAm_CaLuYls-qSpeoY-zTJKbyNuE66out2OqdanEX8zk-7F83AIS-t6bgxylTw/exec';
 
             function goToPlay(mode) {
                 if (webApp) webApp.HapticFeedback?.impactOccurred('light');
@@ -746,46 +768,67 @@
 
             async function fetchData(action, params) {
                 try {
-                    var initData = webApp?.initData || '';
-                    var payload = { action: action, initData: initData };
-                    for (var key in params) {
-                        if (params.hasOwnProperty(key)) {
-                            payload[key] = params[key];
+                    var user = getEitaaUser();
+                    var username = user ? String(user.id) : '';
+
+                    var payload = {
+                        action: action,
+                        username: username
+                    };
+
+                    if (params) {
+                        for (var key in params) {
+                            if (params.hasOwnProperty(key)) {
+                                payload[key] = params[key];
+                            }
                         }
                     }
+
+                    console.log('Sending payload:', payload);
+
                     var response = await fetch(API_URL, {
                         method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
+                        headers: { 
+                            'Content-Type': 'text/plain;charset=utf-8'
+                        },
                         body: JSON.stringify(payload)
                     });
-                    return await response.json();
+
+                    var result = await response.json();
+                    console.log('Response:', result);
+                    return result;
+                    
                 } catch(e) {
-                    return { ok: false, error: 'Network error' };
+                    console.error('Fetch error:', e);
+                    return { ok: false, error: 'Network error: ' + e.message };
                 }
             }
 
             async function ensureUserExists() {
                 var user = getEitaaUser();
                 if (!user) return null;
+                
                 var username = String(user.id);
                 var fullName = (user.first_name || '') + ' ' + (user.last_name || '');
+                
                 try {
-                    var userData = await fetchData('getUser', { username: username });
-                    if (userData.ok) return userData;
-                    var createResult = await fetchData('updateUser', {
-                        username: username,
-                        name: fullName.trim() || 'کاربر',
-                        score: 0,
-                        coins: 0,
-                        diamonds: 0,
-                        stats: '{}',
-                        status: 'active'
-                    });
-                    if (createResult.ok) {
-                        return await fetchData('getUser', { username: username });
+                    var userData = await fetchData('getUser', {});
+                    
+                    if (userData.ok && userData.data) {
+                        return userData;
                     }
+                    
+                    var createResult = await fetchData('registerUser', {
+                        name: fullName.trim() || 'کاربر'
+                    });
+                    
+                    if (createResult.ok) {
+                        return await fetchData('getUser', {});
+                    }
+                    
                     return null;
                 } catch(e) {
+                    console.error('ensureUserExists error:', e);
                     return null;
                 }
             }
@@ -797,15 +840,23 @@
             async function loadDashboard() {
                 try {
                     var userData = await ensureUserExists();
-                    if (userData && userData.ok) {
-                        document.getElementById('coinsHeader').textContent = userData.data.coins || 0;
-                        document.getElementById('diamondsHeader').textContent = userData.data.diamonds || 0;
+                    
+                    if (userData && userData.ok && userData.data) {
+                        var user = userData.data;
+                        document.getElementById('coinsHeader').textContent = user.coins || 0;
+                        document.getElementById('diamondsHeader').textContent = user.diamonds || 0;
+                    } else {
+                        document.getElementById('coinsHeader').textContent = '0';
+                        document.getElementById('diamondsHeader').textContent = '0';
                     }
 
-                    var user = getEitaaUser();
-                    var username = String(user ? user.id : '');
+                    var eitaaUser = getEitaaUser();
+                    var username = String(eitaaUser ? eitaaUser.id : '');
 
-                    var gamesData = await fetchData('getGamesByPlayer', { username: username });
+                    var gamesData = await fetchData('getGamesByPlayer', {});
+                    
+                    console.log('Games data:', gamesData);
+                    
                     if (gamesData.ok && Array.isArray(gamesData.data)) {
                         var games = gamesData.data;
                         var inProgress = games.filter(function(g) { return g.status === 'in_progress'; });
@@ -853,6 +904,8 @@
 
                 } catch(e) {
                     console.error('Error:', e);
+                    document.getElementById('inProgressGames').innerHTML = renderEmptyState('fa-hourglass-half', 'مسابقه‌ای در حال برگزاری نیست');
+                    document.getElementById('finishedGames').innerHTML = renderEmptyState('fa-clock-rotate-left', 'مسابقه‌ای یافت نشد');
                 } finally {
                     document.getElementById('loaderWrapper').style.display = 'none';
                     document.getElementById('dashboardContent').classList.add('show');
