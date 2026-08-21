@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Quizico</title>
     <script src="https://developer.eitaa.com/eitaa-web-app.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -81,8 +80,7 @@
     <script>
         (function() {
             var webApp = window.Eitaa?.WebApp;
-            var API_URL = 'https://script.google.com/macros/s/AKfycbzvh-z_tAm_CaLuYls-qSpeoY-zTJKbyNuE66out2OqdanEX8zk-7F83AIS-t6bgxylTw/exec';
-            var SECRET_KEY = 'xK9mP2vN8qR5wT3yL7fJ1cH4bG6sD0eA';
+            var API_URL = 'https://script.google.com/macros/s/AKfycbxFEkhT6KDbjAta8deZYXQwtffttFJIAVwAop80IrIae9Xi6Dg-fucRdbSj27d55VBC_A/exec';
 
             function getEitaaUser() {
                 if (webApp && webApp.initDataUnsafe && webApp.initDataUnsafe.user) {
@@ -91,40 +89,41 @@
                 return null;
             }
 
-            function generateSignature(username, initData) {
-                var data = username + '|' + initData + '|' + SECRET_KEY;
-                return CryptoJS.SHA256(data).toString(CryptoJS.enc.Hex);
-            }
-
             async function fetchData(action, params) {
                 try {
-                    var initData = webApp?.initData || '';
                     var user = getEitaaUser();
                     var username = user ? String(user.id) : '';
-                    var signature = generateSignature(username, initData);
 
                     var payload = {
                         action: action,
-                        initData: initData,
-                        signature: signature,
                         username: username
                     };
 
-                    for (var key in params) {
-                        if (params.hasOwnProperty(key)) {
-                            payload[key] = params[key];
+                    if (params) {
+                        for (var key in params) {
+                            if (params.hasOwnProperty(key)) {
+                                payload[key] = params[key];
+                            }
                         }
                     }
 
+                    console.log('Sending payload:', payload);
+
                     var response = await fetch(API_URL, {
                         method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
+                        headers: { 
+                            'Content-Type': 'text/plain;charset=utf-8'
+                        },
                         body: JSON.stringify(payload)
                     });
 
-                    return await response.json();
+                    var result = await response.json();
+                    console.log('Response:', result);
+                    return result;
+                    
                 } catch(e) {
-                    return { ok: false, error: 'Network error' };
+                    console.error('Fetch error:', e);
+                    return { ok: false, error: 'Network error: ' + e.message };
                 }
             }
 
@@ -144,15 +143,11 @@
 
                 var username = String(user.id);
                 var fullName = (user.first_name || '') + ' ' + (user.last_name || '');
-                var initData = webApp?.initData || '';
-                var signature = generateSignature(username, initData);
 
                 try {
-                    var check = await fetchData('getUser', {
-                        username: username,
-                        signature: signature,
-                        initData: initData
-                    });
+                    var check = await fetchData('getUser', {});
+                    
+                    console.log('Check result:', check);
 
                     if (check.ok && check.data) {
                         window.location.href = './dashboard/';
@@ -160,19 +155,19 @@
                     }
 
                     var result = await fetchData('registerUser', {
-                        username: username,
-                        name: fullName.trim() || 'کاربر',
-                        signature: signature,
-                        initData: initData
+                        name: fullName.trim() || 'کاربر'
                     });
+
+                    console.log('Register result:', result);
 
                     if (result.ok) {
                         window.location.href = './dashboard/';
                     } else {
                         var text = document.querySelector('.text');
-                        text.innerHTML = 'خطا در ثبت اطلاعات';
+                        text.innerHTML = 'خطا در ثبت اطلاعات: ' + (result.error || 'خطای ناشناخته');
                     }
                 } catch(e) {
+                    console.error('Init error:', e);
                     var text = document.querySelector('.text');
                     text.innerHTML = 'خطا در ارتباط با سرور';
                 }
