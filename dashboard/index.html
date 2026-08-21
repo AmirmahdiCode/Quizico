@@ -320,10 +320,10 @@
 
         .banner-card .banner-icon {
             position: absolute;
-            left: 12px;
+            left: -10px;
             bottom: 0;
-            width: 220px;
-            height: 220px;
+            width: 180px;
+            height: 180px;
             opacity: 1;
             display: flex;
             align-items: flex-end;
@@ -548,8 +548,8 @@
             .header-title { font-size: 15px; }
             .banner-card h2 { font-size: 15px; }
             .banner-card .banner-icon {
-                width: 160px;
-                height: 160px;
+                width: 140px;
+                height: 140px;
             }
             .header-logo {
                 width: 44px;
@@ -764,9 +764,28 @@
             }
 
             function getEitaaUser() {
+                console.log('Eitaa WebApp:', webApp);
+                console.log('InitData:', webApp?.initData);
+                console.log('InitDataUnsafe:', webApp?.initDataUnsafe);
+                
                 if (webApp && webApp.initDataUnsafe && webApp.initDataUnsafe.user) {
                     return webApp.initDataUnsafe.user;
                 }
+                
+                if (webApp && webApp.initData) {
+                    try {
+                        var decoded = decodeURIComponent(webApp.initData);
+                        var userMatch = decoded.match(/user=([^&]+)/);
+                        if (userMatch) {
+                            var userJson = JSON.parse(decodeURIComponent(userMatch[1]));
+                            console.log('Parsed user from initData:', userJson);
+                            return userJson;
+                        }
+                    } catch(e) {
+                        console.error('Error parsing initData:', e);
+                    }
+                }
+                
                 return null;
             }
 
@@ -774,10 +793,12 @@
                 try {
                     var user = getEitaaUser();
                     var username = user ? String(user.id) : '';
+                    var initData = webApp?.initData || '';
 
                     var payload = {
                         action: action,
-                        username: username
+                        username: username,
+                        initData: initData
                     };
 
                     if (params) {
@@ -815,26 +836,36 @@
             async function loadDashboard() {
                 try {
                     var eitaaUser = getEitaaUser();
+                    console.log('Eitaa user:', eitaaUser);
+                    
                     if (!eitaaUser) {
+                        console.error('No Eitaa user found');
                         document.getElementById('coinsHeader').textContent = '0';
                         document.getElementById('diamondsHeader').textContent = '0';
+                        document.getElementById('inProgressGames').innerHTML = renderEmptyState('fa-hourglass-half', 'اطلاعات کاربر یافت نشد');
+                        document.getElementById('finishedGames').innerHTML = renderEmptyState('fa-clock-rotate-left', 'اطلاعات کاربر یافت نشد');
                         return;
                     }
                     
                     var username = String(eitaaUser.id);
                     var fullName = (eitaaUser.first_name || '') + ' ' + (eitaaUser.last_name || '');
                     
+                    console.log('Username:', username);
+                    console.log('Full name:', fullName);
+                    
                     var userData = await fetchData('getUser', {});
-                    console.log('User data:', userData);
+                    console.log('User data response:', userData);
                     
                     if (userData.ok && userData.data) {
+                        console.log('User found in sheet:', userData.data);
                         document.getElementById('coinsHeader').textContent = userData.data.coins || 0;
                         document.getElementById('diamondsHeader').textContent = userData.data.diamonds || 0;
                     } else {
+                        console.log('User not found, registering...');
                         var createResult = await fetchData('registerUser', {
                             name: fullName.trim() || 'کاربر'
                         });
-                        console.log('Create result:', createResult);
+                        console.log('Register result:', createResult);
                         
                         if (createResult.ok) {
                             var newUserData = await fetchData('getUser', {});
@@ -844,11 +875,14 @@
                                 document.getElementById('coinsHeader').textContent = newUserData.data.coins || 0;
                                 document.getElementById('diamondsHeader').textContent = newUserData.data.diamonds || 0;
                             }
+                        } else {
+                            document.getElementById('coinsHeader').textContent = '0';
+                            document.getElementById('diamondsHeader').textContent = '0';
                         }
                     }
 
                     var gamesData = await fetchData('getGamesByPlayer', {});
-                    console.log('Games data:', gamesData);
+                    console.log('Games data response:', gamesData);
                     
                     if (gamesData.ok && Array.isArray(gamesData.data)) {
                         var games = gamesData.data;
@@ -878,16 +912,12 @@
                             fList.innerHTML = finished.slice(0, 10).map(function(g) {
                                 var isP1 = String(g.player1) === String(username);
                                 var opp = isP1 ? g.player2 : g.player1;
-                                var p1Score = 0;
-                                var p2Score = 0;
-                                var resultClass = 'draw';
-                                var resultText = 'مساوی';
                                 return '<div class="game-item">' +
                                     '<div class="game-item-left">' +
                                     '<div class="game-item-icon"><i class="fa-solid fa-flag-checkered"></i></div>' +
                                     '<div><div class="game-item-title">' + (opp || 'ناشناس') + '</div>' +
-                                    '<div class="game-item-subtitle">' + p1Score + ' - ' + p2Score + '</div></div></div>' +
-                                    '<span class="game-item-status ' + resultClass + '">' + resultText + '</span></div>';
+                                    '<div class="game-item-subtitle">پایان یافته</div></div></div>' +
+                                    '<span class="game-item-status finished">پایان</span></div>';
                             }).join('');
                         }
                     } else {
@@ -896,9 +926,9 @@
                     }
 
                 } catch(e) {
-                    console.error('Error:', e);
-                    document.getElementById('inProgressGames').innerHTML = renderEmptyState('fa-hourglass-half', 'مسابقه‌ای در حال برگزاری نیست');
-                    document.getElementById('finishedGames').innerHTML = renderEmptyState('fa-clock-rotate-left', 'مسابقه‌ای یافت نشد');
+                    console.error('Error in loadDashboard:', e);
+                    document.getElementById('inProgressGames').innerHTML = renderEmptyState('fa-hourglass-half', 'خطا در بارگذاری');
+                    document.getElementById('finishedGames').innerHTML = renderEmptyState('fa-clock-rotate-left', 'خطا در بارگذاری');
                 } finally {
                     document.getElementById('loaderWrapper').style.display = 'none';
                     document.getElementById('dashboardContent').classList.add('show');
@@ -908,7 +938,11 @@
             window.goToPlay = goToPlay;
             window.savePage = savePage;
 
-            if (webApp) webApp.ready();
+            if (webApp) {
+                webApp.ready();
+                webApp.expand();
+            }
+            
             applyTheme();
             loadDashboard();
         })();
