@@ -80,7 +80,7 @@
     <script>
         (function() {
             var webApp = window.Eitaa?.WebApp;
-            var API_URL = 'https://script.google.com/macros/s/AKfycbxFEkhT6KDbjAta8deZYXQwtffttFJIAVwAop80IrIae9Xi6Dg-fucRdbSj27d55VBC_A/exec';
+            var API_URL = 'https://script.google.com/macros/s/AKfycby39_m_-w42F1ps3z21aAW2jMXjgmDJjrPD6CfrLLczg-KPk1cbyXcVnUjaeFQ4TIP9ww/exec';
 
             function getEitaaUser() {
                 if (webApp && webApp.initDataUnsafe && webApp.initDataUnsafe.user) {
@@ -89,14 +89,25 @@
                 return null;
             }
 
+            function getUserId() {
+                var user = getEitaaUser();
+                if (!user) return '';
+                
+                if (typeof user.id === 'number') {
+                    return user.id.toString();
+                }
+                return String(user.id || '');
+            }
+
             async function fetchData(action, params) {
                 try {
-                    var user = getEitaaUser();
-                    var username = user ? String(user.id) : '';
+                    var username = getUserId();
+                    var initData = webApp?.initData || '';
 
                     var payload = {
                         action: action,
-                        username: username
+                        username: username,
+                        initData: initData
                     };
 
                     if (params) {
@@ -107,6 +118,7 @@
                         }
                     }
 
+                    console.log('Username:', username);
                     console.log('Sending payload:', payload);
 
                     var response = await fetch(API_URL, {
@@ -134,14 +146,14 @@
                 }
 
                 var user = getEitaaUser();
+                var username = getUserId();
 
-                if (!user) {
+                if (!user || !username) {
                     var text = document.querySelector('.text');
                     text.innerHTML = 'لطفاً از داخل ایتا وارد شوید';
                     return;
                 }
 
-                var username = String(user.id);
                 var fullName = (user.first_name || '') + ' ' + (user.last_name || '');
 
                 try {
