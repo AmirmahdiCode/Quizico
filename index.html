@@ -543,6 +543,7 @@
             var toastTimeout = null;
             var currentUser = null;
             var SECRET_KEY = 'QUIZICO_SECRET_KEY_2024';
+            var debugLog = [];
 
             function createParticles() {
                 var container = document.getElementById('particles');
@@ -631,16 +632,18 @@
                 return null;
             }
 
+            function addDebugLog(msg) {
+                debugLog.push(new Date().toISOString() + ': ' + msg);
+                console.log('[Debug]', msg);
+                document.getElementById('debugInfo').textContent = debugLog.slice(-5).join('\n');
+            }
+
             async function fetchData(action, params) {
                 try {
                     var initData = webApp?.initData || '';
-                    var signature = '';
-                    var username = '';
                     var user = getEitaaUser();
-                    if (user) {
-                        username = String(user.id);
-                        signature = generateSignature(username, initData);
-                    }
+                    var username = user ? String(user.id) : '';
+                    var signature = generateSignature(username, initData);
 
                     var payload = {
                         action: action,
@@ -655,20 +658,23 @@
                         }
                     }
 
+                    addDebugLog('Sending request: ' + action + ' | payload: ' + JSON.stringify(payload));
+
                     var response = await fetch(API_URL, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify(payload)
                     });
                     var data = await response.json();
+                    addDebugLog('Response: ' + JSON.stringify(data));
                     if (data.ok === false) {
-                        console.warn('API Error:', data.error);
-                        return { ok: false, error: 'خطا در ارتباط با سرور' };
+                        addDebugLog('Error from server: ' + data.error);
+                        return { ok: false, error: data.error || 'خطا در ارتباط با سرور', raw: data };
                     }
                     return data;
                 } catch(e) {
-                    console.warn('Network Error:', e);
-                    return { ok: false, error: 'خطا در ارتباط با سرور' };
+                    addDebugLog('Network Error: ' + e.message);
+                    return { ok: false, error: 'خطا در ارتباط با سرور', raw: e.message };
                 }
             }
 
@@ -730,9 +736,23 @@
                 }
             }
 
+            function showDetailedError(errorMsg, rawData) {
+                var details = 'خطا: ' + errorMsg + '\n';
+                if (rawData) {
+                    if (typeof rawData === 'string') {
+                        details += 'جزئیات: ' + rawData;
+                    } else if (rawData.error) {
+                        details += 'جزئیات: ' + rawData.error;
+                    } else if (rawData.raw) {
+                        details += 'جزئیات: ' + rawData.raw;
+                    }
+                }
+                details += '\n\nآخرین لاگ‌ها:\n' + debugLog.slice(-3).join('\n');
+                alert(details);
+            }
+
             async function registerUser() {
                 var btn = document.getElementById('registerBtn');
-                var skipBtn = document.getElementById('skipBtn');
 
                 if (!currentUser) {
                     showToast('کاربر ایتا شناسایی نشد.', 'error', 5000);
@@ -743,6 +763,12 @@
                 var fullName = (currentUser.first_name || '') + ' ' + (currentUser.last_name || '');
                 var initData = webApp?.initData || '';
                 var signature = generateSignature(username, initData);
+
+                addDebugLog('=== START REGISTER ===');
+                addDebugLog('Username: ' + username);
+                addDebugLog('Name: ' + fullName);
+                addDebugLog('InitData length: ' + (initData ? initData.length : 0));
+                addDebugLog('Signature: ' + signature);
 
                 btn.disabled = true;
                 btn.innerHTML = '<span class="loader-small"></span> در حال ثبت...';
@@ -756,25 +782,30 @@
                         initData: initData
                     });
 
+                    addDebugLog('Result: ' + JSON.stringify(result));
+
                     if (result.ok) {
                         isRegistered = true;
                         hideToast();
                         showToast('اطلاعات شما با موفقیت ثبت شد!', 'success', 2000);
                         btn.innerHTML = '<i class="fa-solid fa-check"></i> ثبت شد';
                         btn.style.background = '#10b981';
-                        skipBtn.disabled = false;
+                        document.getElementById('skipBtn').disabled = false;
 
                         setTimeout(function() {
                             window.location.href = './dashboard/';
                         }, 2000);
                     } else {
                         hideToast();
-                        showToast('خطا در ثبت اطلاعات', 'error', 5000);
+                        var errorMsg = result.error || 'خطا در ثبت اطلاعات';
+                        showDetailedError(errorMsg, result);
+                        showToast('خطا در ثبت اطلاعات - جزئیات در پیام بعدی', 'error', 5000);
                         btn.disabled = false;
                         btn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> ثبت اطلاعات';
                     }
                 } catch(e) {
                     hideToast();
+                    showDetailedError('خطا در ارتباط با سرور', e.message);
                     showToast('خطا در ارتباط با سرور', 'error', 5000);
                     btn.disabled = false;
                     btn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> ثبت اطلاعات';
@@ -835,6 +866,12 @@
 
                 applyTheme();
             }
+
+            var debugDiv = document.createElement('div');
+            debugDiv.id = 'debugInfo';
+            debugDiv.style.cssText = 'position:fixed;bottom:120px;left:10px;right:10px;background:#000;color:#0f0;font-size:10px;padding:10px;border-radius:4px;max-height:150px;overflow:auto;font-family:monospace;white-space:pre-wrap;z-index:10000;display:block;border:1px solid #0f0;';
+            debugDiv.textContent = '⏳ در حال بارگذاری...';
+            document.body.appendChild(debugDiv);
 
             document.getElementById('registerBtn').addEventListener('click', registerUser);
 
