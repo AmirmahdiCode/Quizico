@@ -289,7 +289,7 @@
             position: relative;
             transition: all 0.3s ease;
             min-height: 160px;
-            flex: 2;
+            flex: 3;
             display: flex;
             align-items: flex-end;
             justify-content: flex-start;
@@ -320,7 +320,7 @@
             position: absolute;
             left: 0;
             bottom: 0;
-            width: 50%;
+            width: 40%;
             height: 100%;
             z-index: 1;
         }
@@ -360,8 +360,8 @@
             min-height: 160px;
             flex: 1;
             display: flex;
-            align-items: flex-end;
-            justify-content: flex-start;
+            align-items: center;
+            justify-content: center;
         }
 
         .wheel-card::after {
@@ -385,32 +385,26 @@
             box-shadow: 1px 1px 0 #000000;
         }
 
-        .wheel-card .wheel-image {
-            position: absolute;
-            left: 0;
-            bottom: 0;
-            width: 50%;
-            height: 100%;
-            z-index: 1;
-        }
-
-        .wheel-card .wheel-image img {
+        .wheel-card img {
             width: 100%;
             height: 100%;
-            object-fit: contain;
-            object-position: left bottom;
-            filter: drop-shadow(2px 2px 0 rgba(0,0,0,0.2));
+            object-fit: cover;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 1;
         }
 
         .wheel-card .wheel-label {
             position: absolute;
             bottom: 8px;
             right: 8px;
+            left: 8px;
             background: rgba(255,255,255,0.2);
             color: #fff;
             font-size: 9px;
             font-weight: 700;
-            padding: 4px 12px;
+            padding: 4px 8px;
             border-radius: 20px;
             text-align: center;
             z-index: 2;
@@ -452,11 +446,11 @@
             background: var(--card-bg);
             border: var(--border);
             border-radius: var(--radius);
-            padding: 16px 8px;
-            text-align: center;
+            overflow: hidden;
             cursor: pointer;
             box-shadow: var(--shadow);
             transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            position: relative;
         }
 
         .game-mode-card:hover {
@@ -469,22 +463,25 @@
             box-shadow: 1px 1px 0 #000000;
         }
 
-        .game-mode-icon {
-            font-size: 26px;
-            margin-bottom: 6px;
-            color: var(--primary);
+        .game-mode-card img {
+            width: 100%;
+            aspect-ratio: 1 / 1;
+            object-fit: cover;
+            display: block;
         }
 
-        .game-mode-name {
+        .game-mode-card .game-mode-label {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            left: 0;
+            background: rgba(0,0,0,0.65);
+            color: #fff;
             font-size: 10px;
             font-weight: 700;
-            color: var(--dark);
-        }
-
-        .game-mode-desc {
-            font-size: 8px;
-            color: var(--text-light);
-            margin-top: 2px;
+            padding: 6px 4px;
+            text-align: center;
+            backdrop-filter: blur(4px);
         }
 
         .games-list {
@@ -618,7 +615,7 @@
         .nav-item:active { transform: scale(0.9); }
 
         @media (max-width: 480px) {
-            .game-modes-grid { grid-template-columns: repeat(2, 1fr); }
+            .game-modes-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
             .header-title { font-size: 15px; }
             .header-logo {
                 width: 44px;
@@ -673,9 +670,7 @@
                 </div>
                 
                 <div class="wheel-card" onclick="goToWheel()">
-                    <div class="wheel-image">
-                        <img src="https://cdn.imgurl.ir/uploads/m526299_InShot_20260821_182752507.png" alt="گردونه شانس">
-                    </div>
+                    <img src="https://cdn.imgurl.ir/uploads/m526299_InShot_20260821_182752507.png" alt="گردونه شانس">
                     <div class="wheel-label"><i class="fa-solid fa-wand-magic-sparkles"></i> گردونه شانس</div>
                 </div>
             </div>
@@ -687,24 +682,20 @@
 
             <div class="game-modes-grid">
                 <div class="game-mode-card" onclick="goToPlay('single')">
-                    <div class="game-mode-icon"><i class="fa-solid fa-user"></i></div>
-                    <div class="game-mode-name">تک‌نفره</div>
-                    <div class="game-mode-desc">با ربات</div>
+                    <img src="https://cdn.imgurl.ir/uploads/f711120_InShot_20260821_200930706.jpg" alt="تک‌نفره">
+                    <div class="game-mode-label">تک‌نفره</div>
                 </div>
                 <div class="game-mode-card" onclick="goToPlay('offline')">
-                    <div class="game-mode-icon"><i class="fa-solid fa-users"></i></div>
-                    <div class="game-mode-name">دو نفره آفلاین</div>
-                    <div class="game-mode-desc">یک گوشی</div>
+                    <img src="https://cdn.imgurl.ir/uploads/k5971_InShot_20260821_201008883.jpg" alt="دو نفره آفلاین">
+                    <div class="game-mode-label">دو نفره آفلاین</div>
                 </div>
                 <div class="game-mode-card" onclick="goToPlay('online')">
-                    <div class="game-mode-icon"><i class="fa-solid fa-globe"></i></div>
-                    <div class="game-mode-name">دو نفره آنلاین</div>
-                    <div class="game-mode-desc">با کاربر دیگه</div>
+                    <img src="https://cdn.imgurl.ir/uploads/h2464_InShot_20260821_201207943.jpg" alt="دو نفره آنلاین">
+                    <div class="game-mode-label">دو نفره آنلاین</div>
                 </div>
                 <div class="game-mode-card" onclick="goToPlay('league')">
-                    <div class="game-mode-icon"><i class="fa-solid fa-trophy"></i></div>
-                    <div class="game-mode-name">لیگ</div>
-                    <div class="game-mode-desc">رقابتی</div>
+                    <img src="https://cdn.imgurl.ir/uploads/e135154_InShot_20260821_201323323.jpg" alt="لیگ">
+                    <div class="game-mode-label">لیگ</div>
                 </div>
             </div>
 
