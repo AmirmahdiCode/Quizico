@@ -291,7 +291,7 @@
             cursor: pointer;
             transition: all 0.3s ease;
             min-height: 160px;
-            flex: 1;
+            flex: 2;
         }
 
         .banner-card:hover {
@@ -317,16 +317,6 @@
             margin-bottom: 8px;
             position: relative;
             z-index: 2;
-        }
-
-        .banner-card .banner-badge {
-            display: inline-block;
-            background: rgba(255,255,255,0.2);
-            padding: 2px 12px;
-            border-radius: 20px;
-            font-size: 10px;
-            font-weight: 700;
-            backdrop-filter: blur(10px);
         }
 
         .banner-card h2 {
@@ -360,9 +350,7 @@
         }
 
         .wheel-card {
-            width: 100px;
-            min-width: 100px;
-            background: var(--card-bg);
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
             border: var(--border);
             border-radius: var(--radius);
             box-shadow: var(--shadow);
@@ -374,6 +362,18 @@
             align-items: center;
             justify-content: center;
             min-height: 160px;
+            flex: 1;
+        }
+
+        .wheel-card::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -30%;
+            width: 150px;
+            height: 150px;
+            background: rgba(255,255,255,0.08);
+            border-radius: 50%;
         }
 
         .wheel-card:hover {
@@ -393,6 +393,7 @@
             position: absolute;
             top: 0;
             left: 0;
+            z-index: 1;
         }
 
         .wheel-card .wheel-label {
@@ -400,14 +401,15 @@
             bottom: 8px;
             right: 8px;
             left: 8px;
-            background: rgba(0,0,0,0.6);
+            background: rgba(255,255,255,0.2);
             color: #fff;
             font-size: 9px;
             font-weight: 700;
             padding: 4px 8px;
-            border-radius: var(--radius);
+            border-radius: 20px;
             text-align: center;
             z-index: 2;
+            backdrop-filter: blur(10px);
         }
 
         .section-title {
@@ -625,11 +627,6 @@
                 width: 44px;
                 height: 44px;
             }
-            .wheel-card {
-                width: 80px;
-                min-width: 80px;
-                min-height: 140px;
-            }
         }
     </style>
 </head>
@@ -672,16 +669,13 @@
 
             <div class="banner-row">
                 <div class="banner-card" onclick="goToPlay('challenge')">
-                    <div class="banner-header">
-                        <h2>مسابقه روزانه</h2>
-                        <div class="banner-badge"><i class="fa-solid fa-fire"></i> ویژه امروز</div>
-                    </div>
+                    <h2>مسابقه روزانه</h2>
                     <div class="banner-icon"><img src="https://cdn.imgurl.ir/uploads/n93424_InShot_20260821_172611812.png" alt=""></div>
                 </div>
                 
                 <div class="wheel-card" onclick="goToWheel()">
                     <img src="https://cdn.imgurl.ir/uploads/m526299_InShot_20260821_182752507.png" alt="گردونه شانس">
-                    <div class="wheel-label">گردونه شانس</div>
+                    <div class="wheel-label"><i class="fa-solid fa-wand-magic-sparkles"></i> گردونه شانس</div>
                 </div>
             </div>
 
