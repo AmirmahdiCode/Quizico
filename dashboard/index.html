@@ -281,22 +281,18 @@
 
         .banner-card {
             background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-            border-radius: var(--radius);
-            padding: 20px 24px;
-            color: #fff;
-            position: relative;
-            overflow: hidden;
             border: var(--border);
+            border-radius: var(--radius);
             box-shadow: var(--shadow);
             cursor: pointer;
+            overflow: hidden;
+            position: relative;
             transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             min-height: 160px;
             flex: 2;
-        }
-
-        .banner-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 5px 5px 0 #000000;
         }
 
         .banner-card::after {
@@ -310,43 +306,40 @@
             border-radius: 50%;
         }
 
-        .banner-header {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin-bottom: 8px;
-            position: relative;
-            z-index: 2;
+        .banner-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 5px 5px 0 #000000;
         }
 
-        .banner-card h2 {
-            font-size: 18px;
-            font-weight: 800;
-            margin: 0;
-            position: relative;
-            z-index: 2;
+        .banner-card:active {
+            transform: translate(2px, 2px);
+            box-shadow: 1px 1px 0 #000000;
         }
 
-        .banner-card .banner-icon {
+        .banner-card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
             position: absolute;
-            left: -10px;
-            bottom: 0;
-            width: 180px;
-            height: 180px;
-            opacity: 1;
-            display: flex;
-            align-items: flex-end;
-            justify-content: center;
-            pointer-events: none;
+            top: 0;
+            left: 0;
             z-index: 1;
         }
 
-        .banner-card .banner-icon img {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-            object-position: bottom;
-            filter: drop-shadow(2px 2px 0 rgba(0,0,0,0.2));
+        .banner-card .banner-label {
+            position: absolute;
+            bottom: 8px;
+            right: 8px;
+            left: 8px;
+            background: rgba(255,255,255,0.2);
+            color: #fff;
+            font-size: 9px;
+            font-weight: 700;
+            padding: 4px 8px;
+            border-radius: 20px;
+            text-align: center;
+            z-index: 2;
+            backdrop-filter: blur(10px);
         }
 
         .wheel-card {
@@ -618,11 +611,6 @@
         @media (max-width: 480px) {
             .game-modes-grid { grid-template-columns: repeat(2, 1fr); }
             .header-title { font-size: 15px; }
-            .banner-card h2 { font-size: 15px; }
-            .banner-card .banner-icon {
-                width: 140px;
-                height: 140px;
-            }
             .header-logo {
                 width: 44px;
                 height: 44px;
@@ -669,8 +657,8 @@
 
             <div class="banner-row">
                 <div class="banner-card" onclick="goToPlay('challenge')">
-                    <h2>مسابقه روزانه</h2>
-                    <div class="banner-icon"><img src="https://cdn.imgurl.ir/uploads/n93424_InShot_20260821_172611812.png" alt=""></div>
+                    <img src="https://cdn.imgurl.ir/uploads/h142945_InShot_20260821_184807337.png" alt="مسابقه روزانه">
+                    <div class="banner-label"><i class="fa-solid fa-trophy"></i> مسابقه روزانه</div>
                 </div>
                 
                 <div class="wheel-card" onclick="goToWheel()">
