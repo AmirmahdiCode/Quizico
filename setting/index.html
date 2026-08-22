@@ -50,6 +50,12 @@
             transition: none !important;
         }
 
+        [data-animation="off"] .header-title .t-letter {
+            opacity: 1 !important;
+            transform: translateY(0) !important;
+            animation: none !important;
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -553,8 +559,8 @@
                         <span class="t-letter">i</span>
                         <span class="t-letter">z</span>
                         <span class="t-letter t-accent">i</span>
-                        <span class="t-letter">c</span>
-                        <span class="t-letter">o</span>
+                        <span class="t-letter t-accent">c</span>
+                        <span class="t-letter t-accent">o</span>
                     </div>
                     <div class="header-subtitle">تنظیمات</div>
                 </div>
@@ -581,13 +587,6 @@
                     <div>
                         <div class="theme-option-label">حالت تاریک</div>
                         <div class="theme-option-desc">همیشه تاریک</div>
-                    </div>
-                </div>
-                <div class="theme-option" data-theme-mode="auto">
-                    <i class="fa-solid fa-circle-half-stroke"></i>
-                    <div>
-                        <div class="theme-option-label">هماهنگ با ایتا</div>
-                        <div class="theme-option-desc">تشخیص خودکار</div>
                     </div>
                 </div>
             </div>
@@ -728,17 +727,9 @@
                 return '#' + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
             }
 
-            function getEffectiveTheme(settings) {
-                if (settings.theme === 'auto') {
-                    var eitaaTheme = webApp?.colorScheme || 'light';
-                    return eitaaTheme;
-                }
-                return settings.theme;
-            }
-
             function applyTheme() {
                 var settings = getSettings();
-                var theme = getEffectiveTheme(settings);
+                var theme = settings.theme || 'light';
                 var primaryColor = settings.primaryColor || '#a855f7';
                 
                 document.documentElement.setAttribute('data-theme', theme);
@@ -794,29 +785,28 @@
                 var settings = getSettings();
                 if (settings.animation === false) {
                     title.classList.remove('animate-out');
+                    document.documentElement.setAttribute('data-animation', 'off');
                     return;
                 }
 
+                document.documentElement.removeAttribute('data-animation');
+
                 function playIn() {
                     title.classList.remove('animate-out');
-                    title.style.display = 'flex';
                 }
 
                 function playOut() {
                     title.classList.add('animate-out');
                 }
 
-                function loop() {
+                var interval = setInterval(function() {
                     playIn();
                     setTimeout(function() {
                         playOut();
                     }, 10000);
-                    setTimeout(function() {
-                        loop();
-                    }, 12400);
-                }
+                }, 12400);
 
-                loop();
+                title._interval = interval;
             }
 
             if (webApp) {
@@ -824,15 +814,6 @@
                 webApp.BackButton.show();
                 webApp.BackButton.onClick(function() {
                     window.location.href = '../dashboard/';
-                });
-            }
-
-            if (webApp?.onEvent) {
-                webApp.onEvent('themeChanged', function() {
-                    var settings = getSettings();
-                    if (settings.theme === 'auto') {
-                        applyTheme();
-                    }
                 });
             }
 
@@ -862,6 +843,13 @@
                 settings.animation = !this.classList.contains('active');
                 saveSettings(settings);
                 applyTheme();
+                
+                var title = document.getElementById('headerTitle');
+                if (title && title._interval) {
+                    clearInterval(title._interval);
+                    title._interval = null;
+                }
+                
                 animateTitle();
             });
 
