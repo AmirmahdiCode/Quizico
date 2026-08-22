@@ -171,15 +171,58 @@
         }
 
         .header-title {
+            display: flex;
+            direction: ltr;
+            gap: 0;
             font-size: 18px;
             font-weight: 800;
             color: var(--dark);
             letter-spacing: -0.5px;
             transition: color 0.5s ease;
             font-family: 'IRANSans', Tahoma, sans-serif;
+            overflow: hidden;
         }
 
-        .header-title span {
+        .header-title .t-letter {
+            display: inline-block;
+            opacity: 0;
+            transform: translateY(-20px);
+            animation: titleLetterIn 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+        }
+
+        .header-title .t-letter:nth-child(1) { animation-delay: 0.1s; }
+        .header-title .t-letter:nth-child(2) { animation-delay: 0.15s; }
+        .header-title .t-letter:nth-child(3) { animation-delay: 0.2s; }
+        .header-title .t-letter:nth-child(4) { animation-delay: 0.25s; }
+        .header-title .t-letter:nth-child(5) { animation-delay: 0.3s; }
+        .header-title .t-letter:nth-child(6) { animation-delay: 0.35s; }
+        .header-title .t-letter:nth-child(7) { animation-delay: 0.4s; }
+
+        @keyframes titleLetterIn {
+            0% { opacity: 0; transform: translateY(-20px); }
+            60% { opacity: 1; transform: translateY(3px); }
+            80% { transform: translateY(-2px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        .header-title.animate-out .t-letter {
+            animation: titleLetterOut 0.4s ease forwards;
+        }
+
+        .header-title.animate-out .t-letter:nth-child(1) { animation-delay: 0s; }
+        .header-title.animate-out .t-letter:nth-child(2) { animation-delay: 0.05s; }
+        .header-title.animate-out .t-letter:nth-child(3) { animation-delay: 0.1s; }
+        .header-title.animate-out .t-letter:nth-child(4) { animation-delay: 0.15s; }
+        .header-title.animate-out .t-letter:nth-child(5) { animation-delay: 0.2s; }
+        .header-title.animate-out .t-letter:nth-child(6) { animation-delay: 0.25s; }
+        .header-title.animate-out .t-letter:nth-child(7) { animation-delay: 0.3s; }
+
+        @keyframes titleLetterOut {
+            0% { opacity: 1; transform: translateY(0); }
+            100% { opacity: 0; transform: translateY(-20px); }
+        }
+
+        .header-title .t-letter.t-accent {
             color: var(--primary);
         }
 
@@ -504,7 +547,15 @@
                     <img src="https://cdn.imgurl.ir/uploads/f30974_InShot_20260821_174101103.png" alt="Quizico">
                 </div>
                 <div>
-                    <div class="header-title">Quiz<span>ico</span></div>
+                    <div class="header-title" id="headerTitle">
+                        <span class="t-letter">Q</span>
+                        <span class="t-letter">u</span>
+                        <span class="t-letter">i</span>
+                        <span class="t-letter">z</span>
+                        <span class="t-letter t-accent">i</span>
+                        <span class="t-letter">c</span>
+                        <span class="t-letter">o</span>
+                    </div>
                     <div class="header-subtitle">تنظیمات</div>
                 </div>
             </div>
@@ -530,6 +581,13 @@
                     <div>
                         <div class="theme-option-label">حالت تاریک</div>
                         <div class="theme-option-desc">همیشه تاریک</div>
+                    </div>
+                </div>
+                <div class="theme-option" data-theme-mode="auto">
+                    <i class="fa-solid fa-circle-half-stroke"></i>
+                    <div>
+                        <div class="theme-option-label">هماهنگ با ایتا</div>
+                        <div class="theme-option-desc">تشخیص خودکار</div>
                     </div>
                 </div>
             </div>
@@ -670,9 +728,17 @@
                 return '#' + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
             }
 
+            function getEffectiveTheme(settings) {
+                if (settings.theme === 'auto') {
+                    var eitaaTheme = webApp?.colorScheme || 'light';
+                    return eitaaTheme;
+                }
+                return settings.theme;
+            }
+
             function applyTheme() {
                 var settings = getSettings();
-                var theme = settings.theme || 'light';
+                var theme = getEffectiveTheme(settings);
                 var primaryColor = settings.primaryColor || '#a855f7';
                 
                 document.documentElement.setAttribute('data-theme', theme);
@@ -699,7 +765,7 @@
 
                 var themeBtns = document.querySelectorAll('.theme-option');
                 themeBtns.forEach(function(btn) {
-                    btn.classList.toggle('active', btn.dataset.themeMode === theme);
+                    btn.classList.toggle('active', btn.dataset.themeMode === settings.theme);
                 });
 
                 var colorBtns = document.querySelectorAll('.color-option');
@@ -721,11 +787,52 @@
                 }
             }
 
+            function animateTitle() {
+                var title = document.getElementById('headerTitle');
+                if (!title) return;
+                
+                var settings = getSettings();
+                if (settings.animation === false) {
+                    title.classList.remove('animate-out');
+                    return;
+                }
+
+                function playIn() {
+                    title.classList.remove('animate-out');
+                    title.style.display = 'flex';
+                }
+
+                function playOut() {
+                    title.classList.add('animate-out');
+                }
+
+                function loop() {
+                    playIn();
+                    setTimeout(function() {
+                        playOut();
+                    }, 10000);
+                    setTimeout(function() {
+                        loop();
+                    }, 12400);
+                }
+
+                loop();
+            }
+
             if (webApp) {
                 webApp.ready();
                 webApp.BackButton.show();
                 webApp.BackButton.onClick(function() {
                     window.location.href = '../dashboard/';
+                });
+            }
+
+            if (webApp?.onEvent) {
+                webApp.onEvent('themeChanged', function() {
+                    var settings = getSettings();
+                    if (settings.theme === 'auto') {
+                        applyTheme();
+                    }
                 });
             }
 
@@ -755,6 +862,7 @@
                 settings.animation = !this.classList.contains('active');
                 saveSettings(settings);
                 applyTheme();
+                animateTitle();
             });
 
             document.getElementById('hapticToggle').addEventListener('click', function() {
@@ -766,6 +874,7 @@
             });
 
             applyTheme();
+            animateTitle();
         })();
     </script>
 </body>
