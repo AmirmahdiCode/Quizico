@@ -50,6 +50,12 @@
             transition: none !important;
         }
 
+        [data-animation="off"] .header-title .t-letter {
+            opacity: 1 !important;
+            transform: translateY(0) !important;
+            animation: none !important;
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -64,6 +70,7 @@
             display: flex;
             flex-direction: column;
             transition: background 0.5s ease, color 0.5s ease;
+            overscroll-behavior-y: contain;
         }
 
         .bg-animation {
@@ -159,10 +166,6 @@
             transition: transform 0.3s ease, background 0.5s ease;
         }
 
-        .header-logo:hover {
-            transform: scale(1.05) rotate(-3deg);
-        }
-
         .header-logo img {
             width: 95%;
             height: 95%;
@@ -171,15 +174,50 @@
         }
 
         .header-title {
+            display: flex;
+            direction: ltr;
+            gap: 0;
             font-size: 18px;
             font-weight: 800;
             color: var(--dark);
             letter-spacing: -0.5px;
             transition: color 0.5s ease;
             font-family: 'IRANSans', Tahoma, sans-serif;
+            overflow: hidden;
         }
 
-        .header-title span {
+        .header-title .t-letter {
+            display: inline-block;
+            opacity: 0;
+            transform: translateY(-20px);
+            animation: titleLetterIn 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+        }
+
+        .header-title .t-letter:nth-child(1) { animation-delay: 0.1s; }
+        .header-title .t-letter:nth-child(2) { animation-delay: 0.15s; }
+        .header-title .t-letter:nth-child(3) { animation-delay: 0.2s; }
+        .header-title .t-letter:nth-child(4) { animation-delay: 0.25s; }
+        .header-title .t-letter:nth-child(5) { animation-delay: 0.3s; }
+        .header-title .t-letter:nth-child(6) { animation-delay: 0.35s; }
+        .header-title .t-letter:nth-child(7) { animation-delay: 0.4s; }
+
+        @keyframes titleLetterIn {
+            0% { opacity: 0; transform: translateY(-20px); }
+            60% { opacity: 1; transform: translateY(3px); }
+            80% { transform: translateY(-2px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        .header-title.animate-out .t-letter {
+            animation: titleLetterOut 0.4s ease forwards;
+        }
+
+        @keyframes titleLetterOut {
+            0% { opacity: 1; transform: translateY(0); }
+            100% { opacity: 0; transform: translateY(-20px); }
+        }
+
+        .header-title .t-letter.t-accent {
             color: var(--primary);
         }
 
@@ -209,11 +247,6 @@
             color: var(--dark);
             box-shadow: var(--shadow);
             transition: all 0.3s ease;
-        }
-
-        .currency-badge:hover {
-            transform: translateY(-2px);
-            box-shadow: 4px 4px 0 #000000;
         }
 
         .currency-badge i {
@@ -311,11 +344,6 @@
             box-shadow: 5px 5px 0 #000000;
         }
 
-        .banner-card:active {
-            transform: translate(2px, 2px);
-            box-shadow: 1px 1px 0 #000000;
-        }
-
         .banner-card .banner-image {
             position: absolute;
             left: 0;
@@ -365,27 +393,6 @@
             justify-content: center;
         }
 
-        .wheel-card::after {
-            content: '';
-            position: absolute;
-            top: -50%;
-            right: -30%;
-            width: 150px;
-            height: 150px;
-            background: rgba(255,255,255,0.08);
-            border-radius: 50%;
-        }
-
-        .wheel-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 5px 5px 0 #000000;
-        }
-
-        .wheel-card:active {
-            transform: translate(2px, 2px);
-            box-shadow: 1px 1px 0 #000000;
-        }
-
         .wheel-card img {
             width: 100%;
             height: 100%;
@@ -412,29 +419,102 @@
             backdrop-filter: blur(10px);
         }
 
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            padding: 10px 0 4px;
+            margin-top: 16px;
+            border-bottom: 1px dashed var(--text-light);
+        }
+
+        .section-header:first-of-type { margin-top: 0; }
+
         .section-title {
             font-size: 13px;
             font-weight: 700;
             color: var(--dark);
-            margin-bottom: 0;
-            margin-top: 16px;
             display: flex;
             align-items: center;
             gap: 8px;
             transition: color 0.5s ease;
-            padding-bottom: 4px;
         }
 
         .section-title i { color: var(--primary); }
 
-        .section-title:first-of-type { margin-top: 0; }
-
-        .section-divider {
-            border: none;
-            border-top: 1px solid var(--text-light);
-            opacity: 0.3;
-            margin: 4px 0 12px 0;
+        .section-toggle {
+            color: var(--text-light);
+            font-size: 12px;
+            transition: transform 0.3s ease;
         }
+
+        .section-toggle.open {
+            transform: rotate(180deg);
+        }
+
+        .games-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            overflow: hidden;
+            max-height: 0;
+            transition: max-height 0.4s ease, margin-top 0.4s ease;
+        }
+
+        .games-list.open {
+            max-height: 500px;
+            margin-top: 8px;
+        }
+
+        .game-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 14px;
+            border: var(--border);
+            border-radius: var(--radius);
+            background: var(--card-bg);
+            box-shadow: var(--shadow);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .game-item-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .game-item-icon {
+            font-size: 18px;
+            color: var(--primary);
+            width: 28px;
+            text-align: center;
+        }
+
+        .game-item-title {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--dark);
+        }
+
+        .game-item-subtitle {
+            font-size: 9px;
+            color: var(--text-light);
+        }
+
+        .game-item-status {
+            font-size: 9px;
+            font-weight: 700;
+            padding: 3px 12px;
+            border-radius: var(--radius);
+            border: var(--border);
+            flex-shrink: 0;
+        }
+
+        .game-item-status.in_progress { background: #f59e0b; color: #fff; }
+        .game-item-status.finished { background: #10b981; color: #fff; }
 
         .game-modes-grid {
             display: grid;
@@ -485,66 +565,6 @@
             backdrop-filter: blur(4px);
         }
 
-        .games-list {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-
-        .game-item {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 12px 14px;
-            border: var(--border);
-            border-radius: var(--radius);
-            background: var(--card-bg);
-            box-shadow: var(--shadow);
-            transition: all 0.3s ease;
-            cursor: pointer;
-        }
-
-        .game-item:hover {
-            transform: translateX(-4px);
-            box-shadow: 4px 4px 0 #000000;
-        }
-
-        .game-item-left {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .game-item-icon {
-            font-size: 18px;
-            color: var(--primary);
-            width: 28px;
-            text-align: center;
-        }
-
-        .game-item-title {
-            font-size: 12px;
-            font-weight: 700;
-            color: var(--dark);
-        }
-
-        .game-item-subtitle {
-            font-size: 9px;
-            color: var(--text-light);
-        }
-
-        .game-item-status {
-            font-size: 9px;
-            font-weight: 700;
-            padding: 3px 12px;
-            border-radius: var(--radius);
-            border: var(--border);
-            flex-shrink: 0;
-        }
-
-        .game-item-status.in_progress { background: #f59e0b; color: #fff; }
-        .game-item-status.finished { background: #10b981; color: #fff; }
-
         .empty-state {
             text-align: center;
             padding: 20px;
@@ -556,11 +576,12 @@
             box-shadow: var(--shadow);
         }
 
-        .empty-state i {
-            font-size: 28px;
+        .empty-state img {
+            width: 80px;
+            height: 80px;
+            object-fit: contain;
             display: block;
-            margin-bottom: 6px;
-            color: var(--primary-light);
+            margin: 0 auto 8px;
         }
 
         .bottom-nav {
@@ -612,16 +633,12 @@
 
         .nav-item.active { color: var(--primary); }
         .nav-item.active i { transform: translateY(-2px); }
-
         .nav-item:active { transform: scale(0.9); }
 
         @media (max-width: 480px) {
             .game-modes-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
             .header-title { font-size: 15px; }
-            .header-logo {
-                width: 44px;
-                height: 44px;
-            }
+            .header-logo { width: 44px; height: 44px; }
         }
     </style>
 </head>
@@ -637,7 +654,15 @@
                     <img src="https://cdn.imgurl.ir/uploads/f30974_InShot_20260821_174101103.png" alt="Quizico">
                 </div>
                 <div>
-                    <div class="header-title">Quiz<span>ico</span></div>
+                    <div class="header-title" id="headerTitle">
+                        <span class="t-letter">Q</span>
+                        <span class="t-letter">u</span>
+                        <span class="t-letter">i</span>
+                        <span class="t-letter">z</span>
+                        <span class="t-letter t-accent">i</span>
+                        <span class="t-letter t-accent">c</span>
+                        <span class="t-letter t-accent">o</span>
+                    </div>
                     <div class="header-subtitle">اطلاعات خودت رو محک بزن</div>
                 </div>
             </div>
@@ -679,7 +704,7 @@
             <div class="section-title">
                 <i class="fa-solid fa-gamepad"></i> شروع مسابقه
             </div>
-            <hr class="section-divider">
+            <hr style="border: none; border-top: 1px dashed var(--text-light); opacity: 0.3; margin: 4px 0 12px 0;">
 
             <div class="game-modes-grid">
                 <div class="game-mode-card" onclick="goToPlay('single')">
@@ -700,19 +725,25 @@
                 </div>
             </div>
 
-            <div class="section-title">
-                <i class="fa-solid fa-hourglass-half"></i> در حال برگزاری
+            <div class="section-header" onclick="toggleSection('inProgressSection')">
+                <div class="section-title">
+                    <i class="fa-solid fa-hourglass-half"></i> در حال برگزاری
+                </div>
+                <i class="fa-solid fa-chevron-down section-toggle" id="inProgressToggle"></i>
             </div>
-            <hr class="section-divider">
-
-            <div class="games-list" id="inProgressGames"></div>
-
-            <div class="section-title">
-                <i class="fa-solid fa-clock-rotate-left"></i> مسابقات گذشته
+            <div class="games-list" id="inProgressSection">
+                <div id="inProgressGames"></div>
             </div>
-            <hr class="section-divider">
 
-            <div class="games-list" id="finishedGames"></div>
+            <div class="section-header" onclick="toggleSection('finishedSection')">
+                <div class="section-title">
+                    <i class="fa-solid fa-clock-rotate-left"></i> مسابقات گذشته
+                </div>
+                <i class="fa-solid fa-chevron-down section-toggle" id="finishedToggle"></i>
+            </div>
+            <div class="games-list" id="finishedSection">
+                <div id="finishedGames"></div>
+            </div>
 
         </div>
     </main>
@@ -740,6 +771,7 @@
         (function() {
             var webApp = window.Eitaa?.WebApp;
             var API_URL = 'https://script.google.com/macros/s/AKfycby39_m_-w42F1ps3z21aAW2jMXjgmDJjrPD6CfrLLczg-KPk1cbyXcVnUjaeFQ4TIP9ww/exec';
+            var SAD_IMAGE = 'https://cdn.imgurl.ir/uploads/g58935_InShot_20260822_140943752.png';
 
             function goToPlay(mode) {
                 if (webApp) webApp.HapticFeedback?.impactOccurred('light');
@@ -751,6 +783,20 @@
                 if (webApp) webApp.HapticFeedback?.impactOccurred('light');
                 window.location.href = '../wheel/';
             }
+
+            function toggleSection(sectionId) {
+                var section = document.getElementById(sectionId);
+                var toggle = document.getElementById(sectionId === 'inProgressSection' ? 'inProgressToggle' : 'finishedToggle');
+                if (section.classList.contains('open')) {
+                    section.classList.remove('open');
+                    toggle.classList.remove('open');
+                } else {
+                    section.classList.add('open');
+                    toggle.classList.add('open');
+                }
+            }
+
+            window.toggleSection = toggleSection;
 
             function createParticles() {
                 var container = document.getElementById('particles');
@@ -768,19 +814,11 @@
             }
             createParticles();
 
-            function savePage(page) {
-                localStorage.setItem('lastPage', page);
-            }
-
             function getSettings() {
                 try {
                     var raw = localStorage.getItem('quizicoSettings');
                     if (!raw) {
-                        var defaultSettings = {
-                            theme: 'light',
-                            primaryColor: '#a855f7',
-                            animation: true
-                        };
+                        var defaultSettings = { theme: 'light', primaryColor: '#a855f7', animation: true };
                         localStorage.setItem('quizicoSettings', JSON.stringify(defaultSettings));
                         return defaultSettings;
                     }
@@ -796,11 +834,7 @@
 
             function hexToRgb(hex) {
                 var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-                return result ? {
-                    r: parseInt(result[1], 16),
-                    g: parseInt(result[2], 16),
-                    b: parseInt(result[3], 16)
-                } : { r: 168, g: 85, b: 247 };
+                return result ? { r: parseInt(result[1], 16), g: parseInt(result[2], 16), b: parseInt(result[3], 16) } : { r: 168, g: 85, b: 247 };
             }
 
             function shadeColor(color, percent) {
@@ -815,9 +849,7 @@
                 var settings = getSettings();
                 var theme = settings.theme || 'light';
                 var primaryColor = settings.primaryColor || '#a855f7';
-                
                 document.documentElement.setAttribute('data-theme', theme);
-                
                 if (theme === 'dark') {
                     var darkPrimary = shadeColor(primaryColor, 40);
                     document.documentElement.style.setProperty('--primary', darkPrimary);
@@ -826,13 +858,11 @@
                     document.documentElement.style.setProperty('--primary', primaryColor);
                     document.documentElement.style.setProperty('--primary-rgb', hexToRgb(primaryColor).r + ', ' + hexToRgb(primaryColor).g + ', ' + hexToRgb(primaryColor).b);
                 }
-                
                 if (settings.animation === false) {
                     document.documentElement.setAttribute('data-animation', 'off');
                 } else {
                     document.documentElement.removeAttribute('data-animation');
                 }
-                
                 if (webApp) {
                     webApp.setHeaderColor('bg_color');
                     webApp.setBackgroundColor('bg_color');
@@ -849,10 +879,7 @@
             function getUserId() {
                 var user = getEitaaUser();
                 if (!user) return '';
-                
-                if (typeof user.id === 'number') {
-                    return user.id.toString();
-                }
+                if (typeof user.id === 'number') return user.id.toString();
                 return String(user.id || '');
             }
 
@@ -860,40 +887,62 @@
                 try {
                     var username = getUserId();
                     var initData = webApp?.initData || '';
-
-                    var payload = {
-                        action: action,
-                        username: username,
-                        initData: initData
-                    };
-
+                    var payload = { action: action, username: username, initData: initData };
                     if (params) {
                         for (var key in params) {
-                            if (params.hasOwnProperty(key)) {
-                                payload[key] = params[key];
-                            }
+                            if (params.hasOwnProperty(key)) payload[key] = params[key];
                         }
                     }
-
                     var response = await fetch(API_URL, {
                         method: 'POST',
-                        headers: { 
-                            'Content-Type': 'text/plain;charset=utf-8'
-                        },
+                        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
                         body: JSON.stringify(payload)
                     });
-
                     var result = await response.json();
                     return result;
-                    
                 } catch(e) {
                     console.error('Fetch error:', e);
                     return { ok: false, error: 'Network error: ' + e.message };
                 }
             }
 
-            function renderEmptyState(icon, text) {
-                return '<div class="empty-state"><i class="fa-solid ' + icon + '"></i><p>' + text + '</p></div>';
+            function animateCount(element, target, duration) {
+                var start = 0;
+                var startTime = null;
+                function step(timestamp) {
+                    if (!startTime) startTime = timestamp;
+                    var progress = Math.min((timestamp - startTime) / duration, 1);
+                    var eased = 1 - Math.pow(1 - progress, 3);
+                    element.textContent = Math.floor(eased * target);
+                    if (progress < 1) {
+                        requestAnimationFrame(step);
+                    } else {
+                        element.textContent = target;
+                    }
+                }
+                requestAnimationFrame(step);
+            }
+
+            function renderEmptyState(text) {
+                return '<div class="empty-state"><img src="' + SAD_IMAGE + '" alt=""><p>' + text + '</p></div>';
+            }
+
+            function animateTitle() {
+                var title = document.getElementById('headerTitle');
+                if (!title) return;
+                var settings = getSettings();
+                if (settings.animation === false) {
+                    title.classList.remove('animate-out');
+                    document.documentElement.setAttribute('data-animation', 'off');
+                    return;
+                }
+                document.documentElement.removeAttribute('data-animation');
+                function playIn() { title.classList.remove('animate-out'); }
+                function playOut() { title.classList.add('animate-out'); }
+                setInterval(function() {
+                    playIn();
+                    setTimeout(playOut, 10000);
+                }, 12400);
             }
 
             async function loadDashboard() {
@@ -914,8 +963,8 @@
                     var userData = await fetchData('getUser', {});
                     
                     if (userData.ok && userData.data) {
-                        document.getElementById('coinsHeader').textContent = userData.data.coins || 0;
-                        document.getElementById('diamondsHeader').textContent = userData.data.diamonds || 0;
+                        animateCount(document.getElementById('coinsHeader'), userData.data.coins || 0, 1000);
+                        animateCount(document.getElementById('diamondsHeader'), userData.data.diamonds || 0, 1000);
                     } else {
                         var createResult = await fetchData('registerUser', {
                             name: fullName.trim() || 'کاربر'
@@ -923,10 +972,9 @@
                         
                         if (createResult.ok) {
                             var newUserData = await fetchData('getUser', {});
-                            
                             if (newUserData.ok && newUserData.data) {
-                                document.getElementById('coinsHeader').textContent = newUserData.data.coins || 0;
-                                document.getElementById('diamondsHeader').textContent = newUserData.data.diamonds || 0;
+                                animateCount(document.getElementById('coinsHeader'), newUserData.data.coins || 0, 1000);
+                                animateCount(document.getElementById('diamondsHeader'), newUserData.data.diamonds || 0, 1000);
                             }
                         } else {
                             document.getElementById('coinsHeader').textContent = '0';
@@ -943,7 +991,7 @@
 
                         var ipList = document.getElementById('inProgressGames');
                         if (inProgress.length === 0) {
-                            ipList.innerHTML = renderEmptyState('fa-hourglass-half', 'مسابقه‌ای در حال برگزاری نیست');
+                            ipList.innerHTML = renderEmptyState('مسابقه‌ای در حال برگزاری نیست');
                         } else {
                             ipList.innerHTML = inProgress.slice(0, 5).map(function(g) {
                                 var isP1 = String(g.player1) === String(username);
@@ -959,7 +1007,7 @@
 
                         var fList = document.getElementById('finishedGames');
                         if (finished.length === 0) {
-                            fList.innerHTML = renderEmptyState('fa-clock-rotate-left', 'مسابقه‌ای یافت نشد');
+                            fList.innerHTML = renderEmptyState('مسابقه‌ای یافت نشد');
                         } else {
                             fList.innerHTML = finished.slice(0, 10).map(function(g) {
                                 var isP1 = String(g.player1) === String(username);
@@ -973,8 +1021,8 @@
                             }).join('');
                         }
                     } else {
-                        document.getElementById('inProgressGames').innerHTML = renderEmptyState('fa-hourglass-half', 'مسابقه‌ای در حال برگزاری نیست');
-                        document.getElementById('finishedGames').innerHTML = renderEmptyState('fa-clock-rotate-left', 'مسابقه‌ای یافت نشد');
+                        document.getElementById('inProgressGames').innerHTML = renderEmptyState('مسابقه‌ای در حال برگزاری نیست');
+                        document.getElementById('finishedGames').innerHTML = renderEmptyState('مسابقه‌ای یافت نشد');
                     }
 
                 } catch(e) {
@@ -987,7 +1035,6 @@
 
             window.goToPlay = goToPlay;
             window.goToWheel = goToWheel;
-            window.savePage = savePage;
 
             if (webApp) {
                 webApp.ready();
@@ -995,6 +1042,7 @@
             }
             
             applyTheme();
+            animateTitle();
             loadDashboard();
         })();
     </script>
