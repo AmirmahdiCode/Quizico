@@ -643,10 +643,167 @@
         .nav-item.active i { transform: translateY(-2px); }
         .nav-item:active { transform: scale(0.9); }
 
+        .wheel-modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.7);
+            z-index: 1000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            animation: fadeInOverlay 0.3s ease;
+        }
+
+        .wheel-modal-overlay.show {
+            display: flex;
+        }
+
+        @keyframes fadeInOverlay {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .wheel-modal {
+            background: var(--card-bg);
+            border: var(--border);
+            border-radius: var(--radius);
+            padding: 20px;
+            box-shadow: 5px 5px 0 #000000;
+            max-width: 400px;
+            width: 100%;
+            position: relative;
+            animation: modalIn 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        @keyframes modalIn {
+            from { transform: scale(0.5) translateY(50px); opacity: 0; }
+            to { transform: scale(1) translateY(0); opacity: 1; }
+        }
+
+        .wheel-modal-close {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            width: 30px;
+            height: 30px;
+            border: var(--border);
+            border-radius: 50%;
+            background: var(--bg2);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text);
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .wheel-modal-close:hover {
+            background: #ef4444;
+            color: #fff;
+            transform: rotate(90deg);
+        }
+
+        .wheel-modal-title {
+            text-align: center;
+            font-size: 16px;
+            font-weight: 800;
+            color: var(--dark);
+            margin-bottom: 16px;
+        }
+
+        .wheel-container {
+            position: relative;
+            width: 280px;
+            height: 280px;
+            margin: 0 auto 16px;
+        }
+
+        .wheel-canvas {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 4px solid #000;
+            transition: transform 4s cubic-bezier(0.17, 0.67, 0.12, 0.99);
+            box-shadow: 0 0 30px rgba(var(--primary-rgb), 0.4);
+        }
+
+        .wheel-pointer {
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 36px;
+            color: #f59e0b;
+            z-index: 5;
+            filter: drop-shadow(2px 2px 0 #000);
+        }
+
+        .wheel-center-btn {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: var(--primary);
+            border: 3px solid #000;
+            color: #fff;
+            font-size: 12px;
+            font-weight: 800;
+            cursor: pointer;
+            z-index: 5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 3px 3px 0 #000;
+            transition: all 0.3s ease;
+        }
+
+        .wheel-center-btn:hover {
+            transform: translate(-50%, -50%) scale(1.1);
+        }
+
+        .wheel-center-btn:active {
+            transform: translate(-50%, -50%) scale(0.95);
+        }
+
+        .wheel-center-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .wheel-cost-info {
+            text-align: center;
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 10px;
+        }
+
+        .wheel-cost-info i {
+            color: #f59e0b;
+        }
+
+        .wheel-result {
+            text-align: center;
+            font-size: 14px;
+            font-weight: 800;
+            color: var(--primary);
+            min-height: 30px;
+            margin-top: 10px;
+        }
+
         @media (max-width: 480px) {
             .game-modes-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
             .header-title { font-size: 15px; }
             .header-logo { width: 44px; height: 44px; }
+            .wheel-container { width: 240px; height: 240px; }
         }
     </style>
 </head>
@@ -703,7 +860,7 @@
                     <div class="banner-label"><i class="fa-solid fa-trophy"></i> مسابقه روزانه</div>
                 </div>
                 
-                <div class="wheel-card" onclick="goToWheel()">
+                <div class="wheel-card" onclick="openWheelModal()">
                     <img src="https://cdn.imgurl.ir/uploads/m526299_InShot_20260821_182752507.png" alt="گردونه شانس">
                     <div class="wheel-label"><i class="fa-solid fa-wand-magic-sparkles"></i> گردونه شانس</div>
                 </div>
@@ -775,21 +932,171 @@
         </a>
     </nav>
 
+    <div class="wheel-modal-overlay" id="wheelModalOverlay">
+        <div class="wheel-modal">
+            <div class="wheel-modal-close" onclick="closeWheelModal()">
+                <i class="fa-solid fa-xmark"></i>
+            </div>
+            <div class="wheel-modal-title">🎡 گردونه شانس</div>
+            <div class="wheel-container">
+                <div class="wheel-pointer">📍</div>
+                <canvas class="wheel-canvas" id="wheelCanvas" width="280" height="280"></canvas>
+                <button class="wheel-center-btn" id="spinBtn" onclick="spinWheel()">چرخش</button>
+            </div>
+            <div class="wheel-cost-info">
+                <i class="fa-solid fa-coins"></i> هزینه هر چرخش: ۲۰ سکه
+            </div>
+            <div class="wheel-result" id="wheelResult"></div>
+        </div>
+    </div>
+
     <script>
         (function() {
             var webApp = window.Eitaa?.WebApp;
             var API_URL = 'https://script.google.com/macros/s/AKfycby39_m_-w42F1ps3z21aAW2jMXjgmDJjrPD6CfrLLczg-KPk1cbyXcVnUjaeFQ4TIP9ww/exec';
             var SAD_IMAGE = 'https://cdn.imgurl.ir/uploads/g58935_InShot_20260822_140943752.png';
 
+            var wheelPrizes = [
+                { label: 'پوچ', type: 'empty', value: 0 },
+                { label: '۲۰ سکه', type: 'coins', value: 20 },
+                { label: 'پوچ', type: 'empty', value: 0 },
+                { label: '۱۰۰ سکه', type: 'coins', value: 100 },
+                { label: '۱ الماس', type: 'diamonds', value: 1 },
+                { label: '۲۰۰ سکه', type: 'coins', value: 200 },
+                { label: '۵ الماس', type: 'diamonds', value: 5 },
+                { label: '۱۰ الماس', type: 'diamonds', value: 10 }
+            ];
+
+            var wheelColors = ['#ef4444', '#f59e0b', '#10b981', '#06b6d4', '#8b5cf6', '#ec4899', '#84cc16', '#f97316'];
+            var currentRotation = 0;
+            var isSpinning = false;
+            var userCoins = 0;
+            var userDiamonds = 0;
+
+            function shuffleArray(arr) {
+                for (var i = arr.length - 1; i > 0; i--) {
+                    var j = Math.floor(Math.random() * (i + 1));
+                    var temp = arr[i];
+                    arr[i] = arr[j];
+                    arr[j] = temp;
+                }
+                return arr;
+            }
+
+            function drawWheel() {
+                var canvas = document.getElementById('wheelCanvas');
+                var ctx = canvas.getContext('2d');
+                var centerX = canvas.width / 2;
+                var centerY = canvas.height / 2;
+                var radius = canvas.width / 2 - 10;
+                var segmentAngle = (2 * Math.PI) / wheelPrizes.length;
+
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                for (var i = 0; i < wheelPrizes.length; i++) {
+                    var startAngle = i * segmentAngle;
+                    var endAngle = startAngle + segmentAngle;
+
+                    ctx.beginPath();
+                    ctx.moveTo(centerX, centerY);
+                    ctx.arc(centerX, centerY, radius, startAngle, endAngle);
+                    ctx.closePath();
+
+                    ctx.fillStyle = wheelColors[i % wheelColors.length];
+                    ctx.fill();
+                    ctx.strokeStyle = '#000';
+                    ctx.lineWidth = 2;
+                    ctx.stroke();
+
+                    ctx.save();
+                    ctx.translate(centerX, centerY);
+                    ctx.rotate(startAngle + segmentAngle / 2);
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    ctx.fillStyle = '#fff';
+                    ctx.font = 'bold 13px IRANSans, Tahoma';
+                    ctx.shadowColor = '#000';
+                    ctx.shadowBlur = 4;
+                    ctx.fillText(wheelPrizes[i].label, radius - 40, 0);
+                    ctx.restore();
+                }
+
+                ctx.beginPath();
+                ctx.arc(centerX, centerY, 25, 0, 2 * Math.PI);
+                ctx.fillStyle = '#fff';
+                ctx.fill();
+                ctx.strokeStyle = '#000';
+                ctx.lineWidth = 3;
+                ctx.stroke();
+            }
+
+            function openWheelModal() {
+                if (webApp) webApp.HapticFeedback?.impactOccurred('light');
+                shuffleArray(wheelPrizes);
+                drawWheel();
+                document.getElementById('wheelResult').textContent = '';
+                document.getElementById('wheelModalOverlay').classList.add('show');
+            }
+
+            function closeWheelModal() {
+                if (isSpinning) return;
+                document.getElementById('wheelModalOverlay').classList.remove('show');
+            }
+
+            window.openWheelModal = openWheelModal;
+            window.closeWheelModal = closeWheelModal;
+
+            function spinWheel() {
+                if (isSpinning) return;
+                if (userCoins < 20) {
+                    document.getElementById('wheelResult').textContent = 'سکه کافی نداری!';
+                    return;
+                }
+
+                isSpinning = true;
+                document.getElementById('spinBtn').disabled = true;
+                document.getElementById('wheelResult').textContent = '';
+
+                var spinDegrees = 1800 + Math.random() * 1800;
+                var newRotation = currentRotation + spinDegrees;
+                var canvas = document.getElementById('wheelCanvas');
+                canvas.style.transform = 'rotate(' + newRotation + 'deg)';
+                currentRotation = newRotation;
+
+                setTimeout(function() {
+                    var segmentAngle = 360 / wheelPrizes.length;
+                    var normalizedRotation = newRotation % 360;
+                    var pointerAngle = 0;
+                    var winningIndex = Math.floor(((360 - (normalizedRotation % 360)) % 360) / segmentAngle);
+                    winningIndex = winningIndex % wheelPrizes.length;
+
+                    var prize = wheelPrizes[winningIndex];
+                    
+                    if (prize.type === 'empty') {
+                        document.getElementById('wheelResult').textContent = '😢 پوچ! شانس بیار';
+                    } else if (prize.type === 'coins') {
+                        userCoins = userCoins - 20 + prize.value;
+                        document.getElementById('wheelResult').textContent = '🎉 بردی! ' + prize.label;
+                    } else {
+                        userDiamonds += prize.value;
+                        userCoins -= 20;
+                        document.getElementById('wheelResult').textContent = '💎 بردی! ' + prize.label;
+                    }
+
+                    document.getElementById('coinsHeader').textContent = userCoins;
+                    document.getElementById('diamondsHeader').textContent = userDiamonds;
+                    
+                    isSpinning = false;
+                    document.getElementById('spinBtn').disabled = false;
+                }, 4200);
+            }
+
+            window.spinWheel = spinWheel;
+
             function goToPlay(mode) {
                 if (webApp) webApp.HapticFeedback?.impactOccurred('light');
                 localStorage.setItem('gameMode', mode);
                 window.location.href = '../play/';
-            }
-
-            function goToWheel() {
-                if (webApp) webApp.HapticFeedback?.impactOccurred('light');
-                window.location.href = '../wheel/';
             }
 
             function toggleSection(sectionId) {
@@ -971,8 +1278,10 @@
                     var userData = await fetchData('getUser', {});
                     
                     if (userData.ok && userData.data) {
-                        animateCount(document.getElementById('coinsHeader'), userData.data.coins || 0, 1000);
-                        animateCount(document.getElementById('diamondsHeader'), userData.data.diamonds || 0, 1000);
+                        userCoins = userData.data.coins || 0;
+                        userDiamonds = userData.data.diamonds || 0;
+                        animateCount(document.getElementById('coinsHeader'), userCoins, 1000);
+                        animateCount(document.getElementById('diamondsHeader'), userDiamonds, 1000);
                     } else {
                         var createResult = await fetchData('registerUser', {
                             name: fullName.trim() || 'کاربر'
@@ -981,8 +1290,10 @@
                         if (createResult.ok) {
                             var newUserData = await fetchData('getUser', {});
                             if (newUserData.ok && newUserData.data) {
-                                animateCount(document.getElementById('coinsHeader'), newUserData.data.coins || 0, 1000);
-                                animateCount(document.getElementById('diamondsHeader'), newUserData.data.diamonds || 0, 1000);
+                                userCoins = newUserData.data.coins || 0;
+                                userDiamonds = newUserData.data.diamonds || 0;
+                                animateCount(document.getElementById('coinsHeader'), userCoins, 1000);
+                                animateCount(document.getElementById('diamondsHeader'), userDiamonds, 1000);
                             }
                         } else {
                             document.getElementById('coinsHeader').textContent = '0';
@@ -1042,13 +1353,13 @@
             }
 
             window.goToPlay = goToPlay;
-            window.goToWheel = goToWheel;
 
             if (webApp) {
                 webApp.ready();
                 webApp.expand();
             }
             
+            drawWheel();
             applyTheme();
             animateTitle();
             loadDashboard();
