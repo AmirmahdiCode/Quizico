@@ -641,11 +641,12 @@
             font-size: 11px;
         }
 
-        .empty-state i {
-            font-size: 32px;
+        .empty-state img {
+            width: 80px;
+            height: 80px;
+            object-fit: contain;
             display: block;
-            margin-bottom: 8px;
-            color: var(--primary-light);
+            margin: 0 auto 8px;
         }
 
         .bottom-nav {
@@ -860,6 +861,7 @@
         (function() {
             var webApp = window.Eitaa?.WebApp;
             var API_URL = 'https://script.google.com/macros/s/AKfycby39_m_-w42F1ps3z21aAW2jMXjgmDJjrPD6CfrLLczg-KPk1cbyXcVnUjaeFQ4TIP9ww/exec';
+            var SAD_IMAGE = 'https://cdn.imgurl.ir/uploads/g58935_InShot_20260822_140943752.png';
 
             function createParticles() {
                 var container = document.getElementById('particles');
@@ -987,23 +989,23 @@
                 requestAnimationFrame(step);
             }
 
-            function renderEmptyState(icon, text) {
-                return '<div class="empty-state"><i class="fa-solid ' + icon + '"></i><p>' + text + '</p></div>';
+            function renderEmptyState(text) {
+                return '<div class="empty-state"><img src="' + SAD_IMAGE + '" alt=""><p>' + text + '</p></div>';
             }
 
             var allAchievements = [
-                { id: 'first_game', name: 'اولین بازی', icon: '🎮' },
-                { id: 'first_win', name: 'اولین برد', icon: '🏆' },
-                { id: '10_games', name: '۱۰ بازی', icon: '🔥' },
-                { id: '10_wins', name: '۱۰ برد', icon: '⚡' },
-                { id: '50_games', name: '۵۰ بازی', icon: '💎' },
-                { id: '50_wins', name: '۵۰ برد', icon: '👑' },
+                { id: 'first_game', name: 'اولین بازی', icon: '🕹️' },
+                { id: '10_games', name: '۱۰ بازی', icon: '🎮' },
+                { id: '100_games', name: '۱۰۰ بازی', icon: '💻' },
+                { id: '1000_games', name: '۱۰۰۰ بازی', icon: '🔬' },
+                { id: 'first_win', name: 'اولین برد', icon: '🎉' },
+                { id: '10_wins', name: '۱۰ برد', icon: '🎈' },
+                { id: '100_wins', name: '۱۰۰ برد', icon: '🎁' },
+                { id: '1000_wins', name: '۱۰۰۰ برد', icon: '🍰' },
+                { id: '100_score', name: '۱۰۰ امتیاز', icon: '✨' },
                 { id: '1000_score', name: '۱۰۰۰ امتیاز', icon: '⭐' },
-                { id: '5000_score', name: '۵۰۰۰ امتیاز', icon: '🌟' },
-                { id: '100_coins', name: '۱۰۰ سکه', icon: '🪙' },
-                { id: '500_coins', name: '۵۰۰ سکه', icon: '💰' },
-                { id: '100_diamonds', name: '۱۰۰ الماس', icon: '💠' },
-                { id: '500_diamonds', name: '۵۰۰ الماس', icon: '🔷' }
+                { id: '10000_score', name: '۱۰۰۰۰ امتیاز', icon: '💫' },
+                { id: '100000_score', name: '۱۰۰۰۰۰ امتیاز', icon: '☄️' }
             ];
 
             function renderAchievements(userData) {
@@ -1012,22 +1014,23 @@
                 try { stats = JSON.parse(userData.stats || '{}'); } catch(e) {}
                 
                 var unlocked = stats.achievements || [];
-                var wins = stats.wins || parseInt(userData.score > 0 ? 1 : 0);
+                var wins = stats.wins || 0;
                 var games = stats.games || 0;
+                var score = userData.score || 0;
                 
                 var earned = [];
-                if (userData.score >= 1000) earned.push('1000_score');
-                if (userData.score >= 5000) earned.push('5000_score');
-                if (userData.coins >= 100) earned.push('100_coins');
-                if (userData.coins >= 500) earned.push('500_coins');
-                if (userData.diamonds >= 100) earned.push('100_diamonds');
-                if (userData.diamonds >= 500) earned.push('500_diamonds');
-                if (unlocked.indexOf('first_game') !== -1 || games >= 1) earned.push('first_game');
-                if (unlocked.indexOf('first_win') !== -1 || wins >= 1) earned.push('first_win');
+                if (games >= 1) earned.push('first_game');
                 if (games >= 10) earned.push('10_games');
+                if (games >= 100) earned.push('100_games');
+                if (games >= 1000) earned.push('1000_games');
+                if (wins >= 1) earned.push('first_win');
                 if (wins >= 10) earned.push('10_wins');
-                if (games >= 50) earned.push('50_games');
-                if (wins >= 50) earned.push('50_wins');
+                if (wins >= 100) earned.push('100_wins');
+                if (wins >= 1000) earned.push('1000_wins');
+                if (score >= 100) earned.push('100_score');
+                if (score >= 1000) earned.push('1000_score');
+                if (score >= 10000) earned.push('10000_score');
+                if (score >= 100000) earned.push('100000_score');
                 
                 var allUnlocked = unlocked.concat(earned.filter(function(a) { return unlocked.indexOf(a) === -1; }));
 
@@ -1041,6 +1044,24 @@
                 grid.innerHTML = items;
             }
 
+            function animateTitle() {
+                var title = document.getElementById('headerTitle');
+                if (!title) return;
+                var settings = getSettings();
+                if (settings.animation === false) {
+                    title.classList.remove('animate-out');
+                    document.documentElement.setAttribute('data-animation', 'off');
+                    return;
+                }
+                document.documentElement.removeAttribute('data-animation');
+                function playIn() { title.classList.remove('animate-out'); }
+                function playOut() { title.classList.add('animate-out'); }
+                setInterval(function() {
+                    playIn();
+                    setTimeout(playOut, 10000);
+                }, 12400);
+            }
+
             async function loadProfile() {
                 var user = getEitaaUser();
                 var username = getUserId();
@@ -1049,7 +1070,6 @@
                     var fullName = (user.first_name || '') + ' ' + (user.last_name || '');
                     document.getElementById('profileName').textContent = fullName.trim() || 'کاربر';
                     document.getElementById('profileUsername').textContent = 'ID: ' + username;
-                    
                     if (user.photo_url) {
                         var avatar = document.getElementById('profileAvatar');
                         avatar.innerHTML = '<img src="' + user.photo_url + '" alt="آواتار">';
@@ -1058,24 +1078,49 @@
 
                 try {
                     var userData = await fetchData('getUser', {});
+                    var myScore = 0;
+                    
                     if (userData.ok && userData.data) {
                         var data = userData.data;
-                        animateCount(document.getElementById('totalScore'), data.score || 0, 1000);
+                        myScore = data.score || 0;
+                        animateCount(document.getElementById('totalScore'), myScore, 1000);
                         animateCount(document.getElementById('coinsValue'), data.coins || 0, 1000);
                         animateCount(document.getElementById('diamondsValue'), data.diamonds || 0, 1000);
                         renderAchievements(data);
-                        
-                        var nextLevelScore = Math.ceil((data.score || 0) / 1000) * 1000;
-                        var currentLevelProgress = ((data.score || 0) % 1000);
-                        var progressPercent = Math.round((currentLevelProgress / nextLevelScore) * 100);
-                        if (nextLevelScore === 0) progressPercent = 0;
-                        if (progressPercent > 100) progressPercent = 100;
-                        
-                        setTimeout(function() {
-                            document.getElementById('progressFill').style.width = progressPercent + '%';
-                            document.getElementById('progressText').textContent = progressPercent + '%';
-                        }, 300);
                     }
+
+                    var leaderboardData = await fetchData('leaderboard', { limit: 100 });
+                    var progressPercent = 0;
+                    var myRank = null;
+                    
+                    if (leaderboardData.ok && Array.isArray(leaderboardData.data)) {
+                        var list = leaderboardData.data;
+                        for (var i = 0; i < list.length; i++) {
+                            if (String(list[i].username) === String(username)) {
+                                myRank = i + 1;
+                                break;
+                            }
+                        }
+                        
+                        if (myRank === 1) {
+                            progressPercent = 100;
+                        } else if (myRank && myRank > 1) {
+                            var nextRankScore = list[myRank - 2].score || 0;
+                            if (nextRankScore > 0) {
+                                progressPercent = Math.round((myScore / nextRankScore) * 100);
+                            } else {
+                                progressPercent = 0;
+                            }
+                            if (progressPercent > 100) progressPercent = 100;
+                        } else {
+                            progressPercent = 0;
+                        }
+                    }
+
+                    setTimeout(function() {
+                        document.getElementById('progressFill').style.width = progressPercent + '%';
+                        document.getElementById('progressText').textContent = progressPercent + '%';
+                    }, 300);
 
                     var leagueData = await fetchData('getLeague', {});
                     var wins = 0, draws = 0, losses = 0;
@@ -1092,7 +1137,9 @@
                     var totalLeague = wins + draws + losses;
                     var winRate = totalLeague > 0 ? Math.round((wins / totalLeague) * 100) : 0;
                     animateCount(document.getElementById('winRate'), winRate, 800);
-                    document.getElementById('winRate').textContent += '%';
+                    setTimeout(function() {
+                        document.getElementById('winRate').textContent = winRate + '%';
+                    }, 900);
 
                     var gamesData = await fetchData('getGamesByPlayer', {});
                     if (gamesData.ok && Array.isArray(gamesData.data)) {
@@ -1101,7 +1148,7 @@
 
                         var gamesList = document.getElementById('gamesList');
                         if (games.length === 0) {
-                            gamesList.innerHTML = renderEmptyState('fa-gamepad', 'مسابقه‌ای یافت نشد');
+                            gamesList.innerHTML = renderEmptyState('مسابقه‌ای یافت نشد');
                         } else {
                             var items = games.slice(0, 10).reverse().map(function(game) {
                                 var isPlayer1 = String(game.player1) === String(username);
@@ -1119,7 +1166,7 @@
                             gamesList.innerHTML = items;
                         }
                     } else {
-                        document.getElementById('gamesList').innerHTML = renderEmptyState('fa-gamepad', 'مسابقه‌ای یافت نشد');
+                        document.getElementById('gamesList').innerHTML = renderEmptyState('مسابقه‌ای یافت نشد');
                     }
 
                 } catch(e) {
@@ -1139,6 +1186,7 @@
             }
 
             applyTheme();
+            animateTitle();
             loadProfile();
         })();
     </script>
