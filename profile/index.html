@@ -50,6 +50,12 @@
             transition: none !important;
         }
 
+        [data-animation="off"] .header-title .t-letter {
+            opacity: 1 !important;
+            transform: translateY(0) !important;
+            animation: none !important;
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -171,15 +177,58 @@
         }
 
         .header-title {
+            display: flex;
+            direction: ltr;
+            gap: 0;
             font-size: 18px;
             font-weight: 800;
             color: var(--dark);
             letter-spacing: -0.5px;
             transition: color 0.5s ease;
             font-family: 'IRANSans', Tahoma, sans-serif;
+            overflow: hidden;
         }
 
-        .header-title span {
+        .header-title .t-letter {
+            display: inline-block;
+            opacity: 0;
+            transform: translateY(-20px);
+            animation: titleLetterIn 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+        }
+
+        .header-title .t-letter:nth-child(1) { animation-delay: 0.1s; }
+        .header-title .t-letter:nth-child(2) { animation-delay: 0.15s; }
+        .header-title .t-letter:nth-child(3) { animation-delay: 0.2s; }
+        .header-title .t-letter:nth-child(4) { animation-delay: 0.25s; }
+        .header-title .t-letter:nth-child(5) { animation-delay: 0.3s; }
+        .header-title .t-letter:nth-child(6) { animation-delay: 0.35s; }
+        .header-title .t-letter:nth-child(7) { animation-delay: 0.4s; }
+
+        @keyframes titleLetterIn {
+            0% { opacity: 0; transform: translateY(-20px); }
+            60% { opacity: 1; transform: translateY(3px); }
+            80% { transform: translateY(-2px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        .header-title.animate-out .t-letter {
+            animation: titleLetterOut 0.4s ease forwards;
+        }
+
+        .header-title.animate-out .t-letter:nth-child(1) { animation-delay: 0s; }
+        .header-title.animate-out .t-letter:nth-child(2) { animation-delay: 0.05s; }
+        .header-title.animate-out .t-letter:nth-child(3) { animation-delay: 0.1s; }
+        .header-title.animate-out .t-letter:nth-child(4) { animation-delay: 0.15s; }
+        .header-title.animate-out .t-letter:nth-child(5) { animation-delay: 0.2s; }
+        .header-title.animate-out .t-letter:nth-child(6) { animation-delay: 0.25s; }
+        .header-title.animate-out .t-letter:nth-child(7) { animation-delay: 0.3s; }
+
+        @keyframes titleLetterOut {
+            0% { opacity: 1; transform: translateY(0); }
+            100% { opacity: 0; transform: translateY(-20px); }
+        }
+
+        .header-title .t-letter.t-accent {
             color: var(--primary);
         }
 
@@ -272,6 +321,12 @@
             flex-shrink: 0;
         }
 
+        .profile-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
         .profile-info {
             flex: 1;
             min-width: 0;
@@ -361,6 +416,58 @@
             font-weight: 600;
         }
 
+        .progress-card {
+            background: var(--card-bg);
+            border: var(--border);
+            border-radius: var(--radius);
+            padding: 14px;
+            margin-bottom: 16px;
+            box-shadow: var(--shadow);
+        }
+
+        .progress-title {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .progress-title i {
+            color: var(--primary);
+        }
+
+        .progress-bar-container {
+            background: var(--bg3);
+            border: var(--border);
+            border-radius: 20px;
+            height: 20px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: inset 2px 2px 0 rgba(0,0,0,0.1);
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            border-radius: 20px;
+            transition: width 1s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            width: 0%;
+        }
+
+        .progress-text {
+            position: absolute;
+            top: 50%;
+            right: 50%;
+            transform: translate(50%, -50%);
+            font-size: 9px;
+            font-weight: 700;
+            color: #fff;
+            z-index: 2;
+        }
+
         .league-card {
             background: var(--card-bg);
             border: var(--border);
@@ -398,20 +505,9 @@
             background: var(--bg2);
         }
 
-        .league-item.win {
-            background: #10b981;
-            color: #ffffff;
-        }
-
-        .league-item.draw {
-            background: #f59e0b;
-            color: #ffffff;
-        }
-
-        .league-item.loss {
-            background: #ef4444;
-            color: #ffffff;
-        }
+        .league-item.win { background: #10b981; color: #ffffff; }
+        .league-item.draw { background: #f59e0b; color: #ffffff; }
+        .league-item.loss { background: #ef4444; color: #ffffff; }
 
         .league-item-value {
             font-size: 18px;
@@ -426,7 +522,7 @@
             display: block;
         }
 
-        .chart-card {
+        .achievements-card {
             background: var(--card-bg);
             border: var(--border);
             border-radius: var(--radius);
@@ -435,7 +531,7 @@
             box-shadow: var(--shadow);
         }
 
-        .chart-title {
+        .achievements-title {
             font-size: 13px;
             font-weight: 700;
             color: var(--dark);
@@ -445,58 +541,45 @@
             gap: 8px;
         }
 
-        .chart-title i {
+        .achievements-title i {
             color: var(--primary);
         }
 
-        .chart-container {
-            display: flex;
-            align-items: flex-end;
-            justify-content: center;
-            gap: 16px;
-            height: 120px;
-            padding: 8px;
+        .achievements-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
         }
 
-        .chart-bar-wrapper {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 6px;
-            flex: 1;
-            max-width: 70px;
-        }
-
-        .chart-bar {
-            width: 100%;
-            border-radius: var(--radius);
+        .achievement-item {
+            text-align: center;
+            padding: 10px 4px;
             border: var(--border);
-            transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-            min-height: 8px;
+            border-radius: var(--radius);
+            background: var(--bg2);
+            transition: all 0.3s ease;
         }
 
-        .chart-bar.win {
-            background: #10b981;
+        .achievement-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 3px 3px 0 #000000;
         }
 
-        .chart-bar.draw {
-            background: #f59e0b;
+        .achievement-icon {
+            font-size: 24px;
+            display: block;
+            margin-bottom: 4px;
         }
 
-        .chart-bar.loss {
-            background: #ef4444;
-        }
-
-        .chart-bar-label {
-            font-size: 9px;
-            font-weight: 600;
-            color: var(--dark);
-        }
-
-        .chart-bar-value {
-            font-size: 11px;
+        .achievement-name {
+            font-size: 8px;
             font-weight: 700;
             color: var(--dark);
+        }
+
+        .achievement-item.locked {
+            opacity: 0.4;
+            filter: grayscale(1);
         }
 
         .games-history-card {
@@ -547,20 +630,9 @@
             border: var(--border);
         }
 
-        .game-score.win {
-            background: #10b981;
-            color: #ffffff;
-        }
-
-        .game-score.loss {
-            background: #ef4444;
-            color: #ffffff;
-        }
-
-        .game-score.draw {
-            background: #f59e0b;
-            color: #ffffff;
-        }
+        .game-score.win { background: #10b981; color: #ffffff; }
+        .game-score.loss { background: #ef4444; color: #ffffff; }
+        .game-score.draw { background: #f59e0b; color: #ffffff; }
 
         .empty-state {
             text-align: center;
@@ -641,6 +713,7 @@
                 width: 44px;
                 height: 44px;
             }
+            .achievements-grid { grid-template-columns: repeat(3, 1fr); }
         }
     </style>
 </head>
@@ -656,7 +729,15 @@
                     <img src="https://cdn.imgurl.ir/uploads/f30974_InShot_20260821_174101103.png" alt="Quizico">
                 </div>
                 <div>
-                    <div class="header-title">Quiz<span>ico</span></div>
+                    <div class="header-title" id="headerTitle">
+                        <span class="t-letter">Q</span>
+                        <span class="t-letter">u</span>
+                        <span class="t-letter">i</span>
+                        <span class="t-letter">z</span>
+                        <span class="t-letter t-accent">i</span>
+                        <span class="t-letter t-accent">c</span>
+                        <span class="t-letter t-accent">o</span>
+                    </div>
                     <div class="header-subtitle">پروفایل من</div>
                 </div>
             </div>
@@ -673,7 +754,7 @@
 
             <div class="profile-header-card">
                 <div class="profile-top">
-                    <div class="profile-avatar">
+                    <div class="profile-avatar" id="profileAvatar">
                         <i class="fa-solid fa-user"></i>
                     </div>
                     <div class="profile-info">
@@ -705,6 +786,17 @@
                 </div>
             </div>
 
+            <div class="progress-card">
+                <div class="progress-title">
+                    <i class="fa-solid fa-ranking-star"></i>
+                    پیشرفت به رتبه بعدی
+                </div>
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill" id="progressFill"></div>
+                    <div class="progress-text" id="progressText">0%</div>
+                </div>
+            </div>
+
             <div class="league-card">
                 <div class="league-title">
                     <i class="fa-solid fa-trophy"></i>
@@ -726,32 +818,16 @@
                 </div>
             </div>
 
-            <div class="chart-card">
-                <div class="chart-title">
-                    <i class="fa-solid fa-chart-column"></i>
-                    نمودار عملکرد
+            <div class="achievements-card">
+                <div class="achievements-title">
+                    <i class="fa-solid fa-award"></i>
+                    افتخارات
                 </div>
-                <div class="chart-container">
-                    <div class="chart-bar-wrapper">
-                        <div class="chart-bar win" id="winBar" style="height: 8px;"></div>
-                        <span class="chart-bar-value" id="winBarValue">0</span>
-                        <span class="chart-bar-label">برد</span>
-                    </div>
-                    <div class="chart-bar-wrapper">
-                        <div class="chart-bar draw" id="drawBar" style="height: 8px;"></div>
-                        <span class="chart-bar-value" id="drawBarValue">0</span>
-                        <span class="chart-bar-label">مساوی</span>
-                    </div>
-                    <div class="chart-bar-wrapper">
-                        <div class="chart-bar loss" id="lossBar" style="height: 8px;"></div>
-                        <span class="chart-bar-value" id="lossBarValue">0</span>
-                        <span class="chart-bar-label">باخت</span>
-                    </div>
-                </div>
+                <div class="achievements-grid" id="achievementsGrid"></div>
             </div>
 
             <div class="games-history-card">
-                <div class="chart-title">
+                <div class="achievements-title">
                     <i class="fa-solid fa-clock-rotate-left"></i>
                     تاریخچه بازی‌ها
                 </div>
@@ -801,20 +877,11 @@
             }
             createParticles();
 
-            function savePage(page) {
-                localStorage.setItem('lastPage', page);
-            }
-
             function getSettings() {
                 try {
                     var raw = localStorage.getItem('quizicoSettings');
                     if (!raw) {
-                        var defaultSettings = {
-                            theme: 'light',
-                            primaryColor: '#a855f7',
-                            animation: true,
-                            haptic: true
-                        };
+                        var defaultSettings = { theme: 'light', primaryColor: '#a855f7', animation: true, haptic: true };
                         localStorage.setItem('quizicoSettings', JSON.stringify(defaultSettings));
                         return defaultSettings;
                     }
@@ -831,11 +898,7 @@
 
             function hexToRgb(hex) {
                 var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-                return result ? {
-                    r: parseInt(result[1], 16),
-                    g: parseInt(result[2], 16),
-                    b: parseInt(result[3], 16)
-                } : { r: 168, g: 85, b: 247 };
+                return result ? { r: parseInt(result[1], 16), g: parseInt(result[2], 16), b: parseInt(result[3], 16) } : { r: 168, g: 85, b: 247 };
             }
 
             function shadeColor(color, percent) {
@@ -850,9 +913,7 @@
                 var settings = getSettings();
                 var theme = settings.theme || 'light';
                 var primaryColor = settings.primaryColor || '#a855f7';
-
                 document.documentElement.setAttribute('data-theme', theme);
-
                 if (theme === 'dark') {
                     var darkPrimary = shadeColor(primaryColor, 40);
                     document.documentElement.style.setProperty('--primary', darkPrimary);
@@ -861,13 +922,11 @@
                     document.documentElement.style.setProperty('--primary', primaryColor);
                     document.documentElement.style.setProperty('--primary-rgb', hexToRgb(primaryColor).r + ', ' + hexToRgb(primaryColor).g + ', ' + hexToRgb(primaryColor).b);
                 }
-
                 if (settings.animation === false) {
                     document.documentElement.setAttribute('data-animation', 'off');
                 } else {
                     document.documentElement.removeAttribute('data-animation');
                 }
-
                 if (webApp) {
                     webApp.setHeaderColor('bg_color');
                     webApp.setBackgroundColor('bg_color');
@@ -884,10 +943,7 @@
             function getUserId() {
                 var user = getEitaaUser();
                 if (!user) return '';
-                
-                if (typeof user.id === 'number') {
-                    return user.id.toString();
-                }
+                if (typeof user.id === 'number') return user.id.toString();
                 return String(user.id || '');
             }
 
@@ -895,64 +951,94 @@
                 try {
                     var username = getUserId();
                     var initData = webApp?.initData || '';
-
-                    var payload = {
-                        action: action,
-                        username: username,
-                        initData: initData
-                    };
-
+                    var payload = { action: action, username: username, initData: initData };
                     if (params) {
                         for (var key in params) {
-                            if (params.hasOwnProperty(key)) {
-                                payload[key] = params[key];
-                            }
+                            if (params.hasOwnProperty(key)) payload[key] = params[key];
                         }
                     }
-
-                    console.log('Username:', username);
-                    console.log('Sending payload:', payload);
-
                     var response = await fetch(API_URL, {
                         method: 'POST',
-                        headers: { 
-                            'Content-Type': 'text/plain;charset=utf-8'
-                        },
+                        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
                         body: JSON.stringify(payload)
                     });
-
                     var result = await response.json();
-                    console.log('Response:', result);
                     return result;
-                    
                 } catch(e) {
                     console.error('Fetch error:', e);
                     return { ok: false, error: 'Network error: ' + e.message };
                 }
             }
 
-            function updateCharts(wins, draws, losses) {
-                var total = wins + draws + losses;
-                if (total === 0) return;
-
-                var maxVal = Math.max(wins, draws, losses);
-                var maxHeight = 90;
-
-                var winHeight = (wins / maxVal) * maxHeight;
-                var drawHeight = (draws / maxVal) * maxHeight;
-                var lossHeight = (losses / maxVal) * maxHeight;
-
-                document.getElementById('winBar').style.height = Math.max(winHeight, 8) + 'px';
-                document.getElementById('drawBar').style.height = Math.max(drawHeight, 8) + 'px';
-                document.getElementById('lossBar').style.height = Math.max(lossHeight, 8) + 'px';
-
-                document.getElementById('winBarValue').textContent = wins;
-                document.getElementById('drawBarValue').textContent = draws;
-                document.getElementById('lossBarValue').textContent = losses;
+            function animateCount(element, target, duration) {
+                var start = 0;
+                var startTime = null;
+                function step(timestamp) {
+                    if (!startTime) startTime = timestamp;
+                    var progress = Math.min((timestamp - startTime) / duration, 1);
+                    var eased = 1 - Math.pow(1 - progress, 3);
+                    element.textContent = Math.floor(eased * target);
+                    if (progress < 1) {
+                        requestAnimationFrame(step);
+                    } else {
+                        element.textContent = target;
+                    }
+                }
+                requestAnimationFrame(step);
             }
 
             function renderEmptyState(icon, text) {
                 return '<div class="empty-state"><i class="fa-solid ' + icon + '"></i><p>' + text + '</p></div>';
+            }
+
+            var allAchievements = [
+                { id: 'first_game', name: 'اولین بازی', icon: '🎮' },
+                { id: 'first_win', name: 'اولین برد', icon: '🏆' },
+                { id: '10_games', name: '۱۰ بازی', icon: '🔥' },
+                { id: '10_wins', name: '۱۰ برد', icon: '⚡' },
+                { id: '50_games', name: '۵۰ بازی', icon: '💎' },
+                { id: '50_wins', name: '۵۰ برد', icon: '👑' },
+                { id: '1000_score', name: '۱۰۰۰ امتیاز', icon: '⭐' },
+                { id: '5000_score', name: '۵۰۰۰ امتیاز', icon: '🌟' },
+                { id: '100_coins', name: '۱۰۰ سکه', icon: '🪙' },
+                { id: '500_coins', name: '۵۰۰ سکه', icon: '💰' },
+                { id: '100_diamonds', name: '۱۰۰ الماس', icon: '💠' },
+                { id: '500_diamonds', name: '۵۰۰ الماس', icon: '🔷' }
+            ];
+
+            function renderAchievements(userData) {
+                var grid = document.getElementById('achievementsGrid');
+                var stats = {};
+                try { stats = JSON.parse(userData.stats || '{}'); } catch(e) {}
+                
+                var unlocked = stats.achievements || [];
+                var wins = stats.wins || parseInt(userData.score > 0 ? 1 : 0);
+                var games = stats.games || 0;
+                
+                var earned = [];
+                if (userData.score >= 1000) earned.push('1000_score');
+                if (userData.score >= 5000) earned.push('5000_score');
+                if (userData.coins >= 100) earned.push('100_coins');
+                if (userData.coins >= 500) earned.push('500_coins');
+                if (userData.diamonds >= 100) earned.push('100_diamonds');
+                if (userData.diamonds >= 500) earned.push('500_diamonds');
+                if (unlocked.indexOf('first_game') !== -1 || games >= 1) earned.push('first_game');
+                if (unlocked.indexOf('first_win') !== -1 || wins >= 1) earned.push('first_win');
+                if (games >= 10) earned.push('10_games');
+                if (wins >= 10) earned.push('10_wins');
+                if (games >= 50) earned.push('50_games');
+                if (wins >= 50) earned.push('50_wins');
+                
+                var allUnlocked = unlocked.concat(earned.filter(function(a) { return unlocked.indexOf(a) === -1; }));
+
+                var items = allAchievements.map(function(ach) {
+                    var isUnlocked = allUnlocked.indexOf(ach.id) !== -1;
+                    return '<div class="achievement-item' + (isUnlocked ? '' : ' locked') + '">' +
+                        '<span class="achievement-icon">' + ach.icon + '</span>' +
+                        '<span class="achievement-name">' + ach.name + '</span></div>';
+                }).join('');
+
+                grid.innerHTML = items;
             }
 
             async function loadProfile() {
@@ -963,70 +1049,73 @@
                     var fullName = (user.first_name || '') + ' ' + (user.last_name || '');
                     document.getElementById('profileName').textContent = fullName.trim() || 'کاربر';
                     document.getElementById('profileUsername').textContent = 'ID: ' + username;
+                    
+                    if (user.photo_url) {
+                        var avatar = document.getElementById('profileAvatar');
+                        avatar.innerHTML = '<img src="' + user.photo_url + '" alt="آواتار">';
+                    }
                 }
 
                 try {
                     var userData = await fetchData('getUser', {});
                     if (userData.ok && userData.data) {
                         var data = userData.data;
-                        document.getElementById('totalScore').textContent = data.score || 0;
-                        document.getElementById('coinsValue').textContent = data.coins || 0;
-                        document.getElementById('diamondsValue').textContent = data.diamonds || 0;
+                        animateCount(document.getElementById('totalScore'), data.score || 0, 1000);
+                        animateCount(document.getElementById('coinsValue'), data.coins || 0, 1000);
+                        animateCount(document.getElementById('diamondsValue'), data.diamonds || 0, 1000);
+                        renderAchievements(data);
+                        
+                        var nextLevelScore = Math.ceil((data.score || 0) / 1000) * 1000;
+                        var currentLevelProgress = ((data.score || 0) % 1000);
+                        var progressPercent = Math.round((currentLevelProgress / nextLevelScore) * 100);
+                        if (nextLevelScore === 0) progressPercent = 0;
+                        if (progressPercent > 100) progressPercent = 100;
+                        
+                        setTimeout(function() {
+                            document.getElementById('progressFill').style.width = progressPercent + '%';
+                            document.getElementById('progressText').textContent = progressPercent + '%';
+                        }, 300);
                     }
 
                     var leagueData = await fetchData('getLeague', {});
-                    var wins = 0,
-                        draws = 0,
-                        losses = 0;
-
+                    var wins = 0, draws = 0, losses = 0;
                     if (leagueData.ok && leagueData.data) {
                         wins = leagueData.data.wins || 0;
                         draws = leagueData.data.draws || 0;
                         losses = leagueData.data.losses || 0;
                     }
 
-                    document.getElementById('winsCount').textContent = wins;
-                    document.getElementById('drawsCount').textContent = draws;
-                    document.getElementById('lossesCount').textContent = losses;
-
-                    updateCharts(wins, draws, losses);
+                    animateCount(document.getElementById('winsCount'), wins, 800);
+                    animateCount(document.getElementById('drawsCount'), draws, 800);
+                    animateCount(document.getElementById('lossesCount'), losses, 800);
 
                     var totalLeague = wins + draws + losses;
                     var winRate = totalLeague > 0 ? Math.round((wins / totalLeague) * 100) : 0;
-                    document.getElementById('winRate').textContent = winRate + '%';
+                    animateCount(document.getElementById('winRate'), winRate, 800);
+                    document.getElementById('winRate').textContent += '%';
 
                     var gamesData = await fetchData('getGamesByPlayer', {});
                     if (gamesData.ok && Array.isArray(gamesData.data)) {
                         var games = gamesData.data;
-                        document.getElementById('totalGames').textContent = games.length;
+                        animateCount(document.getElementById('totalGames'), games.length, 800);
 
                         var gamesList = document.getElementById('gamesList');
-
                         if (games.length === 0) {
                             gamesList.innerHTML = renderEmptyState('fa-gamepad', 'مسابقه‌ای یافت نشد');
                         } else {
                             var items = games.slice(0, 10).reverse().map(function(game) {
                                 var isPlayer1 = String(game.player1) === String(username);
                                 var opponent = isPlayer1 ? game.player2 : game.player1;
-
                                 var resultText = 'مساوی';
                                 var resultClass = 'draw';
-
                                 if (game.status === 'finished') {
-                                    if (isPlayer1) {
-                                        resultText = 'برد';
-                                        resultClass = 'win';
-                                    } else {
-                                        resultText = 'باخت';
-                                        resultClass = 'loss';
-                                    }
+                                    if (isPlayer1) { resultText = 'برد'; resultClass = 'win'; }
+                                    else { resultText = 'باخت'; resultClass = 'loss'; }
                                 }
-
                                 return '<div class="game-item">' +
                                     '<div class="game-players"><i class="fa-solid fa-user"></i><span>' + (opponent || 'ناشناس') + '</span></div>' +
                                     '<span class="game-score ' + resultClass + '">' + resultText + '</span></div>';
                             }).join('');
-
                             gamesList.innerHTML = items;
                         }
                     } else {
@@ -1040,8 +1129,6 @@
                     document.getElementById('profileContent').classList.add('show');
                 }
             }
-
-            window.savePage = savePage;
 
             if (webApp) {
                 webApp.ready();
