@@ -50,6 +50,12 @@
             transition: none !important;
         }
 
+        [data-animation="off"] .header-title .t-letter {
+            opacity: 1 !important;
+            transform: translateY(0) !important;
+            animation: none !important;
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -159,10 +165,6 @@
             transition: transform 0.3s ease, background 0.5s ease;
         }
 
-        .header-logo:hover {
-            transform: scale(1.05) rotate(-3deg);
-        }
-
         .header-logo img {
             width: 95%;
             height: 95%;
@@ -171,15 +173,50 @@
         }
 
         .header-title {
+            display: flex;
+            direction: ltr;
+            gap: 0;
             font-size: 18px;
             font-weight: 800;
             color: var(--dark);
             letter-spacing: -0.5px;
             transition: color 0.5s ease;
             font-family: 'IRANSans', Tahoma, sans-serif;
+            overflow: hidden;
         }
 
-        .header-title span {
+        .header-title .t-letter {
+            display: inline-block;
+            opacity: 0;
+            transform: translateY(-20px);
+            animation: titleLetterIn 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+        }
+
+        .header-title .t-letter:nth-child(1) { animation-delay: 0.1s; }
+        .header-title .t-letter:nth-child(2) { animation-delay: 0.15s; }
+        .header-title .t-letter:nth-child(3) { animation-delay: 0.2s; }
+        .header-title .t-letter:nth-child(4) { animation-delay: 0.25s; }
+        .header-title .t-letter:nth-child(5) { animation-delay: 0.3s; }
+        .header-title .t-letter:nth-child(6) { animation-delay: 0.35s; }
+        .header-title .t-letter:nth-child(7) { animation-delay: 0.4s; }
+
+        @keyframes titleLetterIn {
+            0% { opacity: 0; transform: translateY(-20px); }
+            60% { opacity: 1; transform: translateY(3px); }
+            80% { transform: translateY(-2px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        .header-title.animate-out .t-letter {
+            animation: titleLetterOut 0.4s ease forwards;
+        }
+
+        @keyframes titleLetterOut {
+            0% { opacity: 1; transform: translateY(0); }
+            100% { opacity: 0; transform: translateY(-20px); }
+        }
+
+        .header-title .t-letter.t-accent {
             color: var(--primary);
         }
 
@@ -240,6 +277,40 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
+        .search-box {
+            margin-bottom: 12px;
+            position: relative;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 10px 40px 10px 12px;
+            border: var(--border);
+            border-radius: var(--radius);
+            background: var(--card-bg);
+            color: var(--text);
+            font-family: 'IRANSans', Tahoma, sans-serif;
+            font-size: 11px;
+            box-shadow: var(--shadow);
+            transition: all 0.3s ease;
+            outline: none;
+        }
+
+        .search-box input:focus {
+            transform: translateY(-2px);
+            box-shadow: 4px 4px 0 #000000;
+            border-color: var(--primary);
+        }
+
+        .search-box i {
+            position: absolute;
+            top: 50%;
+            right: 12px;
+            transform: translateY(-50%);
+            color: var(--text-light);
+            font-size: 14px;
+        }
+
         .my-rank-card {
             background: linear-gradient(135deg, var(--primary), var(--primary-dark));
             border: var(--border);
@@ -250,6 +321,12 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
+            animation: slideUpCard 0.5s ease backwards;
+        }
+
+        @keyframes slideUpCard {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .my-rank-left {
@@ -305,7 +382,19 @@
             border-radius: var(--radius);
             box-shadow: var(--shadow);
             transition: all 0.3s ease;
+            animation: slideUpCard 0.4s ease backwards;
         }
+
+        .rank-item:nth-child(1) { animation-delay: 0.05s; }
+        .rank-item:nth-child(2) { animation-delay: 0.1s; }
+        .rank-item:nth-child(3) { animation-delay: 0.15s; }
+        .rank-item:nth-child(4) { animation-delay: 0.2s; }
+        .rank-item:nth-child(5) { animation-delay: 0.25s; }
+        .rank-item:nth-child(6) { animation-delay: 0.3s; }
+        .rank-item:nth-child(7) { animation-delay: 0.35s; }
+        .rank-item:nth-child(8) { animation-delay: 0.4s; }
+        .rank-item:nth-child(9) { animation-delay: 0.45s; }
+        .rank-item:nth-child(10) { animation-delay: 0.5s; }
 
         .rank-item:hover {
             transform: translateX(-3px);
@@ -342,6 +431,13 @@
             font-size: 14px;
             color: var(--primary);
             flex-shrink: 0;
+            overflow: hidden;
+        }
+
+        .rank-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
 
         .rank-info {
@@ -384,11 +480,12 @@
             box-shadow: var(--shadow);
         }
 
-        .rank-empty i {
-            font-size: 40px;
+        .rank-empty img {
+            width: 80px;
+            height: 80px;
+            object-fit: contain;
             display: block;
-            margin-bottom: 10px;
-            color: var(--primary-light);
+            margin: 0 auto 10px;
         }
 
         .bottom-nav {
@@ -473,7 +570,15 @@
                     <img src="https://cdn.imgurl.ir/uploads/f30974_InShot_20260821_174101103.png" alt="Quizico">
                 </div>
                 <div>
-                    <div class="header-title">Quiz<span>ico</span></div>
+                    <div class="header-title" id="headerTitle">
+                        <span class="t-letter">Q</span>
+                        <span class="t-letter">u</span>
+                        <span class="t-letter">i</span>
+                        <span class="t-letter">z</span>
+                        <span class="t-letter t-accent">i</span>
+                        <span class="t-letter t-accent">c</span>
+                        <span class="t-letter t-accent">o</span>
+                    </div>
                     <div class="header-subtitle">رتبه‌بندی</div>
                 </div>
             </div>
@@ -488,6 +593,11 @@
 
         <div class="ranking-content" id="rankingContent">
 
+            <div class="search-box">
+                <i class="fa-solid fa-search"></i>
+                <input type="text" id="searchInput" placeholder="جستجوی کاربر..." oninput="filterRankings()">
+            </div>
+
             <div class="my-rank-card" id="myRankCard">
                 <div class="my-rank-left">
                     <div class="my-rank-number" id="myRankNumber">-</div>
@@ -496,7 +606,7 @@
                         <div class="my-rank-score" id="myRankScore">امتیاز: 0</div>
                     </div>
                 </div>
-                <div class="my-rank-badge" id="myRankBadge">رتبه شما</div>
+                <div class="my-rank-badge">رتبه شما</div>
             </div>
 
             <div class="rank-list" id="rankList"></div>
@@ -527,6 +637,8 @@
         (function() {
             var webApp = window.Eitaa?.WebApp;
             var API_URL = 'https://script.google.com/macros/s/AKfycby39_m_-w42F1ps3z21aAW2jMXjgmDJjrPD6CfrLLczg-KPk1cbyXcVnUjaeFQ4TIP9ww/exec';
+            var SAD_IMAGE = 'https://cdn.imgurl.ir/uploads/g58935_InShot_20260822_140943752.png';
+            var allRankings = [];
 
             function createParticles() {
                 var container = document.getElementById('particles');
@@ -548,12 +660,7 @@
                 try {
                     var raw = localStorage.getItem('quizicoSettings');
                     if (!raw) {
-                        var defaultSettings = {
-                            theme: 'light',
-                            primaryColor: '#a855f7',
-                            animation: true,
-                            haptic: true
-                        };
+                        var defaultSettings = { theme: 'light', primaryColor: '#a855f7', animation: true, haptic: true };
                         localStorage.setItem('quizicoSettings', JSON.stringify(defaultSettings));
                         return defaultSettings;
                     }
@@ -570,11 +677,7 @@
 
             function hexToRgb(hex) {
                 var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-                return result ? {
-                    r: parseInt(result[1], 16),
-                    g: parseInt(result[2], 16),
-                    b: parseInt(result[3], 16)
-                } : { r: 168, g: 85, b: 247 };
+                return result ? { r: parseInt(result[1], 16), g: parseInt(result[2], 16), b: parseInt(result[3], 16) } : { r: 168, g: 85, b: 247 };
             }
 
             function shadeColor(color, percent) {
@@ -589,9 +692,7 @@
                 var settings = getSettings();
                 var theme = settings.theme || 'light';
                 var primaryColor = settings.primaryColor || '#a855f7';
-
                 document.documentElement.setAttribute('data-theme', theme);
-
                 if (theme === 'dark') {
                     var darkPrimary = shadeColor(primaryColor, 40);
                     document.documentElement.style.setProperty('--primary', darkPrimary);
@@ -600,13 +701,11 @@
                     document.documentElement.style.setProperty('--primary', primaryColor);
                     document.documentElement.style.setProperty('--primary-rgb', hexToRgb(primaryColor).r + ', ' + hexToRgb(primaryColor).g + ', ' + hexToRgb(primaryColor).b);
                 }
-
                 if (settings.animation === false) {
                     document.documentElement.setAttribute('data-animation', 'off');
                 } else {
                     document.documentElement.removeAttribute('data-animation');
                 }
-
                 if (webApp) {
                     webApp.setHeaderColor('bg_color');
                     webApp.setBackgroundColor('bg_color');
@@ -623,10 +722,7 @@
             function getUserId() {
                 var user = getEitaaUser();
                 if (!user) return '';
-                
-                if (typeof user.id === 'number') {
-                    return user.id.toString();
-                }
+                if (typeof user.id === 'number') return user.id.toString();
                 return String(user.id || '');
             }
 
@@ -634,32 +730,19 @@
                 try {
                     var username = getUserId();
                     var initData = webApp?.initData || '';
-
-                    var payload = {
-                        action: action,
-                        username: username,
-                        initData: initData
-                    };
-
+                    var payload = { action: action, username: username, initData: initData };
                     if (params) {
                         for (var key in params) {
-                            if (params.hasOwnProperty(key)) {
-                                payload[key] = params[key];
-                            }
+                            if (params.hasOwnProperty(key)) payload[key] = params[key];
                         }
                     }
-
                     var response = await fetch(API_URL, {
                         method: 'POST',
-                        headers: { 
-                            'Content-Type': 'text/plain;charset=utf-8'
-                        },
+                        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
                         body: JSON.stringify(payload)
                     });
-
                     var result = await response.json();
                     return result;
-                    
                 } catch(e) {
                     console.error('Fetch error:', e);
                     return { ok: false, error: 'Network error: ' + e.message };
@@ -680,8 +763,75 @@
                 return '';
             }
 
-            function renderEmptyState(icon, text) {
-                return '<div class="rank-empty"><i class="fa-solid ' + icon + '"></i><p>' + text + '</p></div>';
+            function renderEmptyState(text) {
+                return '<div class="rank-empty"><img src="' + SAD_IMAGE + '" alt=""><p>' + text + '</p></div>';
+            }
+
+            function renderRankList(list, myUsername) {
+                var rankList = document.getElementById('rankList');
+                if (list.length === 0) {
+                    rankList.innerHTML = renderEmptyState('کاربری یافت نشد');
+                    return;
+                }
+
+                var items = list.map(function(item, index) {
+                    var isMe = String(item.username) === String(myUsername);
+                    var rankDisplay = getRankIcon(index);
+                    var rankClass = getRankClass(index);
+                    var score = item.score || 0;
+                    var avatarHtml = item.photo_url ? 
+                        '<img src="' + item.photo_url + '" alt="">' : 
+                        '<i class="fa-solid fa-user"></i>';
+
+                    return '<div class="rank-item' + (isMe ? ' is-me' : '') + '">' +
+                        '<div class="rank-number ' + rankClass + '">' + rankDisplay + '</div>' +
+                        '<div class="rank-avatar">' + avatarHtml + '</div>' +
+                        '<div class="rank-info">' +
+                        '<div class="rank-name">' + (item.name || item.username || 'ناشناس') + '</div>' +
+                        '<div class="rank-score">امتیاز: ' + score + '</div>' +
+                        '</div>' +
+                        (isMe ? '<span class="rank-badge-me">شما</span>' : '') +
+                        '</div>';
+                }).join('');
+
+                rankList.innerHTML = items;
+            }
+
+            window.filterRankings = function() {
+                var searchTerm = document.getElementById('searchInput').value.toLowerCase().trim();
+                var user = getEitaaUser();
+                var myUsername = getUserId();
+                
+                if (!searchTerm) {
+                    renderRankList(allRankings, myUsername);
+                    return;
+                }
+                
+                var filtered = allRankings.filter(function(item) {
+                    var name = (item.name || '').toLowerCase();
+                    var username = String(item.username || '').toLowerCase();
+                    return name.includes(searchTerm) || username.includes(searchTerm);
+                });
+                
+                renderRankList(filtered, myUsername);
+            };
+
+            function animateTitle() {
+                var title = document.getElementById('headerTitle');
+                if (!title) return;
+                var settings = getSettings();
+                if (settings.animation === false) {
+                    title.classList.remove('animate-out');
+                    document.documentElement.setAttribute('data-animation', 'off');
+                    return;
+                }
+                document.documentElement.removeAttribute('data-animation');
+                function playIn() { title.classList.remove('animate-out'); }
+                function playOut() { title.classList.add('animate-out'); }
+                setInterval(function() {
+                    playIn();
+                    setTimeout(playOut, 10000);
+                }, 12400);
             }
 
             async function loadRanking() {
@@ -690,61 +840,29 @@
                 var myName = user ? (user.first_name || '') + ' ' + (user.last_name || '') : 'کاربر';
 
                 try {
-                    var result = await fetchData('leaderboard', { limit: 30 });
+                    var result = await fetchData('leaderboard', { limit: 100 });
 
                     if (result.ok && Array.isArray(result.data) && result.data.length > 0) {
-                        var list = result.data;
+                        allRankings = result.data;
                         var myRank = null;
                         var myScore = 0;
 
-                        var rankList = document.getElementById('rankList');
-                        var items = list.map(function(item, index) {
-                            var isMe = String(item.username) === String(myUsername);
-                            var rankNum = index + 1;
-                            var rankDisplay = getRankIcon(index);
-                            var rankClass = getRankClass(index);
-                            var score = item.score || 0;
-
-                            if (isMe) {
-                                myRank = rankNum;
-                                myScore = score;
-                            }
-
-                            return '<div class="rank-item' + (isMe ? ' is-me' : '') + '">' +
-                                '<div class="rank-number ' + rankClass + '">' + rankDisplay + '</div>' +
-                                '<div class="rank-avatar"><i class="fa-solid fa-user"></i></div>' +
-                                '<div class="rank-info">' +
-                                '<div class="rank-name">' + (item.name || item.username || 'ناشناس') + '</div>' +
-                                '<div class="rank-score">امتیاز: ' + score + '</div>' +
-                                '</div>' +
-                                (isMe ? '<span class="rank-badge-me">شما</span>' : '') +
-                                '</div>';
-                        }).join('');
-
-                        rankList.innerHTML = items;
-
-                        if (myRank === null) {
-                            var userResult = await fetchData('getUser', {});
-                            if (userResult.ok && userResult.data) {
-                                myScore = userResult.data.score || 0;
-                                var allUsers = await fetchData('leaderboard', { limit: 100 });
-                                if (allUsers.ok && Array.isArray(allUsers.data)) {
-                                    for (var i = 0; i < allUsers.data.length; i++) {
-                                        if (String(allUsers.data[i].username) === String(myUsername)) {
-                                            myRank = i + 1;
-                                            break;
-                                        }
-                                    }
-                                }
+                        for (var i = 0; i < allRankings.length; i++) {
+                            if (String(allRankings[i].username) === String(myUsername)) {
+                                myRank = i + 1;
+                                myScore = allRankings[i].score || 0;
+                                break;
                             }
                         }
+
+                        renderRankList(allRankings, myUsername);
 
                         document.getElementById('myRankNumber').textContent = myRank ? '#' + myRank : '-';
                         document.getElementById('myRankName').textContent = myName.trim() || 'شما';
                         document.getElementById('myRankScore').textContent = 'امتیاز: ' + myScore;
 
                     } else {
-                        document.getElementById('rankList').innerHTML = renderEmptyState('fa-trophy', 'هیچ کاربری در رتبه‌بندی ثبت نشده');
+                        document.getElementById('rankList').innerHTML = renderEmptyState('کاربری یافت نشد');
                         document.getElementById('myRankNumber').textContent = '-';
                         document.getElementById('myRankName').textContent = myName.trim() || 'شما';
                         document.getElementById('myRankScore').textContent = 'امتیاز: 0';
@@ -752,7 +870,7 @@
 
                 } catch(e) {
                     console.error('Error loading ranking:', e);
-                    document.getElementById('rankList').innerHTML = renderEmptyState('fa-triangle-exclamation', 'خطا در دریافت اطلاعات');
+                    document.getElementById('rankList').innerHTML = renderEmptyState('خطا در دریافت اطلاعات');
                 } finally {
                     document.getElementById('loaderWrapper').style.display = 'none';
                     document.getElementById('rankingContent').classList.add('show');
@@ -768,6 +886,7 @@
             }
 
             applyTheme();
+            animateTitle();
             loadRanking();
         })();
     </script>
