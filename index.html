@@ -14,13 +14,13 @@
 
         body {
             font-family: 'IRANSans', Tahoma, sans-serif;
-            background: #faf5ff;
+            background: linear-gradient(135deg, #faf5ff 0%, #f3e8ff 40%, #e9d5ff 80%);
             min-height: 100vh;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            background: linear-gradient(135deg, #faf5ff 0%, #f3e8ff 40%, #e9d5ff 80%);
+            overflow: hidden;
         }
 
         .container {
@@ -28,49 +28,101 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            gap: 24px;
+            gap: 20px;
             padding: 20px;
         }
 
-        .loader {
-            width: 48px;
-            height: 48px;
-            border: 4px solid #e9d5ff;
-            border-top-color: #a855f7;
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
+        .loader-letters {
+            display: flex;
+            gap: 6px;
+            direction: ltr;
         }
 
-        @keyframes spin {
-            to { transform: rotate(360deg); }
+        .letter {
+            font-size: 42px;
+            font-weight: 900;
+            color: #a855f7;
+            opacity: 0;
+            transform: translateY(-40px) scale(0.5);
+            animation: letterJump 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+            text-shadow: 3px 3px 0 rgba(0,0,0,0.15);
+            font-family: 'IRANSans', Tahoma, sans-serif;
+        }
+
+        .letter:nth-child(1) { animation-delay: 0.1s; }
+        .letter:nth-child(2) { animation-delay: 0.2s; }
+        .letter:nth-child(3) { animation-delay: 0.3s; }
+        .letter:nth-child(4) { animation-delay: 0.4s; }
+        .letter:nth-child(5) { animation-delay: 0.5s; }
+        .letter:nth-child(6) { animation-delay: 0.6s; }
+        .letter:nth-child(7) { animation-delay: 0.7s; }
+
+        @keyframes letterJump {
+            0% {
+                opacity: 0;
+                transform: translateY(-40px) scale(0.5);
+            }
+            50% {
+                opacity: 1;
+                transform: translateY(10px) scale(1.1);
+            }
+            70% {
+                transform: translateY(-5px) scale(0.95);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
         }
 
         .text {
-            font-size: 16px;
+            font-size: 15px;
             font-weight: 600;
             color: #4a4458;
             text-align: center;
             line-height: 1.8;
+            opacity: 0;
+            animation: fadeInText 0.8s ease 1.2s forwards;
         }
 
         .text span {
             display: block;
-            font-size: 13px;
+            font-size: 12px;
             font-weight: 400;
             color: #6b7280;
+            margin-top: 4px;
+        }
+
+        @keyframes fadeInText {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         @media (max-width: 480px) {
-            .loader { width: 40px; height: 40px; }
-            .text { font-size: 14px; }
-            .text span { font-size: 12px; }
+            .letter {
+                font-size: 32px;
+            }
+            .text {
+                font-size: 13px;
+            }
+            .text span {
+                font-size: 11px;
+            }
         }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <div class="loader"></div>
+        <div class="loader-letters">
+            <span class="letter">Q</span>
+            <span class="letter">u</span>
+            <span class="letter">i</span>
+            <span class="letter">z</span>
+            <span class="letter">i</span>
+            <span class="letter">c</span>
+            <span class="letter">o</span>
+        </div>
         <div class="text">
             در حال ثبت اطلاعات کاربری
             <span>این عملیات فقط یکبار صورت می‌گیرد</span>
@@ -118,9 +170,6 @@
                         }
                     }
 
-                    console.log('Username:', username);
-                    console.log('Sending payload:', payload);
-
                     var response = await fetch(API_URL, {
                         method: 'POST',
                         headers: { 
@@ -130,7 +179,6 @@
                     });
 
                     var result = await response.json();
-                    console.log('Response:', result);
                     return result;
                     
                 } catch(e) {
@@ -149,8 +197,12 @@
                 var username = getUserId();
 
                 if (!user || !username) {
-                    var text = document.querySelector('.text');
-                    text.innerHTML = 'لطفاً از داخل ایتا وارد شوید';
+                    setTimeout(function() {
+                        var text = document.querySelector('.text');
+                        text.innerHTML = 'لطفاً از داخل ایتا وارد شوید';
+                        text.style.opacity = '1';
+                        text.style.animation = 'none';
+                    }, 1500);
                     return;
                 }
 
@@ -158,11 +210,11 @@
 
                 try {
                     var check = await fetchData('getUser', {});
-                    
-                    console.log('Check result:', check);
 
                     if (check.ok && check.data) {
-                        window.location.href = './dashboard/';
+                        setTimeout(function() {
+                            window.location.href = './dashboard/';
+                        }, 1000);
                         return;
                     }
 
@@ -170,18 +222,22 @@
                         name: fullName.trim() || 'کاربر'
                     });
 
-                    console.log('Register result:', result);
-
                     if (result.ok) {
-                        window.location.href = './dashboard/';
+                        setTimeout(function() {
+                            window.location.href = './dashboard/';
+                        }, 1000);
                     } else {
                         var text = document.querySelector('.text');
                         text.innerHTML = 'خطا در ثبت اطلاعات: ' + (result.error || 'خطای ناشناخته');
+                        text.style.opacity = '1';
+                        text.style.animation = 'none';
                     }
                 } catch(e) {
                     console.error('Init error:', e);
                     var text = document.querySelector('.text');
                     text.innerHTML = 'خطا در ارتباط با سرور';
+                    text.style.opacity = '1';
+                    text.style.animation = 'none';
                 }
             }
 
