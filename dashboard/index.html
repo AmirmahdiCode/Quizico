@@ -1,1 +1,1050 @@
-.
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quizico</title>
+    <script src="https://developer.eitaa.com/eitaa-web-app.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/gh/rastikerdar/iran-sans-font@v1.0.0/dist/font-face.css" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #faf5ff;
+            --bg2: #f3e8ff;
+            --bg3: #e9d5ff;
+            --primary: #a855f7;
+            --primary-dark: #9333ea;
+            --primary-light: #c084fc;
+            --primary-rgb: 168, 85, 247;
+            --dark: #1e1b2e;
+            --text: #4a4458;
+            --text-light: #6b7280;
+            --white: #ffffff;
+            --card-bg: #ffffff;
+            --header-bg: #ffffff;
+            --shadow: 3px 3px 0 #000000;
+            --radius: 4px;
+            --border: 1px solid #000000;
+        }
+
+        [data-theme="dark"] {
+            --bg: #1e1b2e;
+            --bg2: #2d2a3e;
+            --bg3: #3d3a4e;
+            --primary: #c084fc;
+            --primary-dark: #a855f7;
+            --primary-light: #d8b4fe;
+            --primary-rgb: 192, 132, 252;
+            --dark: #f1f5f9;
+            --text: #cbd5e1;
+            --text-light: #94a3b8;
+            --white: #2d2a3e;
+            --card-bg: #2d2a3e;
+            --header-bg: #2d2a3e;
+            --shadow: 3px 3px 0 #000000;
+            --border: 1px solid #000000;
+        }
+
+        [data-animation="off"] * {
+            animation: none !important;
+            transition: none !important;
+        }
+
+        [data-animation="off"] .header-title .t-letter {
+            opacity: 1 !important;
+            transform: translateY(0) !important;
+            animation: none !important;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'IRANSans', Tahoma, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            transition: background 0.5s ease, color 0.5s ease;
+            overscroll-behavior-y: contain;
+        }
+
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 0;
+            background: linear-gradient(135deg, var(--bg) 0%, var(--bg2) 40%, var(--bg3) 80%);
+            background-size: 400% 400%;
+            animation: gradientMove 15s ease infinite;
+            transition: background 0.8s ease;
+        }
+
+        @keyframes gradientMove {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .bg-particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 1;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .particle {
+            position: absolute;
+            border-radius: 50%;
+            background: var(--primary);
+            opacity: 0.1;
+            animation: floatUp linear infinite;
+        }
+
+        @keyframes floatUp {
+            0% { transform: translateY(100vh) scale(0); opacity: 0; }
+            10% { opacity: 0.1; }
+            90% { opacity: 0.1; }
+            100% { transform: translateY(-10vh) scale(1); opacity: 0; }
+        }
+
+        .header {
+            position: relative;
+            z-index: 10;
+            background: var(--header-bg);
+            border-bottom: var(--border);
+            padding: 12px 20px;
+            position: sticky;
+            top: 0;
+            box-shadow: var(--shadow);
+            animation: slideDown 0.5s ease;
+            transition: all 0.5s ease;
+        }
+
+        @keyframes slideDown {
+            from { transform: translateY(-100%); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .header-inner {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .header-logo {
+            width: 52px;
+            height: 52px;
+            border-radius: var(--radius);
+            background: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            padding: 2px;
+            border: var(--border);
+            transition: transform 0.3s ease, background 0.5s ease;
+        }
+
+        .header-logo img {
+            width: 95%;
+            height: 95%;
+            object-fit: contain;
+            transform: scale(1.15);
+        }
+
+        .header-title {
+            display: flex;
+            direction: rtl;
+            gap: 0;
+            font-size: 18px;
+            font-weight: 800;
+            color: var(--dark);
+            letter-spacing: -0.5px;
+            transition: color 0.5s ease;
+            font-family: 'IRANSans', Tahoma, sans-serif;
+            overflow: hidden;
+        }
+
+        .header-title .t-letter {
+            display: inline-block;
+            opacity: 0;
+            transform: translateY(-20px);
+            animation: titleLetterIn 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+        }
+
+        .header-title .t-letter:nth-child(1) { animation-delay: 0.1s; }
+        .header-title .t-letter:nth-child(2) { animation-delay: 0.15s; }
+        .header-title .t-letter:nth-child(3) { animation-delay: 0.2s; }
+        .header-title .t-letter:nth-child(4) { animation-delay: 0.25s; }
+        .header-title .t-letter:nth-child(5) { animation-delay: 0.3s; }
+        .header-title .t-letter:nth-child(6) { animation-delay: 0.35s; }
+        .header-title .t-letter:nth-child(7) { animation-delay: 0.4s; }
+
+        @keyframes titleLetterIn {
+            0% { opacity: 0; transform: translateY(-20px); }
+            60% { opacity: 1; transform: translateY(3px); }
+            80% { transform: translateY(-2px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        .header-title.animate-out .t-letter {
+            animation: titleLetterOut 0.4s ease forwards;
+        }
+
+        @keyframes titleLetterOut {
+            0% { opacity: 1; transform: translateY(0); }
+            100% { opacity: 0; transform: translateY(-20px); }
+        }
+
+        .header-title .t-letter.t-accent {
+            color: var(--primary);
+        }
+
+        .header-subtitle {
+            font-size: 9px;
+            color: var(--text-light);
+            margin-top: -2px;
+            transition: color 0.5s ease;
+        }
+
+        .header-currency {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .currency-badge {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            background: var(--bg2);
+            border: var(--border);
+            border-radius: var(--radius);
+            padding: 4px 10px 4px 8px;
+            font-size: 10px;
+            font-weight: 700;
+            color: var(--dark);
+            box-shadow: var(--shadow);
+            transition: all 0.3s ease;
+        }
+
+        .currency-badge i {
+            font-size: 12px;
+        }
+
+        .currency-badge.coins i { color: #f59e0b; }
+        .currency-badge.diamonds i { color: #06b6d4; }
+
+        .main-container {
+            position: relative;
+            z-index: 5;
+            max-width: 600px;
+            width: 100%;
+            margin: 16px auto;
+            padding: 0 12px 80px;
+        }
+
+        .loader-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 60vh;
+            gap: 16px;
+        }
+
+        .loader {
+            width: 56px;
+            height: 56px;
+            border: 5px solid var(--bg3);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            box-shadow: 0 0 20px rgba(var(--primary-rgb), 0.3);
+        }
+
+        .loader-text {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text);
+            animation: pulse 1.5s ease infinite;
+        }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+
+        .dashboard-content { display: none; animation: fadeInUp 0.5s ease; }
+        .dashboard-content.show { display: block; }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .banner-row {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .banner-card {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            border: var(--border);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            cursor: pointer;
+            overflow: hidden;
+            position: relative;
+            transition: all 0.3s ease;
+            min-height: 160px;
+            flex: 6;
+            display: flex;
+            align-items: flex-end;
+            justify-content: flex-start;
+        }
+
+        .banner-card::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -30%;
+            width: 200px;
+            height: 200px;
+            background: rgba(255,255,255,0.08);
+            border-radius: 50%;
+        }
+
+        .banner-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 5px 5px 0 #000000;
+        }
+
+        .banner-card .banner-image {
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 90%;
+            height: 120%;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .banner-card .banner-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            object-position: left bottom;
+            filter: drop-shadow(2px 2px 0 rgba(0,0,0,0.2));
+        }
+
+        .banner-card .banner-label {
+            position: absolute;
+            bottom: 8px;
+            right: 8px;
+            background: rgba(255,255,255,0.2);
+            color: #fff;
+            font-size: 9px;
+            font-weight: 700;
+            padding: 4px 12px;
+            border-radius: 20px;
+            text-align: center;
+            z-index: 2;
+            backdrop-filter: blur(10px);
+        }
+
+        .wheel-card {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            border: var(--border);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            cursor: pointer;
+            overflow: hidden;
+            position: relative;
+            transition: all 0.3s ease;
+            min-height: 160px;
+            flex: 4;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .wheel-card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 1;
+        }
+
+        .wheel-card .wheel-label {
+            position: absolute;
+            bottom: 8px;
+            right: 8px;
+            left: 8px;
+            background: rgba(255,255,255,0.2);
+            color: #fff;
+            font-size: 9px;
+            font-weight: 700;
+            padding: 4px 8px;
+            border-radius: 20px;
+            text-align: center;
+            z-index: 2;
+            backdrop-filter: blur(10px);
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            padding: 10px 0 4px;
+            margin-top: 16px;
+            border-bottom: 1px dashed var(--text-light);
+        }
+
+        .section-header:first-of-type { margin-top: 0; }
+
+        .section-title {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--dark);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: color 0.5s ease;
+        }
+
+        .section-title i { color: var(--primary); }
+
+        .section-toggle {
+            color: var(--text-light);
+            font-size: 12px;
+            transition: transform 0.3s ease;
+        }
+
+        .section-toggle.open {
+            transform: rotate(180deg);
+        }
+
+        .games-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            overflow: hidden;
+            max-height: 0;
+            transition: max-height 0.4s ease, margin-top 0.4s ease;
+        }
+
+        .games-list.open {
+            max-height: 500px;
+            margin-top: 8px;
+        }
+
+        .game-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 14px;
+            border: var(--border);
+            border-radius: var(--radius);
+            background: var(--card-bg);
+            box-shadow: var(--shadow);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .game-item-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .game-item-icon {
+            font-size: 18px;
+            color: var(--primary);
+            width: 28px;
+            text-align: center;
+        }
+
+        .game-item-title {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--dark);
+        }
+
+        .game-item-subtitle {
+            font-size: 9px;
+            color: var(--text-light);
+        }
+
+        .game-item-status {
+            font-size: 9px;
+            font-weight: 700;
+            padding: 3px 12px;
+            border-radius: var(--radius);
+            border: var(--border);
+            flex-shrink: 0;
+        }
+
+        .game-item-status.in_progress { background: #f59e0b; color: #fff; }
+        .game-item-status.finished { background: #10b981; color: #fff; }
+
+        .game-modes-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin-bottom: 4px;
+        }
+
+        .game-mode-card {
+            background: var(--card-bg);
+            border: var(--border);
+            border-radius: var(--radius);
+            overflow: hidden;
+            cursor: pointer;
+            box-shadow: var(--shadow);
+            transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            position: relative;
+        }
+
+        .game-mode-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 5px 5px 0 #000000;
+        }
+
+        .game-mode-card:active {
+            transform: translate(2px, 2px);
+            box-shadow: 1px 1px 0 #000000;
+        }
+
+        .game-mode-card img {
+            width: 100%;
+            aspect-ratio: 1 / 1;
+            object-fit: cover;
+            display: block;
+        }
+
+        .game-mode-card .game-mode-label {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            left: 0;
+            background: rgba(0,0,0,0.65);
+            color: #fff;
+            font-size: 10px;
+            font-weight: 700;
+            padding: 6px 4px;
+            text-align: center;
+            backdrop-filter: blur(4px);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 20px;
+            color: var(--text-light);
+            font-size: 11px;
+            background: var(--card-bg);
+            border: var(--border);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+        }
+
+        .empty-state img {
+            width: 80px;
+            height: 80px;
+            object-fit: contain;
+            display: block;
+            margin: 0 auto 8px;
+        }
+
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            right: 0;
+            left: 0;
+            background: var(--header-bg);
+            border-top: var(--border);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            padding: 6px 0;
+            z-index: 999;
+            transition: all 0.5s ease;
+            animation: slideUp 0.5s ease;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(100%); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
+            cursor: pointer;
+            text-decoration: none;
+            color: var(--text-light);
+            transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            padding: 4px 12px;
+            border-radius: var(--radius);
+            background: none;
+            border: none;
+            font-family: inherit;
+        }
+
+        .nav-item i {
+            font-size: 18px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-item span {
+            font-size: 8px;
+            font-weight: 600;
+        }
+
+        .nav-item.active { color: var(--primary); }
+        .nav-item.active i { transform: translateY(-2px); }
+        .nav-item:active { transform: scale(0.9); }
+
+        @media (max-width: 480px) {
+            .game-modes-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+            .header-title { font-size: 15px; }
+            .header-logo { width: 44px; height: 44px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="bg-animation"></div>
+    <div class="bg-particles" id="particles"></div>
+
+    <header class="header">
+        <div class="header-inner">
+            <div class="header-right">
+                <div class="header-logo">
+                    <img src="https://cdn.imgurl.ir/uploads/f30974_InShot_20260821_174101103.png" alt="Quizico">
+                </div>
+                <div>
+                    <div class="header-title" id="headerTitle">
+                        <span class="t-letter">Q</span>
+                        <span class="t-letter">u</span>
+                        <span class="t-letter">i</span>
+                        <span class="t-letter">z</span>
+                        <span class="t-letter t-accent">i</span>
+                        <span class="t-letter t-accent">c</span>
+                        <span class="t-letter t-accent">o</span>
+                    </div>
+                    <div class="header-subtitle">اطلاعات خودت رو محک بزن</div>
+                </div>
+            </div>
+            <div class="header-currency">
+                <span class="currency-badge coins">
+                    <i class="fa-solid fa-coins"></i>
+                    <span id="coinsHeader">-</span>
+                </span>
+                <span class="currency-badge diamonds">
+                    <i class="fa-solid fa-gem"></i>
+                    <span id="diamondsHeader">-</span>
+                </span>
+            </div>
+        </div>
+    </header>
+
+    <main class="main-container">
+        <div class="loader-wrapper" id="loaderWrapper">
+            <div class="loader"></div>
+            <div class="loader-text">در حال دریافت اطلاعات...</div>
+        </div>
+
+        <div class="dashboard-content" id="dashboardContent">
+
+            <div class="banner-row">
+                <div class="banner-card" onclick="goToPlay('challenge')">
+                    <div class="banner-image">
+                        <img src="https://cdn.imgurl.ir/uploads/h142945_InShot_20260821_184807337.png" alt="مسابقه روزانه">
+                    </div>
+                    <div class="banner-label"><i class="fa-solid fa-trophy"></i> مسابقه روزانه</div>
+                </div>
+                
+                <div class="wheel-card" onclick="goToWheel()">
+                    <img src="https://cdn.imgurl.ir/uploads/m526299_InShot_20260821_182752507.png" alt="گردونه شانس">
+                    <div class="wheel-label"><i class="fa-solid fa-wand-magic-sparkles"></i> گردونه شانس</div>
+                </div>
+            </div>
+
+            <div class="section-title">
+                <i class="fa-solid fa-gamepad"></i> شروع مسابقه
+            </div>
+            <hr style="border: none; border-top: 1px dashed var(--text-light); opacity: 0.3; margin: 4px 0 12px 0;">
+
+            <div class="game-modes-grid">
+                <div class="game-mode-card" onclick="goToPlay('single')">
+                    <img src="https://cdn.imgurl.ir/uploads/f711120_InShot_20260821_200930706.jpg" alt="تک‌نفره">
+                    <div class="game-mode-label">تک‌نفره</div>
+                </div>
+                <div class="game-mode-card" onclick="goToPlay('offline')">
+                    <img src="https://cdn.imgurl.ir/uploads/k5971_InShot_20260821_201008883.jpg" alt="دو نفره آفلاین">
+                    <div class="game-mode-label">دو نفره آفلاین</div>
+                </div>
+                <div class="game-mode-card" onclick="goToPlay('online')">
+                    <img src="https://cdn.imgurl.ir/uploads/h2464_InShot_20260821_201207943.jpg" alt="دو نفره آنلاین">
+                    <div class="game-mode-label">دو نفره آنلاین</div>
+                </div>
+                <div class="game-mode-card" onclick="goToPlay('league')">
+                    <img src="https://cdn.imgurl.ir/uploads/e135154_InShot_20260821_201323323.jpg" alt="لیگ">
+                    <div class="game-mode-label">لیگ</div>
+                </div>
+            </div>
+
+            <div class="section-header" onclick="toggleSection('inProgressSection')">
+                <div class="section-title">
+                    <i class="fa-solid fa-hourglass-half"></i> در حال برگزاری
+                </div>
+                <i class="fa-solid fa-chevron-down section-toggle" id="inProgressToggle"></i>
+            </div>
+            <div class="games-list" id="inProgressSection">
+                <div id="inProgressGames"></div>
+            </div>
+
+            <div class="section-header" onclick="toggleSection('finishedSection')">
+                <div class="section-title">
+                    <i class="fa-solid fa-clock-rotate-left"></i> مسابقات گذشته
+                </div>
+                <i class="fa-solid fa-chevron-down section-toggle" id="finishedToggle"></i>
+            </div>
+            <div class="games-list" id="finishedSection">
+                <div id="finishedGames"></div>
+            </div>
+
+        </div>
+    </main>
+
+    <nav class="bottom-nav">
+        <a href="../dashboard/" class="nav-item active">
+            <i class="fa-solid fa-house"></i>
+            <span>خانه</span>
+        </a>
+        <a href="../ranking/" class="nav-item">
+            <i class="fa-solid fa-trophy"></i>
+            <span>رتبه</span>
+        </a>
+        <a href="../profile/" class="nav-item">
+            <i class="fa-solid fa-user"></i>
+            <span>پروفایل</span>
+        </a>
+        <a href="../setting/" class="nav-item">
+            <i class="fa-solid fa-gear"></i>
+            <span>تنظیمات</span>
+        </a>
+    </nav>
+
+    <script>
+        (function() {
+            var webApp = window.Eitaa?.WebApp;
+            var API_URL = 'https://script.google.com/macros/s/AKfycby39_m_-w42F1ps3z21aAW2jMXjgmDJjrPD6CfrLLczg-KPk1cbyXcVnUjaeFQ4TIP9ww/exec';
+            var SAD_IMAGE = 'https://cdn.imgurl.ir/uploads/g58935_InShot_20260822_140943752.png';
+
+            function goToPlay(mode) {
+                if (webApp) webApp.HapticFeedback?.impactOccurred('light');
+                localStorage.setItem('gameMode', mode);
+                window.location.href = '../play/';
+            }
+
+            function goToWheel() {
+                if (webApp) webApp.HapticFeedback?.impactOccurred('light');
+                window.location.href = '../wheel/';
+            }
+
+            function toggleSection(sectionId) {
+                var section = document.getElementById(sectionId);
+                var toggle = document.getElementById(sectionId === 'inProgressSection' ? 'inProgressToggle' : 'finishedToggle');
+                if (section.classList.contains('open')) {
+                    section.classList.remove('open');
+                    toggle.classList.remove('open');
+                } else {
+                    section.classList.add('open');
+                    toggle.classList.add('open');
+                }
+            }
+
+            window.toggleSection = toggleSection;
+
+            function createParticles() {
+                var container = document.getElementById('particles');
+                for (var i = 0; i < 20; i++) {
+                    var p = document.createElement('div');
+                    p.className = 'particle';
+                    var size = 3 + Math.random() * 8;
+                    p.style.width = size + 'px';
+                    p.style.height = size + 'px';
+                    p.style.left = Math.random() * 100 + '%';
+                    p.style.animationDuration = 15 + Math.random() * 25 + 's';
+                    p.style.animationDelay = Math.random() * 20 + 's';
+                    container.appendChild(p);
+                }
+            }
+            createParticles();
+
+            function getSettings() {
+                try {
+                    var raw = localStorage.getItem('quizicoSettings');
+                    if (!raw) {
+                        var defaultSettings = { theme: 'light', primaryColor: '#a855f7', animation: true };
+                        localStorage.setItem('quizicoSettings', JSON.stringify(defaultSettings));
+                        return defaultSettings;
+                    }
+                    var parsed = JSON.parse(raw);
+                    if (!parsed.theme) parsed.theme = 'light';
+                    if (!parsed.primaryColor) parsed.primaryColor = '#a855f7';
+                    if (parsed.animation === undefined) parsed.animation = true;
+                    return parsed;
+                } catch(e) {
+                    return { theme: 'light', primaryColor: '#a855f7', animation: true };
+                }
+            }
+
+            function hexToRgb(hex) {
+                var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+                return result ? { r: parseInt(result[1], 16), g: parseInt(result[2], 16), b: parseInt(result[3], 16) } : { r: 168, g: 85, b: 247 };
+            }
+
+            function shadeColor(color, percent) {
+                var rgb = hexToRgb(color);
+                var r = Math.max(0, Math.min(255, rgb.r + percent));
+                var g = Math.max(0, Math.min(255, rgb.g + percent));
+                var b = Math.max(0, Math.min(255, rgb.b + percent));
+                return '#' + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
+            }
+
+            function applyTheme() {
+                var settings = getSettings();
+                var theme = settings.theme || 'light';
+                var primaryColor = settings.primaryColor || '#a855f7';
+                document.documentElement.setAttribute('data-theme', theme);
+                if (theme === 'dark') {
+                    var darkPrimary = shadeColor(primaryColor, 40);
+                    document.documentElement.style.setProperty('--primary', darkPrimary);
+                    document.documentElement.style.setProperty('--primary-rgb', hexToRgb(darkPrimary).r + ', ' + hexToRgb(darkPrimary).g + ', ' + hexToRgb(darkPrimary).b);
+                } else {
+                    document.documentElement.style.setProperty('--primary', primaryColor);
+                    document.documentElement.style.setProperty('--primary-rgb', hexToRgb(primaryColor).r + ', ' + hexToRgb(primaryColor).g + ', ' + hexToRgb(primaryColor).b);
+                }
+                if (settings.animation === false) {
+                    document.documentElement.setAttribute('data-animation', 'off');
+                } else {
+                    document.documentElement.removeAttribute('data-animation');
+                }
+                if (webApp) {
+                    webApp.setHeaderColor('bg_color');
+                    webApp.setBackgroundColor('bg_color');
+                }
+            }
+
+            function getEitaaUser() {
+                if (webApp && webApp.initDataUnsafe && webApp.initDataUnsafe.user) {
+                    return webApp.initDataUnsafe.user;
+                }
+                return null;
+            }
+
+            function getUserId() {
+                var user = getEitaaUser();
+                if (!user) return '';
+                if (typeof user.id === 'number') return user.id.toString();
+                return String(user.id || '');
+            }
+
+            async function fetchData(action, params) {
+                try {
+                    var username = getUserId();
+                    var initData = webApp?.initData || '';
+                    var payload = { action: action, username: username, initData: initData };
+                    if (params) {
+                        for (var key in params) {
+                            if (params.hasOwnProperty(key)) payload[key] = params[key];
+                        }
+                    }
+                    var response = await fetch(API_URL, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                        body: JSON.stringify(payload)
+                    });
+                    var result = await response.json();
+                    return result;
+                } catch(e) {
+                    console.error('Fetch error:', e);
+                    return { ok: false, error: 'Network error: ' + e.message };
+                }
+            }
+
+            function animateCount(element, target, duration) {
+                var start = 0;
+                var startTime = null;
+                function step(timestamp) {
+                    if (!startTime) startTime = timestamp;
+                    var progress = Math.min((timestamp - startTime) / duration, 1);
+                    var eased = 1 - Math.pow(1 - progress, 3);
+                    element.textContent = Math.floor(eased * target);
+                    if (progress < 1) {
+                        requestAnimationFrame(step);
+                    } else {
+                        element.textContent = target;
+                    }
+                }
+                requestAnimationFrame(step);
+            }
+
+            function renderEmptyState(text) {
+                return '<div class="empty-state"><img src="' + SAD_IMAGE + '" alt=""><p>' + text + '</p></div>';
+            }
+
+            function animateTitle() {
+                var title = document.getElementById('headerTitle');
+                if (!title) return;
+                var settings = getSettings();
+                if (settings.animation === false) {
+                    title.classList.remove('animate-out');
+                    document.documentElement.setAttribute('data-animation', 'off');
+                    return;
+                }
+                document.documentElement.removeAttribute('data-animation');
+                function playIn() { title.classList.remove('animate-out'); }
+                function playOut() { title.classList.add('animate-out'); }
+                setInterval(function() {
+                    playIn();
+                    setTimeout(playOut, 10000);
+                }, 12400);
+            }
+
+            async function loadDashboard() {
+                try {
+                    var eitaaUser = getEitaaUser();
+                    var username = getUserId();
+                    
+                    if (!eitaaUser || !username) {
+                        document.getElementById('coinsHeader').textContent = '0';
+                        document.getElementById('diamondsHeader').textContent = '0';
+                        document.getElementById('loaderWrapper').style.display = 'none';
+                        document.getElementById('dashboardContent').classList.add('show');
+                        return;
+                    }
+                    
+                    var fullName = (eitaaUser.first_name || '') + ' ' + (eitaaUser.last_name || '');
+                    
+                    var userData = await fetchData('getUser', {});
+                    
+                    if (userData.ok && userData.data) {
+                        animateCount(document.getElementById('coinsHeader'), userData.data.coins || 0, 1000);
+                        animateCount(document.getElementById('diamondsHeader'), userData.data.diamonds || 0, 1000);
+                    } else {
+                        var createResult = await fetchData('registerUser', {
+                            name: fullName.trim() || 'کاربر'
+                        });
+                        
+                        if (createResult.ok) {
+                            var newUserData = await fetchData('getUser', {});
+                            if (newUserData.ok && newUserData.data) {
+                                animateCount(document.getElementById('coinsHeader'), newUserData.data.coins || 0, 1000);
+                                animateCount(document.getElementById('diamondsHeader'), newUserData.data.diamonds || 0, 1000);
+                            }
+                        } else {
+                            document.getElementById('coinsHeader').textContent = '0';
+                            document.getElementById('diamondsHeader').textContent = '0';
+                        }
+                    }
+
+                    var gamesData = await fetchData('getGamesByPlayer', {});
+                    
+                    if (gamesData.ok && Array.isArray(gamesData.data)) {
+                        var games = gamesData.data;
+                        var inProgress = games.filter(function(g) { return g.status === 'in_progress'; });
+                        var finished = games.filter(function(g) { return g.status === 'finished'; });
+
+                        var ipList = document.getElementById('inProgressGames');
+                        if (inProgress.length === 0) {
+                            ipList.innerHTML = renderEmptyState('مسابقه‌ای در حال برگزاری نیست');
+                        } else {
+                            ipList.innerHTML = inProgress.slice(0, 5).map(function(g) {
+                                var isP1 = String(g.player1) === String(username);
+                                var opp = isP1 ? g.player2 : g.player1;
+                                return '<div class="game-item" onclick="window.location.href=\'../play/\'">' +
+                                    '<div class="game-item-left">' +
+                                    '<div class="game-item-icon"><i class="fa-solid fa-gamepad"></i></div>' +
+                                    '<div><div class="game-item-title">' + (opp || 'ناشناس') + '</div>' +
+                                    '<div class="game-item-subtitle">مسابقه نیمه‌تمام</div></div></div>' +
+                                    '<span class="game-item-status in_progress">ادامه</span></div>';
+                            }).join('');
+                        }
+
+                        var fList = document.getElementById('finishedGames');
+                        if (finished.length === 0) {
+                            fList.innerHTML = renderEmptyState('مسابقه‌ای یافت نشد');
+                        } else {
+                            fList.innerHTML = finished.slice(0, 10).map(function(g) {
+                                var isP1 = String(g.player1) === String(username);
+                                var opp = isP1 ? g.player2 : g.player1;
+                                return '<div class="game-item">' +
+                                    '<div class="game-item-left">' +
+                                    '<div class="game-item-icon"><i class="fa-solid fa-flag-checkered"></i></div>' +
+                                    '<div><div class="game-item-title">' + (opp || 'ناشناس') + '</div>' +
+                                    '<div class="game-item-subtitle">پایان یافته</div></div></div>' +
+                                    '<span class="game-item-status finished">پایان</span></div>';
+                            }).join('');
+                        }
+                    } else {
+                        document.getElementById('inProgressGames').innerHTML = renderEmptyState('مسابقه‌ای در حال برگزاری نیست');
+                        document.getElementById('finishedGames').innerHTML = renderEmptyState('مسابقه‌ای یافت نشد');
+                    }
+
+                } catch(e) {
+                    console.error('Error in loadDashboard:', e);
+                } finally {
+                    document.getElementById('loaderWrapper').style.display = 'none';
+                    document.getElementById('dashboardContent').classList.add('show');
+                }
+            }
+
+            window.goToPlay = goToPlay;
+            window.goToWheel = goToWheel;
+
+            if (webApp) {
+                webApp.ready();
+                webApp.expand();
+            }
+            
+            applyTheme();
+            animateTitle();
+            loadDashboard();
+        })();
+    </script>
+</body>
+</html>
