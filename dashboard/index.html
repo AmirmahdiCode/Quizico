@@ -173,9 +173,15 @@
             transform: scale(1.15);
         }
 
+        .header-title-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
         .header-title {
             display: flex;
-            direction: rtl;
+            direction: ltr;
             gap: 0;
             font-size: 18px;
             font-weight: 800;
@@ -184,6 +190,7 @@
             transition: color 0.5s ease;
             font-family: 'IRANSans', Tahoma, sans-serif;
             overflow: hidden;
+            align-self: flex-start;
         }
 
         .header-title .t-letter {
@@ -226,6 +233,7 @@
             color: var(--text-light);
             margin-top: -2px;
             transition: color 0.5s ease;
+            align-self: flex-start;
         }
 
         .header-currency {
@@ -653,7 +661,7 @@
                 <div class="header-logo">
                     <img src="https://cdn.imgurl.ir/uploads/f30974_InShot_20260821_174101103.png" alt="Quizico">
                 </div>
-                <div>
+                <div class="header-title-wrapper">
                     <div class="header-title" id="headerTitle">
                         <span class="t-letter">Q</span>
                         <span class="t-letter">u</span>
