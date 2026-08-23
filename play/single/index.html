@@ -100,13 +100,6 @@
             position: sticky;
             top: 0;
             box-shadow: var(--shadow);
-            animation: slideDown 0.5s ease;
-            transition: all 0.5s ease;
-        }
-
-        @keyframes slideDown {
-            from { transform: translateY(-100%); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
         }
 
         .header-inner {
@@ -136,7 +129,6 @@
             overflow: hidden;
             padding: 2px;
             border: var(--border);
-            transition: transform 0.3s ease, background 0.5s ease;
         }
 
         .header-logo img {
@@ -159,54 +151,16 @@
             font-size: 18px;
             font-weight: 800;
             color: var(--dark);
-            letter-spacing: -0.5px;
-            transition: color 0.5s ease;
             font-family: 'IRANSans', Tahoma, sans-serif;
-            overflow: hidden;
-            align-self: flex-start;
         }
 
-        .header-title .t-letter {
-            display: inline-block;
-            opacity: 0;
-            transform: translateY(-20px);
-            animation: titleLetterIn 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
-        }
-
-        .header-title .t-letter:nth-child(1) { animation-delay: 0.1s; }
-        .header-title .t-letter:nth-child(2) { animation-delay: 0.15s; }
-        .header-title .t-letter:nth-child(3) { animation-delay: 0.2s; }
-        .header-title .t-letter:nth-child(4) { animation-delay: 0.25s; }
-        .header-title .t-letter:nth-child(5) { animation-delay: 0.3s; }
-        .header-title .t-letter:nth-child(6) { animation-delay: 0.35s; }
-        .header-title .t-letter:nth-child(7) { animation-delay: 0.4s; }
-
-        @keyframes titleLetterIn {
-            0% { opacity: 0; transform: translateY(-20px); }
-            60% { opacity: 1; transform: translateY(3px); }
-            80% { transform: translateY(-2px); }
-            100% { opacity: 1; transform: translateY(0); }
-        }
-
-        .header-title.animate-out .t-letter {
-            animation: titleLetterOut 0.4s ease forwards;
-        }
-
-        @keyframes titleLetterOut {
-            0% { opacity: 1; transform: translateY(0); }
-            100% { opacity: 0; transform: translateY(-20px); }
-        }
-
-        .header-title .t-letter.t-accent {
+        .header-title .t-accent {
             color: var(--primary);
         }
 
         .header-subtitle {
             font-size: 9px;
             color: var(--text-light);
-            margin-top: -2px;
-            transition: color 0.5s ease;
-            align-self: flex-start;
         }
 
         .header-currency {
@@ -222,18 +176,39 @@
             background: var(--bg2);
             border: var(--border);
             border-radius: var(--radius);
-            padding: 4px 10px 4px 8px;
+            padding: 4px 10px;
             font-size: 10px;
             font-weight: 700;
             color: var(--dark);
             box-shadow: var(--shadow);
         }
 
-        .currency-badge i {
-            font-size: 12px;
+        .currency-badge.coins i { color: #f59e0b; }
+
+        .timer-badge {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            background: #fef3c7;
+            border: var(--border);
+            border-radius: var(--radius);
+            padding: 4px 10px;
+            font-size: 10px;
+            font-weight: 800;
+            color: #d97706;
+            box-shadow: var(--shadow);
         }
 
-        .currency-badge.coins i { color: #f59e0b; }
+        .timer-badge.warning {
+            background: #fee2e2;
+            color: #ef4444;
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
 
         .main-container {
             position: relative;
@@ -250,7 +225,6 @@
         .players-row {
             display: flex;
             gap: 10px;
-            align-items: stretch;
         }
 
         .player-card {
@@ -261,8 +235,6 @@
             padding: 12px;
             text-align: center;
             box-shadow: var(--shadow);
-            position: relative;
-            transition: all 0.3s ease;
         }
 
         .player-card.active {
@@ -274,17 +246,12 @@
         .player-tag {
             font-size: 11px;
             font-weight: 800;
-            color: var(--text);
             margin-bottom: 6px;
         }
 
-        .player-card.active .player-tag {
-            color: var(--gold);
-        }
-
         .player-avatar {
-            width: 50px;
-            height: 50px;
+            width: 45px;
+            height: 45px;
             border-radius: 50%;
             margin: 0 auto 6px;
             background: var(--bg2);
@@ -292,26 +259,14 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 22px;
+            font-size: 20px;
             color: var(--primary);
-            overflow: hidden;
         }
 
         .player-score {
-            font-size: 18px;
+            font-size: 16px;
             font-weight: 800;
             color: var(--gold);
-            display: block;
-        }
-
-        .player-score.hidden {
-            visibility: hidden;
-        }
-
-        .player-progress {
-            font-size: 8px;
-            color: var(--text-light);
-            margin-top: 2px;
         }
 
         .message-card {
@@ -323,7 +278,6 @@
             text-align: center;
             font-size: 10px;
             font-weight: 600;
-            color: var(--text);
         }
 
         .rounds-results {
@@ -337,7 +291,6 @@
         .rounds-title {
             font-size: 11px;
             font-weight: 800;
-            color: var(--dark);
             margin-bottom: 10px;
             text-align: center;
         }
@@ -350,14 +303,9 @@
             margin-bottom: 8px;
         }
 
-        .round-result-item:last-child {
-            margin-bottom: 0;
-        }
-
         .round-result-header {
             font-size: 9px;
             font-weight: 700;
-            color: var(--dark);
             margin-bottom: 6px;
             display: flex;
             align-items: center;
@@ -374,7 +322,6 @@
 
         .round-result-player {
             font-weight: 700;
-            color: var(--text);
             min-width: 30px;
         }
 
@@ -416,18 +363,11 @@
             border-radius: 12px;
             padding: 16px;
             box-shadow: var(--shadow);
-            animation: fadeInUp 0.4s ease;
-        }
-
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(15px); }
-            to { opacity: 1; transform: translateY(0); }
         }
 
         .question-text {
             font-size: 13px;
             font-weight: 700;
-            color: var(--dark);
             line-height: 1.8;
             text-align: center;
             margin-bottom: 12px;
@@ -453,14 +393,7 @@
             font-family: 'IRANSans', Tahoma, sans-serif;
             font-size: 11px;
             font-weight: 600;
-            color: var(--dark);
             text-align: right;
-        }
-
-        .option-btn:hover {
-            transform: translateX(-3px);
-            box-shadow: 3px 3px 0 #000;
-            background: var(--bg3);
         }
 
         .option-btn.selected-correct {
@@ -502,6 +435,7 @@
         .actions-row {
             display: flex;
             gap: 6px;
+            margin-bottom: 8px;
         }
 
         .action-btn {
@@ -515,33 +449,16 @@
             border-radius: 8px;
             background: var(--card-bg);
             cursor: pointer;
-            transition: all 0.3s ease;
             box-shadow: 2px 2px 0 #000;
             font-family: 'IRANSans', Tahoma, sans-serif;
             font-size: 8px;
             font-weight: 700;
-            color: var(--text);
-        }
-
-        .action-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 3px 3px 0 #000;
         }
 
         .action-btn:disabled {
             opacity: 0.4;
             cursor: not-allowed;
-            transform: none;
-            box-shadow: 2px 2px 0 #000;
         }
-
-        .action-btn i {
-            font-size: 10px;
-        }
-
-        .action-btn.remove i { color: #ef4444; }
-        .action-btn.swap i { color: #06b6d4; }
-        .action-btn.skip i { color: #f59e0b; }
 
         .bottom-btn-container {
             position: fixed;
@@ -570,12 +487,6 @@
             font-weight: 800;
             cursor: pointer;
             box-shadow: 3px 3px 0 #000;
-            transition: all 0.3s ease;
-        }
-
-        .main-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 4px 4px 0 #000;
         }
 
         .main-btn:disabled {
@@ -604,7 +515,6 @@
         .result-text {
             font-size: 16px;
             font-weight: 800;
-            color: var(--dark);
             margin-bottom: 6px;
         }
 
@@ -640,23 +550,15 @@
                     <img src="https://cdn.imgurl.ir/uploads/f30974_InShot_20260821_174101103.png" alt="Quizico">
                 </div>
                 <div class="header-title-wrapper">
-                    <div class="header-title" id="headerTitle">
-                        <span class="t-letter">Q</span>
-                        <span class="t-letter">u</span>
-                        <span class="t-letter">i</span>
-                        <span class="t-letter">z</span>
-                        <span class="t-letter t-accent">i</span>
-                        <span class="t-letter t-accent">c</span>
-                        <span class="t-letter t-accent">o</span>
+                    <div class="header-title">
+                        <span>Quiz<span class="t-accent">ico</span></span>
                     </div>
                     <div class="header-subtitle">تک‌نفره</div>
                 </div>
             </div>
-            <div class="header-currency">
-                <span class="currency-badge coins">
-                    <i class="fa-solid fa-coins"></i>
-                    <span id="coinsHeader">0</span>
-                </span>
+            <div style="display:flex;align-items:center;gap:6px;">
+                <span class="timer-badge" id="timerBadge"><i class="fa-solid fa-clock"></i> <span id="timerDisplay">60</span></span>
+                <span class="currency-badge coins"><i class="fa-solid fa-coins"></i> <span id="coinsHeader">0</span></span>
             </div>
         </div>
     </header>
@@ -675,6 +577,7 @@
 
             var TOTAL_ROUNDS = 5;
             var QUESTIONS_PER_ROUND = 3;
+            var QUESTION_TIME = 60;
             var currentRound = 1;
             var currentQuestionIndex = 0;
             var yourScore = 0;
@@ -689,9 +592,27 @@
             var isRoundActive = false;
             var yourCorrectCount = 0;
             var botCorrectCount = 0;
-            var usedActions = { remove: false, swap: false, skip: false };
+            var usedActions = {};
+            var timerInterval = null;
+            var timeLeft = QUESTION_TIME;
+            var gameId = 'game_' + Date.now();
 
-            var letters = ['۱', '۲', '۳', '۴'];
+            var messages = [
+                'هر سوال درست یه قدم به برد نزدیک‌ترت می‌کنه!',
+                'تمرکزت رو بذار روی سوال، وقت داری!',
+                'تو از پسش برمیای! فقط با دقت جواب بده',
+                'حریفت قویه، ولی تو قوی‌تری!',
+                'هر جواب درست ۵ امتیاز داره، بجنب!',
+                'آروم باش و درست فکر کن، بردی!',
+                'ذهنت رو آماده کن، سوال بعدی مهمه!',
+                'ادامه بده، داری عالی پیش میری!',
+                'هر ثانیه ارزش داره، سریع جواب بده!',
+                'تو این راند رو می‌بری، مطمئنم!'
+            ];
+
+            function getRandomMessage() {
+                return messages[Math.floor(Math.random() * messages.length)];
+            }
 
             function getEitaaUser() {
                 if (webApp && webApp.initDataUnsafe && webApp.initDataUnsafe.user) {
@@ -710,8 +631,7 @@
             async function fetchData(action, params) {
                 try {
                     var username = getUserId();
-                    var initData = webApp?.initData || '';
-                    var payload = { action: action, username: username, initData: initData };
+                    var payload = { action: action, username: username };
                     if (params) {
                         for (var key in params) {
                             if (params.hasOwnProperty(key)) payload[key] = params[key];
@@ -722,10 +642,56 @@
                         headers: { 'Content-Type': 'text/plain;charset=utf-8' },
                         body: JSON.stringify(payload)
                     });
-                    var result = await response.json();
-                    return result;
+                    return await response.json();
                 } catch(e) {
-                    return { ok: false, error: 'Network error' };
+                    return { ok: false };
+                }
+            }
+
+            function getSettings() {
+                try {
+                    var raw = localStorage.getItem('quizicoSettings');
+                    if (!raw) return { theme: 'light', primaryColor: '#a855f7', animation: true };
+                    var parsed = JSON.parse(raw);
+                    if (!parsed.theme) parsed.theme = 'light';
+                    if (!parsed.primaryColor) parsed.primaryColor = '#a855f7';
+                    if (parsed.animation === undefined) parsed.animation = true;
+                    return parsed;
+                } catch(e) {
+                    return { theme: 'light', primaryColor: '#a855f7', animation: true };
+                }
+            }
+
+            function hexToRgb(hex) {
+                var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+                return result ? { r: parseInt(result[1], 16), g: parseInt(result[2], 16), b: parseInt(result[3], 16) } : { r: 168, g: 85, b: 247 };
+            }
+
+            function shadeColor(color, percent) {
+                var rgb = hexToRgb(color);
+                var r = Math.max(0, Math.min(255, rgb.r + percent));
+                var g = Math.max(0, Math.min(255, rgb.g + percent));
+                var b = Math.max(0, Math.min(255, rgb.b + percent));
+                return '#' + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
+            }
+
+            function applyTheme() {
+                var settings = getSettings();
+                var theme = settings.theme || 'light';
+                var primaryColor = settings.primaryColor || '#a855f7';
+                document.documentElement.setAttribute('data-theme', theme);
+                if (theme === 'dark') {
+                    var darkPrimary = shadeColor(primaryColor, 40);
+                    document.documentElement.style.setProperty('--primary', darkPrimary);
+                    document.documentElement.style.setProperty('--primary-rgb', hexToRgb(darkPrimary).r + ', ' + hexToRgb(darkPrimary).g + ', ' + hexToRgb(darkPrimary).b);
+                } else {
+                    document.documentElement.style.setProperty('--primary', primaryColor);
+                    document.documentElement.style.setProperty('--primary-rgb', hexToRgb(primaryColor).r + ', ' + hexToRgb(primaryColor).g + ', ' + hexToRgb(primaryColor).b);
+                }
+                if (settings.animation === false) {
+                    document.documentElement.setAttribute('data-animation', 'off');
+                } else {
+                    document.documentElement.removeAttribute('data-animation');
                 }
             }
 
@@ -747,6 +713,57 @@
                 document.getElementById('coinsHeader').textContent = userCoins;
             }
 
+            function startTimer() {
+                clearInterval(timerInterval);
+                timeLeft = QUESTION_TIME;
+                updateTimerDisplay();
+                timerInterval = setInterval(function() {
+                    timeLeft--;
+                    updateTimerDisplay();
+                    if (timeLeft <= 0) {
+                        clearInterval(timerInterval);
+                        timeOut();
+                    }
+                }, 1000);
+            }
+
+            function updateTimerDisplay() {
+                document.getElementById('timerDisplay').textContent = timeLeft;
+                var badge = document.getElementById('timerBadge');
+                if (timeLeft <= 10) {
+                    badge.classList.add('warning');
+                } else {
+                    badge.classList.remove('warning');
+                }
+            }
+
+            function timeOut() {
+                if (isAnswered) return;
+                isAnswered = true;
+                var allBtns = document.querySelectorAll('.option-btn');
+                allBtns.forEach(function(b) { b.classList.add('disabled'); });
+                var q = currentQuestions[currentQuestionIndex];
+                var correctIndex = q.correctOption - 1;
+                allBtns[correctIndex].classList.add('selected-correct');
+                
+                setTimeout(function() {
+                    moveToNext();
+                }, 1000);
+            }
+
+            function moveToNext() {
+                currentQuestionIndex++;
+                if (currentQuestionIndex >= QUESTIONS_PER_ROUND) {
+                    document.getElementById('mainBtn').textContent = 'دست تمام شد! بریم دست بعد';
+                    document.getElementById('mainBtn').disabled = true;
+                    setTimeout(function() {
+                        endYourRound();
+                    }, 1000);
+                } else {
+                    renderQuestionScreen();
+                }
+            }
+
             function renderMainScreen() {
                 var html = '';
                 html += '<div class="players-row">';
@@ -758,14 +775,10 @@
                 html += '<div class="player-card' + (!isYourTurn && isRoundActive ? ' active' : '') + '">';
                 html += '<div class="player-tag">حریف</div>';
                 html += '<div class="player-avatar"><i class="fa-solid fa-robot"></i></div>';
-                if (isYourTurn || !isRoundActive) {
-                    html += '<span class="player-score hidden">.</span>';
-                } else {
-                    html += '<span class="player-score">' + botScore + '</span>';
-                }
+                html += '<span class="player-score">' + (isYourTurn || !isRoundActive ? '?' : botScore) + '</span>';
                 html += '</div>';
                 html += '</div>';
-                html += '<div class="message-card">حریف رو برتر تا امتیاز کسب کنی! هرچی سوالای بیشتری درست جواب بدی، شانس ت برای برنده شدن بیشتر میشه.</div>';
+                html += '<div class="message-card">' + getRandomMessage() + '</div>';
                 
                 if (roundResults.length > 0) {
                     html += '<div class="rounds-results">';
@@ -801,24 +814,24 @@
             }
 
             function renderQuestionScreen() {
+                isAnswered = false;
+                usedActions = { remove: false, swap: false, skip: false };
                 var q = currentQuestions[currentQuestionIndex];
                 var options = shuffleArray(q.options.slice());
                 var correctText = q.options[q.correctOption - 1];
                 var correctIndex = options.indexOf(correctText);
 
-                usedActions = { remove: false, swap: false, skip: false };
-
                 var html = '<div class="actions-row">';
-                html += '<button class="action-btn remove" id="btnRemove" onclick="useRemove50()"><i class="fa-solid fa-trash"></i> ۵۰</button>';
-                html += '<button class="action-btn swap" id="btnSwap" onclick="useSwapQuestion()"><i class="fa-solid fa-arrows-rotate"></i> ۱۰۰</button>';
-                html += '<button class="action-btn skip" id="btnSkip" onclick="useSkipQuestion()"><i class="fa-solid fa-forward"></i> ۱۵۰</button>';
+                html += '<button class="action-btn" id="btnRemove" onclick="useRemove50()"><i class="fa-solid fa-trash" style="color:#ef4444;"></i> ۵۰</button>';
+                html += '<button class="action-btn" id="btnSwap" onclick="useSwapQuestion()"><i class="fa-solid fa-arrows-rotate" style="color:#06b6d4;"></i> ۱۰۰</button>';
+                html += '<button class="action-btn" id="btnSkip" onclick="useSkipQuestion()"><i class="fa-solid fa-forward" style="color:#f59e0b;"></i> ۱۵۰</button>';
                 html += '</div>';
                 html += '<div class="question-card">';
                 html += '<div class="question-text">' + q.question + '</div>';
                 html += '<div class="options-grid">';
                 for (var i = 0; i < options.length; i++) {
                     html += '<button class="option-btn" data-text="' + options[i] + '" onclick="selectOption(' + i + ', ' + correctIndex + ', this)">';
-                    html += '<span class="option-letter">' + letters[i] + '</span>';
+                    html += '<span class="option-letter">' + (i + 1) + '</span>';
                     html += '<span>' + options[i] + '</span>';
                     html += '</button>';
                 }
@@ -826,6 +839,7 @@
                 html += '</div>';
                 
                 document.getElementById('mainContainer').innerHTML = html;
+                startTimer();
             }
 
             window.handleMainBtn = function() {
@@ -852,6 +866,7 @@
             window.selectOption = function(selectedIndex, correctIndex, btn) {
                 if (isAnswered) return;
                 isAnswered = true;
+                clearInterval(timerInterval);
 
                 var allBtns = document.querySelectorAll('.option-btn');
                 allBtns.forEach(function(b) { b.classList.add('disabled'); });
@@ -866,22 +881,14 @@
                 }
 
                 setTimeout(function() {
-                    currentQuestionIndex++;
-                    if (currentQuestionIndex >= QUESTIONS_PER_ROUND) {
-                        document.getElementById('mainBtn').textContent = 'دست تمام شد! بریم دست بعد';
-                        document.getElementById('mainBtn').disabled = true;
-                        setTimeout(function() {
-                            endYourRound();
-                        }, 1500);
-                    } else {
-                        renderQuestionScreen();
-                    }
-                }, 1000);
+                    moveToNext();
+                }, 800);
             };
 
             function endYourRound() {
                 isYourTurn = false;
                 isAnswered = false;
+                clearInterval(timerInterval);
                 document.getElementById('mainBtn').textContent = 'نوبت حریفه...';
                 document.getElementById('mainBtn').disabled = true;
                 
@@ -930,11 +937,12 @@
                 
                 var allBtns = document.querySelectorAll('.option-btn');
                 allBtns.forEach(function(btn) {
-                    var text = btn.getAttribute('data-text');
-                    if (toHide.indexOf(text) !== -1) {
+                    if (toHide.indexOf(btn.getAttribute('data-text')) !== -1) {
                         btn.classList.add('hidden-option');
                     }
                 });
+                
+                fetchData('updateUser', { coins: userCoins });
             };
 
             window.useSwapQuestion = function() {
@@ -951,6 +959,8 @@
                     currentQuestions[currentQuestionIndex] = shuffleArray(remaining)[0];
                     renderQuestionScreen();
                 }
+                
+                fetchData('updateUser', { coins: userCoins });
             };
 
             window.useSkipQuestion = function() {
@@ -963,18 +973,28 @@
                 yourScore += 5;
                 yourCorrectCount++;
                 
+                fetchData('updateUser', { coins: userCoins });
+                
                 setTimeout(function() {
-                    currentQuestionIndex++;
-                    if (currentQuestionIndex >= QUESTIONS_PER_ROUND) {
-                        document.getElementById('mainBtn').textContent = 'دست تمام شد! بریم دست بعد';
-                        setTimeout(function() {
-                            endYourRound();
-                        }, 1000);
-                    } else {
-                        renderQuestionScreen();
-                    }
+                    moveToNext();
                 }, 300);
             };
+
+            function saveGameResult(scoreChange, coinReward) {
+                var gameData = {
+                    id: gameId,
+                    player1: getUserId(),
+                    player2: 'bot',
+                    round1: JSON.stringify(roundResults[0] || {}),
+                    round2: JSON.stringify(roundResults[1] || {}),
+                    round3: JSON.stringify(roundResults[2] || {}),
+                    round4: JSON.stringify(roundResults[3] || {}),
+                    round5: JSON.stringify(roundResults[4] || {}),
+                    status: 'finished'
+                };
+                fetchData('saveGame', { gameData: gameData });
+                fetchData('updateUser', { score: userTotalScore + scoreChange, coins: userCoins + coinReward });
+            }
 
             function endGame() {
                 var resultHtml = '';
@@ -1006,50 +1026,15 @@
                 document.getElementById('mainContainer').innerHTML = '<div class="result-banner">' + resultHtml + '</div>';
                 document.getElementById('mainBtn').style.display = 'none';
 
-                userTotalScore += scoreChange;
-                userCoins += coinReward;
-
-                fetchData('updateUser', {
-                    score: userTotalScore,
-                    coins: userCoins
-                }).then(function() {});
+                saveGameResult(scoreChange, coinReward);
             }
 
             window.backToDashboard = function() {
                 window.location.href = '../../dashboard/';
             };
 
-            function animateTitle() {
-                var title = document.getElementById('headerTitle');
-                if (!title) return;
-                var settings = getSettings();
-                if (settings.animation === false) {
-                    title.classList.remove('animate-out');
-                    return;
-                }
-                function playIn() { title.classList.remove('animate-out'); }
-                function playOut() { title.classList.add('animate-out'); }
-                setInterval(function() {
-                    playIn();
-                    setTimeout(playOut, 10000);
-                }, 12400);
-            }
-
-            function getSettings() {
-                try {
-                    var raw = localStorage.getItem('quizicoSettings');
-                    if (!raw) return { theme: 'light', primaryColor: '#a855f7', animation: true };
-                    var parsed = JSON.parse(raw);
-                    if (!parsed.theme) parsed.theme = 'light';
-                    if (!parsed.primaryColor) parsed.primaryColor = '#a855f7';
-                    if (parsed.animation === undefined) parsed.animation = true;
-                    return parsed;
-                } catch(e) {
-                    return { theme: 'light', primaryColor: '#a855f7', animation: true };
-                }
-            }
-
             async function init() {
+                applyTheme();
                 if (webApp) {
                     webApp.ready();
                     webApp.expand();
@@ -1073,7 +1058,6 @@
                 }
             }
 
-            animateTitle();
             init();
         })();
     </script>
