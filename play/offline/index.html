@@ -132,7 +132,7 @@
             padding: 0 10px 80px;
             display: flex;
             flex-direction: column;
-            gap: 6px;
+            gap: 8px;
             flex: 1;
             overflow-y: auto;
         }
@@ -217,14 +217,37 @@
             padding: 1px 0;
         }
 
-        .round-result-player { font-weight: 700; min-width: 20px; }
+        .round-result-player { font-weight: 700; min-width: 25px; }
+
+        .round-dots {
+            display: flex;
+            gap: 3px;
+            flex: 1;
+            justify-content: center;
+        }
+
+        .result-dot {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 6px;
+            font-weight: 800;
+            border: 1px solid #000;
+            background: #10b981;
+            color: #fff;
+        }
+
+        .result-dot.wrong { background: #ef4444; }
+
         .round-result-count { font-weight: 800; font-size: 8px; }
 
         .question-area {
             display: flex;
             flex-direction: column;
             gap: 6px;
-            flex: 1;
         }
 
         .question-card {
@@ -239,13 +262,19 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            margin-bottom: 6px;
+            margin-bottom: 4px;
         }
 
         .question-player-tag {
             font-size: 9px;
             font-weight: 800;
             color: var(--primary);
+        }
+
+        .question-progress {
+            font-size: 7px;
+            font-weight: 700;
+            color: var(--text-light);
         }
 
         .question-text {
@@ -417,13 +446,16 @@
             var API_URL = 'https://script.google.com/macros/s/AKfycby39_m_-w42F1ps3z21aAW2jMXjgmDJjrPD6CfrLLczg-KPk1cbyXcVnUjaeFQ4TIP9ww/exec';
 
             var TOTAL_ROUNDS = 5;
-            var QUESTIONS_PER_ROUND = 1;
+            var QUESTIONS_PER_ROUND = 3;
             var QUESTION_TIME = 60;
             var currentRound = 1;
+            var currentQuestionIndex = 0;
             var p1Questions = [];
             var p2Questions = [];
             var p1Score = 0;
             var p2Score = 0;
+            var p1CorrectCount = 0;
+            var p2CorrectCount = 0;
             var questions = [];
             var roundResults = [];
             var isGameActive = false;
@@ -447,14 +479,6 @@
                 return result ? { r: parseInt(result[1], 16), g: parseInt(result[2], 16), b: parseInt(result[3], 16) } : { r: 168, g: 85, b: 247 };
             }
 
-            function shadeColor(color, percent) {
-                var rgb = hexToRgb(color);
-                var r = Math.max(0, Math.min(255, rgb.r + percent));
-                var g = Math.max(0, Math.min(255, rgb.g + percent));
-                var b = Math.max(0, Math.min(255, rgb.b + percent));
-                return '#' + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
-            }
-
             function applyTheme() {
                 var settings = getSettings();
                 var theme = settings.theme || 'light';
@@ -466,6 +490,14 @@
                 } else {
                     document.documentElement.style.setProperty('--primary', primaryColor);
                 }
+            }
+
+            function shadeColor(color, percent) {
+                var rgb = hexToRgb(color);
+                var r = Math.max(0, Math.min(255, rgb.r + percent));
+                var g = Math.max(0, Math.min(255, rgb.g + percent));
+                var b = Math.max(0, Math.min(255, rgb.b + percent));
+                return '#' + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
             }
 
             function shuffleArray(arr) {
@@ -519,10 +551,13 @@
                 });
             }
 
-            function renderQuestionCard(playerNum, question, options, correctIndex) {
+            function renderQuestionCard(playerNum, question, options, correctIndex, qIndex) {
                 var tag = playerNum === 1 ? 'بازیکن ۱' : 'بازیکن ۲';
                 var html = '<div class="question-card" id="p' + playerNum + 'Card">';
-                html += '<div class="question-header"><span class="question-player-tag">' + tag + '</span></div>';
+                html += '<div class="question-header">';
+                html += '<span class="question-player-tag">' + tag + '</span>';
+                html += '<span class="question-progress">سوال ' + (qIndex + 1) + ' از ' + QUESTIONS_PER_ROUND + '</span>';
+                html += '</div>';
                 html += '<div class="question-text">' + question + '</div>';
                 html += '<div class="timer-bar-container"><div class="timer-bar-fill" style="width:100%;"></div></div>';
                 html += '<div class="timer-text">60 ثانیه</div>';
@@ -551,24 +586,42 @@
                     for (var i = 0; i < roundResults.length; i++) {
                         var r = roundResults[i];
                         html += '<div class="round-result-item">';
-                        html += '<div class="round-result-row"><span class="round-result-player">راند ' + (i + 1) + '</span></div>';
-                        html += '<div class="round-result-row"><span class="round-result-player">بازیکن ۱</span><span class="round-result-count">' + (r.p1Correct ? 'درست' : 'غلط') + '</span></div>';
-                        html += '<div class="round-result-row"><span class="round-result-player">بازیکن ۲</span><span class="round-result-count">' + (r.p2Correct ? 'درست' : 'غلط') + '</span></div>';
+                        html += '<div class="round-result-row">';
+                        html += '<span class="round-result-player">راند ' + (i + 1) + '</span>';
+                        html += '</div>';
+                        html += '<div class="round-result-row">';
+                        html += '<span class="round-result-player">بازیکن ۱</span>';
+                        html += '<div class="round-dots">';
+                        for (var j = 0; j < QUESTIONS_PER_ROUND; j++) {
+                            html += '<span class="result-dot' + (j < r.p1Correct ? '' : ' wrong') + '">' + (j + 1) + '</span>';
+                        }
+                        html += '</div>';
+                        html += '<span class="round-result-count">+' + r.p1Score + '</span>';
+                        html += '</div>';
+                        html += '<div class="round-result-row">';
+                        html += '<span class="round-result-player">بازیکن ۲</span>';
+                        html += '<div class="round-dots">';
+                        for (var k = 0; k < QUESTIONS_PER_ROUND; k++) {
+                            html += '<span class="result-dot' + (k < r.p2Correct ? '' : ' wrong') + '">' + (k + 1) + '</span>';
+                        }
+                        html += '</div>';
+                        html += '<span class="round-result-count">+' + r.p2Score + '</span>';
+                        html += '</div>';
                         html += '</div>';
                     }
                     html += '</div>';
                 }
                 
                 html += '<div class="question-area">';
-                var p1q = p1Questions[currentRound - 1];
-                var p2q = p2Questions[currentRound - 1];
+                var p1q = p1Questions[currentQuestionIndex];
+                var p2q = p2Questions[currentQuestionIndex];
                 var p1opts = shuffleArray(p1q.options.slice());
                 var p1correct = p1opts.indexOf(p1q.options[p1q.correctOption - 1]);
                 var p2opts = shuffleArray(p2q.options.slice());
                 var p2correct = p2opts.indexOf(p2q.options[p2q.correctOption - 1]);
                 
-                html += renderQuestionCard(1, p1q.question, p1opts, p1correct);
-                html += renderQuestionCard(2, p2q.question, p2opts, p2correct);
+                html += renderQuestionCard(1, p1q.question, p1opts, p1correct, currentQuestionIndex);
+                html += renderQuestionCard(2, p2q.question, p2opts, p2correct, currentQuestionIndex);
                 html += '</div>';
                 
                 document.getElementById('mainContainer').innerHTML = html;
@@ -585,8 +638,10 @@
                     btn.classList.add('selected-correct');
                     if (playerNum === 1) {
                         p1Score += 5;
+                        p1CorrectCount++;
                     } else {
                         p2Score += 5;
+                        p2CorrectCount++;
                     }
                 } else {
                     btn.classList.add('selected-wrong');
@@ -602,23 +657,28 @@
                 if (allAnswered) {
                     clearInterval(timerInterval);
                     setTimeout(function() {
-                        endRound();
+                        currentQuestionIndex++;
+                        if (currentQuestionIndex >= QUESTIONS_PER_ROUND) {
+                            endRound();
+                        } else {
+                            renderGame();
+                        }
                     }, 800);
                 }
             };
 
             function endRound() {
-                var p1Correct = false;
-                var p2Correct = false;
+                roundResults.push({
+                    p1Score: p1CorrectCount * 5,
+                    p2Score: p2CorrectCount * 5,
+                    p1Correct: p1CorrectCount,
+                    p2Correct: p2CorrectCount
+                });
                 
-                var p1Card = document.getElementById('p1Card');
-                var p2Card = document.getElementById('p2Card');
-                if (p1Card && p1Card.querySelector('.selected-correct')) p1Correct = true;
-                if (p2Card && p2Card.querySelector('.selected-correct')) p2Correct = true;
-                
-                roundResults.push({ p1Correct: p1Correct, p2Correct: p2Correct });
-                
+                p1CorrectCount = 0;
+                p2CorrectCount = 0;
                 currentRound++;
+                currentQuestionIndex = 0;
                 
                 if (currentRound > TOTAL_ROUNDS) {
                     endGame();
@@ -688,27 +748,21 @@
                 if (questionsData.ok && Array.isArray(questionsData.data) && questionsData.data.length >= 8) {
                     questions = shuffleArray(questionsData.data);
                     
-                    // تقسیم سوالات: نیمه اول برای بازیکن ۱، نیمه دوم برای بازیکن ۲
+                    var totalNeeded = TOTAL_ROUNDS * QUESTIONS_PER_ROUND;
                     var half = Math.floor(questions.length / 2);
-                    var p1Pool = questions.slice(0, half);
-                    var p2Pool = questions.slice(half);
                     
-                    // انتخاب ۵ سوال برای هر بازیکن بدون تکرار
-                    p1Questions = p1Pool.slice(0, TOTAL_ROUNDS);
-                    p2Questions = p2Pool.slice(0, TOTAL_ROUNDS);
+                    p1Questions = shuffleArray(questions.slice(0, half)).slice(0, totalNeeded);
+                    p2Questions = shuffleArray(questions.slice(half)).slice(0, totalNeeded);
                     
-                    // اگه سوالات کافی نبود، از کل سوالات استفاده کن
-                    if (p1Questions.length < TOTAL_ROUNDS || p2Questions.length < TOTAL_ROUNDS) {
-                        p1Questions = shuffleArray(questions).slice(0, TOTAL_ROUNDS);
-                        p2Questions = shuffleArray(questions).slice(0, TOTAL_ROUNDS);
-                        // مطمئن شو سوالات تکراری بین دو بازیکن در همون راند نیست
-                        for (var i = 0; i < TOTAL_ROUNDS; i++) {
-                            if (p1Questions[i] && p2Questions[i] && p1Questions[i].id === p2Questions[i].id) {
-                                var temp = p2Questions[i];
-                                var swapIndex = (i + 1) % TOTAL_ROUNDS;
-                                p2Questions[i] = p2Questions[swapIndex];
-                                p2Questions[swapIndex] = temp;
-                            }
+                    // اگه کافی نبود از کل سوالات استفاده کن ولی تکراری نباشه
+                    if (p1Questions.length < totalNeeded || p2Questions.length < totalNeeded) {
+                        var allShuffled = shuffleArray(questions);
+                        p1Questions = allShuffled.slice(0, totalNeeded);
+                        var remaining = allShuffled.slice(totalNeeded);
+                        if (remaining.length >= totalNeeded) {
+                            p2Questions = remaining.slice(0, totalNeeded);
+                        } else {
+                            p2Questions = shuffleArray(questions).slice(0, totalNeeded);
                         }
                     }
                     
