@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تک‌نفره | Quizico</title>
+    <script src="https://developer.eitaa.com/eitaa-web-app.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/gh/rastikerdar/iran-sans-font@v1.0.0/dist/font-face.css" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #faf5ff;
+            --bg2: #f3e8ff;
+            --bg3: #e9d5ff;
+            --primary: #a855f7;
+            --primary-dark: #9333ea;
+            --primary-light: #c084fc;
+            --primary-rgb: 168, 85, 247;
+            --dark: #1e1b2e;
+            --text: #4a4458;
+            --text-light: #6b7280;
+            --white: #ffffff;
+            --card-bg: #ffffff;
+            --header-bg: #ffffff;
+            --shadow: 3px 3px 0 #000000;
+            --radius: 4px;
+            --border: 1px solid #000000;
+        }
+
+        [data-theme="dark"] {
+            --bg: #1e1b2e;
+            --bg2: #2d2a3e;
+            --bg3: #3d3a4e;
+            --primary: #c084fc;
+            --primary-dark: #a855f7;
+            --primary-light: #d8b4fe;
+            --primary-rgb: 192, 132, 252;
+            --dark: #f1f5f9;
+            --text: #cbd5e1;
+            --text-light: #94a3b8;
+            --white: #2d2a3e;
+            --card-bg: #2d2a3e;
+            --header-bg: #2d2a3e;
+            --shadow: 3px 3px 0 #000000;
+            --border: 1px solid #000000;
+        }
+
+        [data-animation="off"] * {
+            animation: none !important;
+            transition: none !important;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'IRANSans', Tahoma, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            transition: background 0.5s ease, color 0.5s ease;
+        }
+
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 0;
+            background: linear-gradient(135deg, var(--bg) 0%, var(--bg2) 40%, var(--bg3) 80%);
+            background-size: 400% 400%;
+            animation: gradientMove 15s ease infinite;
+        }
+
+        @keyframes gradientMove {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .header {
+            position: relative;
+            z-index: 10;
+            background: var(--header-bg);
+            border-bottom: var(--border);
+            padding: 10px 16px;
+            position: sticky;
+            top: 0;
+            box-shadow: var(--shadow);
+        }
+
+        .game-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            max-width: 600px;
+            margin: 0 auto;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .score-display {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--dark);
+        }
+
+        .score-badge {
+            background: var(--bg2);
+            border: var(--border);
+            border-radius: var(--radius);
+            padding: 4px 10px;
+            box-shadow: var(--shadow);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .score-badge.you { background: #dbeafe; }
+        .score-badge.bot { background: #fee2e2; }
+
+        .round-display {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--primary);
+            background: var(--bg2);
+            border: var(--border);
+            border-radius: var(--radius);
+            padding: 4px 10px;
+            box-shadow: var(--shadow);
+        }
+
+        .main-container {
+            position: relative;
+            z-index: 5;
+            max-width: 600px;
+            width: 100%;
+            margin: 16px auto;
+            padding: 0 12px 30px;
+        }
+
+        .question-card {
+            background: var(--card-bg);
+            border: var(--border);
+            border-radius: var(--radius);
+            padding: 16px;
+            box-shadow: var(--shadow);
+            margin-bottom: 12px;
+            animation: fadeInUp 0.4s ease;
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .question-text {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--dark);
+            line-height: 1.8;
+            text-align: center;
+            margin-bottom: 12px;
+        }
+
+        .options-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .option-btn {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 14px;
+            border: var(--border);
+            border-radius: var(--radius);
+            background: var(--bg2);
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            box-shadow: var(--shadow);
+            font-family: 'IRANSans', Tahoma, sans-serif;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--dark);
+            text-align: right;
+        }
+
+        .option-btn:hover {
+            transform: translateX(-3px);
+            box-shadow: 4px 4px 0 #000000;
+            background: var(--bg3);
+        }
+
+        .option-btn:active {
+            transform: translate(1px, 1px);
+            box-shadow: 1px 1px 0 #000000;
+        }
+
+        .option-btn.selected-correct {
+            background: #10b981;
+            color: #fff;
+            border-color: #000;
+        }
+
+        .option-btn.selected-wrong {
+            background: #ef4444;
+            color: #fff;
+            border-color: #000;
+        }
+
+        .option-btn.disabled {
+            pointer-events: none;
+            opacity: 0.6;
+        }
+
+        .option-btn.hidden-option {
+            opacity: 0.3;
+            pointer-events: none;
+            text-decoration: line-through;
+        }
+
+        .option-letter {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: var(--primary);
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: 800;
+            flex-shrink: 0;
+            border: var(--border);
+        }
+
+        .actions-row {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+        }
+
+        .action-btn {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            padding: 8px 12px;
+            border: var(--border);
+            border-radius: var(--radius);
+            background: var(--card-bg);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: var(--shadow);
+            font-family: 'IRANSans', Tahoma, sans-serif;
+            font-size: 9px;
+            font-weight: 700;
+            color: var(--text);
+        }
+
+        .action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 3px 3px 0 #000000;
+        }
+
+        .action-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: var(--shadow);
+        }
+
+        .action-btn i {
+            font-size: 11px;
+            color: var(--primary);
+        }
+
+        .action-btn.skip i { color: #f59e0b; }
+        .action-btn.swap i { color: #06b6d4; }
+        .action-btn.remove i { color: #ef4444; }
+
+        .result-banner {
+            text-align: center;
+            padding: 20px;
+            background: var(--card-bg);
+            border: var(--border);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            animation: fadeInUp 0.5s ease;
+        }
+
+        .result-icon {
+            font-size: 50px;
+            margin-bottom: 10px;
+        }
+
+        .result-text {
+            font-size: 16px;
+            font-weight: 800;
+            color: var(--dark);
+            margin-bottom: 6px;
+        }
+
+        .result-score {
+            font-size: 12px;
+            color: var(--text-light);
+            margin-bottom: 12px;
+        }
+
+        .result-btn {
+            display: inline-block;
+            padding: 10px 24px;
+            background: var(--primary);
+            color: #fff;
+            border: var(--border);
+            border-radius: var(--radius);
+            font-family: 'IRANSans', Tahoma, sans-serif;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: var(--shadow);
+            transition: all 0.3s ease;
+        }
+
+        .result-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 4px 4px 0 #000000;
+        }
+
+        .bot-status {
+            text-align: center;
+            font-size: 10px;
+            font-weight: 700;
+            color: var(--text-light);
+            margin-top: 8px;
+            animation: pulse 1.5s ease infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="bg-animation"></div>
+
+    <header class="header">
+        <div class="game-header">
+            <div class="score-display">
+                <span class="score-badge you"><i class="fa-solid fa-user"></i> شما: <span id="yourScore">0</span></span>
+                <span class="score-badge bot"><i class="fa-solid fa-robot"></i> ربات: <span id="botScore">0</span></span>
+            </div>
+            <div class="round-display" id="roundDisplay">راند 1 از 5</div>
+        </div>
+    </header>
+
+    <main class="main-container">
+        <div id="gameContent"></div>
+    </main>
+
+    <script>
+        (function() {
+            var webApp = window.Eitaa?.WebApp;
+            var API_URL = 'https://script.google.com/macros/s/AKfycby39_m_-w42F1ps3z21aAW2jMXjgmDJjrPD6CfrLLczg-KPk1cbyXcVnUjaeFQ4TIP9ww/exec';
+
+            var TOTAL_ROUNDS = 5;
+            var QUESTIONS_PER_ROUND = 3;
+            var currentRound = 1;
+            var currentQuestionInRound = 1;
+            var yourScore = 0;
+            var botScore = 0;
+            var questions = [];
+            var currentQuestions = [];
+            var currentQuestionIndex = 0;
+            var isAnswered = false;
+            var userCoins = 0;
+            var userDiamonds = 0;
+            var userTotalScore = 0;
+
+            var letters = ['الف', 'ب', 'ج', 'د'];
+
+            function getEitaaUser() {
+                if (webApp && webApp.initDataUnsafe && webApp.initDataUnsafe.user) {
+                    return webApp.initDataUnsafe.user;
+                }
+                return null;
+            }
+
+            function getUserId() {
+                var user = getEitaaUser();
+                if (!user) return '';
+                if (typeof user.id === 'number') return user.id.toString();
+                return String(user.id || '');
+            }
+
+            async function fetchData(action, params) {
+                try {
+                    var username = getUserId();
+                    var initData = webApp?.initData || '';
+                    var payload = { action: action, username: username, initData: initData };
+                    if (params) {
+                        for (var key in params) {
+                            if (params.hasOwnProperty(key)) payload[key] = params[key];
+                        }
+                    }
+                    var response = await fetch(API_URL, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                        body: JSON.stringify(payload)
+                    });
+                    var result = await response.json();
+                    return result;
+                } catch(e) {
+                    return { ok: false, error: 'Network error' };
+                }
+            }
+
+            function shuffleArray(arr) {
+                for (var i = arr.length - 1; i > 0; i--) {
+                    var j = Math.floor(Math.random() * (i + 1));
+                    var temp = arr[i];
+                    arr[i] = arr[j];
+                    arr[j] = temp;
+                }
+                return arr;
+            }
+
+            function botAnswer(correctIndex) {
+                var rand = Math.random();
+                if (rand < 0.7) {
+                    return correctIndex;
+                } else {
+                    var wrongIndex = Math.floor(Math.random() * 4);
+                    while (wrongIndex === correctIndex) {
+                        wrongIndex = Math.floor(Math.random() * 4);
+                    }
+                    return wrongIndex;
+                }
+            }
+
+            function updateScoreDisplay() {
+                document.getElementById('yourScore').textContent = yourScore;
+                document.getElementById('botScore').textContent = botScore;
+                document.getElementById('roundDisplay').textContent = 'راند ' + currentRound + ' از ' + TOTAL_ROUNDS;
+            }
+
+            function renderQuestion() {
+                isAnswered = false;
+                var q = currentQuestions[currentQuestionIndex];
+                var options = shuffleArray(q.options.slice());
+                var correctAnswer = q.correctOption;
+                var correctText = q.options[correctAnswer - 1];
+                var correctIndexInShuffled = options.indexOf(correctText);
+
+                var html = '<div class="question-card">';
+                html += '<div class="question-text">' + q.question + '</div>';
+                html += '<div class="options-grid">';
+                for (var i = 0; i < options.length; i++) {
+                    html += '<button class="option-btn" data-index="' + i + '" onclick="selectOption(' + i + ', ' + correctIndexInShuffled + ', this)">';
+                    html += '<span class="option-letter">' + letters[i] + '</span>';
+                    html += '<span>' + options[i] + '</span>';
+                    html += '</button>';
+                }
+                html += '</div>';
+                html += '<div class="bot-status"><i class="fa-solid fa-robot"></i> ربات در حال پاسخ...</div>';
+                html += '</div>';
+
+                var actionsHtml = '<div class="actions-row">';
+                actionsHtml += '<button class="action-btn remove" onclick="useRemove50()" id="btnRemove"><i class="fa-solid fa-trash"></i> حذف ۲ گزینه (۵۰)</button>';
+                actionsHtml += '<button class="action-btn swap" onclick="useSwapQuestion()" id="btnSwap"><i class="fa-solid fa-arrows-rotate"></i> تعویض سوال (۱۰۰)</button>';
+                actionsHtml += '<button class="action-btn skip" onclick="useSkipQuestion()" id="btnSkip"><i class="fa-solid fa-forward"></i> رد کردن (۱۵۰)</button>';
+                actionsHtml += '</div>';
+
+                document.getElementById('gameContent').innerHTML = actionsHtml + html;
+                updateScoreDisplay();
+            }
+
+            window.selectOption = function(selectedIndex, correctIndex, btn) {
+                if (isAnswered) return;
+                isAnswered = true;
+
+                var allBtns = document.querySelectorAll('.option-btn');
+                allBtns.forEach(function(b) { b.classList.add('disabled'); });
+
+                if (selectedIndex === correctIndex) {
+                    btn.classList.add('selected-correct');
+                    yourScore += 5;
+                } else {
+                    btn.classList.add('selected-wrong');
+                    allBtns[correctIndex].classList.add('selected-correct');
+                }
+
+                var botCorrect = botAnswer(correctIndex);
+                if (botCorrect === correctIndex) {
+                    botScore += 5;
+                }
+
+                updateScoreDisplay();
+
+                setTimeout(function() {
+                    currentQuestionInRound++;
+                    if (currentQuestionInRound > QUESTIONS_PER_ROUND) {
+                        currentQuestionInRound = 1;
+                        currentRound++;
+                        if (currentRound > TOTAL_ROUNDS) {
+                            endGame();
+                        } else {
+                            loadRoundQuestions();
+                        }
+                    } else {
+                        currentQuestionIndex++;
+                        if (currentQuestionIndex >= currentQuestions.length) {
+                            loadRoundQuestions();
+                        } else {
+                            renderQuestion();
+                        }
+                    }
+                }, 1500);
+            };
+
+            function loadRoundQuestions() {
+                var allQuestions = shuffleArray(questions);
+                currentQuestions = allQuestions.slice(0, QUESTIONS_PER_ROUND);
+                currentQuestionIndex = 0;
+                renderQuestion();
+            }
+
+            window.useRemove50 = function() {
+                if (userCoins < 50 || isAnswered) return;
+                userCoins -= 50;
+                document.getElementById('btnRemove').disabled = true;
+                
+                var q = currentQuestions[currentQuestionIndex];
+                var correctText = q.options[q.correctOption - 1];
+                var wrongOptions = q.options.filter(function(o) { return o !== correctText; });
+                var toHide = shuffleArray(wrongOptions).slice(0, 2);
+                
+                var allBtns = document.querySelectorAll('.option-btn');
+                allBtns.forEach(function(btn) {
+                    var text = btn.querySelector('span:last-child').textContent;
+                    if (toHide.indexOf(text) !== -1) {
+                        btn.classList.add('hidden-option');
+                    }
+                });
+            };
+
+            window.useSwapQuestion = function() {
+                if (userCoins < 100 || isAnswered) return;
+                userCoins -= 100;
+                document.getElementById('btnSwap').disabled = true;
+                
+                var remaining = questions.filter(function(q) {
+                    return currentQuestions.indexOf(q) === -1;
+                });
+                if (remaining.length > 0) {
+                    currentQuestions[currentQuestionIndex] = shuffleArray(remaining)[0];
+                    renderQuestion();
+                }
+            };
+
+            window.useSkipQuestion = function() {
+                if (userCoins < 150 || isAnswered) return;
+                userCoins -= 150;
+                document.getElementById('btnSkip').disabled = true;
+                
+                yourScore += 5;
+                updateScoreDisplay();
+                
+                setTimeout(function() {
+                    currentQuestionInRound++;
+                    if (currentQuestionInRound > QUESTIONS_PER_ROUND) {
+                        currentQuestionInRound = 1;
+                        currentRound++;
+                        if (currentRound > TOTAL_ROUNDS) {
+                            endGame();
+                        } else {
+                            loadRoundQuestions();
+                        }
+                    } else {
+                        currentQuestionIndex++;
+                        if (currentQuestionIndex >= currentQuestions.length) {
+                            loadRoundQuestions();
+                        } else {
+                            renderQuestion();
+                        }
+                    }
+                }, 300);
+            };
+
+            function endGame() {
+                var resultHtml = '';
+                var scoreChange = 0;
+                var coinReward = 0;
+
+                if (yourScore > botScore) {
+                    resultHtml = '<div class="result-icon"><i class="fa-solid fa-trophy" style="color:#f59e0b;"></i></div>';
+                    resultHtml += '<div class="result-text">بردی!</div>';
+                    scoreChange = 75;
+                    coinReward = 300;
+                } else if (yourScore < botScore) {
+                    resultHtml = '<div class="result-icon"><i class="fa-solid fa-face-frown" style="color:#ef4444;"></i></div>';
+                    resultHtml += '<div class="result-text">باختی!</div>';
+                    scoreChange = -25;
+                } else {
+                    resultHtml = '<div class="result-icon"><i class="fa-solid fa-handshake" style="color:#f59e0b;"></i></div>';
+                    resultHtml += '<div class="result-text">مساوی شدی!</div>';
+                    scoreChange = 25;
+                }
+
+                resultHtml += '<div class="result-score">شما: ' + yourScore + ' - ربات: ' + botScore + '</div>';
+                if (scoreChange >= 0) {
+                    resultHtml += '<div class="result-score">امتیاز: +' + scoreChange + '</div>';
+                } else {
+                    resultHtml += '<div class="result-score">امتیاز: ' + scoreChange + '</div>';
+                }
+                if (coinReward > 0) {
+                    resultHtml += '<div class="result-score">سکه: +' + coinReward + '</div>';
+                }
+                resultHtml += '<button class="result-btn" onclick="backToDashboard()">بازگشت</button>';
+
+                document.getElementById('gameContent').innerHTML = '<div class="result-banner">' + resultHtml + '</div>';
+
+                userTotalScore += scoreChange;
+                userCoins += coinReward;
+
+                fetchData('updateUser', {
+                    score: userTotalScore,
+                    coins: userCoins
+                }).then(function() {});
+            }
+
+            window.backToDashboard = function() {
+                window.location.href = '../dashboard/';
+            };
+
+            async function init() {
+                if (webApp) {
+                    webApp.ready();
+                    webApp.expand();
+                }
+
+                var userData = await fetchData('getUser', {});
+                if (userData.ok && userData.data) {
+                    userCoins = userData.data.coins || 0;
+                    userDiamonds = userData.data.diamonds || 0;
+                    userTotalScore = userData.data.score || 0;
+                }
+
+                var questionsData = await fetchData('getQuestions', { limit: 50 });
+                if (questionsData.ok && Array.isArray(questionsData.data) && questionsData.data.length > 0) {
+                    questions = questionsData.data;
+                    loadRoundQuestions();
+                } else {
+                    document.getElementById('gameContent').innerHTML = '<div class="result-banner"><div class="result-text">سوالی یافت نشد</div></div>';
+                }
+            }
+
+            init();
+        })();
+    </script>
+</body>
+</html>
