@@ -51,12 +51,6 @@
             transition: none !important;
         }
 
-        [data-animation="off"] .header-title .t-letter {
-            opacity: 1 !important;
-            transform: translateY(0) !important;
-            animation: none !important;
-        }
-
         * {
             margin: 0;
             padding: 0;
@@ -70,7 +64,6 @@
             min-height: 100vh;
             display: flex;
             flex-direction: column;
-            transition: background 0.5s ease, color 0.5s ease;
         }
 
         .bg-animation {
@@ -106,7 +99,6 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            gap: 12px;
             max-width: 600px;
             margin: 0 auto;
         }
@@ -118,8 +110,8 @@
         }
 
         .header-logo {
-            width: 52px;
-            height: 52px;
+            width: 44px;
+            height: 44px;
             border-radius: var(--radius);
             background: var(--primary);
             display: flex;
@@ -138,20 +130,10 @@
             transform: scale(1.15);
         }
 
-        .header-title-wrapper {
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start;
-        }
-
         .header-title {
-            display: flex;
-            direction: ltr;
-            gap: 0;
-            font-size: 18px;
+            font-size: 16px;
             font-weight: 800;
             color: var(--dark);
-            font-family: 'IRANSans', Tahoma, sans-serif;
         }
 
         .header-title .t-accent {
@@ -161,12 +143,6 @@
         .header-subtitle {
             font-size: 9px;
             color: var(--text-light);
-        }
-
-        .header-currency {
-            display: flex;
-            align-items: center;
-            gap: 6px;
         }
 
         .currency-badge {
@@ -184,31 +160,6 @@
         }
 
         .currency-badge.coins i { color: #f59e0b; }
-
-        .timer-badge {
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            background: #fef3c7;
-            border: var(--border);
-            border-radius: var(--radius);
-            padding: 4px 10px;
-            font-size: 10px;
-            font-weight: 800;
-            color: #d97706;
-            box-shadow: var(--shadow);
-        }
-
-        .timer-badge.warning {
-            background: #fee2e2;
-            color: #ef4444;
-            animation: pulse 1s infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
-        }
 
         .main-container {
             position: relative;
@@ -232,7 +183,7 @@
             background: var(--card-bg);
             border: var(--border);
             border-radius: 12px;
-            padding: 12px;
+            padding: 10px;
             text-align: center;
             box-shadow: var(--shadow);
         }
@@ -240,31 +191,30 @@
         .player-card.active {
             border-color: var(--gold);
             border-width: 3px;
-            box-shadow: 0 0 20px rgba(245, 158, 11, 0.4);
         }
 
         .player-tag {
-            font-size: 11px;
+            font-size: 10px;
             font-weight: 800;
-            margin-bottom: 6px;
+            margin-bottom: 4px;
         }
 
         .player-avatar {
-            width: 45px;
-            height: 45px;
+            width: 40px;
+            height: 40px;
             border-radius: 50%;
-            margin: 0 auto 6px;
+            margin: 0 auto 4px;
             background: var(--bg2);
             border: var(--border);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 20px;
+            font-size: 18px;
             color: var(--primary);
         }
 
         .player-score {
-            font-size: 16px;
+            font-size: 14px;
             font-weight: 800;
             color: var(--gold);
         }
@@ -273,10 +223,10 @@
             background: var(--card-bg);
             border: var(--border);
             border-radius: 12px;
-            padding: 10px 14px;
+            padding: 8px 12px;
             box-shadow: var(--shadow);
             text-align: center;
-            font-size: 10px;
+            font-size: 9px;
             font-weight: 600;
         }
 
@@ -284,14 +234,14 @@
             background: var(--card-bg);
             border: var(--border);
             border-radius: 12px;
-            padding: 14px;
+            padding: 12px;
             box-shadow: var(--shadow);
         }
 
         .rounds-title {
-            font-size: 11px;
+            font-size: 10px;
             font-weight: 800;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
             text-align: center;
         }
 
@@ -299,47 +249,44 @@
             background: rgba(245, 158, 11, 0.1);
             border: 1px solid var(--gold);
             border-radius: 8px;
-            padding: 10px;
-            margin-bottom: 8px;
+            padding: 8px;
+            margin-bottom: 6px;
         }
 
         .round-result-header {
-            font-size: 9px;
+            font-size: 8px;
             font-weight: 700;
-            margin-bottom: 6px;
-            display: flex;
-            align-items: center;
-            gap: 4px;
+            margin-bottom: 4px;
         }
 
         .round-result-row {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 3px 0;
-            font-size: 9px;
+            padding: 2px 0;
+            font-size: 8px;
         }
 
         .round-result-player {
             font-weight: 700;
-            min-width: 30px;
+            min-width: 25px;
         }
 
         .round-dots {
             display: flex;
-            gap: 4px;
+            gap: 3px;
             flex: 1;
             justify-content: center;
         }
 
         .result-dot {
-            width: 18px;
-            height: 18px;
+            width: 15px;
+            height: 15px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 8px;
+            font-size: 7px;
             font-weight: 800;
             border: 1px solid #000;
             background: #10b981;
@@ -352,8 +299,8 @@
 
         .round-result-count {
             font-weight: 800;
-            font-size: 10px;
-            min-width: 20px;
+            font-size: 9px;
+            min-width: 18px;
             text-align: center;
         }
 
@@ -361,16 +308,48 @@
             background: var(--card-bg);
             border: var(--border);
             border-radius: 12px;
-            padding: 16px;
+            padding: 14px;
             box-shadow: var(--shadow);
         }
 
         .question-text {
-            font-size: 13px;
+            font-size: 12px;
             font-weight: 700;
-            line-height: 1.8;
+            line-height: 1.7;
             text-align: center;
-            margin-bottom: 12px;
+            margin-bottom: 10px;
+        }
+
+        .timer-bar-container {
+            background: var(--bg3);
+            border: var(--border);
+            border-radius: 10px;
+            height: 8px;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+
+        .timer-bar-fill {
+            height: 100%;
+            background: #10b981;
+            border-radius: 10px;
+            transition: width 1s linear;
+        }
+
+        .timer-bar-fill.warning {
+            background: #f59e0b;
+        }
+
+        .timer-bar-fill.danger {
+            background: #ef4444;
+        }
+
+        .timer-text {
+            text-align: center;
+            font-size: 8px;
+            font-weight: 700;
+            color: var(--text-light);
+            margin-bottom: 8px;
         }
 
         .options-grid {
@@ -443,8 +422,8 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 4px;
-            padding: 8px;
+            gap: 3px;
+            padding: 7px;
             border: var(--border);
             border-radius: 8px;
             background: var(--card-bg);
@@ -456,8 +435,9 @@
         }
 
         .action-btn:disabled {
-            opacity: 0.4;
+            opacity: 0.3;
             cursor: not-allowed;
+            box-shadow: 1px 1px 0 #000;
         }
 
         .bottom-btn-container {
@@ -465,11 +445,10 @@
             bottom: 0;
             right: 0;
             left: 0;
-            padding: 12px 16px;
+            padding: 10px 16px;
             background: var(--header-bg);
             border-top: var(--border);
             z-index: 100;
-            box-shadow: 0 -3px 0 #000;
         }
 
         .main-btn {
@@ -521,7 +500,7 @@
         .result-score {
             font-size: 12px;
             color: var(--text-light);
-            margin-bottom: 12px;
+            margin-bottom: 10px;
         }
 
         .result-btn {
@@ -549,17 +528,12 @@
                 <div class="header-logo">
                     <img src="https://cdn.imgurl.ir/uploads/f30974_InShot_20260821_174101103.png" alt="Quizico">
                 </div>
-                <div class="header-title-wrapper">
-                    <div class="header-title">
-                        <span>Quiz<span class="t-accent">ico</span></span>
-                    </div>
+                <div>
+                    <div class="header-title">Quiz<span class="t-accent">ico</span></div>
                     <div class="header-subtitle">تک‌نفره</div>
                 </div>
             </div>
-            <div style="display:flex;align-items:center;gap:6px;">
-                <span class="timer-badge" id="timerBadge"><i class="fa-solid fa-clock"></i> <span id="timerDisplay">60</span></span>
-                <span class="currency-badge coins"><i class="fa-solid fa-coins"></i> <span id="coinsHeader">0</span></span>
-            </div>
+            <span class="currency-badge coins"><i class="fa-solid fa-coins"></i> <span id="coinsHeader">0</span></span>
         </div>
     </header>
 
@@ -592,22 +566,20 @@
             var isRoundActive = false;
             var yourCorrectCount = 0;
             var botCorrectCount = 0;
-            var usedActions = {};
             var timerInterval = null;
             var timeLeft = QUESTION_TIME;
             var gameId = 'game_' + Date.now();
+            var actionUsedThisQuestion = false;
 
             var messages = [
                 'هر سوال درست یه قدم به برد نزدیک‌ترت می‌کنه!',
                 'تمرکزت رو بذار روی سوال، وقت داری!',
                 'تو از پسش برمیای! فقط با دقت جواب بده',
                 'حریفت قویه، ولی تو قوی‌تری!',
-                'هر جواب درست ۵ امتیاز داره، بجنب!',
-                'آروم باش و درست فکر کن، بردی!',
-                'ذهنت رو آماده کن، سوال بعدی مهمه!',
+                'هر جواب درست ۵ امتیاز داره!',
+                'آروم باش و درست فکر کن!',
                 'ادامه بده، داری عالی پیش میری!',
-                'هر ثانیه ارزش داره، سریع جواب بده!',
-                'تو این راند رو می‌بری، مطمئنم!'
+                'هر ثانیه ارزش داره!'
             ];
 
             function getRandomMessage() {
@@ -628,24 +600,19 @@
                 return String(user.id || '');
             }
 
-            async function fetchData(action, params) {
-                try {
-                    var username = getUserId();
-                    var payload = { action: action, username: username };
-                    if (params) {
-                        for (var key in params) {
-                            if (params.hasOwnProperty(key)) payload[key] = params[key];
-                        }
+            function fetchData(action, params) {
+                var username = getUserId();
+                var payload = { action: action, username: username };
+                if (params) {
+                    for (var key in params) {
+                        if (params.hasOwnProperty(key)) payload[key] = params[key];
                     }
-                    var response = await fetch(API_URL, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                        body: JSON.stringify(payload)
-                    });
-                    return await response.json();
-                } catch(e) {
-                    return { ok: false };
                 }
+                return fetch(API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify(payload)
+                }).then(function(r) { return r.json(); }).catch(function() { return { ok: false }; });
             }
 
             function getSettings() {
@@ -709,52 +676,59 @@
                 return Math.random() < 0.7 ? correctIndex : Math.floor(Math.random() * 4);
             }
 
-            function updateCoinsDisplay() {
-                document.getElementById('coinsHeader').textContent = userCoins;
-            }
-
             function startTimer() {
                 clearInterval(timerInterval);
                 timeLeft = QUESTION_TIME;
-                updateTimerDisplay();
+                updateTimerBar();
                 timerInterval = setInterval(function() {
                     timeLeft--;
-                    updateTimerDisplay();
+                    updateTimerBar();
                     if (timeLeft <= 0) {
                         clearInterval(timerInterval);
-                        timeOut();
+                        if (!isAnswered) {
+                            timeOut();
+                        }
                     }
                 }, 1000);
             }
 
-            function updateTimerDisplay() {
-                document.getElementById('timerDisplay').textContent = timeLeft;
-                var badge = document.getElementById('timerBadge');
+            function updateTimerBar() {
+                var fill = document.getElementById('timerFill');
+                var text = document.getElementById('timerText');
+                if (!fill || !text) return;
+                var percent = (timeLeft / QUESTION_TIME) * 100;
+                fill.style.width = percent + '%';
+                text.textContent = timeLeft + ' ثانیه';
                 if (timeLeft <= 10) {
-                    badge.classList.add('warning');
+                    fill.className = 'timer-bar-fill danger';
+                } else if (timeLeft <= 20) {
+                    fill.className = 'timer-bar-fill warning';
                 } else {
-                    badge.classList.remove('warning');
+                    fill.className = 'timer-bar-fill';
                 }
             }
 
             function timeOut() {
-                if (isAnswered) return;
                 isAnswered = true;
                 var allBtns = document.querySelectorAll('.option-btn');
                 allBtns.forEach(function(b) { b.classList.add('disabled'); });
                 var q = currentQuestions[currentQuestionIndex];
-                var correctIndex = q.correctOption - 1;
-                allBtns[correctIndex].classList.add('selected-correct');
-                
+                var correctText = q.options[q.correctOption - 1];
+                var allBtnTexts = document.querySelectorAll('.option-btn');
+                allBtnTexts.forEach(function(btn) {
+                    if (btn.getAttribute('data-text') === correctText) {
+                        btn.classList.add('selected-correct');
+                    }
+                });
                 setTimeout(function() {
-                    moveToNext();
+                    nextQuestion();
                 }, 1000);
             }
 
-            function moveToNext() {
+            function nextQuestion() {
                 currentQuestionIndex++;
                 if (currentQuestionIndex >= QUESTIONS_PER_ROUND) {
-                    document.getElementById('mainBtn').textContent = 'دست تمام شد! بریم دست بعد';
+                    document.getElementById('mainBtn').textContent = 'دست تمام شد!';
                     document.getElementById('mainBtn').disabled = true;
                     setTimeout(function() {
                         endYourRound();
@@ -782,11 +756,11 @@
                 
                 if (roundResults.length > 0) {
                     html += '<div class="rounds-results">';
-                    html += '<div class="rounds-title">نتایج راندهای پاسخ‌داده‌شده</div>';
+                    html += '<div class="rounds-title">نتایج راندها</div>';
                     for (var i = 0; i < roundResults.length; i++) {
                         var result = roundResults[i];
                         html += '<div class="round-result-item">';
-                        html += '<div class="round-result-header"><i class="fa-solid fa-gamepad"></i> راند ' + (i + 1) + '</div>';
+                        html += '<div class="round-result-header">راند ' + (i + 1) + '</div>';
                         html += '<div class="round-result-row">';
                         html += '<span class="round-result-player">تو</span>';
                         html += '<div class="round-dots">';
@@ -815,7 +789,7 @@
 
             function renderQuestionScreen() {
                 isAnswered = false;
-                usedActions = { remove: false, swap: false, skip: false };
+                actionUsedThisQuestion = false;
                 var q = currentQuestions[currentQuestionIndex];
                 var options = shuffleArray(q.options.slice());
                 var correctText = q.options[q.correctOption - 1];
@@ -828,6 +802,8 @@
                 html += '</div>';
                 html += '<div class="question-card">';
                 html += '<div class="question-text">' + q.question + '</div>';
+                html += '<div class="timer-bar-container"><div class="timer-bar-fill" id="timerFill" style="width:100%;"></div></div>';
+                html += '<div class="timer-text" id="timerText">60 ثانیه</div>';
                 html += '<div class="options-grid">';
                 for (var i = 0; i < options.length; i++) {
                     html += '<button class="option-btn" data-text="' + options[i] + '" onclick="selectOption(' + i + ', ' + correctIndex + ', this)">';
@@ -881,13 +857,12 @@
                 }
 
                 setTimeout(function() {
-                    moveToNext();
+                    nextQuestion();
                 }, 800);
             };
 
             function endYourRound() {
                 isYourTurn = false;
-                isAnswered = false;
                 clearInterval(timerInterval);
                 document.getElementById('mainBtn').textContent = 'نوبت حریفه...';
                 document.getElementById('mainBtn').disabled = true;
@@ -924,11 +899,10 @@
             }
 
             window.useRemove50 = function() {
-                if (userCoins < 50 || isAnswered || usedActions.remove) return;
+                if (userCoins < 50 || isAnswered || actionUsedThisQuestion) return;
                 userCoins -= 50;
-                usedActions.remove = true;
-                updateCoinsDisplay();
-                document.getElementById('btnRemove').disabled = true;
+                actionUsedThisQuestion = true;
+                document.getElementById('coinsHeader').textContent = userCoins;
                 
                 var q = currentQuestions[currentQuestionIndex];
                 var correctText = q.options[q.correctOption - 1];
@@ -942,45 +916,56 @@
                     }
                 });
                 
+                document.getElementById('btnRemove').disabled = true;
+                document.getElementById('btnSwap').disabled = true;
+                document.getElementById('btnSkip').disabled = true;
+                
                 fetchData('updateUser', { coins: userCoins });
             };
 
             window.useSwapQuestion = function() {
-                if (userCoins < 100 || isAnswered || usedActions.swap) return;
+                if (userCoins < 100 || isAnswered || actionUsedThisQuestion) return;
                 userCoins -= 100;
-                usedActions.swap = true;
-                updateCoinsDisplay();
-                document.getElementById('btnSwap').disabled = true;
+                actionUsedThisQuestion = true;
+                document.getElementById('coinsHeader').textContent = userCoins;
                 
                 var remaining = questions.filter(function(q) {
                     return currentQuestions.indexOf(q) === -1;
                 });
                 if (remaining.length > 0) {
                     currentQuestions[currentQuestionIndex] = shuffleArray(remaining)[0];
-                    renderQuestionScreen();
                 }
                 
+                document.getElementById('btnRemove').disabled = true;
+                document.getElementById('btnSwap').disabled = true;
+                document.getElementById('btnSkip').disabled = true;
+                
                 fetchData('updateUser', { coins: userCoins });
+                renderQuestionScreen();
             };
 
             window.useSkipQuestion = function() {
-                if (userCoins < 150 || isAnswered || usedActions.skip) return;
+                if (userCoins < 150 || isAnswered || actionUsedThisQuestion) return;
                 userCoins -= 150;
-                usedActions.skip = true;
-                updateCoinsDisplay();
-                document.getElementById('btnSkip').disabled = true;
+                actionUsedThisQuestion = true;
+                document.getElementById('coinsHeader').textContent = userCoins;
                 
                 yourScore += 5;
                 yourCorrectCount++;
                 
+                document.getElementById('btnRemove').disabled = true;
+                document.getElementById('btnSwap').disabled = true;
+                document.getElementById('btnSkip').disabled = true;
+                
                 fetchData('updateUser', { coins: userCoins });
                 
+                clearInterval(timerInterval);
                 setTimeout(function() {
-                    moveToNext();
+                    nextQuestion();
                 }, 300);
             };
 
-            function saveGameResult(scoreChange, coinReward) {
+            function saveGame(scoreChange, coinReward) {
                 var gameData = {
                     id: gameId,
                     player1: getUserId(),
@@ -997,6 +982,7 @@
             }
 
             function endGame() {
+                clearInterval(timerInterval);
                 var resultHtml = '';
                 var scoreChange = 0;
                 var coinReward = 0;
@@ -1026,7 +1012,7 @@
                 document.getElementById('mainContainer').innerHTML = '<div class="result-banner">' + resultHtml + '</div>';
                 document.getElementById('mainBtn').style.display = 'none';
 
-                saveGameResult(scoreChange, coinReward);
+                saveGame(scoreChange, coinReward);
             }
 
             window.backToDashboard = function() {
@@ -1044,14 +1030,13 @@
                 if (userData.ok && userData.data) {
                     userCoins = userData.data.coins || 0;
                     userTotalScore = userData.data.score || 0;
-                    updateCoinsDisplay();
+                    document.getElementById('coinsHeader').textContent = userCoins;
                 }
 
                 var questionsData = await fetchData('getQuestions', { limit: 50 });
                 if (questionsData.ok && Array.isArray(questionsData.data) && questionsData.data.length > 0) {
                     questions = questionsData.data;
                     renderMainScreen();
-                    document.getElementById('mainBtn').textContent = 'شروع راند 1';
                 } else {
                     document.getElementById('mainContainer').innerHTML = '<div class="result-banner"><div class="result-text">سوالی یافت نشد</div></div>';
                     document.getElementById('mainBtn').style.display = 'none';
