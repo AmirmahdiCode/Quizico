@@ -25,6 +25,7 @@
             --shadow: 3px 3px 0 #000000;
             --radius: 4px;
             --border: 1px solid #000000;
+            --gold: #f59e0b;
         }
 
         [data-theme="dark"] {
@@ -84,237 +85,201 @@
             100% { background-position: 0% 50%; }
         }
 
-        .header {
+        .main-container {
             position: relative;
-            z-index: 10;
-            background: var(--header-bg);
-            border-bottom: var(--border);
-            padding: 12px 16px;
-            position: sticky;
-            top: 0;
-            box-shadow: var(--shadow);
+            z-index: 5;
+            max-width: 500px;
+            width: 100%;
+            margin: 16px auto;
+            padding: 0 12px 100px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
         }
 
         .players-row {
             display: flex;
-            align-items: center;
-            justify-content: space-between;
-            max-width: 600px;
-            margin: 0 auto;
             gap: 10px;
+            align-items: stretch;
         }
 
-        .player-info {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 11px;
-            font-weight: 700;
-            color: var(--dark);
+        .player-card {
             flex: 1;
+            background: var(--card-bg);
+            border: var(--border);
+            border-radius: 12px;
+            padding: 12px;
+            text-align: center;
+            box-shadow: var(--shadow);
+            position: relative;
+            transition: all 0.3s ease;
         }
 
-        .player-info.opponent {
-            justify-content: flex-end;
-            text-align: left;
+        .player-card.active {
+            border-color: var(--gold);
+            border-width: 3px;
+            box-shadow: 0 0 20px rgba(245, 158, 11, 0.4);
+        }
+
+        .player-tag {
+            font-size: 11px;
+            font-weight: 800;
+            color: var(--text);
+            margin-bottom: 6px;
+        }
+
+        .player-card.active .player-tag {
+            color: var(--gold);
         }
 
         .player-avatar {
-            width: 36px;
-            height: 36px;
+            width: 50px;
+            height: 50px;
             border-radius: 50%;
+            margin: 0 auto 6px;
             background: var(--bg2);
             border: var(--border);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 14px;
+            font-size: 22px;
             color: var(--primary);
-            flex-shrink: 0;
-            box-shadow: var(--shadow);
+            overflow: hidden;
         }
 
-        .player-detail {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .player-name {
-            font-size: 10px;
-            font-weight: 700;
+        .player-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
 
         .player-score {
-            font-size: 9px;
-            color: var(--text-light);
-        }
-
-        .vs-badge {
-            font-size: 10px;
+            font-size: 18px;
             font-weight: 800;
-            color: var(--primary);
-            background: var(--bg2);
-            border: var(--border);
-            border-radius: 50%;
-            width: 30px;
-            height: 30px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: var(--shadow);
-            flex-shrink: 0;
+            color: var(--gold);
+            display: block;
         }
 
-        .main-container {
-            position: relative;
-            z-index: 5;
-            max-width: 600px;
-            width: 100%;
-            margin: 16px auto;
-            padding: 0 12px 30px;
+        .player-score.hidden {
+            visibility: hidden;
         }
 
-        .rounds-card {
+        .player-progress {
+            font-size: 8px;
+            color: var(--text-light);
+            margin-top: 2px;
+        }
+
+        .message-card {
             background: var(--card-bg);
             border: var(--border);
-            border-radius: var(--radius);
-            padding: 16px;
+            border-radius: 12px;
+            padding: 10px 14px;
             box-shadow: var(--shadow);
-            margin-bottom: 16px;
+            text-align: center;
+            font-size: 10px;
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .rounds-results {
+            background: var(--card-bg);
+            border: var(--border);
+            border-radius: 12px;
+            padding: 14px;
+            box-shadow: var(--shadow);
         }
 
         .rounds-title {
-            font-size: 12px;
+            font-size: 11px;
+            font-weight: 800;
+            color: var(--dark);
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .round-result-item {
+            background: rgba(245, 158, 11, 0.1);
+            border: 1px solid var(--gold);
+            border-radius: 8px;
+            padding: 10px;
+            margin-bottom: 8px;
+        }
+
+        .round-result-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .round-result-header {
+            font-size: 9px;
             font-weight: 700;
             color: var(--dark);
-            text-align: center;
-            margin-bottom: 12px;
-        }
-
-        .rounds-list {
+            margin-bottom: 6px;
             display: flex;
-            flex-direction: column;
-            gap: 8px;
+            align-items: center;
+            gap: 4px;
         }
 
-        .round-row {
+        .round-result-row {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 8px 10px;
-            border: var(--border);
-            border-radius: var(--radius);
-            background: var(--bg2);
+            padding: 3px 0;
+            font-size: 9px;
         }
 
-        .round-row.active {
-            border-color: var(--primary);
-            border-width: 2px;
-            background: var(--bg3);
-        }
-
-        .round-row.completed {
-            opacity: 0.7;
+        .round-result-player {
+            font-weight: 700;
+            color: var(--text);
+            min-width: 30px;
         }
 
         .round-dots {
             display: flex;
             gap: 4px;
+            flex: 1;
+            justify-content: center;
         }
 
-        .dot {
-            width: 8px;
-            height: 8px;
+        .result-dot {
+            width: 18px;
+            height: 18px;
             border-radius: 50%;
-            background: var(--text-light);
-            opacity: 0.3;
-            border: 1px solid #000;
-        }
-
-        .dot.filled {
-            background: #10b981;
-            opacity: 1;
-        }
-
-        .dot.wrong {
-            background: #ef4444;
-            opacity: 1;
-        }
-
-        .dot.pending {
-            background: #f59e0b;
-            opacity: 1;
-        }
-
-        .round-label {
-            font-size: 9px;
-            font-weight: 700;
-            color: var(--text);
-        }
-
-        .round-score {
-            font-size: 9px;
-            font-weight: 700;
-            color: var(--primary);
-        }
-
-        .bottom-btn-container {
-            position: sticky;
-            bottom: 16px;
-            z-index: 20;
-            max-width: 600px;
-            margin: 0 auto;
-            padding: 0 12px;
-        }
-
-        .main-btn {
-            width: 100%;
-            padding: 14px;
-            background: var(--primary);
-            color: #fff;
-            border: var(--border);
-            border-radius: var(--radius);
-            font-family: 'IRANSans', Tahoma, sans-serif;
-            font-size: 13px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 8px;
             font-weight: 800;
-            cursor: pointer;
-            box-shadow: var(--shadow);
-            transition: all 0.3s ease;
+            border: 1px solid #000;
+            background: #10b981;
+            color: #fff;
+        }
+
+        .result-dot.wrong {
+            background: #ef4444;
+        }
+
+        .round-result-count {
+            font-weight: 800;
+            font-size: 10px;
+            min-width: 20px;
             text-align: center;
         }
 
-        .main-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 4px 4px 0 #000000;
+        .round-result-count.good {
+            color: #10b981;
         }
 
-        .main-btn:active {
-            transform: translate(1px, 1px);
-            box-shadow: 1px 1px 0 #000000;
-        }
-
-        .main-btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            transform: none;
-            box-shadow: var(--shadow);
-        }
-
-        .main-btn.waiting {
-            background: #f59e0b;
-        }
-
-        .main-btn.start {
-            background: #10b981;
+        .round-result-count.bad {
+            color: #ef4444;
         }
 
         .question-card {
             background: var(--card-bg);
             border: var(--border);
-            border-radius: var(--radius);
+            border-radius: 12px;
             padding: 16px;
             box-shadow: var(--shadow);
-            margin-bottom: 12px;
             animation: fadeInUp 0.4s ease;
         }
 
@@ -324,7 +289,7 @@
         }
 
         .question-text {
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 700;
             color: var(--dark);
             line-height: 1.8;
@@ -335,22 +300,22 @@
         .options-grid {
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 6px;
         }
 
         .option-btn {
             display: flex;
             align-items: center;
-            gap: 10px;
-            padding: 12px 14px;
+            gap: 8px;
+            padding: 10px 12px;
             border: var(--border);
-            border-radius: var(--radius);
+            border-radius: 8px;
             background: var(--bg2);
             cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-            box-shadow: var(--shadow);
+            transition: all 0.3s ease;
+            box-shadow: 2px 2px 0 #000;
             font-family: 'IRANSans', Tahoma, sans-serif;
-            font-size: 12px;
+            font-size: 11px;
             font-weight: 600;
             color: var(--dark);
             text-align: right;
@@ -358,13 +323,8 @@
 
         .option-btn:hover {
             transform: translateX(-3px);
-            box-shadow: 4px 4px 0 #000000;
+            box-shadow: 3px 3px 0 #000;
             background: var(--bg3);
-        }
-
-        .option-btn:active {
-            transform: translate(1px, 1px);
-            box-shadow: 1px 1px 0 #000000;
         }
 
         .option-btn.selected-correct {
@@ -389,15 +349,15 @@
         }
 
         .option-letter {
-            width: 28px;
-            height: 28px;
+            width: 22px;
+            height: 22px;
             border-radius: 50%;
             background: var(--primary);
             color: #fff;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 11px;
+            font-size: 10px;
             font-weight: 800;
             flex-shrink: 0;
             border: var(--border);
@@ -405,55 +365,98 @@
 
         .actions-row {
             display: flex;
-            gap: 8px;
-            margin-bottom: 12px;
+            gap: 6px;
             flex-wrap: wrap;
         }
 
         .action-btn {
+            flex: 1;
             display: flex;
             align-items: center;
+            justify-content: center;
             gap: 4px;
-            padding: 8px 12px;
+            padding: 8px;
             border: var(--border);
-            border-radius: var(--radius);
+            border-radius: 8px;
             background: var(--card-bg);
             cursor: pointer;
             transition: all 0.3s ease;
-            box-shadow: var(--shadow);
+            box-shadow: 2px 2px 0 #000;
             font-family: 'IRANSans', Tahoma, sans-serif;
-            font-size: 9px;
+            font-size: 8px;
             font-weight: 700;
             color: var(--text);
         }
 
         .action-btn:hover {
             transform: translateY(-2px);
-            box-shadow: 3px 3px 0 #000000;
+            box-shadow: 3px 3px 0 #000;
         }
 
         .action-btn:disabled {
             opacity: 0.4;
             cursor: not-allowed;
             transform: none;
-            box-shadow: var(--shadow);
+            box-shadow: 2px 2px 0 #000;
         }
 
-        .action-btn i {
-            font-size: 11px;
-            color: var(--primary);
+        .bottom-btn-container {
+            position: fixed;
+            bottom: 0;
+            right: 0;
+            left: 0;
+            padding: 12px 16px;
+            background: var(--header-bg);
+            border-top: var(--border);
+            z-index: 100;
+            box-shadow: 0 -3px 0 #000;
         }
 
-        .action-btn.skip i { color: #f59e0b; }
-        .action-btn.swap i { color: #06b6d4; }
-        .action-btn.remove i { color: #ef4444; }
+        .main-btn {
+            width: 100%;
+            max-width: 500px;
+            margin: 0 auto;
+            display: block;
+            padding: 12px;
+            background: var(--gold);
+            color: #fff;
+            border: var(--border);
+            border-radius: 8px;
+            font-family: 'IRANSans', Tahoma, sans-serif;
+            font-size: 12px;
+            font-weight: 800;
+            cursor: pointer;
+            box-shadow: 3px 3px 0 #000;
+            transition: all 0.3s ease;
+        }
+
+        .main-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 4px 4px 0 #000;
+        }
+
+        .main-btn:active {
+            transform: translate(1px, 1px);
+            box-shadow: 1px 1px 0 #000;
+        }
+
+        .main-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: 3px 3px 0 #000;
+        }
+
+        .main-btn.waiting {
+            background: var(--text-light);
+        }
 
         .result-banner {
             text-align: center;
             padding: 20px;
             background: var(--card-bg);
             border: var(--border);
-            border-radius: var(--radius);
+            border-radius: 12px;
             box-shadow: var(--shadow);
         }
 
@@ -481,18 +484,12 @@
             background: var(--primary);
             color: #fff;
             border: var(--border);
-            border-radius: var(--radius);
+            border-radius: 8px;
             font-family: 'IRANSans', Tahoma, sans-serif;
             font-size: 12px;
             font-weight: 700;
             cursor: pointer;
-            box-shadow: var(--shadow);
-            transition: all 0.3s ease;
-        }
-
-        .result-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 4px 4px 0 #000000;
+            box-shadow: 3px 3px 0 #000;
         }
     </style>
 </head>
@@ -500,36 +497,11 @@
 
     <div class="bg-animation"></div>
 
-    <header class="header">
-        <div class="players-row">
-            <div class="player-info">
-                <div class="player-avatar"><i class="fa-solid fa-user"></i></div>
-                <div class="player-detail">
-                    <span class="player-name">شما</span>
-                    <span class="player-score">امتیاز: <span id="yourScore">0</span></span>
-                </div>
-            </div>
-            <div class="vs-badge">VS</div>
-            <div class="player-info opponent">
-                <div class="player-detail">
-                    <span class="player-name">ربات</span>
-                    <span class="player-score">امتیاز: <span id="botScore">0</span></span>
-                </div>
-                <div class="player-avatar"><i class="fa-solid fa-robot"></i></div>
-            </div>
-        </div>
-    </header>
-
-    <main class="main-container">
-        <div class="rounds-card" id="roundsCard">
-            <div class="rounds-title">راندها</div>
-            <div class="rounds-list" id="roundsList"></div>
-        </div>
-        <div id="gameContent"></div>
+    <main class="main-container" id="mainContainer">
     </main>
 
     <div class="bottom-btn-container">
-        <button class="main-btn start" id="mainBtn" onclick="startRound()">شروع راند</button>
+        <button class="main-btn" id="mainBtn" onclick="handleMainBtn()">شروع راند 1</button>
     </div>
 
     <script>
@@ -552,8 +524,10 @@
             var isYourTurn = true;
             var roundResults = [];
             var isRoundActive = false;
+            var yourCorrectCount = 0;
+            var botCorrectCount = 0;
 
-            var letters = ['الف', 'ب', 'ج', 'د'];
+            var letters = ['۱', '۲', '۳', '۴'];
 
             function getEitaaUser() {
                 if (webApp && webApp.initDataUnsafe && webApp.initDataUnsafe.user) {
@@ -602,113 +576,125 @@
             }
 
             function botAnswer(correctIndex) {
-                var rand = Math.random();
-                if (rand < 0.7) {
-                    return correctIndex;
-                } else {
-                    var wrongIndex = Math.floor(Math.random() * 4);
-                    while (wrongIndex === correctIndex) {
-                        wrongIndex = Math.floor(Math.random() * 4);
-                    }
-                    return wrongIndex;
-                }
+                return Math.random() < 0.7 ? correctIndex : Math.floor(Math.random() * 4);
             }
 
-            function renderRounds() {
+            function renderMainScreen() {
                 var html = '';
-                for (var i = 1; i <= TOTAL_ROUNDS; i++) {
-                    var result = roundResults[i - 1];
-                    var statusClass = '';
-                    var label = 'راند ' + i;
-                    var scoreText = '';
-                    
-                    if (i === currentRound && isRoundActive) {
-                        statusClass = 'active';
-                        scoreText = 'در حال برگزاری';
-                    } else if (result) {
-                        statusClass = 'completed';
-                        scoreText = result.yourRoundScore + ' - ' + result.botRoundScore;
-                    } else if (i < currentRound) {
-                        statusClass = 'completed';
-                        scoreText = 'پایان';
-                    }
-
-                    html += '<div class="round-row ' + statusClass + '">';
-                    html += '<div class="round-dots">';
-                    for (var j = 0; j < QUESTIONS_PER_ROUND; j++) {
-                        var dotClass = 'dot';
-                        if (result) {
-                            if (j < result.yourCorrect) dotClass += ' filled';
-                            else if (j < result.yourTotal) dotClass += ' wrong';
-                        } else if (i === currentRound && isRoundActive && !isYourTurn) {
-                            if (j < botScore) dotClass += ' pending';
-                        } else if (i === currentRound && isRoundActive) {
-                            if (j < currentQuestionIndex) dotClass += ' filled';
+                
+                html += '<div class="players-row">';
+                html += '<div class="player-card' + (isYourTurn && isRoundActive ? ' active' : '') + '">';
+                html += '<div class="player-tag">تو</div>';
+                html += '<div class="player-avatar"><i class="fa-solid fa-user"></i></div>';
+                html += '<span class="player-score">' + yourScore + '</span>';
+                html += '<div class="player-progress">امتیاز ' + yourCorrectCount + ' از ' + (currentRound > 1 ? (currentRound - 1) * QUESTIONS_PER_ROUND : 0) + ' تا الان</div>';
+                html += '</div>';
+                
+                html += '<div class="player-card' + (!isYourTurn && isRoundActive ? ' active' : '') + '">';
+                html += '<div class="player-tag">حریف</div>';
+                html += '<div class="player-avatar"><i class="fa-solid fa-robot"></i></div>';
+                if (isYourTurn || !isRoundActive) {
+                    html += '<span class="player-score hidden">.</span>';
+                } else {
+                    html += '<span class="player-score">' + botScore + '</span>';
+                }
+                html += '<div class="player-progress">امتیاز ' + botCorrectCount + ' از ' + (currentRound > 1 ? (currentRound - 1) * QUESTIONS_PER_ROUND : 0) + ' تا الان</div>';
+                html += '</div>';
+                html += '</div>';
+                
+                html += '<div class="message-card">حریف رو برتر تا امتیاز کسب کنی! هرچی سوالای بیشتری درست جواب بدی، شانس ت برای برنده شدن بیشتر میشه.</div>';
+                
+                if (roundResults.length > 0) {
+                    html += '<div class="rounds-results">';
+                    html += '<div class="rounds-title">نتایج راندهای پاسخ‌داده‌شده</div>';
+                    for (var i = 0; i < roundResults.length; i++) {
+                        var result = roundResults[i];
+                        html += '<div class="round-result-item">';
+                        html += '<div class="round-result-header"><i class="fa-solid fa-gamepad"></i> راند ' + (i + 1) + '</div>';
+                        html += '<div class="round-result-row">';
+                        html += '<span class="round-result-player">تو</span>';
+                        html += '<div class="round-dots">';
+                        for (var j = 0; j < QUESTIONS_PER_ROUND; j++) {
+                            html += '<span class="result-dot' + (j < result.yourCorrect ? '' : ' wrong') + '">' + (j + 1) + '</span>';
                         }
-                        html += '<span class="' + dotClass + '"></span>';
+                        html += '</div>';
+                        html += '<span class="round-result-count good">+' + result.yourRoundScore + '</span>';
+                        html += '</div>';
+                        html += '<div class="round-result-row">';
+                        html += '<span class="round-result-player">حریف</span>';
+                        html += '<div class="round-dots">';
+                        for (var k = 0; k < QUESTIONS_PER_ROUND; k++) {
+                            html += '<span class="result-dot' + (k < result.botCorrect ? '' : ' wrong') + '">' + (k + 1) + '</span>';
+                        }
+                        html += '</div>';
+                        html += '<span class="round-result-count good">+' + result.botRoundScore + '</span>';
+                        html += '</div>';
+                        html += '</div>';
                     }
-                    html += '</div>';
-                    html += '<span class="round-label">' + label + '</span>';
-                    html += '<span class="round-score">' + scoreText + '</span>';
                     html += '</div>';
                 }
-                document.getElementById('roundsList').innerHTML = html;
-            }
-
-            function updateBtnState(text, state) {
-                var btn = document.getElementById('mainBtn');
-                btn.textContent = text;
-                btn.className = 'main-btn ' + state;
-            }
-
-            function updateScores() {
-                document.getElementById('yourScore').textContent = yourScore;
-                document.getElementById('botScore').textContent = botScore;
-                renderRounds();
-            }
-
-            window.startRound = function() {
-                if (isRoundActive) return;
-                isRoundActive = true;
-                isYourTurn = true;
-                currentQuestionIndex = 0;
                 
-                var allQuestions = shuffleArray(questions);
-                currentQuestions = allQuestions.slice(0, QUESTIONS_PER_ROUND);
-                
-                updateBtnState('نوبت شماست', 'start');
-                renderQuestion();
-                renderRounds();
-            };
+                document.getElementById('mainContainer').innerHTML = html;
+            }
 
-            function renderQuestion() {
-                isAnswered = false;
+            function renderQuestionScreen() {
                 var q = currentQuestions[currentQuestionIndex];
                 var options = shuffleArray(q.options.slice());
-                var correctAnswer = q.correctOption;
-                var correctText = q.options[correctAnswer - 1];
-                var correctIndexInShuffled = options.indexOf(correctText);
+                var correctText = q.options[q.correctOption - 1];
+                var correctIndex = options.indexOf(correctText);
 
-                var html = '<div class="question-card">';
+                var html = '<div class="actions-row">';
+                html += '<button class="action-btn" onclick="useRemove50()" id="btnRemove"><i class="fa-solid fa-trash"></i> ۵۰</button>';
+                html += '<button class="action-btn" onclick="useSwapQuestion()" id="btnSwap"><i class="fa-solid fa-arrows-rotate"></i> ۱۰۰</button>';
+                html += '<button class="action-btn" onclick="useSkipQuestion()" id="btnSkip"><i class="fa-solid fa-forward"></i> ۱۵۰</button>';
+                html += '</div>';
+                html += '<div class="question-card">';
                 html += '<div class="question-text">' + q.question + '</div>';
                 html += '<div class="options-grid">';
                 for (var i = 0; i < options.length; i++) {
-                    html += '<button class="option-btn" onclick="selectOption(' + i + ', ' + correctIndexInShuffled + ', this)">';
+                    html += '<button class="option-btn" onclick="selectOption(' + i + ', ' + correctIndex + ', this)">';
                     html += '<span class="option-letter">' + letters[i] + '</span>';
                     html += '<span>' + options[i] + '</span>';
                     html += '</button>';
                 }
                 html += '</div>';
                 html += '</div>';
+                
+                document.getElementById('mainContainer').innerHTML = html;
+            }
 
-                var actionsHtml = '<div class="actions-row">';
-                actionsHtml += '<button class="action-btn remove" onclick="useRemove50()" id="btnRemove"><i class="fa-solid fa-trash"></i> حذف ۲ گزینه (۵۰)</button>';
-                actionsHtml += '<button class="action-btn swap" onclick="useSwapQuestion()" id="btnSwap"><i class="fa-solid fa-arrows-rotate"></i> تعویض سوال (۱۰۰)</button>';
-                actionsHtml += '<button class="action-btn skip" onclick="useSkipQuestion()" id="btnSkip"><i class="fa-solid fa-forward"></i> رد کردن (۱۵۰)</button>';
-                actionsHtml += '</div>';
+            function updateBtnState(text, state) {
+                var btn = document.getElementById('mainBtn');
+                btn.textContent = text;
+                btn.className = 'main-btn' + (state ? ' ' + state : '');
+            }
 
-                document.getElementById('gameContent').innerHTML = actionsHtml + html;
-                updateScores();
+            function renderRoundsResults() {
+                renderMainScreen();
+            }
+
+            window.handleMainBtn = function() {
+                if (!isRoundActive) {
+                    startYourRound();
+                } else if (isYourTurn && currentQuestionIndex >= QUESTIONS_PER_ROUND) {
+                    endYourRound();
+                } else if (!isYourTurn) {
+                    // waiting for bot
+                }
+            };
+
+            function startYourRound() {
+                isRoundActive = true;
+                isYourTurn = true;
+                currentQuestionIndex = 0;
+                yourCorrectCount = 0;
+                botCorrectCount = 0;
+                
+                var allQuestions = shuffleArray(questions);
+                currentQuestions = allQuestions.slice(0, QUESTIONS_PER_ROUND);
+                
+                updateBtnState('نوبت توست', '');
+                renderQuestionScreen();
             }
 
             window.selectOption = function(selectedIndex, correctIndex, btn) {
@@ -721,65 +707,57 @@
                 if (selectedIndex === correctIndex) {
                     btn.classList.add('selected-correct');
                     yourScore += 5;
+                    yourCorrectCount++;
                 } else {
                     btn.classList.add('selected-wrong');
                     allBtns[correctIndex].classList.add('selected-correct');
                 }
 
-                updateScores();
-
                 setTimeout(function() {
                     currentQuestionIndex++;
                     if (currentQuestionIndex >= QUESTIONS_PER_ROUND) {
-                        endYourRound();
+                        updateBtnState('دست تمام شد! بریم دست بعد', 'waiting');
+                        setTimeout(function() {
+                            endYourRound();
+                        }, 1000);
                     } else {
-                        renderQuestion();
+                        renderQuestionScreen();
                     }
-                }, 1200);
+                }, 1000);
             };
 
             function endYourRound() {
                 isYourTurn = false;
-                updateBtnState('نوبت ربات است، منتظر بمانید...', 'waiting');
-                document.getElementById('gameContent').innerHTML = '';
-                renderRounds();
+                isAnswered = false;
+                updateBtnState('نوبت حریفه...', 'waiting');
                 
-                setTimeout(function() {
-                    startBotRound();
-                }, 1500);
-            }
-
-            function startBotRound() {
                 var botRoundScore = 0;
-                var botCorrectCount = 0;
-                
                 for (var i = 0; i < QUESTIONS_PER_ROUND; i++) {
                     var q = currentQuestions[i];
                     var correctIndex = q.correctOption - 1;
-                    var botChoice = botAnswer(correctIndex);
-                    if (botChoice === correctIndex) {
+                    if (botAnswer(correctIndex) === correctIndex) {
                         botRoundScore += 5;
                         botCorrectCount++;
                     }
                 }
-
                 botScore += botRoundScore;
-                roundResults[currentRound - 1] = {
-                    yourRoundScore: yourScore,
-                    botRoundScore: botScore,
-                    yourCorrect: yourScore > 0 ? currentQuestionIndex : 0,
-                    yourTotal: QUESTIONS_PER_ROUND,
-                    botCorrect: botCorrectCount,
-                    botTotal: QUESTIONS_PER_ROUND
-                };
-
+                
+                roundResults.push({
+                    yourRoundScore: yourCorrectCount * 5,
+                    botRoundScore: botRoundScore,
+                    yourCorrect: yourCorrectCount,
+                    botCorrect: botCorrectCount
+                });
+                
                 currentRound++;
                 isRoundActive = false;
-                updateBtnState('شروع راند ' + currentRound, 'start');
-                updateScores();
-
+                
+                renderMainScreen();
+                
                 if (currentRound > TOTAL_ROUNDS) {
                     endGame();
+                } else {
+                    updateBtnState('شروع راند ' + currentRound, '');
                 }
             }
 
@@ -812,7 +790,7 @@
                 });
                 if (remaining.length > 0) {
                     currentQuestions[currentQuestionIndex] = shuffleArray(remaining)[0];
-                    renderQuestion();
+                    renderQuestionScreen();
                 }
             };
 
@@ -822,14 +800,17 @@
                 document.getElementById('btnSkip').disabled = true;
                 
                 yourScore += 5;
-                updateScores();
+                yourCorrectCount++;
                 
                 setTimeout(function() {
                     currentQuestionIndex++;
                     if (currentQuestionIndex >= QUESTIONS_PER_ROUND) {
-                        endYourRound();
+                        updateBtnState('دست تمام شد! بریم دست بعد', 'waiting');
+                        setTimeout(function() {
+                            endYourRound();
+                        }, 1000);
                     } else {
-                        renderQuestion();
+                        renderQuestionScreen();
                     }
                 }, 300);
             };
@@ -855,19 +836,14 @@
                 }
 
                 resultHtml += '<div class="result-score">شما: ' + yourScore + ' - ربات: ' + botScore + '</div>';
-                if (scoreChange >= 0) {
-                    resultHtml += '<div class="result-score">امتیاز: +' + scoreChange + '</div>';
-                } else {
-                    resultHtml += '<div class="result-score">امتیاز: ' + scoreChange + '</div>';
-                }
+                resultHtml += '<div class="result-score">امتیاز: ' + (scoreChange >= 0 ? '+' : '') + scoreChange + '</div>';
                 if (coinReward > 0) {
                     resultHtml += '<div class="result-score">سکه: +' + coinReward + '</div>';
                 }
                 resultHtml += '<button class="result-btn" onclick="backToDashboard()">بازگشت</button>';
 
-                document.getElementById('gameContent').innerHTML = '<div class="result-banner">' + resultHtml + '</div>';
+                document.getElementById('mainContainer').innerHTML = '<div class="result-banner">' + resultHtml + '</div>';
                 document.getElementById('mainBtn').style.display = 'none';
-                document.getElementById('roundsCard').style.display = 'none';
 
                 userTotalScore += scoreChange;
                 userCoins += coinReward;
@@ -898,10 +874,10 @@
                 var questionsData = await fetchData('getQuestions', { limit: 50 });
                 if (questionsData.ok && Array.isArray(questionsData.data) && questionsData.data.length > 0) {
                     questions = questionsData.data;
-                    renderRounds();
-                    updateBtnState('شروع راند 1', 'start');
+                    renderMainScreen();
+                    updateBtnState('شروع راند 1', '');
                 } else {
-                    document.getElementById('gameContent').innerHTML = '<div class="result-banner"><div class="result-text">سوالی یافت نشد</div></div>';
+                    document.getElementById('mainContainer').innerHTML = '<div class="result-banner"><div class="result-text">سوالی یافت نشد</div></div>';
                     document.getElementById('mainBtn').style.display = 'none';
                 }
             }
