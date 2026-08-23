@@ -1049,6 +1049,10 @@
                 if (webApp) {
                     webApp.ready();
                     webApp.expand();
+                    webApp.BackButton.show();
+                    webApp.BackButton.onClick(function() {
+                        window.location.href = '../../dashboard/';
+                    });
                 }
 
                 var userData = await fetchData('getUser', {});
