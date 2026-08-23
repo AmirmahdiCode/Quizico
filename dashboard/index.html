@@ -1111,7 +1111,7 @@
             function goToPlay(mode) {
                 if (webApp) webApp.HapticFeedback?.impactOccurred('light');
                 localStorage.setItem('gameMode', mode);
-                window.location.href = '../play/';
+                window.location.href = '../play/' + mode + '/';
             }
 
             function toggleSection(sectionId) {
