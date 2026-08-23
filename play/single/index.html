@@ -173,6 +173,39 @@
             gap: 12px;
         }
 
+        .loader-letters {
+            display: flex;
+            gap: 4px;
+            justify-content: center;
+            align-items: center;
+            padding: 30px 0;
+            direction: ltr;
+        }
+
+        .loader-letter {
+            font-size: 32px;
+            font-weight: 900;
+            color: var(--primary);
+            opacity: 0;
+            animation: letterBounce 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+            text-shadow: 2px 2px 0 rgba(0,0,0,0.15);
+        }
+
+        .loader-letter:nth-child(1) { animation-delay: 0.1s; }
+        .loader-letter:nth-child(2) { animation-delay: 0.2s; }
+        .loader-letter:nth-child(3) { animation-delay: 0.3s; }
+        .loader-letter:nth-child(4) { animation-delay: 0.4s; }
+        .loader-letter:nth-child(5) { animation-delay: 0.5s; color: #f59e0b; }
+        .loader-letter:nth-child(6) { animation-delay: 0.6s; color: #f59e0b; }
+        .loader-letter:nth-child(7) { animation-delay: 0.7s; color: #f59e0b; }
+
+        @keyframes letterBounce {
+            0% { opacity: 0; transform: translateY(-30px) scale(0.3) rotate(-10deg); }
+            50% { opacity: 1; transform: translateY(8px) scale(1.2) rotate(5deg); }
+            70% { transform: translateY(-4px) scale(0.95) rotate(-2deg); }
+            100% { opacity: 1; transform: translateY(0) scale(1) rotate(0deg); }
+        }
+
         .players-row {
             display: flex;
             gap: 10px;
@@ -326,7 +359,7 @@
             border-radius: 10px;
             height: 8px;
             overflow: hidden;
-            margin-bottom: 10px;
+            margin-bottom: 6px;
         }
 
         .timer-bar-fill {
@@ -538,9 +571,18 @@
     </header>
 
     <main class="main-container" id="mainContainer">
+        <div class="loader-letters" id="loaderLetters">
+            <span class="loader-letter">Q</span>
+            <span class="loader-letter">u</span>
+            <span class="loader-letter">i</span>
+            <span class="loader-letter">z</span>
+            <span class="loader-letter">i</span>
+            <span class="loader-letter">c</span>
+            <span class="loader-letter">o</span>
+        </div>
     </main>
 
-    <div class="bottom-btn-container">
+    <div class="bottom-btn-container" id="bottomBtnContainer" style="display:none;">
         <button class="main-btn" id="mainBtn" onclick="handleMainBtn()">شروع راند 1</button>
     </div>
 
@@ -578,8 +620,7 @@
                 'حریفت قویه، ولی تو قوی‌تری!',
                 'هر جواب درست ۵ امتیاز داره!',
                 'آروم باش و درست فکر کن!',
-                'ادامه بده، داری عالی پیش میری!',
-                'هر ثانیه ارزش داره!'
+                'ادامه بده، داری عالی پیش میری!'
             ];
 
             function getRandomMessage() {
@@ -655,11 +696,6 @@
                     document.documentElement.style.setProperty('--primary', primaryColor);
                     document.documentElement.style.setProperty('--primary-rgb', hexToRgb(primaryColor).r + ', ' + hexToRgb(primaryColor).g + ', ' + hexToRgb(primaryColor).b);
                 }
-                if (settings.animation === false) {
-                    document.documentElement.setAttribute('data-animation', 'off');
-                } else {
-                    document.documentElement.removeAttribute('data-animation');
-                }
             }
 
             function shuffleArray(arr) {
@@ -699,13 +735,7 @@
                 var percent = (timeLeft / QUESTION_TIME) * 100;
                 fill.style.width = percent + '%';
                 text.textContent = timeLeft + ' ثانیه';
-                if (timeLeft <= 10) {
-                    fill.className = 'timer-bar-fill danger';
-                } else if (timeLeft <= 20) {
-                    fill.className = 'timer-bar-fill warning';
-                } else {
-                    fill.className = 'timer-bar-fill';
-                }
+                fill.className = 'timer-bar-fill' + (timeLeft <= 10 ? ' danger' : timeLeft <= 20 ? ' warning' : '');
             }
 
             function timeOut() {
@@ -714,25 +744,24 @@
                 allBtns.forEach(function(b) { b.classList.add('disabled'); });
                 var q = currentQuestions[currentQuestionIndex];
                 var correctText = q.options[q.correctOption - 1];
-                var allBtnTexts = document.querySelectorAll('.option-btn');
-                allBtnTexts.forEach(function(btn) {
+                document.querySelectorAll('.option-btn').forEach(function(btn) {
                     if (btn.getAttribute('data-text') === correctText) {
                         btn.classList.add('selected-correct');
                     }
                 });
                 setTimeout(function() {
-                    nextQuestion();
-                }, 1000);
+                    goToNextQuestion();
+                }, 800);
             }
 
-            function nextQuestion() {
+            function goToNextQuestion() {
                 currentQuestionIndex++;
                 if (currentQuestionIndex >= QUESTIONS_PER_ROUND) {
                     document.getElementById('mainBtn').textContent = 'دست تمام شد!';
                     document.getElementById('mainBtn').disabled = true;
                     setTimeout(function() {
                         endYourRound();
-                    }, 1000);
+                    }, 800);
                 } else {
                     renderQuestionScreen();
                 }
@@ -857,7 +886,7 @@
                 }
 
                 setTimeout(function() {
-                    nextQuestion();
+                    goToNextQuestion();
                 }, 800);
             };
 
@@ -916,10 +945,7 @@
                     }
                 });
                 
-                document.getElementById('btnRemove').disabled = true;
-                document.getElementById('btnSwap').disabled = true;
-                document.getElementById('btnSkip').disabled = true;
-                
+                disableAllActions();
                 fetchData('updateUser', { coins: userCoins });
             };
 
@@ -936,10 +962,7 @@
                     currentQuestions[currentQuestionIndex] = shuffleArray(remaining)[0];
                 }
                 
-                document.getElementById('btnRemove').disabled = true;
-                document.getElementById('btnSwap').disabled = true;
-                document.getElementById('btnSkip').disabled = true;
-                
+                disableAllActions();
                 fetchData('updateUser', { coins: userCoins });
                 renderQuestionScreen();
             };
@@ -953,17 +976,19 @@
                 yourScore += 5;
                 yourCorrectCount++;
                 
-                document.getElementById('btnRemove').disabled = true;
-                document.getElementById('btnSwap').disabled = true;
-                document.getElementById('btnSkip').disabled = true;
-                
+                disableAllActions();
                 fetchData('updateUser', { coins: userCoins });
                 
                 clearInterval(timerInterval);
                 setTimeout(function() {
-                    nextQuestion();
+                    goToNextQuestion();
                 }, 300);
             };
+
+            function disableAllActions() {
+                var btns = document.querySelectorAll('.action-btn');
+                btns.forEach(function(b) { b.disabled = true; });
+            }
 
             function saveGame(scoreChange, coinReward) {
                 var gameData = {
@@ -1037,9 +1062,9 @@
                 if (questionsData.ok && Array.isArray(questionsData.data) && questionsData.data.length > 0) {
                     questions = questionsData.data;
                     renderMainScreen();
+                    document.getElementById('bottomBtnContainer').style.display = 'block';
                 } else {
                     document.getElementById('mainContainer').innerHTML = '<div class="result-banner"><div class="result-text">سوالی یافت نشد</div></div>';
-                    document.getElementById('mainBtn').style.display = 'none';
                 }
             }
 
