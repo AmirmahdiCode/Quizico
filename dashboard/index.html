@@ -1059,7 +1059,10 @@
                 var segmentAngle = 360 / wheelPrizes.length;
                 var randomIndex = Math.floor(Math.random() * wheelPrizes.length);
                 
-                var targetAngle = 360 - randomIndex * segmentAngle - segmentAngle / 2;
+                var pointerAngle = -90;
+                var segmentCenterAngle = randomIndex * segmentAngle + segmentAngle / 2;
+                
+                var targetAngle = pointerAngle - segmentCenterAngle;
                 
                 var currentAngle = currentRotation % 360;
                 var spins = 5;
@@ -1077,15 +1080,15 @@
                     var prize = wheelPrizes[randomIndex];
                     
                     if (prize.type === 'empty') {
-                        document.getElementById('wheelResult').textContent = 'پوچ! شانس بیار';
+                        document.getElementById('wheelResult').textContent = 'پوچ!';
                         userCoins -= SPIN_COST;
                     } else if (prize.type === 'coins') {
                         userCoins = userCoins - SPIN_COST + prize.value;
-                        document.getElementById('wheelResult').textContent = 'بردی! ' + prize.label;
+                        document.getElementById('wheelResult').textContent = prize.label;
                     } else {
                         userDiamonds += prize.value;
                         userCoins -= SPIN_COST;
-                        document.getElementById('wheelResult').textContent = 'بردی! ' + prize.label;
+                        document.getElementById('wheelResult').textContent = prize.label;
                     }
 
                     document.getElementById('coinsHeader').textContent = userCoins;
@@ -1095,11 +1098,7 @@
                         coins: userCoins,
                         diamonds: userDiamonds
                     }).then(function(result) {
-                        if (result.ok) {
-                            console.log('ذخیره شد:', result);
-                        } else {
-                            console.error('خطا در ذخیره:', result.error);
-                        }
+                        console.log('Saved:', result);
                     });
                     
                     isSpinning = false;
