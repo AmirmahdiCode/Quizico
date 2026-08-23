@@ -59,7 +59,6 @@
             min-height: 100vh;
             display: flex;
             flex-direction: column;
-            overflow: hidden;
         }
 
         .bg-animation {
@@ -184,11 +183,6 @@
             box-shadow: var(--shadow);
         }
 
-        .player-card.active {
-            border-color: var(--gold);
-            border-width: 2px;
-        }
-
         .player-tag { font-size: 9px; font-weight: 800; }
         .player-score { font-size: 13px; font-weight: 800; color: var(--gold); }
 
@@ -239,11 +233,6 @@
             border-radius: 10px;
             padding: 10px;
             box-shadow: var(--shadow);
-        }
-
-        .question-card.active-player {
-            border-color: var(--gold);
-            border-width: 2px;
         }
 
         .question-header {
@@ -428,15 +417,13 @@
             var API_URL = 'https://script.google.com/macros/s/AKfycby39_m_-w42F1ps3z21aAW2jMXjgmDJjrPD6CfrLLczg-KPk1cbyXcVnUjaeFQ4TIP9ww/exec';
 
             var TOTAL_ROUNDS = 5;
-            var QUESTIONS_PER_ROUND = 3;
+            var QUESTIONS_PER_ROUND = 1;
             var QUESTION_TIME = 60;
             var currentRound = 1;
             var p1Questions = [];
             var p2Questions = [];
             var p1Score = 0;
             var p2Score = 0;
-            var p1CorrectCount = 0;
-            var p2CorrectCount = 0;
             var questions = [];
             var roundResults = [];
             var isGameActive = false;
@@ -565,8 +552,8 @@
                         var r = roundResults[i];
                         html += '<div class="round-result-item">';
                         html += '<div class="round-result-row"><span class="round-result-player">راند ' + (i + 1) + '</span></div>';
-                        html += '<div class="round-result-row"><span class="round-result-player">بازیکن ۱</span><span class="round-result-count">+' + r.p1 + '</span></div>';
-                        html += '<div class="round-result-row"><span class="round-result-player">بازیکن ۲</span><span class="round-result-count">+' + r.p2 + '</span></div>';
+                        html += '<div class="round-result-row"><span class="round-result-player">بازیکن ۱</span><span class="round-result-count">' + (r.p1Correct ? 'درست' : 'غلط') + '</span></div>';
+                        html += '<div class="round-result-row"><span class="round-result-player">بازیکن ۲</span><span class="round-result-count">' + (r.p2Correct ? 'درست' : 'غلط') + '</span></div>';
                         html += '</div>';
                     }
                     html += '</div>';
@@ -596,8 +583,11 @@
                 
                 if (selectedIndex === correctIndex) {
                     btn.classList.add('selected-correct');
-                    if (playerNum === 1) p1CorrectCount++;
-                    else p2CorrectCount++;
+                    if (playerNum === 1) {
+                        p1Score += 5;
+                    } else {
+                        p2Score += 5;
+                    }
                 } else {
                     btn.classList.add('selected-wrong');
                     btns[correctIndex].classList.add('selected-correct');
@@ -618,15 +608,16 @@
             };
 
             function endRound() {
-                var p1RoundScore = p1CorrectCount * 5;
-                var p2RoundScore = p2CorrectCount * 5;
-                p1Score += p1RoundScore;
-                p2Score += p2RoundScore;
+                var p1Correct = false;
+                var p2Correct = false;
                 
-                roundResults.push({ p1: p1RoundScore, p2: p2RoundScore });
+                var p1Card = document.getElementById('p1Card');
+                var p2Card = document.getElementById('p2Card');
+                if (p1Card && p1Card.querySelector('.selected-correct')) p1Correct = true;
+                if (p2Card && p2Card.querySelector('.selected-correct')) p2Correct = true;
                 
-                p1CorrectCount = 0;
-                p2CorrectCount = 0;
+                roundResults.push({ p1Correct: p1Correct, p2Correct: p2Correct });
+                
                 currentRound++;
                 
                 if (currentRound > TOTAL_ROUNDS) {
@@ -637,6 +628,7 @@
             }
 
             function endGame() {
+                clearInterval(timerInterval);
                 var resultHtml = '';
                 if (p1Score > p2Score) {
                     resultHtml = '<div class="result-icon"><i class="fa-solid fa-trophy" style="color:#f59e0b;"></i></div>';
@@ -686,17 +678,43 @@
                 if (webApp) {
                     webApp.ready();
                     webApp.expand();
+                    webApp.BackButton.show();
+                    webApp.BackButton.onClick(function() {
+                        window.location.href = '../../dashboard/';
+                    });
                 }
 
-                var questionsData = await fetchData('getQuestions', { limit: 50 });
-                if (questionsData.ok && Array.isArray(questionsData.data) && questionsData.data.length >= TOTAL_ROUNDS * QUESTIONS_PER_ROUND * 2) {
+                var questionsData = await fetchData('getQuestions', { limit: 100 });
+                if (questionsData.ok && Array.isArray(questionsData.data) && questionsData.data.length >= 8) {
                     questions = shuffleArray(questionsData.data);
-                    var half = (TOTAL_ROUNDS * QUESTIONS_PER_ROUND);
-                    p1Questions = questions.slice(0, half);
-                    p2Questions = questions.slice(half, half * 2);
+                    
+                    // تقسیم سوالات: نیمه اول برای بازیکن ۱، نیمه دوم برای بازیکن ۲
+                    var half = Math.floor(questions.length / 2);
+                    var p1Pool = questions.slice(0, half);
+                    var p2Pool = questions.slice(half);
+                    
+                    // انتخاب ۵ سوال برای هر بازیکن بدون تکرار
+                    p1Questions = p1Pool.slice(0, TOTAL_ROUNDS);
+                    p2Questions = p2Pool.slice(0, TOTAL_ROUNDS);
+                    
+                    // اگه سوالات کافی نبود، از کل سوالات استفاده کن
+                    if (p1Questions.length < TOTAL_ROUNDS || p2Questions.length < TOTAL_ROUNDS) {
+                        p1Questions = shuffleArray(questions).slice(0, TOTAL_ROUNDS);
+                        p2Questions = shuffleArray(questions).slice(0, TOTAL_ROUNDS);
+                        // مطمئن شو سوالات تکراری بین دو بازیکن در همون راند نیست
+                        for (var i = 0; i < TOTAL_ROUNDS; i++) {
+                            if (p1Questions[i] && p2Questions[i] && p1Questions[i].id === p2Questions[i].id) {
+                                var temp = p2Questions[i];
+                                var swapIndex = (i + 1) % TOTAL_ROUNDS;
+                                p2Questions[i] = p2Questions[swapIndex];
+                                p2Questions[swapIndex] = temp;
+                            }
+                        }
+                    }
+                    
                     document.getElementById('bottomBtnContainer').style.display = 'block';
                 } else {
-                    document.getElementById('mainContainer').innerHTML = '<div class="result-banner"><div class="result-text">سوال کافی نیست</div></div>';
+                    document.getElementById('mainContainer').innerHTML = '<div class="result-banner"><div class="result-text">حداقل ۸ سوال لازم است</div></div>';
                 }
             }
 
