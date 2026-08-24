@@ -51,11 +51,7 @@
             transition: none !important;
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
             font-family: 'IRANSans', Tahoma, sans-serif;
@@ -93,11 +89,7 @@
             margin: 0 auto;
         }
 
-        .header-right {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
+        .header-right { display: flex; align-items: center; gap: 8px; }
 
         .header-logo {
             width: 38px;
@@ -163,7 +155,6 @@
             text-align: center;
             box-shadow: var(--shadow);
         }
-        .player-card.active { border-color: var(--gold); border-width: 2px; }
         .player-tag { font-size: 9px; font-weight: 800; color: var(--dark); margin-bottom: 4px; }
         .player-score { font-size: 13px; font-weight: 800; color: var(--gold); }
 
@@ -224,7 +215,6 @@
         }
         .question-player-tag { font-size: 9px; font-weight: 800; color: var(--primary); }
         .question-progress { font-size: 7px; font-weight: 700; color: var(--text-light); }
-
         .question-text {
             font-size: 10px;
             font-weight: 700;
@@ -233,7 +223,6 @@
             text-align: center;
             margin-bottom: 6px;
         }
-
         .timer-bar-container {
             background: var(--bg3);
             border: var(--border);
@@ -247,11 +236,7 @@
         .timer-bar-fill.danger { background: #ef4444; }
         .timer-text { font-size: 7px; font-weight: 700; color: var(--text-light); text-align: center; margin-bottom: 6px; }
 
-        .options-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 4px;
-        }
+        .options-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 4px; }
 
         .option-btn {
             display: flex;
@@ -316,6 +301,7 @@
             box-shadow: 3px 3px 0 #000;
         }
         .main-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .main-btn.green { background: #10b981; }
 
         .result-banner {
             text-align: center;
@@ -364,7 +350,6 @@
             <div class="loader"></div>
             <div class="loader-text" data-i18n="loading">در حال دریافت...</div>
         </div>
-
         <div class="game-content" id="gameContent"></div>
     </main>
 
@@ -390,26 +375,27 @@
             var timerInterval = null;
             var timeLeft = QUESTION_TIME;
             var currentLang = 'fa';
+            var screen = 'rounds';
 
             var translations = {
                 fa: {
                     offline: 'دو نفره آفلاین', loading: 'در حال دریافت...', start_game: 'شروع بازی',
                     p1: 'بازیکن ۱', p2: 'بازیکن ۲', results: 'نتایج راندها',
-                    round: 'راند', question: 'سوال', of: 'از',
+                    round: 'راند', question: 'سوال', of: 'از', next_round: 'شروع راند بعدی',
                     p1_win: 'بازیکن ۱ برنده شد!', p2_win: 'بازیکن ۲ برنده شد!', draw: 'مساوی شد!',
                     back: 'بازگشت', no_questions: 'سوال کافی نیست', score: 'امتیاز'
                 },
                 en: {
                     offline: '2P Offline', loading: 'Loading...', start_game: 'Start Game',
                     p1: 'Player 1', p2: 'Player 2', results: 'Round Results',
-                    round: 'Round', question: 'Question', of: 'of',
+                    round: 'Round', question: 'Question', of: 'of', next_round: 'Next Round',
                     p1_win: 'Player 1 Wins!', p2_win: 'Player 2 Wins!', draw: 'Draw!',
                     back: 'Back', no_questions: 'Not enough questions', score: 'Score'
                 },
                 ar: {
                     offline: 'ثنائي بدون إنترنت', loading: 'جار التحميل...', start_game: 'ابدأ اللعبة',
                     p1: 'اللاعب ۱', p2: 'اللاعب ۲', results: 'نتائج الجولات',
-                    round: 'جولة', question: 'سؤال', of: 'من',
+                    round: 'جولة', question: 'سؤال', of: 'من', next_round: 'الجولة التالية',
                     p1_win: 'اللاعب ۱ فاز!', p2_win: 'اللاعب ۲ فاز!', draw: 'تعادل!',
                     back: 'رجوع', no_questions: 'أسئلة غير كافية', score: 'النقاط'
                 }
@@ -507,7 +493,7 @@
                     updateTimerBars();
                     if (timeLeft <= 0) {
                         clearInterval(timerInterval);
-                        endRound();
+                        finishRound();
                     }
                 }, 1000);
             }
@@ -523,28 +509,8 @@
                 texts.forEach(function(t) { t.textContent = timeLeft + 's'; });
             }
 
-            function renderQuestionCard(playerNum, q, qIndex) {
-                var tag = getTranslation(playerNum === 1 ? 'p1' : 'p2');
-                var opts = shuffleArray(q.options.slice());
-                var ci = opts.indexOf(q.options[q.correctOption - 1]);
-                var html = '<div class="question-card" id="p' + playerNum + 'Card">';
-                html += '<div class="question-header">';
-                html += '<span class="question-player-tag">' + tag + '</span>';
-                html += '<span class="question-progress">' + getTranslation('question') + ' ' + (qIndex + 1) + ' ' + getTranslation('of') + ' ' + QUESTIONS_PER_ROUND + '</span>';
-                html += '</div>';
-                html += '<div class="question-text">' + q.question + '</div>';
-                html += '<div class="timer-bar-container"><div class="timer-bar-fill" style="width:100%;"></div></div>';
-                html += '<div class="timer-text">60s</div>';
-                html += '<div class="options-grid">';
-                for (var i = 0; i < opts.length; i++) {
-                    html += '<button class="option-btn" data-player="' + playerNum + '" data-correct="' + ci + '" onclick="selectOption(' + playerNum + ',' + i + ',this)">';
-                    html += '<span class="option-letter">' + (i + 1) + '</span><span>' + opts[i] + '</span></button>';
-                }
-                html += '</div></div>';
-                return html;
-            }
-
-            function renderGame() {
+            function renderRoundsScreen() {
+                screen = 'rounds';
                 var t = getTranslation;
                 var html = '';
                 html += '<div class="players-row">';
@@ -570,12 +536,49 @@
                     html += '</div>';
                 }
                 
-                html += '<div class="question-area">';
+                document.getElementById('gameContent').innerHTML = html;
+                
+                var btn = document.getElementById('mainBtn');
+                if (currentRound > TOTAL_ROUNDS) {
+                    btn.textContent = t('back');
+                    btn.className = 'main-btn';
+                } else {
+                    btn.textContent = currentRound === 1 ? t('start_game') : t('next_round') + ' ' + currentRound;
+                    btn.className = 'main-btn green';
+                }
+                btn.disabled = false;
+                document.getElementById('bottomBtnContainer').style.display = 'block';
+            }
+
+            function renderQuestionCard(playerNum, q, qIndex) {
+                var tag = getTranslation(playerNum === 1 ? 'p1' : 'p2');
+                var opts = shuffleArray(q.options.slice());
+                var ci = opts.indexOf(q.options[q.correctOption - 1]);
+                var html = '<div class="question-card" id="p' + playerNum + 'Card">';
+                html += '<div class="question-header">';
+                html += '<span class="question-player-tag">' + tag + '</span>';
+                html += '<span class="question-progress">' + getTranslation('question') + ' ' + (qIndex + 1) + ' ' + getTranslation('of') + ' ' + QUESTIONS_PER_ROUND + '</span>';
+                html += '</div>';
+                html += '<div class="question-text">' + q.question + '</div>';
+                html += '<div class="timer-bar-container"><div class="timer-bar-fill" style="width:100%;"></div></div>';
+                html += '<div class="timer-text">60s</div>';
+                html += '<div class="options-grid">';
+                for (var i = 0; i < opts.length; i++) {
+                    html += '<button class="option-btn" data-player="' + playerNum + '" data-correct="' + ci + '" onclick="selectOption(' + playerNum + ',' + i + ',this)">';
+                    html += '<span class="option-letter">' + (i + 1) + '</span><span>' + opts[i] + '</span></button>';
+                }
+                html += '</div></div>';
+                return html;
+            }
+
+            function renderQuestionsScreen() {
+                screen = 'questions';
+                var html = '<div class="question-area">';
                 html += renderQuestionCard(1, p1Questions[currentQuestionIndex], currentQuestionIndex);
                 html += renderQuestionCard(2, p2Questions[currentQuestionIndex], currentQuestionIndex);
                 html += '</div>';
-                
                 document.getElementById('gameContent').innerHTML = html;
+                document.getElementById('bottomBtnContainer').style.display = 'none';
                 startTimer();
             }
 
@@ -600,11 +603,18 @@
                 
                 if (allAnswered) {
                     clearInterval(timerInterval);
-                    setTimeout(endRound, 800);
+                    setTimeout(function() {
+                        currentQuestionIndex++;
+                        if (currentQuestionIndex >= QUESTIONS_PER_ROUND) {
+                            finishRound();
+                        } else {
+                            renderQuestionsScreen();
+                        }
+                    }, 800);
                 }
             };
 
-            function endRound() {
+            function finishRound() {
                 roundResults.push({
                     p1Score: p1CorrectCount * 5,
                     p2Score: p2CorrectCount * 5,
@@ -615,11 +625,7 @@
                 p2CorrectCount = 0;
                 currentRound++;
                 currentQuestionIndex = 0;
-                if (currentRound > TOTAL_ROUNDS) {
-                    endGame();
-                } else {
-                    renderGame();
-                }
+                renderRoundsScreen();
             }
 
             function endGame() {
@@ -640,9 +646,11 @@
             };
 
             window.handleMainBtn = function() {
-                document.getElementById('mainBtn').disabled = true;
-                document.getElementById('mainBtn').textContent = '...';
-                renderGame();
+                if (currentRound > TOTAL_ROUNDS) {
+                    endGame();
+                } else {
+                    renderQuestionsScreen();
+                }
             };
 
             async function init() {
@@ -670,8 +678,7 @@
                         p1Questions = shuffleArray(questions).slice(0, totalNeeded);
                         p2Questions = shuffleArray(questions).slice(0, totalNeeded);
                     }
-                    document.getElementById('mainBtn').textContent = getTranslation('start_game');
-                    document.getElementById('bottomBtnContainer').style.display = 'block';
+                    renderRoundsScreen();
                 } else {
                     document.getElementById('gameContent').innerHTML = '<div class="result-banner"><div class="result-text">' + getTranslation('no_questions') + '</div></div>';
                 }
