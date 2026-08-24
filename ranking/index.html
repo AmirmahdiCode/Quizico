@@ -23,8 +23,9 @@
             --card-bg: #ffffff;
             --header-bg: #ffffff;
             --shadow: 3px 3px 0 #000000;
-            --radius: 4px;
+            --radius: 12px;
             --border: 1px solid #000000;
+            --gold: #f59e0b;
         }
 
         [data-theme="dark"] {
@@ -50,12 +51,6 @@
             transition: none !important;
         }
 
-        [data-animation="off"] .header-title .t-letter {
-            opacity: 1 !important;
-            transform: translateY(0) !important;
-            animation: none !important;
-        }
-
         * {
             margin: 0;
             padding: 0;
@@ -69,52 +64,14 @@
             min-height: 100vh;
             display: flex;
             flex-direction: column;
-            transition: background 0.5s ease, color 0.5s ease;
+            transition: font-family 0.3s ease;
         }
 
         .bg-animation {
             position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
+            top: 0; left: 0; right: 0; bottom: 0;
             z-index: 0;
             background: linear-gradient(135deg, var(--bg) 0%, var(--bg2) 40%, var(--bg3) 80%);
-            background-size: 400% 400%;
-            animation: gradientMove 15s ease infinite;
-            transition: background 0.8s ease;
-        }
-
-        @keyframes gradientMove {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-
-        .bg-particles {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            z-index: 1;
-            pointer-events: none;
-            overflow: hidden;
-        }
-
-        .particle {
-            position: absolute;
-            border-radius: 50%;
-            background: var(--primary);
-            opacity: 0.1;
-            animation: floatUp linear infinite;
-        }
-
-        @keyframes floatUp {
-            0% { transform: translateY(100vh) scale(0); opacity: 0; }
-            10% { opacity: 0.1; }
-            90% { opacity: 0.1; }
-            100% { transform: translateY(-10vh) scale(1); opacity: 0; }
         }
 
         .header {
@@ -126,20 +83,12 @@
             position: sticky;
             top: 0;
             box-shadow: var(--shadow);
-            animation: slideDown 0.5s ease;
-            transition: all 0.5s ease;
-        }
-
-        @keyframes slideDown {
-            from { transform: translateY(-100%); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
         }
 
         .header-inner {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            gap: 12px;
             max-width: 600px;
             margin: 0 auto;
         }
@@ -151,8 +100,8 @@
         }
 
         .header-logo {
-            width: 52px;
-            height: 52px;
+            width: 44px;
+            height: 44px;
             border-radius: var(--radius);
             background: var(--primary);
             display: flex;
@@ -162,70 +111,12 @@
             overflow: hidden;
             padding: 2px;
             border: var(--border);
-            transition: transform 0.3s ease, background 0.5s ease;
         }
 
-        .header-logo img {
-            width: 95%;
-            height: 95%;
-            object-fit: contain;
-            transform: scale(1.15);
-        }
-
-        .header-title {
-            display: flex;
-            direction: ltr;
-            gap: 0;
-            font-size: 18px;
-            font-weight: 800;
-            color: var(--dark);
-            letter-spacing: -0.5px;
-            transition: color 0.5s ease;
-            font-family: 'IRANSans', Tahoma, sans-serif;
-            overflow: hidden;
-        }
-
-        .header-title .t-letter {
-            display: inline-block;
-            opacity: 0;
-            transform: translateY(-20px);
-            animation: titleLetterIn 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
-        }
-
-        .header-title .t-letter:nth-child(1) { animation-delay: 0.1s; }
-        .header-title .t-letter:nth-child(2) { animation-delay: 0.15s; }
-        .header-title .t-letter:nth-child(3) { animation-delay: 0.2s; }
-        .header-title .t-letter:nth-child(4) { animation-delay: 0.25s; }
-        .header-title .t-letter:nth-child(5) { animation-delay: 0.3s; }
-        .header-title .t-letter:nth-child(6) { animation-delay: 0.35s; }
-        .header-title .t-letter:nth-child(7) { animation-delay: 0.4s; }
-
-        @keyframes titleLetterIn {
-            0% { opacity: 0; transform: translateY(-20px); }
-            60% { opacity: 1; transform: translateY(3px); }
-            80% { transform: translateY(-2px); }
-            100% { opacity: 1; transform: translateY(0); }
-        }
-
-        .header-title.animate-out .t-letter {
-            animation: titleLetterOut 0.4s ease forwards;
-        }
-
-        @keyframes titleLetterOut {
-            0% { opacity: 1; transform: translateY(0); }
-            100% { opacity: 0; transform: translateY(-20px); }
-        }
-
-        .header-title .t-letter.t-accent {
-            color: var(--primary);
-        }
-
-        .header-subtitle {
-            font-size: 9px;
-            color: var(--text-light);
-            margin-top: -2px;
-            transition: color 0.5s ease;
-        }
+        .header-logo img { width: 95%; height: 95%; object-fit: contain; transform: scale(1.1); }
+        .header-title { font-size: 16px; font-weight: 800; color: var(--dark); }
+        .header-title .t-accent { color: var(--primary); }
+        .header-subtitle { font-size: 8px; color: var(--text-light); }
 
         .main-container {
             position: relative;
@@ -234,6 +125,9 @@
             width: 100%;
             margin: 16px auto;
             padding: 0 12px 80px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
         }
 
         .loader-wrapper {
@@ -242,45 +136,23 @@
             align-items: center;
             justify-content: center;
             min-height: 60vh;
-            gap: 16px;
+            gap: 12px;
         }
-
         .loader {
-            width: 56px;
-            height: 56px;
+            width: 50px;
+            height: 50px;
             border: 5px solid var(--bg3);
             border-top-color: var(--primary);
             border-radius: 50%;
             animation: spin 0.8s linear infinite;
-            box-shadow: 0 0 20px rgba(var(--primary-rgb), 0.3);
         }
-
-        .loader-text {
-            font-size: 13px;
-            font-weight: 700;
-            color: var(--text);
-            animation: pulse 1.5s ease infinite;
-        }
-
+        .loader-text { font-size: 12px; font-weight: 700; color: var(--text); }
         @keyframes spin { to { transform: rotate(360deg); } }
 
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.4; }
-        }
+        .ranking-content { display: none; }
+        .ranking-content.show { display: flex; flex-direction: column; gap: 12px; }
 
-        .ranking-content { display: none; animation: fadeInUp 0.5s ease; }
-        .ranking-content.show { display: block; }
-
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(15px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .search-box {
-            margin-bottom: 12px;
-            position: relative;
-        }
+        .search-box { position: relative; }
 
         .search-box input {
             width: 100%;
@@ -289,17 +161,10 @@
             border-radius: var(--radius);
             background: var(--card-bg);
             color: var(--text);
-            font-family: 'IRANSans', Tahoma, sans-serif;
+            font-family: inherit;
             font-size: 11px;
             box-shadow: var(--shadow);
-            transition: all 0.3s ease;
             outline: none;
-        }
-
-        .search-box input:focus {
-            transform: translateY(-2px);
-            box-shadow: 4px 4px 0 #000000;
-            border-color: var(--primary);
         }
 
         .search-box i {
@@ -308,7 +173,6 @@
             right: 12px;
             transform: translateY(-50%);
             color: var(--text-light);
-            font-size: 14px;
         }
 
         .my-rank-card {
@@ -316,61 +180,28 @@
             border: var(--border);
             border-radius: var(--radius);
             padding: 14px 18px;
-            margin-bottom: 16px;
             box-shadow: var(--shadow);
             display: flex;
             align-items: center;
             justify-content: space-between;
-            animation: slideUpCard 0.5s ease backwards;
         }
 
-        @keyframes slideUpCard {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .my-rank-left {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .my-rank-number {
-            font-size: 24px;
-            font-weight: 800;
-            color: #ffffff;
-            min-width: 40px;
-        }
-
-        .my-rank-info {
-            color: #ffffff;
-        }
-
-        .my-rank-name {
-            font-size: 14px;
-            font-weight: 700;
-        }
-
-        .my-rank-score {
-            font-size: 10px;
-            opacity: 0.8;
-        }
-
+        .my-rank-left { display: flex; align-items: center; gap: 12px; }
+        .my-rank-number { font-size: 22px; font-weight: 800; color: #fff; min-width: 40px; }
+        .my-rank-info { color: #fff; }
+        .my-rank-name { font-size: 13px; font-weight: 700; }
+        .my-rank-score { font-size: 9px; opacity: 0.8; }
         .my-rank-badge {
-            background: rgba(255, 255, 255, 0.2);
+            background: rgba(255,255,255,0.2);
             padding: 4px 12px;
-            border-radius: var(--radius);
-            font-size: 10px;
-            font-weight: 600;
-            color: #ffffff;
-            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 20px;
+            font-size: 9px;
+            font-weight: 700;
+            color: #fff;
+            border: 1px solid rgba(255,255,255,0.3);
         }
 
-        .rank-list {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-        }
+        .rank-list { display: flex; flex-direction: column; gap: 6px; }
 
         .rank-item {
             display: flex;
@@ -381,43 +212,22 @@
             border: var(--border);
             border-radius: var(--radius);
             box-shadow: var(--shadow);
-            transition: all 0.3s ease;
-            animation: slideUpCard 0.4s ease backwards;
+            cursor: pointer;
+            transition: all 0.2s ease;
         }
-
-        .rank-item:nth-child(1) { animation-delay: 0.05s; }
-        .rank-item:nth-child(2) { animation-delay: 0.1s; }
-        .rank-item:nth-child(3) { animation-delay: 0.15s; }
-        .rank-item:nth-child(4) { animation-delay: 0.2s; }
-        .rank-item:nth-child(5) { animation-delay: 0.25s; }
-        .rank-item:nth-child(6) { animation-delay: 0.3s; }
-        .rank-item:nth-child(7) { animation-delay: 0.35s; }
-        .rank-item:nth-child(8) { animation-delay: 0.4s; }
-        .rank-item:nth-child(9) { animation-delay: 0.45s; }
-        .rank-item:nth-child(10) { animation-delay: 0.5s; }
-
-        .rank-item:hover {
-            transform: translateX(-3px);
-            box-shadow: 4px 4px 0 #000000;
-        }
-
-        .rank-item.is-me {
-            border-color: var(--primary);
-            border-width: 2px;
-            background: var(--bg2);
-        }
+        .rank-item:active { transform: translateX(-3px); }
+        .rank-item.is-me { border-color: var(--primary); border-width: 2px; background: var(--bg2); }
 
         .rank-number {
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 800;
             color: var(--text-light);
-            min-width: 32px;
+            min-width: 30px;
             text-align: center;
         }
-
-        .rank-number.gold { color: #f59e0b; font-size: 18px; }
-        .rank-number.silver { color: #94a3b8; font-size: 18px; }
-        .rank-number.bronze { color: #d97706; font-size: 18px; }
+        .rank-number.gold { color: #f59e0b; font-size: 16px; }
+        .rank-number.silver { color: #94a3b8; font-size: 16px; }
+        .rank-number.bronze { color: #d97706; font-size: 16px; }
 
         .rank-avatar {
             width: 32px;
@@ -428,71 +238,49 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 14px;
-            color: var(--primary);
-            flex-shrink: 0;
-            overflow: hidden;
-        }
-
-        .rank-avatar img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .rank-info {
-            flex: 1;
-            min-width: 0;
-        }
-
-        .rank-name {
             font-size: 13px;
+            color: var(--primary);
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+        .rank-avatar img { width: 100%; height: 100%; object-fit: cover; }
+
+        .rank-info { flex: 1; min-width: 0; }
+        .rank-name {
+            font-size: 11px;
             font-weight: 700;
             color: var(--dark);
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
         }
-
-        .rank-score {
-            font-size: 10px;
-            color: var(--text-light);
-        }
+        .rank-score { font-size: 8px; color: var(--text-light); }
 
         .rank-badge-me {
-            font-size: 8px;
+            font-size: 7px;
             font-weight: 700;
             color: var(--primary);
             background: var(--bg2);
             padding: 2px 8px;
-            border-radius: var(--radius);
+            border-radius: 10px;
             border: var(--border);
         }
 
         .rank-empty {
             text-align: center;
-            padding: 30px;
+            padding: 20px;
             color: var(--text-light);
-            font-size: 12px;
+            font-size: 10px;
             background: var(--card-bg);
             border: var(--border);
             border-radius: var(--radius);
             box-shadow: var(--shadow);
         }
-
-        .rank-empty img {
-            width: 80px;
-            height: 80px;
-            object-fit: contain;
-            display: block;
-            margin: 0 auto 10px;
-        }
+        .rank-empty img { width: 60px; height: 60px; object-fit: contain; margin: 0 auto 8px; display: block; }
 
         .bottom-nav {
             position: fixed;
-            bottom: 0;
-            right: 0;
-            left: 0;
+            bottom: 0; right: 0; left: 0;
             background: var(--header-bg);
             border-top: var(--border);
             display: flex;
@@ -500,13 +288,6 @@
             align-items: center;
             padding: 6px 0;
             z-index: 999;
-            transition: all 0.5s ease;
-            animation: slideUp 0.5s ease;
-        }
-
-        @keyframes slideUp {
-            from { transform: translateY(100%); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
         }
 
         .nav-item {
@@ -517,69 +298,28 @@
             cursor: pointer;
             text-decoration: none;
             color: var(--text-light);
-            transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
             padding: 4px 12px;
-            border-radius: var(--radius);
+            font-family: inherit;
             background: none;
             border: none;
-            font-family: inherit;
+            font-size: 12px;
         }
-
-        .nav-item i {
-            font-size: 18px;
-            transition: all 0.3s ease;
-        }
-
-        .nav-item span {
-            font-size: 8px;
-            font-weight: 600;
-        }
-
-        .nav-item.active {
-            color: var(--primary);
-        }
-
-        .nav-item.active i {
-            transform: translateY(-2px);
-        }
-
-        .nav-item:active {
-            transform: scale(0.9);
-        }
-
-        @media (max-width: 480px) {
-            .header-title { font-size: 15px; }
-            .header-logo {
-                width: 44px;
-                height: 44px;
-            }
-            .my-rank-card { flex-wrap: wrap; gap: 8px; }
-            .my-rank-left { flex: 1; min-width: 0; }
-        }
+        .nav-item i { font-size: 18px; }
+        .nav-item span { font-size: 8px; font-weight: 600; }
+        .nav-item.active { color: var(--primary); }
     </style>
 </head>
 <body>
 
     <div class="bg-animation"></div>
-    <div class="bg-particles" id="particles"></div>
 
     <header class="header">
         <div class="header-inner">
             <div class="header-right">
-                <div class="header-logo">
-                    <img src="https://cdn.imgurl.ir/uploads/f30974_InShot_20260821_174101103.png" alt="Quizico">
-                </div>
+                <div class="header-logo"><img src="https://cdn.imgurl.ir/uploads/f30974_InShot_20260821_174101103.png" alt="Quizico"></div>
                 <div>
-                    <div class="header-title" id="headerTitle">
-                        <span class="t-letter">Q</span>
-                        <span class="t-letter">u</span>
-                        <span class="t-letter">i</span>
-                        <span class="t-letter">z</span>
-                        <span class="t-letter t-accent">i</span>
-                        <span class="t-letter t-accent">c</span>
-                        <span class="t-letter t-accent">o</span>
-                    </div>
-                    <div class="header-subtitle">رتبه‌بندی</div>
+                    <div class="header-title">Quiz<span class="t-accent">ico</span></div>
+                    <div class="header-subtitle" data-i18n="ranking">رتبه‌بندی</div>
                 </div>
             </div>
         </div>
@@ -588,7 +328,7 @@
     <main class="main-container">
         <div class="loader-wrapper" id="loaderWrapper">
             <div class="loader"></div>
-            <div class="loader-text">در حال دریافت اطلاعات...</div>
+            <div class="loader-text" data-i18n="loading">در حال دریافت...</div>
         </div>
 
         <div class="ranking-content" id="rankingContent">
@@ -598,15 +338,15 @@
                 <input type="text" id="searchInput" placeholder="جستجوی کاربر..." oninput="filterRankings()">
             </div>
 
-            <div class="my-rank-card" id="myRankCard">
+            <div class="my-rank-card">
                 <div class="my-rank-left">
                     <div class="my-rank-number" id="myRankNumber">-</div>
                     <div class="my-rank-info">
-                        <div class="my-rank-name" id="myRankName">در حال بارگذاری...</div>
+                        <div class="my-rank-name" id="myRankName">...</div>
                         <div class="my-rank-score" id="myRankScore">امتیاز: 0</div>
                     </div>
                 </div>
-                <div class="my-rank-badge">رتبه شما</div>
+                <div class="my-rank-badge" data-i18n="your_rank">رتبه شما</div>
             </div>
 
             <div class="rank-list" id="rankList"></div>
@@ -615,22 +355,10 @@
     </main>
 
     <nav class="bottom-nav">
-        <a href="../dashboard/" class="nav-item">
-            <i class="fa-solid fa-house"></i>
-            <span>خانه</span>
-        </a>
-        <a href="../ranking/" class="nav-item active">
-            <i class="fa-solid fa-trophy"></i>
-            <span>رتبه</span>
-        </a>
-        <a href="../profile/" class="nav-item">
-            <i class="fa-solid fa-user"></i>
-            <span>پروفایل</span>
-        </a>
-        <a href="../setting/" class="nav-item">
-            <i class="fa-solid fa-gear"></i>
-            <span>تنظیمات</span>
-        </a>
+        <a href="../dashboard/" class="nav-item"><i class="fa-solid fa-house"></i><span data-i18n="home">خانه</span></a>
+        <a href="../ranking/" class="nav-item active"><i class="fa-solid fa-trophy"></i><span data-i18n="ranking_nav">رتبه</span></a>
+        <a href="../profile/" class="nav-item"><i class="fa-solid fa-user"></i><span data-i18n="profile">پروفایل</span></a>
+        <a href="../setting/" class="nav-item"><i class="fa-solid fa-gear"></i><span data-i18n="settings">تنظیمات</span></a>
     </nav>
 
     <script>
@@ -640,237 +368,160 @@
             var SAD_IMAGE = 'https://cdn.imgurl.ir/uploads/g58935_InShot_20260822_140943752.png';
             var allRankings = [];
 
-            function createParticles() {
-                var container = document.getElementById('particles');
-                for (var i = 0; i < 20; i++) {
-                    var p = document.createElement('div');
-                    p.className = 'particle';
-                    var size = 3 + Math.random() * 8;
-                    p.style.width = size + 'px';
-                    p.style.height = size + 'px';
-                    p.style.left = Math.random() * 100 + '%';
-                    p.style.animationDuration = 15 + Math.random() * 25 + 's';
-                    p.style.animationDelay = Math.random() * 20 + 's';
-                    container.appendChild(p);
+            var translations = {
+                fa: {
+                    ranking: 'رتبه‌بندی', loading: 'در حال دریافت...', your_rank: 'رتبه شما',
+                    home: 'خانه', ranking_nav: 'رتبه', profile: 'پروفایل', settings: 'تنظیمات',
+                    no_users: 'کاربری یافت نشد'
+                },
+                en: {
+                    ranking: 'Ranking', loading: 'Loading...', your_rank: 'Your Rank',
+                    home: 'Home', ranking_nav: 'Ranking', profile: 'Profile', settings: 'Settings',
+                    no_users: 'No users found'
+                },
+                ar: {
+                    ranking: 'الترتيب', loading: 'جار التحميل...', your_rank: 'رتبتك',
+                    home: 'الرئيسية', ranking_nav: 'الترتيب', profile: 'الملف', settings: 'الإعدادات',
+                    no_users: 'لا يوجد مستخدمين'
                 }
-            }
-            createParticles();
+            };
 
             function getSettings() {
                 try {
                     var raw = localStorage.getItem('quizicoSettings');
-                    if (!raw) {
-                        var defaultSettings = { theme: 'light', primaryColor: '#a855f7', animation: true, haptic: true };
-                        localStorage.setItem('quizicoSettings', JSON.stringify(defaultSettings));
-                        return defaultSettings;
-                    }
-                    var parsed = JSON.parse(raw);
-                    if (!parsed.theme) parsed.theme = 'light';
-                    if (!parsed.primaryColor) parsed.primaryColor = '#a855f7';
-                    if (parsed.animation === undefined) parsed.animation = true;
-                    if (parsed.haptic === undefined) parsed.haptic = true;
-                    return parsed;
-                } catch(e) {
-                    return { theme: 'light', primaryColor: '#a855f7', animation: true, haptic: true };
+                    if (!raw) return { theme: 'light', primaryColor: '#a855f7', animation: true, language: 'fa' };
+                    var p = JSON.parse(raw);
+                    if (!p.theme) p.theme = 'light';
+                    if (!p.primaryColor) p.primaryColor = '#a855f7';
+                    if (p.animation === undefined) p.animation = true;
+                    if (!p.language) p.language = 'fa';
+                    return p;
+                } catch(e) { return { theme: 'light', primaryColor: '#a855f7', animation: true, language: 'fa' }; }
+            }
+
+            function hexToRgb(h) {
+                var r = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(h);
+                return r ? { r: parseInt(r[1],16), g: parseInt(r[2],16), b: parseInt(r[3],16) } : { r:168,g:85,b:247 };
+            }
+            function shadeColor(c,p){var r=hexToRgb(c);var rr=Math.max(0,Math.min(255,r.r+p));var gg=Math.max(0,Math.min(255,r.g+p));var bb=Math.max(0,Math.min(255,r.b+p));return '#'+((1<<24)+(rr<<16)+(gg<<8)+bb).toString(16).slice(1);}
+
+            function applyLanguage(lang) {
+                var t = translations[lang] || translations.fa;
+                document.querySelectorAll('[data-i18n]').forEach(function(el) {
+                    var k = el.getAttribute('data-i18n');
+                    if (t[k]) el.textContent = t[k];
+                });
+                if (lang === 'en') {
+                    document.documentElement.setAttribute('dir', 'ltr');
+                    document.body.style.fontFamily = 'Arial, sans-serif';
+                } else if (lang === 'ar') {
+                    document.documentElement.setAttribute('dir', 'rtl');
+                    document.body.style.fontFamily = 'Tahoma, sans-serif';
+                } else {
+                    document.documentElement.setAttribute('dir', 'rtl');
+                    document.body.style.fontFamily = "'IRANSans', Tahoma, sans-serif";
                 }
-            }
-
-            function hexToRgb(hex) {
-                var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-                return result ? { r: parseInt(result[1], 16), g: parseInt(result[2], 16), b: parseInt(result[3], 16) } : { r: 168, g: 85, b: 247 };
-            }
-
-            function shadeColor(color, percent) {
-                var rgb = hexToRgb(color);
-                var r = Math.max(0, Math.min(255, rgb.r + percent));
-                var g = Math.max(0, Math.min(255, rgb.g + percent));
-                var b = Math.max(0, Math.min(255, rgb.b + percent));
-                return '#' + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
             }
 
             function applyTheme() {
-                var settings = getSettings();
-                var theme = settings.theme || 'light';
-                var primaryColor = settings.primaryColor || '#a855f7';
-                document.documentElement.setAttribute('data-theme', theme);
-                if (theme === 'dark') {
-                    var darkPrimary = shadeColor(primaryColor, 40);
-                    document.documentElement.style.setProperty('--primary', darkPrimary);
-                    document.documentElement.style.setProperty('--primary-rgb', hexToRgb(darkPrimary).r + ', ' + hexToRgb(darkPrimary).g + ', ' + hexToRgb(darkPrimary).b);
+                var s = getSettings();
+                var t = s.theme || 'light';
+                var p = s.primaryColor || '#a855f7';
+                document.documentElement.setAttribute('data-theme', t);
+                if (t === 'dark') {
+                    var dp = shadeColor(p, 40);
+                    document.documentElement.style.setProperty('--primary', dp);
                 } else {
-                    document.documentElement.style.setProperty('--primary', primaryColor);
-                    document.documentElement.style.setProperty('--primary-rgb', hexToRgb(primaryColor).r + ', ' + hexToRgb(primaryColor).g + ', ' + hexToRgb(primaryColor).b);
+                    document.documentElement.style.setProperty('--primary', p);
                 }
-                if (settings.animation === false) {
+                if (s.animation === false) {
                     document.documentElement.setAttribute('data-animation', 'off');
                 } else {
                     document.documentElement.removeAttribute('data-animation');
                 }
-                if (webApp) {
-                    webApp.setHeaderColor('bg_color');
-                    webApp.setBackgroundColor('bg_color');
-                }
+                applyLanguage(s.language);
             }
 
-            function getEitaaUser() {
-                if (webApp && webApp.initDataUnsafe && webApp.initDataUnsafe.user) {
-                    return webApp.initDataUnsafe.user;
-                }
-                return null;
+            function getEitaaUser(){return webApp&&webApp.initDataUnsafe&&webApp.initDataUnsafe.user?webApp.initDataUnsafe.user:null;}
+            function getUserId(){var u=getEitaaUser();return u?(typeof u.id==='number'?u.id.toString():String(u.id||'')):'';}
+            function fetchData(action,params){
+                var payload={action:action,username:getUserId()};
+                if(params){for(var k in params){if(params.hasOwnProperty(k))payload[k]=params[k];}}
+                return fetch(API_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(payload)}).then(function(r){return r.json();}).catch(function(){return{ok:false};});
             }
 
-            function getUserId() {
-                var user = getEitaaUser();
-                if (!user) return '';
-                if (typeof user.id === 'number') return user.id.toString();
-                return String(user.id || '');
+            function getRankIcon(i) {
+                if (i === 0) return '<i class="fa-solid fa-crown" style="color:#f59e0b;"></i>';
+                if (i === 1) return '<i class="fa-solid fa-medal" style="color:#94a3b8;"></i>';
+                if (i === 2) return '<i class="fa-solid fa-medal" style="color:#d97706;"></i>';
+                return '#' + (i + 1);
             }
-
-            async function fetchData(action, params) {
-                try {
-                    var username = getUserId();
-                    var initData = webApp?.initData || '';
-                    var payload = { action: action, username: username, initData: initData };
-                    if (params) {
-                        for (var key in params) {
-                            if (params.hasOwnProperty(key)) payload[key] = params[key];
-                        }
-                    }
-                    var response = await fetch(API_URL, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                        body: JSON.stringify(payload)
-                    });
-                    var result = await response.json();
-                    return result;
-                } catch(e) {
-                    console.error('Fetch error:', e);
-                    return { ok: false, error: 'Network error: ' + e.message };
-                }
-            }
-
-            function getRankIcon(index) {
-                if (index === 0) return '<i class="fa-solid fa-crown" style="color:#f59e0b;"></i>';
-                if (index === 1) return '<i class="fa-solid fa-medal" style="color:#94a3b8;"></i>';
-                if (index === 2) return '<i class="fa-solid fa-medal" style="color:#d97706;"></i>';
-                return '#' + (index + 1);
-            }
-
-            function getRankClass(index) {
-                if (index === 0) return 'gold';
-                if (index === 1) return 'silver';
-                if (index === 2) return 'bronze';
+            function getRankClass(i) {
+                if (i === 0) return 'gold';
+                if (i === 1) return 'silver';
+                if (i === 2) return 'bronze';
                 return '';
             }
 
-            function renderEmptyState(text) {
-                return '<div class="rank-empty"><img src="' + SAD_IMAGE + '" alt=""><p>' + text + '</p></div>';
-            }
-
-            function renderRankList(list, myUsername) {
-                var rankList = document.getElementById('rankList');
+            function renderRankList(list, myId) {
+                var el = document.getElementById('rankList');
                 if (list.length === 0) {
-                    rankList.innerHTML = renderEmptyState('کاربری یافت نشد');
+                    el.innerHTML = '<div class="rank-empty"><img src="'+SAD_IMAGE+'" alt=""><p>کاربری یافت نشد</p></div>';
                     return;
                 }
-
-                var items = list.map(function(item, index) {
-                    var isMe = String(item.username) === String(myUsername);
-                    var rankDisplay = getRankIcon(index);
-                    var rankClass = getRankClass(index);
-                    var score = item.score || 0;
-                    var avatarHtml = item.photo_url ? 
-                        '<img src="' + item.photo_url + '" alt="">' : 
-                        '<i class="fa-solid fa-user"></i>';
-
-                    return '<div class="rank-item' + (isMe ? ' is-me' : '') + '">' +
-                        '<div class="rank-number ' + rankClass + '">' + rankDisplay + '</div>' +
-                        '<div class="rank-avatar">' + avatarHtml + '</div>' +
-                        '<div class="rank-info">' +
-                        '<div class="rank-name">' + (item.name || item.username || 'ناشناس') + '</div>' +
-                        '<div class="rank-score">امتیاز: ' + score + '</div>' +
-                        '</div>' +
-                        (isMe ? '<span class="rank-badge-me">شما</span>' : '') +
+                el.innerHTML = list.map(function(item, i) {
+                    var isMe = String(item.username) === String(myId);
+                    var avatar = item.photo_url ? '<img src="'+item.photo_url+'" alt="">' : '<i class="fa-solid fa-user"></i>';
+                    return '<div class="rank-item'+(isMe?' is-me':'')+'">'+
+                        '<div class="rank-number '+getRankClass(i)+'">'+getRankIcon(i)+'</div>'+
+                        '<div class="rank-avatar">'+avatar+'</div>'+
+                        '<div class="rank-info"><div class="rank-name">'+(item.name||item.username||'ناشناس')+'</div>'+
+                        '<div class="rank-score">امتیاز: '+(item.score||0)+'</div></div>'+
+                        (isMe?'<span class="rank-badge-me">شما</span>':'')+
                         '</div>';
                 }).join('');
-
-                rankList.innerHTML = items;
             }
 
             window.filterRankings = function() {
-                var searchTerm = document.getElementById('searchInput').value.toLowerCase().trim();
-                var user = getEitaaUser();
-                var myUsername = getUserId();
-                
-                if (!searchTerm) {
-                    renderRankList(allRankings, myUsername);
+                var q = document.getElementById('searchInput').value.toLowerCase().trim();
+                var myId = getUserId();
+                if (!q) {
+                    renderRankList(allRankings, myId);
                     return;
                 }
-                
                 var filtered = allRankings.filter(function(item) {
-                    var name = (item.name || '').toLowerCase();
-                    var username = String(item.username || '').toLowerCase();
-                    return name.includes(searchTerm) || username.includes(searchTerm);
+                    var n = (item.name||'').toLowerCase();
+                    var u = String(item.username||'').toLowerCase();
+                    return n.includes(q) || u.includes(q);
                 });
-                
-                renderRankList(filtered, myUsername);
+                renderRankList(filtered, myId);
             };
 
-            function animateTitle() {
-                var title = document.getElementById('headerTitle');
-                if (!title) return;
-                var settings = getSettings();
-                if (settings.animation === false) {
-                    title.classList.remove('animate-out');
-                    document.documentElement.setAttribute('data-animation', 'off');
-                    return;
-                }
-                document.documentElement.removeAttribute('data-animation');
-                function playIn() { title.classList.remove('animate-out'); }
-                function playOut() { title.classList.add('animate-out'); }
-                setInterval(function() {
-                    playIn();
-                    setTimeout(playOut, 10000);
-                }, 12400);
-            }
-
             async function loadRanking() {
-                var user = getEitaaUser();
-                var myUsername = getUserId();
-                var myName = user ? (user.first_name || '') + ' ' + (user.last_name || '') : 'کاربر';
-
                 try {
+                    var myId = getUserId();
                     var result = await fetchData('leaderboard', { limit: 100 });
-
                     if (result.ok && Array.isArray(result.data) && result.data.length > 0) {
                         allRankings = result.data;
+                        renderRankList(allRankings, myId);
+                        
                         var myRank = null;
                         var myScore = 0;
-
                         for (var i = 0; i < allRankings.length; i++) {
-                            if (String(allRankings[i].username) === String(myUsername)) {
+                            if (String(allRankings[i].username) === String(myId)) {
                                 myRank = i + 1;
                                 myScore = allRankings[i].score || 0;
                                 break;
                             }
                         }
-
-                        renderRankList(allRankings, myUsername);
-
-                        document.getElementById('myRankNumber').textContent = myRank ? '#' + myRank : '-';
-                        document.getElementById('myRankName').textContent = myName.trim() || 'شما';
-                        document.getElementById('myRankScore').textContent = 'امتیاز: ' + myScore;
-
+                        document.getElementById('myRankNumber').textContent = myRank ? '#'+myRank : '-';
+                        document.getElementById('myRankName').textContent = getEitaaUser() ? ((getEitaaUser().first_name||'')+' '+(getEitaaUser().last_name||'')).trim() : 'شما';
+                        document.getElementById('myRankScore').textContent = 'امتیاز: '+myScore;
                     } else {
-                        document.getElementById('rankList').innerHTML = renderEmptyState('کاربری یافت نشد');
-                        document.getElementById('myRankNumber').textContent = '-';
-                        document.getElementById('myRankName').textContent = myName.trim() || 'شما';
-                        document.getElementById('myRankScore').textContent = 'امتیاز: 0';
+                        document.getElementById('rankList').innerHTML = '<div class="rank-empty"><img src="'+SAD_IMAGE+'" alt=""><p>کاربری یافت نشد</p></div>';
                     }
-
                 } catch(e) {
-                    console.error('Error loading ranking:', e);
-                    document.getElementById('rankList').innerHTML = renderEmptyState('خطا در دریافت اطلاعات');
+                    console.error(e);
                 } finally {
                     document.getElementById('loaderWrapper').style.display = 'none';
                     document.getElementById('rankingContent').classList.add('show');
@@ -886,7 +537,6 @@
             }
 
             applyTheme();
-            animateTitle();
             loadRanking();
         })();
     </script>
