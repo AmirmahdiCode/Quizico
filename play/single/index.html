@@ -23,7 +23,7 @@
             --card-bg: #ffffff;
             --header-bg: #ffffff;
             --shadow: 3px 3px 0 #000000;
-            --radius: 4px;
+            --radius: 12px;
             --border: 1px solid #000000;
             --gold: #f59e0b;
         }
@@ -37,13 +37,13 @@
             --primary-light: #d8b4fe;
             --primary-rgb: 192, 132, 252;
             --dark: #f1f5f9;
-            --text: #cbd5e1;
+            --text: #e2e8f0;
             --text-light: #94a3b8;
             --white: #2d2a3e;
             --card-bg: #2d2a3e;
             --header-bg: #2d2a3e;
             --shadow: 3px 3px 0 #000000;
-            --border: 1px solid #000000;
+            --border: 1px solid #475569;
         }
 
         [data-animation="off"] * {
@@ -64,24 +64,14 @@
             min-height: 100vh;
             display: flex;
             flex-direction: column;
+            transition: font-family 0.3s ease;
         }
 
         .bg-animation {
             position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
+            top: 0; left: 0; right: 0; bottom: 0;
             z-index: 0;
             background: linear-gradient(135deg, var(--bg) 0%, var(--bg2) 40%, var(--bg3) 80%);
-            background-size: 400% 400%;
-            animation: gradientMove 15s ease infinite;
-        }
-
-        @keyframes gradientMove {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
         }
 
         .header {
@@ -89,7 +79,7 @@
             z-index: 10;
             background: var(--header-bg);
             border-bottom: var(--border);
-            padding: 12px 20px;
+            padding: 10px 16px;
             position: sticky;
             top: 0;
             box-shadow: var(--shadow);
@@ -99,19 +89,19 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            max-width: 600px;
+            max-width: 500px;
             margin: 0 auto;
         }
 
         .header-right {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
         }
 
         .header-logo {
-            width: 44px;
-            height: 44px;
+            width: 38px;
+            height: 38px;
             border-radius: var(--radius);
             background: var(--primary);
             display: flex;
@@ -123,27 +113,10 @@
             border: var(--border);
         }
 
-        .header-logo img {
-            width: 95%;
-            height: 95%;
-            object-fit: contain;
-            transform: scale(1.15);
-        }
-
-        .header-title {
-            font-size: 16px;
-            font-weight: 800;
-            color: var(--dark);
-        }
-
-        .header-title .t-accent {
-            color: var(--primary);
-        }
-
-        .header-subtitle {
-            font-size: 9px;
-            color: var(--text-light);
-        }
+        .header-logo img { width: 95%; height: 95%; object-fit: contain; transform: scale(1.1); }
+        .header-title { font-size: 14px; font-weight: 800; color: var(--dark); }
+        .header-title .t-accent { color: var(--primary); }
+        .header-subtitle { font-size: 8px; color: var(--text-light); }
 
         .currency-badge {
             display: flex;
@@ -151,14 +124,13 @@
             gap: 4px;
             background: var(--bg2);
             border: var(--border);
-            border-radius: var(--radius);
+            border-radius: 8px;
             padding: 4px 10px;
             font-size: 10px;
             font-weight: 700;
             color: var(--dark);
             box-shadow: var(--shadow);
         }
-
         .currency-badge.coins i { color: #f59e0b; }
 
         .main-container {
@@ -166,72 +138,48 @@
             z-index: 5;
             max-width: 500px;
             width: 100%;
-            margin: 16px auto;
-            padding: 0 12px 100px;
+            margin: 12px auto;
+            padding: 0 10px 100px;
             display: flex;
             flex-direction: column;
-            gap: 12px;
-        }
-
-        .loader-letters {
-            display: flex;
-            gap: 4px;
-            justify-content: center;
-            align-items: center;
-            padding: 30px 0;
-            direction: ltr;
-        }
-
-        .loader-letter {
-            font-size: 32px;
-            font-weight: 900;
-            color: var(--primary);
-            opacity: 0;
-            animation: letterBounce 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
-            text-shadow: 2px 2px 0 rgba(0,0,0,0.15);
-        }
-
-        .loader-letter:nth-child(1) { animation-delay: 0.1s; }
-        .loader-letter:nth-child(2) { animation-delay: 0.2s; }
-        .loader-letter:nth-child(3) { animation-delay: 0.3s; }
-        .loader-letter:nth-child(4) { animation-delay: 0.4s; }
-        .loader-letter:nth-child(5) { animation-delay: 0.5s; color: #f59e0b; }
-        .loader-letter:nth-child(6) { animation-delay: 0.6s; color: #f59e0b; }
-        .loader-letter:nth-child(7) { animation-delay: 0.7s; color: #f59e0b; }
-
-        @keyframes letterBounce {
-            0% { opacity: 0; transform: translateY(-30px) scale(0.3) rotate(-10deg); }
-            50% { opacity: 1; transform: translateY(8px) scale(1.2) rotate(5deg); }
-            70% { transform: translateY(-4px) scale(0.95) rotate(-2deg); }
-            100% { opacity: 1; transform: translateY(0) scale(1) rotate(0deg); }
-        }
-
-        .players-row {
-            display: flex;
             gap: 10px;
         }
+
+        .loader-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 50vh;
+            gap: 10px;
+        }
+        .loader {
+            width: 45px;
+            height: 45px;
+            border: 5px solid var(--bg3);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+        .loader-text { font-size: 11px; font-weight: 700; color: var(--text); }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .game-content { display: none; }
+        .game-content.show { display: flex; flex-direction: column; gap: 10px; }
+
+        .players-row { display: flex; gap: 8px; }
 
         .player-card {
             flex: 1;
             background: var(--card-bg);
             border: var(--border);
-            border-radius: 12px;
+            border-radius: var(--radius);
             padding: 10px;
             text-align: center;
             box-shadow: var(--shadow);
         }
-
-        .player-card.active {
-            border-color: var(--gold);
-            border-width: 3px;
-        }
-
-        .player-tag {
-            font-size: 10px;
-            font-weight: 800;
-            margin-bottom: 4px;
-        }
-
+        .player-card.active { border-color: var(--gold); border-width: 2px; }
+        .player-tag { font-size: 9px; font-weight: 800; color: var(--dark); margin-bottom: 4px; }
         .player-avatar {
             width: 40px;
             height: 40px;
@@ -242,42 +190,37 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 18px;
+            font-size: 16px;
             color: var(--primary);
         }
-
-        .player-score {
-            font-size: 14px;
-            font-weight: 800;
-            color: var(--gold);
-        }
+        .player-score { font-size: 13px; font-weight: 800; color: var(--gold); }
 
         .message-card {
             background: var(--card-bg);
             border: var(--border);
-            border-radius: 12px;
+            border-radius: var(--radius);
             padding: 8px 12px;
             box-shadow: var(--shadow);
             text-align: center;
             font-size: 9px;
             font-weight: 600;
+            color: var(--text);
         }
 
         .rounds-results {
             background: var(--card-bg);
             border: var(--border);
-            border-radius: 12px;
+            border-radius: var(--radius);
             padding: 12px;
             box-shadow: var(--shadow);
         }
-
         .rounds-title {
             font-size: 10px;
             font-weight: 800;
+            color: var(--dark);
             margin-bottom: 8px;
             text-align: center;
         }
-
         .round-result-item {
             background: rgba(245, 158, 11, 0.1);
             border: 1px solid var(--gold);
@@ -285,111 +228,60 @@
             padding: 8px;
             margin-bottom: 6px;
         }
-
-        .round-result-header {
-            font-size: 8px;
-            font-weight: 700;
-            margin-bottom: 4px;
-        }
-
         .round-result-row {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 2px 0;
             font-size: 8px;
+            padding: 2px 0;
         }
-
-        .round-result-player {
-            font-weight: 700;
-            min-width: 25px;
-        }
-
-        .round-dots {
-            display: flex;
-            gap: 3px;
-            flex: 1;
-            justify-content: center;
-        }
-
+        .round-result-player { font-weight: 700; color: var(--dark); min-width: 25px; }
+        .round-dots { display: flex; gap: 3px; flex: 1; justify-content: center; }
         .result-dot {
-            width: 15px;
-            height: 15px;
+            width: 14px;
+            height: 14px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 7px;
+            font-size: 6px;
             font-weight: 800;
-            border: 1px solid #000;
+            border: var(--border);
             background: #10b981;
             color: #fff;
         }
-
-        .result-dot.wrong {
-            background: #ef4444;
-        }
-
-        .round-result-count {
-            font-weight: 800;
-            font-size: 9px;
-            min-width: 18px;
-            text-align: center;
-        }
+        .result-dot.wrong { background: #ef4444; }
+        .round-result-count { font-weight: 800; font-size: 8px; color: var(--dark); }
 
         .question-card {
             background: var(--card-bg);
             border: var(--border);
-            border-radius: 12px;
-            padding: 14px;
+            border-radius: var(--radius);
+            padding: 12px;
             box-shadow: var(--shadow);
         }
-
         .question-text {
-            font-size: 12px;
+            font-size: 11px;
             font-weight: 700;
+            color: var(--dark);
             line-height: 1.7;
             text-align: center;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
         }
-
         .timer-bar-container {
             background: var(--bg3);
             border: var(--border);
-            border-radius: 10px;
-            height: 8px;
+            border-radius: 8px;
+            height: 6px;
             overflow: hidden;
-            margin-bottom: 6px;
+            margin-bottom: 4px;
         }
+        .timer-bar-fill { height: 100%; background: #10b981; transition: width 1s linear; }
+        .timer-bar-fill.warning { background: #f59e0b; }
+        .timer-bar-fill.danger { background: #ef4444; }
+        .timer-text { font-size: 7px; font-weight: 700; color: var(--text-light); text-align: center; margin-bottom: 8px; }
 
-        .timer-bar-fill {
-            height: 100%;
-            background: #10b981;
-            border-radius: 10px;
-            transition: width 1s linear;
-        }
-
-        .timer-bar-fill.warning {
-            background: #f59e0b;
-        }
-
-        .timer-bar-fill.danger {
-            background: #ef4444;
-        }
-
-        .timer-text {
-            text-align: center;
-            font-size: 8px;
-            font-weight: 700;
-            color: var(--text-light);
-            margin-bottom: 8px;
-        }
-
-        .options-grid {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-        }
+        .options-grid { display: flex; flex-direction: column; gap: 6px; }
 
         .option-btn {
             display: flex;
@@ -400,34 +292,19 @@
             border-radius: 8px;
             background: var(--bg2);
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 0.2s ease;
             box-shadow: 2px 2px 0 #000;
             font-family: 'IRANSans', Tahoma, sans-serif;
-            font-size: 11px;
+            font-size: 10px;
             font-weight: 600;
+            color: var(--dark);
             text-align: right;
         }
-
-        .option-btn.selected-correct {
-            background: #10b981;
-            color: #fff;
-        }
-
-        .option-btn.selected-wrong {
-            background: #ef4444;
-            color: #fff;
-        }
-
-        .option-btn.disabled {
-            pointer-events: none;
-            opacity: 0.6;
-        }
-
-        .option-btn.hidden-option {
-            opacity: 0.2;
-            pointer-events: none;
-            text-decoration: line-through;
-        }
+        .option-btn:active { transform: translate(1px, 1px); box-shadow: 1px 1px 0 #000; }
+        .option-btn.selected-correct { background: #10b981; color: #fff; }
+        .option-btn.selected-wrong { background: #ef4444; color: #fff; }
+        .option-btn.disabled { pointer-events: none; opacity: 0.6; }
+        .option-btn.hidden-option { opacity: 0.2; pointer-events: none; text-decoration: line-through; }
 
         .option-letter {
             width: 22px;
@@ -438,17 +315,13 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 10px;
+            font-size: 9px;
             font-weight: 800;
             flex-shrink: 0;
             border: var(--border);
         }
 
-        .actions-row {
-            display: flex;
-            gap: 6px;
-            margin-bottom: 8px;
-        }
+        .actions-row { display: flex; gap: 6px; margin-bottom: 8px; }
 
         .action-btn {
             flex: 1;
@@ -465,20 +338,14 @@
             font-family: 'IRANSans', Tahoma, sans-serif;
             font-size: 8px;
             font-weight: 700;
+            color: var(--dark);
         }
-
-        .action-btn:disabled {
-            opacity: 0.3;
-            cursor: not-allowed;
-            box-shadow: 1px 1px 0 #000;
-        }
+        .action-btn:disabled { opacity: 0.3; cursor: not-allowed; }
 
         .bottom-btn-container {
             position: fixed;
-            bottom: 0;
-            right: 0;
-            left: 0;
-            padding: 10px 16px;
+            bottom: 0; right: 0; left: 0;
+            padding: 8px 16px;
             background: var(--header-bg);
             border-top: var(--border);
             z-index: 100;
@@ -489,65 +356,43 @@
             max-width: 500px;
             margin: 0 auto;
             display: block;
-            padding: 12px;
+            padding: 10px;
             background: var(--gold);
             color: #fff;
             border: var(--border);
             border-radius: 8px;
             font-family: 'IRANSans', Tahoma, sans-serif;
-            font-size: 12px;
+            font-size: 11px;
             font-weight: 800;
             cursor: pointer;
             box-shadow: 3px 3px 0 #000;
         }
-
-        .main-btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-
-        .main-btn.waiting {
-            background: var(--text-light);
-        }
+        .main-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .main-btn.waiting { background: var(--text-light); }
 
         .result-banner {
             text-align: center;
-            padding: 20px;
+            padding: 16px;
             background: var(--card-bg);
             border: var(--border);
-            border-radius: 12px;
+            border-radius: var(--radius);
             box-shadow: var(--shadow);
         }
-
-        .result-icon {
-            font-size: 50px;
-            margin-bottom: 10px;
-        }
-
-        .result-text {
-            font-size: 16px;
-            font-weight: 800;
-            margin-bottom: 6px;
-        }
-
-        .result-score {
-            font-size: 12px;
-            color: var(--text-light);
-            margin-bottom: 10px;
-        }
-
+        .result-icon { font-size: 40px; margin-bottom: 8px; }
+        .result-text { font-size: 14px; font-weight: 800; color: var(--dark); margin-bottom: 4px; }
+        .result-score { font-size: 10px; color: var(--text-light); margin-bottom: 8px; }
         .result-btn {
             display: inline-block;
-            padding: 10px 24px;
+            padding: 8px 20px;
             background: var(--primary);
             color: #fff;
             border: var(--border);
             border-radius: 8px;
             font-family: 'IRANSans', Tahoma, sans-serif;
-            font-size: 12px;
+            font-size: 10px;
             font-weight: 700;
             cursor: pointer;
-            box-shadow: 3px 3px 0 #000;
+            box-shadow: 2px 2px 0 #000;
         }
     </style>
 </head>
@@ -558,28 +403,23 @@
     <header class="header">
         <div class="header-inner">
             <div class="header-right">
-                <div class="header-logo">
-                    <img src="https://cdn.imgurl.ir/uploads/f30974_InShot_20260821_174101103.png" alt="Quizico">
-                </div>
+                <div class="header-logo"><img src="https://cdn.imgurl.ir/uploads/f30974_InShot_20260821_174101103.png" alt="Quizico"></div>
                 <div>
                     <div class="header-title">Quiz<span class="t-accent">ico</span></div>
-                    <div class="header-subtitle">تک‌نفره</div>
+                    <div class="header-subtitle" data-i18n="single">تک‌نفره</div>
                 </div>
             </div>
             <span class="currency-badge coins"><i class="fa-solid fa-coins"></i> <span id="coinsHeader">0</span></span>
         </div>
     </header>
 
-    <main class="main-container" id="mainContainer">
-        <div class="loader-letters" id="loaderLetters">
-            <span class="loader-letter">Q</span>
-            <span class="loader-letter">u</span>
-            <span class="loader-letter">i</span>
-            <span class="loader-letter">z</span>
-            <span class="loader-letter">i</span>
-            <span class="loader-letter">c</span>
-            <span class="loader-letter">o</span>
+    <main class="main-container">
+        <div class="loader-wrapper" id="loaderWrapper">
+            <div class="loader"></div>
+            <div class="loader-text" data-i18n="loading">در حال دریافت...</div>
         </div>
+
+        <div class="game-content" id="gameContent"></div>
     </main>
 
     <div class="bottom-btn-container" id="bottomBtnContainer" style="display:none;">
@@ -603,114 +443,148 @@
             var isAnswered = false;
             var userCoins = 0;
             var userTotalScore = 0;
-            var isYourTurn = true;
             var roundResults = [];
             var isRoundActive = false;
             var yourCorrectCount = 0;
             var botCorrectCount = 0;
             var timerInterval = null;
             var timeLeft = QUESTION_TIME;
-            var gameId = 'game_' + Date.now();
             var actionUsedThisQuestion = false;
+            var currentLang = 'fa';
 
-            var messages = [
-                'هر سوال درست یه قدم به برد نزدیک‌ترت می‌کنه!',
-                'تمرکزت رو بذار روی سوال، وقت داری!',
-                'تو از پسش برمیای! فقط با دقت جواب بده',
-                'حریفت قویه، ولی تو قوی‌تری!',
-                'هر جواب درست ۵ امتیاز داره!',
-                'آروم باش و درست فکر کن!',
-                'ادامه بده، داری عالی پیش میری!'
-            ];
-
-            function getRandomMessage() {
-                return messages[Math.floor(Math.random() * messages.length)];
-            }
-
-            function getEitaaUser() {
-                if (webApp && webApp.initDataUnsafe && webApp.initDataUnsafe.user) {
-                    return webApp.initDataUnsafe.user;
+            var translations = {
+                fa: {
+                    single: 'تک‌نفره', loading: 'در حال دریافت...', start_round: 'شروع راند',
+                    your_turn: 'نوبت توست', opponent_turn: 'نوبت حریفه...', round_done: 'دست تمام شد!',
+                    you: 'تو', opponent: 'حریف', results: 'نتایج راندها',
+                    question: 'سوال', of: 'از', round: 'راند',
+                    win: 'بردی!', lose: 'باختی!', draw: 'مساوی شدی!',
+                    score: 'امتیاز', coins: 'سکه', back: 'بازگشت',
+                    no_questions: 'سوالی یافت نشد', remove: '۵۰', swap: '۱۰۰', skip: '۱۵۰',
+                    not_enough: 'سکه کافی نداری!'
+                },
+                en: {
+                    single: 'Single Player', loading: 'Loading...', start_round: 'Start Round',
+                    your_turn: 'Your turn', opponent_turn: 'Opponent turn...', round_done: 'Round done!',
+                    you: 'You', opponent: 'Bot', results: 'Round Results',
+                    question: 'Question', of: 'of', round: 'Round',
+                    win: 'You Win!', lose: 'You Lose!', draw: 'Draw!',
+                    score: 'Score', coins: 'Coins', back: 'Back',
+                    no_questions: 'No questions found', remove: '50', swap: '100', skip: '150',
+                    not_enough: 'Not enough coins!'
+                },
+                ar: {
+                    single: 'فردي', loading: 'جار التحميل...', start_round: 'ابدأ الجولة',
+                    your_turn: 'دورك', opponent_turn: 'دور الخصم...', round_done: 'انتهت الجولة!',
+                    you: 'أنت', opponent: 'الخصم', results: 'نتائج الجولات',
+                    question: 'سؤال', of: 'من', round: 'جولة',
+                    win: 'فزت!', lose: 'خسرت!', draw: 'تعادل!',
+                    score: 'النقاط', coins: 'عملات', back: 'رجوع',
+                    no_questions: 'لا توجد أسئلة', remove: '50', swap: '100', skip: '150',
+                    not_enough: 'عملات غير كافية!'
                 }
-                return null;
-            }
+            };
 
-            function getUserId() {
-                var user = getEitaaUser();
-                if (!user) return '';
-                if (typeof user.id === 'number') return user.id.toString();
-                return String(user.id || '');
-            }
-
-            function fetchData(action, params) {
-                var username = getUserId();
-                var payload = { action: action, username: username };
-                if (params) {
-                    for (var key in params) {
-                        if (params.hasOwnProperty(key)) payload[key] = params[key];
-                    }
-                }
-                return fetch(API_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                    body: JSON.stringify(payload)
-                }).then(function(r) { return r.json(); }).catch(function() { return { ok: false }; });
-            }
+            var messages = {
+                fa: ['هر سوال درست یه قدم به برد نزدیک‌ترت می‌کنه!','تمرکزت رو بذار روی سوال!','تو از پسش برمیای!'],
+                en: ['Every correct answer brings you closer to victory!','Stay focused!','You can do it!'],
+                ar: ['كل إجابة صحيحة تقربك من الفوز!','ركز!','يمكنك فعلها!']
+            };
 
             function getSettings() {
                 try {
                     var raw = localStorage.getItem('quizicoSettings');
-                    if (!raw) return { theme: 'light', primaryColor: '#a855f7', animation: true };
-                    var parsed = JSON.parse(raw);
-                    if (!parsed.theme) parsed.theme = 'light';
-                    if (!parsed.primaryColor) parsed.primaryColor = '#a855f7';
-                    if (parsed.animation === undefined) parsed.animation = true;
-                    return parsed;
-                } catch(e) {
-                    return { theme: 'light', primaryColor: '#a855f7', animation: true };
-                }
+                    if (!raw) return { theme: 'light', primaryColor: '#a855f7', animation: true, language: 'fa' };
+                    var p = JSON.parse(raw);
+                    if (!p.theme) p.theme = 'light';
+                    if (!p.primaryColor) p.primaryColor = '#a855f7';
+                    if (p.animation === undefined) p.animation = true;
+                    if (!p.language) p.language = 'fa';
+                    return p;
+                } catch(e) { return { theme: 'light', primaryColor: '#a855f7', animation: true, language: 'fa' }; }
             }
 
-            function hexToRgb(hex) {
-                var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-                return result ? { r: parseInt(result[1], 16), g: parseInt(result[2], 16), b: parseInt(result[3], 16) } : { r: 168, g: 85, b: 247 };
+            function getTranslation(key) {
+                var t = translations[currentLang] || translations.fa;
+                return t[key] || translations.fa[key] || key;
             }
 
-            function shadeColor(color, percent) {
-                var rgb = hexToRgb(color);
-                var r = Math.max(0, Math.min(255, rgb.r + percent));
-                var g = Math.max(0, Math.min(255, rgb.g + percent));
-                var b = Math.max(0, Math.min(255, rgb.b + percent));
-                return '#' + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
+            function getRandomMessage() {
+                var m = messages[currentLang] || messages.fa;
+                return m[Math.floor(Math.random() * m.length)];
             }
+
+            function hexToRgb(h) {
+                var r = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(h);
+                return r ? { r: parseInt(r[1],16), g: parseInt(r[2],16), b: parseInt(r[3],16) } : { r:168,g:85,b:247 };
+            }
+            function shadeColor(c,p){var r=hexToRgb(c);var rr=Math.max(0,Math.min(255,r.r+p));var gg=Math.max(0,Math.min(255,r.g+p));var bb=Math.max(0,Math.min(255,r.b+p));return '#'+((1<<24)+(rr<<16)+(gg<<8)+bb).toString(16).slice(1);}
 
             function applyTheme() {
-                var settings = getSettings();
-                var theme = settings.theme || 'light';
-                var primaryColor = settings.primaryColor || '#a855f7';
-                document.documentElement.setAttribute('data-theme', theme);
-                if (theme === 'dark') {
-                    var darkPrimary = shadeColor(primaryColor, 40);
-                    document.documentElement.style.setProperty('--primary', darkPrimary);
-                    document.documentElement.style.setProperty('--primary-rgb', hexToRgb(darkPrimary).r + ', ' + hexToRgb(darkPrimary).g + ', ' + hexToRgb(darkPrimary).b);
+                var s = getSettings();
+                currentLang = s.language || 'fa';
+                var t = s.theme || 'light';
+                var p = s.primaryColor || '#a855f7';
+                document.documentElement.setAttribute('data-theme', t);
+                if (t === 'dark') {
+                    var dp = shadeColor(p, 40);
+                    document.documentElement.style.setProperty('--primary', dp);
                 } else {
-                    document.documentElement.style.setProperty('--primary', primaryColor);
-                    document.documentElement.style.setProperty('--primary-rgb', hexToRgb(primaryColor).r + ', ' + hexToRgb(primaryColor).g + ', ' + hexToRgb(primaryColor).b);
+                    document.documentElement.style.setProperty('--primary', p);
                 }
+                if (s.animation === false) {
+                    document.documentElement.setAttribute('data-animation', 'off');
+                } else {
+                    document.documentElement.removeAttribute('data-animation');
+                }
+                if (currentLang === 'en') {
+                    document.documentElement.setAttribute('dir', 'ltr');
+                    document.body.style.fontFamily = 'Arial, sans-serif';
+                } else if (currentLang === 'ar') {
+                    document.documentElement.setAttribute('dir', 'rtl');
+                    document.body.style.fontFamily = 'Tahoma, sans-serif';
+                } else {
+                    document.documentElement.setAttribute('dir', 'rtl');
+                    document.body.style.fontFamily = "'IRANSans', Tahoma, sans-serif";
+                }
+                document.querySelectorAll('[data-i18n]').forEach(function(el) {
+                    var k = el.getAttribute('data-i18n');
+                    var t2 = translations[currentLang] || translations.fa;
+                    if (t2[k]) el.textContent = t2[k];
+                });
             }
 
-            function shuffleArray(arr) {
-                for (var i = arr.length - 1; i > 0; i--) {
-                    var j = Math.floor(Math.random() * (i + 1));
-                    var temp = arr[i];
-                    arr[i] = arr[j];
-                    arr[j] = temp;
-                }
-                return arr;
+            function translateText(text, targetLang) {
+                if (targetLang === 'fa') return Promise.resolve(text);
+                var url = 'https://translate.googleapis.com/translate_a/single?client=gtx&sl=fa&tl=' + targetLang + '&dt=t&q=' + encodeURIComponent(text);
+                return fetch(url)
+                    .then(function(r) { return r.json(); })
+                    .then(function(d) { return d && d[0] && d[0][0] ? d[0][0][0] : text; })
+                    .catch(function() { return text; });
             }
 
-            function botAnswer(correctIndex) {
-                return Math.random() < 0.7 ? correctIndex : Math.floor(Math.random() * 4);
+            async function translateQuestion(q, lang) {
+                if (lang === 'fa') return q;
+                var target = lang === 'en' ? 'en' : 'ar';
+                var tq = await translateText(q.question, target);
+                var topts = [];
+                for (var i = 0; i < q.options.length; i++) {
+                    topts.push(await translateText(q.options[i], target));
+                }
+                return { id: q.id, question: tq, options: topts, correctOption: q.correctOption };
             }
+
+            function getEitaaUser(){return webApp&&webApp.initDataUnsafe&&webApp.initDataUnsafe.user?webApp.initDataUnsafe.user:null;}
+            function getUserId(){var u=getEitaaUser();return u?(typeof u.id==='number'?u.id.toString():String(u.id||'')):'';}
+            function fetchData(action,params){
+                var payload={action:action,username:getUserId()};
+                if(params){for(var k in params){if(params.hasOwnProperty(k))payload[k]=params[k];}}
+                return fetch(API_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(payload)}).then(function(r){return r.json();}).catch(function(){return{ok:false};});
+            }
+
+            function shuffleArray(a){for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t;}return a;}
+
+            function botAnswer(ci){return Math.random()<0.7?ci:Math.floor(Math.random()*4);}
 
             function startTimer() {
                 clearInterval(timerInterval);
@@ -721,9 +595,7 @@
                     updateTimerBar();
                     if (timeLeft <= 0) {
                         clearInterval(timerInterval);
-                        if (!isAnswered) {
-                            timeOut();
-                        }
+                        if (!isAnswered) timeOut();
                     }
                 }, 1000);
             }
@@ -732,197 +604,131 @@
                 var fill = document.getElementById('timerFill');
                 var text = document.getElementById('timerText');
                 if (!fill || !text) return;
-                var percent = (timeLeft / QUESTION_TIME) * 100;
-                fill.style.width = percent + '%';
-                text.textContent = timeLeft + ' ثانیه';
+                var pct = (timeLeft / QUESTION_TIME) * 100;
+                fill.style.width = pct + '%';
+                text.textContent = timeLeft + 's';
                 fill.className = 'timer-bar-fill' + (timeLeft <= 10 ? ' danger' : timeLeft <= 20 ? ' warning' : '');
             }
 
             function timeOut() {
                 isAnswered = true;
-                var allBtns = document.querySelectorAll('.option-btn');
-                allBtns.forEach(function(b) { b.classList.add('disabled'); });
+                var btns = document.querySelectorAll('.option-btn');
+                btns.forEach(function(b){b.classList.add('disabled');});
                 var q = currentQuestions[currentQuestionIndex];
-                var correctText = q.options[q.correctOption - 1];
-                document.querySelectorAll('.option-btn').forEach(function(btn) {
-                    if (btn.getAttribute('data-text') === correctText) {
-                        btn.classList.add('selected-correct');
-                    }
+                var ct = q.options[q.correctOption - 1];
+                document.querySelectorAll('.option-btn').forEach(function(b){
+                    if (b.getAttribute('data-text') === ct) b.classList.add('selected-correct');
                 });
-                setTimeout(function() {
-                    goToNextQuestion();
-                }, 800);
+                setTimeout(goToNext, 800);
             }
 
-            function goToNextQuestion() {
+            function goToNext() {
                 currentQuestionIndex++;
                 if (currentQuestionIndex >= QUESTIONS_PER_ROUND) {
-                    document.getElementById('mainBtn').textContent = 'دست تمام شد!';
+                    document.getElementById('mainBtn').textContent = getTranslation('round_done');
                     document.getElementById('mainBtn').disabled = true;
-                    setTimeout(function() {
-                        endYourRound();
-                    }, 800);
+                    setTimeout(endYourRound, 800);
                 } else {
                     renderQuestionScreen();
                 }
             }
 
             function renderMainScreen() {
+                var t = getTranslation;
                 var html = '';
                 html += '<div class="players-row">';
-                html += '<div class="player-card' + (isYourTurn && isRoundActive ? ' active' : '') + '">';
-                html += '<div class="player-tag">تو</div>';
+                html += '<div class="player-card'+(isRoundActive?' active':'')+'">';
+                html += '<div class="player-tag">'+t('you')+'</div>';
                 html += '<div class="player-avatar"><i class="fa-solid fa-user"></i></div>';
-                html += '<span class="player-score">' + yourScore + '</span>';
-                html += '</div>';
-                html += '<div class="player-card' + (!isYourTurn && isRoundActive ? ' active' : '') + '">';
-                html += '<div class="player-tag">حریف</div>';
+                html += '<span class="player-score">'+yourScore+'</span></div>';
+                html += '<div class="player-card">';
+                html += '<div class="player-tag">'+t('opponent')+'</div>';
                 html += '<div class="player-avatar"><i class="fa-solid fa-robot"></i></div>';
-                html += '<span class="player-score">' + (isYourTurn || !isRoundActive ? '?' : botScore) + '</span>';
-                html += '</div>';
-                html += '</div>';
-                html += '<div class="message-card">' + getRandomMessage() + '</div>';
+                html += '<span class="player-score">'+botScore+'</span></div></div>';
+                html += '<div class="message-card">'+getRandomMessage()+'</div>';
                 
                 if (roundResults.length > 0) {
                     html += '<div class="rounds-results">';
-                    html += '<div class="rounds-title">نتایج راندها</div>';
+                    html += '<div class="rounds-title">'+t('results')+'</div>';
                     for (var i = 0; i < roundResults.length; i++) {
-                        var result = roundResults[i];
+                        var r = roundResults[i];
                         html += '<div class="round-result-item">';
-                        html += '<div class="round-result-header">راند ' + (i + 1) + '</div>';
-                        html += '<div class="round-result-row">';
-                        html += '<span class="round-result-player">تو</span>';
-                        html += '<div class="round-dots">';
-                        for (var j = 0; j < QUESTIONS_PER_ROUND; j++) {
-                            html += '<span class="result-dot' + (j < result.yourCorrect ? '' : ' wrong') + '">' + (j + 1) + '</span>';
-                        }
-                        html += '</div>';
-                        html += '<span class="round-result-count">+' + result.yourRoundScore + '</span>';
-                        html += '</div>';
-                        html += '<div class="round-result-row">';
-                        html += '<span class="round-result-player">حریف</span>';
-                        html += '<div class="round-dots">';
-                        for (var k = 0; k < QUESTIONS_PER_ROUND; k++) {
-                            html += '<span class="result-dot' + (k < result.botCorrect ? '' : ' wrong') + '">' + (k + 1) + '</span>';
-                        }
-                        html += '</div>';
-                        html += '<span class="round-result-count">+' + result.botRoundScore + '</span>';
-                        html += '</div>';
+                        html += '<div class="round-result-row"><span class="round-result-player">'+t('round')+' '+(i+1)+'</span></div>';
+                        html += '<div class="round-result-row"><span class="round-result-player">'+t('you')+'</span><div class="round-dots">';
+                        for (var j=0;j<QUESTIONS_PER_ROUND;j++) html += '<span class="result-dot'+(j<r.yourCorrect?'':' wrong')+'">'+(j+1)+'</span>';
+                        html += '</div><span class="round-result-count">+'+r.yourScore+'</span></div>';
+                        html += '<div class="round-result-row"><span class="round-result-player">'+t('opponent')+'</span><div class="round-dots">';
+                        for (var k=0;k<QUESTIONS_PER_ROUND;k++) html += '<span class="result-dot'+(k<r.botCorrect?'':' wrong')+'">'+(k+1)+'</span>';
+                        html += '</div><span class="round-result-count">+'+r.botScore+'</span></div>';
                         html += '</div>';
                     }
                     html += '</div>';
                 }
-                
-                document.getElementById('mainContainer').innerHTML = html;
+                document.getElementById('gameContent').innerHTML = html;
             }
 
             function renderQuestionScreen() {
                 isAnswered = false;
                 actionUsedThisQuestion = false;
                 var q = currentQuestions[currentQuestionIndex];
-                var options = shuffleArray(q.options.slice());
-                var correctText = q.options[q.correctOption - 1];
-                var correctIndex = options.indexOf(correctText);
+                var opts = shuffleArray(q.options.slice());
+                var ct = q.options[q.correctOption - 1];
+                var ci = opts.indexOf(ct);
 
                 var html = '<div class="actions-row">';
-                html += '<button class="action-btn" id="btnRemove" onclick="useRemove50()"><i class="fa-solid fa-trash" style="color:#ef4444;"></i> ۵۰</button>';
-                html += '<button class="action-btn" id="btnSwap" onclick="useSwapQuestion()"><i class="fa-solid fa-arrows-rotate" style="color:#06b6d4;"></i> ۱۰۰</button>';
-                html += '<button class="action-btn" id="btnSkip" onclick="useSkipQuestion()"><i class="fa-solid fa-forward" style="color:#f59e0b;"></i> ۱۵۰</button>';
+                html += '<button class="action-btn" id="btnRemove" onclick="useRemove50()"><i class="fa-solid fa-trash" style="color:#ef4444;"></i> '+getTranslation('remove')+'</button>';
+                html += '<button class="action-btn" id="btnSwap" onclick="useSwapQuestion()"><i class="fa-solid fa-arrows-rotate" style="color:#06b6d4;"></i> '+getTranslation('swap')+'</button>';
+                html += '<button class="action-btn" id="btnSkip" onclick="useSkipQuestion()"><i class="fa-solid fa-forward" style="color:#f59e0b;"></i> '+getTranslation('skip')+'</button>';
                 html += '</div>';
                 html += '<div class="question-card">';
-                html += '<div class="question-text">' + q.question + '</div>';
+                html += '<div class="question-text">'+q.question+'</div>';
                 html += '<div class="timer-bar-container"><div class="timer-bar-fill" id="timerFill" style="width:100%;"></div></div>';
-                html += '<div class="timer-text" id="timerText">60 ثانیه</div>';
+                html += '<div class="timer-text" id="timerText">60s</div>';
                 html += '<div class="options-grid">';
-                for (var i = 0; i < options.length; i++) {
-                    html += '<button class="option-btn" data-text="' + options[i] + '" onclick="selectOption(' + i + ', ' + correctIndex + ', this)">';
-                    html += '<span class="option-letter">' + (i + 1) + '</span>';
-                    html += '<span>' + options[i] + '</span>';
-                    html += '</button>';
+                for (var i = 0; i < opts.length; i++) {
+                    html += '<button class="option-btn" data-text="'+opts[i]+'" onclick="selectOption('+i+','+ci+',this)">';
+                    html += '<span class="option-letter">'+(i+1)+'</span><span>'+opts[i]+'</span></button>';
                 }
-                html += '</div>';
-                html += '</div>';
-                
-                document.getElementById('mainContainer').innerHTML = html;
+                html += '</div></div>';
+                document.getElementById('gameContent').innerHTML = html;
                 startTimer();
             }
 
-            window.handleMainBtn = function() {
-                if (!isRoundActive) {
-                    startYourRound();
-                }
-            };
-
-            function startYourRound() {
-                isRoundActive = true;
-                isYourTurn = true;
-                currentQuestionIndex = 0;
-                yourCorrectCount = 0;
-                botCorrectCount = 0;
-                
-                var allQuestions = shuffleArray(questions);
-                currentQuestions = allQuestions.slice(0, QUESTIONS_PER_ROUND);
-                
-                document.getElementById('mainBtn').textContent = 'نوبت توست';
-                document.getElementById('mainBtn').disabled = true;
-                renderQuestionScreen();
-            }
-
-            window.selectOption = function(selectedIndex, correctIndex, btn) {
+            window.selectOption = function(sel, ci, btn) {
                 if (isAnswered) return;
                 isAnswered = true;
                 clearInterval(timerInterval);
-
-                var allBtns = document.querySelectorAll('.option-btn');
-                allBtns.forEach(function(b) { b.classList.add('disabled'); });
-
-                if (selectedIndex === correctIndex) {
+                var btns = document.querySelectorAll('.option-btn');
+                btns.forEach(function(b){b.classList.add('disabled');});
+                if (sel === ci) {
                     btn.classList.add('selected-correct');
                     yourScore += 5;
                     yourCorrectCount++;
                 } else {
                     btn.classList.add('selected-wrong');
-                    allBtns[correctIndex].classList.add('selected-correct');
+                    btns[ci].classList.add('selected-correct');
                 }
-
-                setTimeout(function() {
-                    goToNextQuestion();
-                }, 800);
+                setTimeout(goToNext, 800);
             };
 
             function endYourRound() {
-                isYourTurn = false;
                 clearInterval(timerInterval);
-                document.getElementById('mainBtn').textContent = 'نوبت حریفه...';
+                document.getElementById('mainBtn').textContent = getTranslation('opponent_turn');
                 document.getElementById('mainBtn').disabled = true;
-                
-                var botRoundScore = 0;
+                var brs = 0;
                 for (var i = 0; i < QUESTIONS_PER_ROUND; i++) {
                     var q = currentQuestions[i];
-                    var correctIndex = q.correctOption - 1;
-                    if (botAnswer(correctIndex) === correctIndex) {
-                        botRoundScore += 5;
-                        botCorrectCount++;
-                    }
+                    if (botAnswer(q.correctOption - 1) === q.correctOption - 1) { brs += 5; botCorrectCount++; }
                 }
-                botScore += botRoundScore;
-                
-                roundResults.push({
-                    yourRoundScore: yourCorrectCount * 5,
-                    botRoundScore: botRoundScore,
-                    yourCorrect: yourCorrectCount,
-                    botCorrect: botCorrectCount
-                });
-                
+                botScore += brs;
+                roundResults.push({ yourScore: yourCorrectCount*5, botScore: brs, yourCorrect: yourCorrectCount, botCorrect: botCorrectCount });
                 currentRound++;
                 isRoundActive = false;
-                
                 renderMainScreen();
-                
                 if (currentRound > TOTAL_ROUNDS) {
                     endGame();
                 } else {
-                    document.getElementById('mainBtn').textContent = 'شروع راند ' + currentRound;
+                    document.getElementById('mainBtn').textContent = getTranslation('start_round') + ' ' + currentRound;
                     document.getElementById('mainBtn').disabled = false;
                 }
             }
@@ -932,21 +738,15 @@
                 userCoins -= 50;
                 actionUsedThisQuestion = true;
                 document.getElementById('coinsHeader').textContent = userCoins;
-                
                 var q = currentQuestions[currentQuestionIndex];
-                var correctText = q.options[q.correctOption - 1];
-                var wrongOptions = q.options.filter(function(o) { return o !== correctText; });
-                var toHide = shuffleArray(wrongOptions).slice(0, 2);
-                
-                var allBtns = document.querySelectorAll('.option-btn');
-                allBtns.forEach(function(btn) {
-                    if (toHide.indexOf(btn.getAttribute('data-text')) !== -1) {
-                        btn.classList.add('hidden-option');
-                    }
+                var ct = q.options[q.correctOption - 1];
+                var wo = q.options.filter(function(o){return o!==ct;});
+                var th = shuffleArray(wo).slice(0,2);
+                document.querySelectorAll('.option-btn').forEach(function(b){
+                    if (th.indexOf(b.getAttribute('data-text')) !== -1) b.classList.add('hidden-option');
                 });
-                
-                disableAllActions();
-                fetchData('updateUser', { coins: userCoins });
+                disableActions();
+                fetchData('updateUser',{coins:userCoins});
             };
 
             window.useSwapQuestion = function() {
@@ -954,16 +754,10 @@
                 userCoins -= 100;
                 actionUsedThisQuestion = true;
                 document.getElementById('coinsHeader').textContent = userCoins;
-                
-                var remaining = questions.filter(function(q) {
-                    return currentQuestions.indexOf(q) === -1;
-                });
-                if (remaining.length > 0) {
-                    currentQuestions[currentQuestionIndex] = shuffleArray(remaining)[0];
-                }
-                
-                disableAllActions();
-                fetchData('updateUser', { coins: userCoins });
+                var rem = questions.filter(function(q){return currentQuestions.indexOf(q)===-1;});
+                if (rem.length > 0) currentQuestions[currentQuestionIndex] = shuffleArray(rem)[0];
+                disableActions();
+                fetchData('updateUser',{coins:userCoins});
                 renderQuestionScreen();
             };
 
@@ -972,72 +766,50 @@
                 userCoins -= 150;
                 actionUsedThisQuestion = true;
                 document.getElementById('coinsHeader').textContent = userCoins;
-                
                 yourScore += 5;
                 yourCorrectCount++;
-                
-                disableAllActions();
-                fetchData('updateUser', { coins: userCoins });
-                
+                disableActions();
+                fetchData('updateUser',{coins:userCoins});
                 clearInterval(timerInterval);
-                setTimeout(function() {
-                    goToNextQuestion();
-                }, 300);
+                setTimeout(goToNext, 300);
             };
 
-            function disableAllActions() {
-                var btns = document.querySelectorAll('.action-btn');
-                btns.forEach(function(b) { b.disabled = true; });
+            function disableActions() {
+                document.querySelectorAll('.action-btn').forEach(function(b){b.disabled=true;});
             }
 
-            function saveGame(scoreChange, coinReward) {
-                var gameData = {
-                    id: gameId,
-                    player1: getUserId(),
-                    player2: 'bot',
-                    round1: JSON.stringify(roundResults[0] || {}),
-                    round2: JSON.stringify(roundResults[1] || {}),
-                    round3: JSON.stringify(roundResults[2] || {}),
-                    round4: JSON.stringify(roundResults[3] || {}),
-                    round5: JSON.stringify(roundResults[4] || {}),
-                    status: 'finished'
-                };
-                fetchData('saveGame', { gameData: gameData });
-                fetchData('updateUser', { score: userTotalScore + scoreChange, coins: userCoins + coinReward });
-            }
+            window.handleMainBtn = function() {
+                if (!isRoundActive) {
+                    isRoundActive = true;
+                    currentQuestionIndex = 0;
+                    yourCorrectCount = 0;
+                    botCorrectCount = 0;
+                    var sq = shuffleArray(questions).slice(0, QUESTIONS_PER_ROUND);
+                    currentQuestions = sq;
+                    document.getElementById('mainBtn').textContent = getTranslation('your_turn');
+                    document.getElementById('mainBtn').disabled = true;
+                    renderQuestionScreen();
+                }
+            };
 
             function endGame() {
-                clearInterval(timerInterval);
-                var resultHtml = '';
-                var scoreChange = 0;
-                var coinReward = 0;
-
-                if (yourScore > botScore) {
-                    resultHtml = '<div class="result-icon"><i class="fa-solid fa-trophy" style="color:#f59e0b;"></i></div>';
-                    resultHtml += '<div class="result-text">بردی!</div>';
-                    scoreChange = 75;
-                    coinReward = 300;
-                } else if (yourScore < botScore) {
-                    resultHtml = '<div class="result-icon"><i class="fa-solid fa-face-frown" style="color:#ef4444;"></i></div>';
-                    resultHtml += '<div class="result-text">باختی!</div>';
-                    scoreChange = -25;
-                } else {
-                    resultHtml = '<div class="result-icon"><i class="fa-solid fa-handshake" style="color:#f59e0b;"></i></div>';
-                    resultHtml += '<div class="result-text">مساوی شدی!</div>';
-                    scoreChange = 25;
-                }
-
-                resultHtml += '<div class="result-score">شما: ' + yourScore + ' - ربات: ' + botScore + '</div>';
-                resultHtml += '<div class="result-score">امتیاز: ' + (scoreChange >= 0 ? '+' : '') + scoreChange + '</div>';
-                if (coinReward > 0) {
-                    resultHtml += '<div class="result-score">سکه: +' + coinReward + '</div>';
-                }
-                resultHtml += '<button class="result-btn" onclick="backToDashboard()">بازگشت</button>';
-
-                document.getElementById('mainContainer').innerHTML = '<div class="result-banner">' + resultHtml + '</div>';
-                document.getElementById('mainBtn').style.display = 'none';
-
-                saveGame(scoreChange, coinReward);
+                var sc = 0, cr = 0;
+                var t = getTranslation;
+                if (yourScore > botScore) { sc = 75; cr = 300; }
+                else if (yourScore < botScore) { sc = -25; }
+                else { sc = 25; }
+                userTotalScore += sc;
+                userCoins += cr;
+                fetchData('updateUser', { score: userTotalScore, coins: userCoins });
+                var html = '<div class="result-banner">';
+                html += '<div class="result-icon">'+(sc>0?'<i class="fa-solid fa-trophy" style="color:#f59e0b;"></i>':sc<0?'<i class="fa-solid fa-face-frown" style="color:#ef4444;"></i>':'<i class="fa-solid fa-handshake" style="color:#f59e0b;"></i>')+'</div>';
+                html += '<div class="result-text">'+(sc>0?t('win'):sc<0?t('lose'):t('draw'))+'</div>';
+                html += '<div class="result-score">'+t('you')+': '+yourScore+' - '+t('opponent')+': '+botScore+'</div>';
+                html += '<div class="result-score">'+t('score')+': '+(sc>=0?'+':'')+sc+'</div>';
+                if (cr>0) html += '<div class="result-score">'+t('coins')+': +'+cr+'</div>';
+                html += '<button class="result-btn" onclick="backToDashboard()">'+t('back')+'</button></div>';
+                document.getElementById('gameContent').innerHTML = html;
+                document.getElementById('bottomBtnContainer').style.display = 'none';
             }
 
             window.backToDashboard = function() {
@@ -1050,26 +822,34 @@
                     webApp.ready();
                     webApp.expand();
                     webApp.BackButton.show();
-                    webApp.BackButton.onClick(function() {
-                        window.location.href = '../../dashboard/';
-                    });
+                    webApp.BackButton.onClick(function(){ window.location.href = '../../dashboard/'; });
                 }
 
-                var userData = await fetchData('getUser', {});
-                if (userData.ok && userData.data) {
-                    userCoins = userData.data.coins || 0;
-                    userTotalScore = userData.data.score || 0;
+                var ud = await fetchData('getUser', {});
+                if (ud.ok && ud.data) {
+                    userCoins = ud.data.coins || 0;
+                    userTotalScore = ud.data.score || 0;
                     document.getElementById('coinsHeader').textContent = userCoins;
                 }
 
-                var questionsData = await fetchData('getQuestions', { limit: 50 });
-                if (questionsData.ok && Array.isArray(questionsData.data) && questionsData.data.length > 0) {
-                    questions = questionsData.data;
+                var qd = await fetchData('getQuestions', { limit: 50 });
+                if (qd.ok && Array.isArray(qd.data) && qd.data.length > 0) {
+                    questions = qd.data;
+                    if (currentLang !== 'fa') {
+                        var translated = [];
+                        for (var i = 0; i < questions.length; i++) {
+                            translated.push(await translateQuestion(questions[i], currentLang));
+                        }
+                        questions = translated;
+                    }
                     renderMainScreen();
+                    document.getElementById('mainBtn').textContent = getTranslation('start_round') + ' 1';
                     document.getElementById('bottomBtnContainer').style.display = 'block';
                 } else {
-                    document.getElementById('mainContainer').innerHTML = '<div class="result-banner"><div class="result-text">سوالی یافت نشد</div></div>';
+                    document.getElementById('gameContent').innerHTML = '<div class="result-banner"><div class="result-text">'+getTranslation('no_questions')+'</div></div>';
                 }
+                document.getElementById('loaderWrapper').style.display = 'none';
+                document.getElementById('gameContent').classList.add('show');
             }
 
             init();
