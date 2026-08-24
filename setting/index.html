@@ -45,6 +45,11 @@
             --border: 1px solid #000000;
         }
 
+        [data-animation="off"] * {
+            animation: none !important;
+            transition: none !important;
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -58,6 +63,7 @@
             min-height: 100vh;
             display: flex;
             flex-direction: column;
+            transition: font-family 0.3s ease;
         }
 
         .bg-animation {
@@ -65,6 +71,7 @@
             top: 0; left: 0; right: 0; bottom: 0;
             z-index: 0;
             background: linear-gradient(135deg, var(--bg) 0%, var(--bg2) 40%, var(--bg3) 80%);
+            transition: background 0.3s ease;
         }
 
         .header {
@@ -145,11 +152,7 @@
 
         .settings-title i { color: var(--primary); }
 
-        .language-options {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-        }
+        .language-options { display: flex; gap: 8px; flex-wrap: wrap; }
 
         .lang-btn {
             display: flex;
@@ -161,24 +164,15 @@
             background: var(--bg2);
             cursor: pointer;
             box-shadow: 2px 2px 0 #000;
-            font-family: 'IRANSans', Tahoma, sans-serif;
             font-size: 10px;
             font-weight: 700;
             color: var(--text);
             transition: all 0.2s ease;
         }
         .lang-btn:active { transform: translate(1px, 1px); box-shadow: 1px 1px 0 #000; }
-        .lang-btn.active {
-            background: var(--primary);
-            color: #fff;
-            border-color: var(--primary);
-        }
+        .lang-btn.active { background: var(--primary); color: #fff; border-color: var(--primary); }
 
-        .theme-options {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
+        .theme-options { display: flex; flex-direction: column; gap: 8px; }
 
         .theme-option {
             display: flex;
@@ -192,31 +186,16 @@
             background: var(--bg2);
             transition: all 0.2s ease;
         }
-
         .theme-option:active { transform: translate(1px, 1px); box-shadow: 1px 1px 0 #000; }
-        .theme-option.active {
-            background: var(--primary);
-            border-color: var(--primary);
-        }
+        .theme-option.active { background: var(--primary); border-color: var(--primary); }
         .theme-option.active .theme-option-label { color: #fff; }
         .theme-option.active .theme-option-desc { color: rgba(255,255,255,0.8); }
         .theme-option.active i { color: #fff; }
-
-        .theme-option i {
-            font-size: 18px;
-            color: var(--primary);
-            width: 24px;
-            text-align: center;
-        }
-
+        .theme-option i { font-size: 18px; color: var(--primary); width: 24px; text-align: center; }
         .theme-option-label { font-size: 11px; font-weight: 700; color: var(--dark); }
         .theme-option-desc { font-size: 8px; color: var(--text-light); }
 
-        .color-options {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-        }
+        .color-options { display: flex; gap: 8px; flex-wrap: wrap; }
 
         .color-option {
             width: 32px;
@@ -227,12 +206,8 @@
             box-shadow: 2px 2px 0 #000;
             transition: all 0.2s ease;
         }
-
         .color-option:active { transform: translate(1px, 1px); box-shadow: 1px 1px 0 #000; }
-        .color-option.active {
-            box-shadow: 0 0 15px var(--primary), 2px 2px 0 #000;
-            transform: scale(1.1);
-        }
+        .color-option.active { box-shadow: 0 0 15px var(--primary), 2px 2px 0 #000; transform: scale(1.1); }
 
         .setting-item {
             display: flex;
@@ -243,12 +218,7 @@
         }
         .setting-item:last-child { border-bottom: none; }
 
-        .setting-info {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
+        .setting-info { display: flex; align-items: center; gap: 10px; }
         .setting-info i { font-size: 16px; color: var(--primary); width: 22px; text-align: center; }
         .setting-label { font-size: 11px; font-weight: 700; color: var(--dark); }
         .setting-desc { font-size: 8px; color: var(--text-light); }
@@ -302,6 +272,7 @@
             font-family: inherit;
             background: none;
             border: none;
+            font-size: 12px;
         }
         .nav-item i { font-size: 18px; }
         .nav-item span { font-size: 8px; font-weight: 600; }
@@ -318,7 +289,7 @@
                 <div class="header-logo"><img src="https://cdn.imgurl.ir/uploads/f30974_InShot_20260821_174101103.png" alt="Quizico"></div>
                 <div>
                     <div class="header-title">Quiz<span class="t-accent">ico</span></div>
-                    <div class="header-subtitle">تنظیمات</div>
+                    <div class="header-subtitle" data-i18n="settings">تنظیمات</div>
                 </div>
             </div>
         </div>
@@ -327,7 +298,7 @@
     <main class="main-container">
 
         <div class="settings-card">
-            <div class="settings-title"><i class="fa-solid fa-language"></i> زبان</div>
+            <div class="settings-title"><i class="fa-solid fa-language"></i> <span data-i18n="language">زبان</span></div>
             <div class="language-options">
                 <button class="lang-btn" data-lang="fa" onclick="setLanguage('fa')"> فارسی</button>
                 <button class="lang-btn" data-lang="ar" onclick="setLanguage('ar')"> العربية</button>
@@ -336,27 +307,27 @@
         </div>
 
         <div class="settings-card">
-            <div class="settings-title"><i class="fa-solid fa-moon"></i> حالت نمایش</div>
+            <div class="settings-title"><i class="fa-solid fa-moon"></i> <span data-i18n="theme">حالت نمایش</span></div>
             <div class="theme-options">
                 <div class="theme-option" data-theme-mode="light" onclick="setTheme('light')">
                     <i class="fa-regular fa-sun"></i>
                     <div>
-                        <div class="theme-option-label">حالت روشن</div>
-                        <div class="theme-option-desc">همیشه روشن</div>
+                        <div class="theme-option-label" data-i18n="light">حالت روشن</div>
+                        <div class="theme-option-desc" data-i18n="light_desc">همیشه روشن</div>
                     </div>
                 </div>
                 <div class="theme-option" data-theme-mode="dark" onclick="setTheme('dark')">
                     <i class="fa-regular fa-moon"></i>
                     <div>
-                        <div class="theme-option-label">حالت تاریک</div>
-                        <div class="theme-option-desc">همیشه تاریک</div>
+                        <div class="theme-option-label" data-i18n="dark">حالت تاریک</div>
+                        <div class="theme-option-desc" data-i18n="dark_desc">همیشه تاریک</div>
                     </div>
                 </div>
             </div>
         </div>
 
         <div class="settings-card">
-            <div class="settings-title"><i class="fa-solid fa-palette"></i> تم رنگ</div>
+            <div class="settings-title"><i class="fa-solid fa-palette"></i> <span data-i18n="color_theme">تم رنگ</span></div>
             <div class="color-options" id="colorOptions">
                 <div class="color-option" data-color="#ef4444" style="background:#ef4444;" onclick="setColor('#ef4444')"></div>
                 <div class="color-option" data-color="#f97316" style="background:#f97316;" onclick="setColor('#f97316')"></div>
@@ -370,13 +341,13 @@
         </div>
 
         <div class="settings-card">
-            <div class="settings-title"><i class="fa-solid fa-sliders"></i> سایر</div>
+            <div class="settings-title"><i class="fa-solid fa-sliders"></i> <span data-i18n="other">سایر</span></div>
             <div class="setting-item">
                 <div class="setting-info">
                     <i class="fa-solid fa-bolt"></i>
                     <div>
-                        <div class="setting-label">انیمیشن‌ها</div>
-                        <div class="setting-desc">افکت‌های حرکتی</div>
+                        <div class="setting-label" data-i18n="animation">انیمیشن‌ها</div>
+                        <div class="setting-desc" data-i18n="animation_desc">افکت‌های حرکتی</div>
                     </div>
                 </div>
                 <div class="toggle-switch active" id="animationToggle" onclick="toggleAnimation()"></div>
@@ -385,8 +356,8 @@
                 <div class="setting-info">
                     <i class="fa-solid fa-mobile-screen"></i>
                     <div>
-                        <div class="setting-label">لرزش</div>
-                        <div class="setting-desc">بازخورد لمسی</div>
+                        <div class="setting-label" data-i18n="haptic">لرزش</div>
+                        <div class="setting-desc" data-i18n="haptic_desc">بازخورد لمسی</div>
                     </div>
                 </div>
                 <div class="toggle-switch active" id="hapticToggle" onclick="toggleHaptic()"></div>
@@ -396,15 +367,75 @@
     </main>
 
     <nav class="bottom-nav">
-        <a href="../dashboard/" class="nav-item"><i class="fa-solid fa-house"></i><span>خانه</span></a>
-        <a href="../ranking/" class="nav-item"><i class="fa-solid fa-trophy"></i><span>رتبه</span></a>
-        <a href="../profile/" class="nav-item"><i class="fa-solid fa-user"></i><span>پروفایل</span></a>
-        <a href="../setting/" class="nav-item active"><i class="fa-solid fa-gear"></i><span>تنظیمات</span></a>
+        <a href="../dashboard/" class="nav-item"><i class="fa-solid fa-house"></i><span data-i18n="home">خانه</span></a>
+        <a href="../ranking/" class="nav-item"><i class="fa-solid fa-trophy"></i><span data-i18n="ranking">رتبه</span></a>
+        <a href="../profile/" class="nav-item"><i class="fa-solid fa-user"></i><span data-i18n="profile">پروفایل</span></a>
+        <a href="../setting/" class="nav-item active"><i class="fa-solid fa-gear"></i><span data-i18n="settings_nav">تنظیمات</span></a>
     </nav>
 
     <script>
         (function() {
             var webApp = window.Eitaa?.WebApp;
+
+            var translations = {
+                fa: {
+                    settings: 'تنظیمات',
+                    language: 'زبان',
+                    theme: 'حالت نمایش',
+                    light: 'حالت روشن',
+                    light_desc: 'همیشه روشن',
+                    dark: 'حالت تاریک',
+                    dark_desc: 'همیشه تاریک',
+                    color_theme: 'تم رنگ',
+                    other: 'سایر',
+                    animation: 'انیمیشن‌ها',
+                    animation_desc: 'افکت‌های حرکتی',
+                    haptic: 'لرزش',
+                    haptic_desc: 'بازخورد لمسی',
+                    home: 'خانه',
+                    ranking: 'رتبه',
+                    profile: 'پروفایل',
+                    settings_nav: 'تنظیمات'
+                },
+                en: {
+                    settings: 'Settings',
+                    language: 'Language',
+                    theme: 'Theme',
+                    light: 'Light Mode',
+                    light_desc: 'Always light',
+                    dark: 'Dark Mode',
+                    dark_desc: 'Always dark',
+                    color_theme: 'Color Theme',
+                    other: 'Other',
+                    animation: 'Animations',
+                    animation_desc: 'Motion effects',
+                    haptic: 'Haptic',
+                    haptic_desc: 'Tactile feedback',
+                    home: 'Home',
+                    ranking: 'Ranking',
+                    profile: 'Profile',
+                    settings_nav: 'Settings'
+                },
+                ar: {
+                    settings: 'الإعدادات',
+                    language: 'اللغة',
+                    theme: 'المظهر',
+                    light: 'وضع فاتح',
+                    light_desc: 'فاتح دائمًا',
+                    dark: 'وضع داكن',
+                    dark_desc: 'داكن دائمًا',
+                    color_theme: 'لون السمة',
+                    other: 'أخرى',
+                    animation: 'الحركات',
+                    animation_desc: 'تأثيرات الحركة',
+                    haptic: 'الاهتزاز',
+                    haptic_desc: 'ردود فعل لمسية',
+                    home: 'الرئيسية',
+                    ranking: 'الترتيب',
+                    profile: 'الملف',
+                    settings_nav: 'الإعدادات'
+                }
+            };
 
             function getSettings() {
                 try {
@@ -427,26 +458,54 @@
             function triggerHaptic(style) {
                 var s = getSettings();
                 if (s.haptic === false) return;
-                if (!webApp || !webApp.HapticFeedback) return;
-                try {
-                    webApp.HapticFeedback.impactOccurred(style || 'light');
-                } catch(e) {}
+                if (webApp && webApp.HapticFeedback && webApp.HapticFeedback.impactOccurred) {
+                    try {
+                        webApp.HapticFeedback.impactOccurred(style || 'light');
+                    } catch(e) {}
+                }
             }
 
             function hapticNotify(type) {
                 var s = getSettings();
                 if (s.haptic === false) return;
-                if (!webApp || !webApp.HapticFeedback) return;
-                try {
-                    webApp.HapticFeedback.notificationOccurred(type || 'success');
-                } catch(e) {}
+                if (webApp && webApp.HapticFeedback && webApp.HapticFeedback.notificationOccurred) {
+                    try {
+                        webApp.HapticFeedback.notificationOccurred(type || 'success');
+                    } catch(e) {}
+                }
             }
 
             function hexToRgb(hex) {
                 var r = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
                 return r ? { r: parseInt(r[1],16), g: parseInt(r[2],16), b: parseInt(r[3],16) } : { r:168,g:85,b:247 };
             }
-            function shadeColor(c,p){var r=hexToRgb(c);var rr=Math.max(0,Math.min(255,r.r+p));var gg=Math.max(0,Math.min(255,r.g+p));var bb=Math.max(0,Math.min(255,r.b+p));return '#'+((1<<24)+(rr<<16)+(gg<<8)+bb).toString(16).slice(1);}
+
+            function shadeColor(c,p) {
+                var r = hexToRgb(c);
+                var rr = Math.max(0, Math.min(255, r.r + p));
+                var gg = Math.max(0, Math.min(255, r.g + p));
+                var bb = Math.max(0, Math.min(255, r.b + p));
+                return '#' + ((1 << 24) + (rr << 16) + (gg << 8) + bb).toString(16).slice(1);
+            }
+
+            function applyLanguage(lang) {
+                var t = translations[lang] || translations.fa;
+                document.querySelectorAll('[data-i18n]').forEach(function(el) {
+                    var key = el.getAttribute('data-i18n');
+                    if (t[key]) el.textContent = t[key];
+                });
+
+                if (lang === 'en') {
+                    document.documentElement.setAttribute('dir', 'ltr');
+                    document.body.style.fontFamily = 'Arial, sans-serif';
+                } else if (lang === 'ar') {
+                    document.documentElement.setAttribute('dir', 'rtl');
+                    document.body.style.fontFamily = 'Tahoma, sans-serif';
+                } else {
+                    document.documentElement.setAttribute('dir', 'rtl');
+                    document.body.style.fontFamily = "'IRANSans', Tahoma, sans-serif";
+                }
+            }
 
             function applyTheme() {
                 var s = getSettings();
@@ -456,8 +515,16 @@
                 if (t === 'dark') {
                     var dp = shadeColor(p, 40);
                     document.documentElement.style.setProperty('--primary', dp);
+                    document.documentElement.style.setProperty('--primary-rgb', hexToRgb(dp).r + ', ' + hexToRgb(dp).g + ', ' + hexToRgb(dp).b);
                 } else {
                     document.documentElement.style.setProperty('--primary', p);
+                    document.documentElement.style.setProperty('--primary-rgb', hexToRgb(p).r + ', ' + hexToRgb(p).g + ', ' + hexToRgb(p).b);
+                }
+
+                if (s.animation === false) {
+                    document.documentElement.setAttribute('data-animation', 'off');
+                } else {
+                    document.documentElement.removeAttribute('data-animation');
                 }
 
                 document.querySelectorAll('.theme-option').forEach(function(b) {
@@ -471,6 +538,8 @@
                 });
                 document.getElementById('animationToggle').classList.toggle('active', s.animation !== false);
                 document.getElementById('hapticToggle').classList.toggle('active', s.haptic !== false);
+
+                applyLanguage(s.language);
             }
 
             window.setLanguage = function(l) {
@@ -512,7 +581,6 @@
                 applyTheme();
                 if (s.haptic) {
                     triggerHaptic('medium');
-                    hapticNotify('success');
                 }
             };
 
