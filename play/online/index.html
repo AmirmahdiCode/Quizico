@@ -438,14 +438,6 @@
             cursor: pointer;
             box-shadow: 2px 2px 0 #000;
         }
-
-        .error-image {
-            width: 100px;
-            height: 100px;
-            object-fit: contain;
-            margin: 0 auto 10px;
-            display: block;
-        }
     </style>
 </head>
 <body>
@@ -494,13 +486,10 @@
             var currentRound = 1;
             var currentQuestionIndex = 0;
             var myScore = 0;
-            var opponentScore = 0;
             var myCorrectCount = 0;
-            var opponentCorrectCount = 0;
             var questions = [];
             var roundQuestions = [];
             var roundResults = [];
-            var isGameActive = false;
             var timerInterval = null;
             var timeLeft = QUESTION_TIME;
             var roomCode = null;
@@ -508,6 +497,7 @@
             var checkInterval = null;
             var myUserId = '';
             var myAnswers = [];
+            var opponentAnswers = [];
 
             function getSettings() {
                 try {
@@ -578,7 +568,6 @@
             }
 
             function generateRoomCode() {
-                var chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
                 var code = 'G';
                 for (var i = 0; i < 5; i++) {
                     code += Math.floor(Math.random() * 10);
@@ -609,22 +598,19 @@
                     updateTimerBars();
                     if (timeLeft <= 0) {
                         clearInterval(timerInterval);
-                        endRound();
+                        nextQuestion();
                     }
                 }, 1000);
             }
 
             function updateTimerBars() {
-                var fills = document.querySelectorAll('.timer-bar-fill');
-                var texts = document.querySelectorAll('.timer-text');
+                var fill = document.querySelector('.timer-bar-fill');
+                var text = document.querySelector('.timer-text');
+                if (!fill || !text) return;
                 var percent = (timeLeft / QUESTION_TIME) * 100;
-                fills.forEach(function(fill) {
-                    fill.style.width = percent + '%';
-                    fill.className = 'timer-bar-fill' + (timeLeft <= 10 ? ' danger' : timeLeft <= 20 ? ' warning' : '');
-                });
-                texts.forEach(function(text) {
-                    text.textContent = timeLeft + ' ثانیه';
-                });
+                fill.style.width = percent + '%';
+                text.textContent = timeLeft + ' ثانیه';
+                fill.className = 'timer-bar-fill' + (timeLeft <= 10 ? ' danger' : timeLeft <= 20 ? ' warning' : '');
             }
 
             function renderWaitingScreen() {
@@ -644,40 +630,16 @@
             window.copyInviteLink = function() {
                 var link = document.getElementById('inviteLink').textContent;
                 if (navigator.clipboard) {
-                    navigator.clipboard.writeText(link).then(function() {
-                        if (webApp) webApp.HapticFeedback?.impactOccurred('light');
-                    });
+                    navigator.clipboard.writeText(link).then(function() {});
                 }
                 if (webApp) webApp.HapticFeedback?.impactOccurred('light');
             };
-
-            function renderQuestionCard(playerNum, question, options, correctIndex, qIndex) {
-                var tag = playerNum === 1 ? 'شما' : 'حریف';
-                var html = '<div class="question-card" id="p' + playerNum + 'Card">';
-                html += '<div class="question-header">';
-                html += '<span class="question-player-tag">' + tag + '</span>';
-                html += '<span class="question-progress">سوال ' + (qIndex + 1) + ' از ' + QUESTIONS_PER_ROUND + '</span>';
-                html += '</div>';
-                html += '<div class="question-text">' + question + '</div>';
-                html += '<div class="timer-bar-container"><div class="timer-bar-fill" style="width:100%;"></div></div>';
-                html += '<div class="timer-text">60 ثانیه</div>';
-                html += '<div class="options-grid">';
-                for (var i = 0; i < options.length; i++) {
-                    html += '<button class="option-btn" data-player="' + playerNum + '" data-correct="' + correctIndex + '" onclick="selectOption(' + playerNum + ', ' + i + ', this)">';
-                    html += '<span class="option-letter">' + (i + 1) + '</span>';
-                    html += '<span>' + options[i] + '</span>';
-                    html += '</button>';
-                }
-                html += '</div>';
-                html += '</div>';
-                return html;
-            }
 
             function renderGame() {
                 var html = '';
                 html += '<div class="players-row">';
                 html += '<div class="player-card"><div class="player-tag">شما</div><span class="player-score">' + myScore + '</span></div>';
-                html += '<div class="player-card"><div class="player-tag">حریف</div><span class="player-score">' + opponentScore + '</span></div>';
+                html += '<div class="player-card"><div class="player-tag">حریف</div><span class="player-score">?</span></div>';
                 html += '</div>';
                 
                 if (roundResults.length > 0) {
@@ -693,19 +655,10 @@
                         html += '<span class="round-result-player">شما</span>';
                         html += '<div class="round-dots">';
                         for (var j = 0; j < QUESTIONS_PER_ROUND; j++) {
-                            html += '<span class="result-dot' + (r.myAnswers[j] ? '' : ' wrong') + '">' + (j + 1) + '</span>';
+                            html += '<span class="result-dot' + (j < r.myAnswers.length && r.myAnswers[j] ? '' : ' wrong') + '">' + (j + 1) + '</span>';
                         }
                         html += '</div>';
-                        html += '<span class="round-result-count">+' + r.myScore + '</span>';
-                        html += '</div>';
-                        html += '<div class="round-result-row">';
-                        html += '<span class="round-result-player">حریف</span>';
-                        html += '<div class="round-dots">';
-                        for (var k = 0; k < QUESTIONS_PER_ROUND; k++) {
-                            html += '<span class="result-dot' + (r.opponentAnswers[k] ? '' : ' wrong') + '">' + (k + 1) + '</span>';
-                        }
-                        html += '</div>';
-                        html += '<span class="round-result-count">+' + r.opponentScore + '</span>';
+                        html += '<span class="round-result-count">+' + (r.myAnswers.filter(function(a){return a;}).length * 5) + '</span>';
                         html += '</div>';
                         html += '</div>';
                     }
@@ -714,7 +667,6 @@
                 
                 var q = roundQuestions[currentQuestionIndex];
                 var options = shuffleArray(q.options.slice());
-                var correctIndex = options.indexOf(q.options[q.correctOption - 1]);
                 var correctIdx = options.indexOf(q.options[q.correctOption - 1]);
                 
                 html += '<div class="question-card">';
@@ -739,6 +691,15 @@
                 startTimer();
             }
 
+            function nextQuestion() {
+                currentQuestionIndex++;
+                if (currentQuestionIndex >= QUESTIONS_PER_ROUND) {
+                    endRound();
+                } else {
+                    renderGame();
+                }
+            }
+
             window.selectMyOption = function(selectedIndex, btn) {
                 var correctIndex = parseInt(btn.getAttribute('data-correct'));
                 var btns = document.querySelectorAll('.option-btn');
@@ -758,31 +719,27 @@
                 
                 clearInterval(timerInterval);
                 setTimeout(function() {
-                    currentQuestionIndex++;
-                    if (currentQuestionIndex >= QUESTIONS_PER_ROUND) {
-                        endRound();
-                    } else {
-                        renderGame();
-                    }
+                    nextQuestion();
                 }, 800);
             };
 
             function endRound() {
                 roundResults.push({
                     myAnswers: myAnswers,
-                    opponentAnswers: [],
-                    myScore: myCorrectCount * 5,
-                    opponentScore: 0
+                    myScore: myCorrectCount * 5
                 });
                 
-                // ذخیره در شیت
                 var questionIds = roundQuestions.map(function(q) { return q.id; }).join(',');
                 var myAnsStr = myAnswers.map(function(a) { return a ? 'T' : 'F'; }).join(',');
                 var roundData = '[' + questionIds + '][' + myAnsStr + '][]';
                 
+                var roundKey = 'round' + currentRound;
+                var updateData = { status: 'in_progress' };
+                updateData[roundKey] = roundData;
+                
                 fetchData('updateGame', {
                     gameId: roomCode,
-                    updates: { round1: roundData, status: 'in_progress' }
+                    updates: updateData
                 });
                 
                 myCorrectCount = 0;
@@ -808,7 +765,7 @@
                 var resultHtml = '';
                 resultHtml = '<div class="result-icon"><i class="fa-solid fa-flag-checkered" style="color:#f59e0b;"></i></div>';
                 resultHtml += '<div class="result-text">بازی تمام شد!</div>';
-                resultHtml += '<div class="result-score">شما: ' + myScore + ' - حریف: ' + opponentScore + '</div>';
+                resultHtml += '<div class="result-score">امتیاز شما: ' + myScore + '</div>';
                 resultHtml += '<button class="result-btn" onclick="backToDashboard()">بازگشت</button>';
                 
                 document.getElementById('mainContainer').innerHTML = '<div class="result-banner">' + resultHtml + '</div>';
@@ -831,7 +788,6 @@
                 isPlayer1 = true;
                 myUserId = getUserId();
                 
-                // ذخیره بازی جدید
                 fetchData('saveGame', {
                     gameData: {
                         id: roomCode,
@@ -848,7 +804,6 @@
                 
                 renderWaitingScreen();
                 
-                // چک هر ۵ ثانیه
                 checkInterval = setInterval(async function() {
                     var gameResult = await fetchData('getGame', { gameId: roomCode });
                     if (gameResult.ok && gameResult.data && gameResult.data.player2) {
@@ -859,19 +814,9 @@
             }
 
             async function initPlayer2() {
-                roomCode = getStartParam();
                 isPlayer1 = false;
                 myUserId = getUserId();
                 
-                // اول چک کن کاربر ثبت شده
-                var userData = await fetchData('getUser', { username: myUserId });
-                if (!userData.ok || !userData.data) {
-                    var user = getEitaaUser();
-                    var fullName = (user.first_name || '') + ' ' + (user.last_name || '');
-                    await fetchData('registerUser', { name: fullName.trim() || 'کاربر' });
-                }
-                
-                // وارد بازی شو
                 fetchData('updateGame', {
                     gameId: roomCode,
                     updates: { player2: myUserId, status: 'in_progress' }
@@ -881,7 +826,6 @@
             }
 
             async function startOnlineGame() {
-                isGameActive = true;
                 document.getElementById('bottomBtnContainer').style.display = 'none';
                 
                 var questionsData = await fetchData('getQuestions', { limit: 50 });
@@ -905,8 +849,17 @@
                     });
                 }
 
+                myUserId = getUserId();
                 var startParam = getStartParam();
+                var savedRoom = localStorage.getItem('onlineRoomCode');
+
                 if (startParam) {
+                    roomCode = startParam;
+                    localStorage.removeItem('onlineRoomCode');
+                    initPlayer2();
+                } else if (savedRoom) {
+                    roomCode = savedRoom;
+                    localStorage.removeItem('onlineRoomCode');
                     initPlayer2();
                 } else {
                     initPlayer1();
