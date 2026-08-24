@@ -335,7 +335,7 @@
 
             <div class="search-box">
                 <i class="fa-solid fa-search"></i>
-                <input type="text" id="searchInput" placeholder="جستجوی کاربر..." oninput="filterRankings()">
+                <input type="text" id="searchInput" data-i18n-placeholder="search_placeholder" placeholder="جستجوی کاربر..." oninput="filterRankings()">
             </div>
 
             <div class="my-rank-card">
@@ -343,7 +343,7 @@
                     <div class="my-rank-number" id="myRankNumber">-</div>
                     <div class="my-rank-info">
                         <div class="my-rank-name" id="myRankName">...</div>
-                        <div class="my-rank-score" id="myRankScore">امتیاز: 0</div>
+                        <div class="my-rank-score" id="myRankScore"></div>
                     </div>
                 </div>
                 <div class="my-rank-badge" data-i18n="your_rank">رتبه شما</div>
@@ -370,19 +370,46 @@
 
             var translations = {
                 fa: {
-                    ranking: 'رتبه‌بندی', loading: 'در حال دریافت...', your_rank: 'رتبه شما',
-                    home: 'خانه', ranking_nav: 'رتبه', profile: 'پروفایل', settings: 'تنظیمات',
-                    no_users: 'کاربری یافت نشد'
+                    ranking: 'رتبه‌بندی',
+                    loading: 'در حال دریافت...',
+                    your_rank: 'رتبه شما',
+                    home: 'خانه',
+                    ranking_nav: 'رتبه',
+                    profile: 'پروفایل',
+                    settings: 'تنظیمات',
+                    no_users: 'کاربری یافت نشد',
+                    search_placeholder: 'جستجوی کاربر...',
+                    score: 'امتیاز',
+                    you: 'شما',
+                    unknown: 'ناشناس'
                 },
                 en: {
-                    ranking: 'Ranking', loading: 'Loading...', your_rank: 'Your Rank',
-                    home: 'Home', ranking_nav: 'Ranking', profile: 'Profile', settings: 'Settings',
-                    no_users: 'No users found'
+                    ranking: 'Ranking',
+                    loading: 'Loading...',
+                    your_rank: 'Your Rank',
+                    home: 'Home',
+                    ranking_nav: 'Ranking',
+                    profile: 'Profile',
+                    settings: 'Settings',
+                    no_users: 'No users found',
+                    search_placeholder: 'Search users...',
+                    score: 'Score',
+                    you: 'You',
+                    unknown: 'Unknown'
                 },
                 ar: {
-                    ranking: 'الترتيب', loading: 'جار التحميل...', your_rank: 'رتبتك',
-                    home: 'الرئيسية', ranking_nav: 'الترتيب', profile: 'الملف', settings: 'الإعدادات',
-                    no_users: 'لا يوجد مستخدمين'
+                    ranking: 'الترتيب',
+                    loading: 'جار التحميل...',
+                    your_rank: 'رتبتك',
+                    home: 'الرئيسية',
+                    ranking_nav: 'الترتيب',
+                    profile: 'الملف',
+                    settings: 'الإعدادات',
+                    no_users: 'لا يوجد مستخدمين',
+                    search_placeholder: 'ابحث عن مستخدم...',
+                    score: 'النقاط',
+                    you: 'أنت',
+                    unknown: 'غير معروف'
                 }
             };
 
@@ -399,6 +426,12 @@
                 } catch(e) { return { theme: 'light', primaryColor: '#a855f7', animation: true, language: 'fa' }; }
             }
 
+            function getTranslation(key) {
+                var s = getSettings();
+                var t = translations[s.language] || translations.fa;
+                return t[key] || translations.fa[key] || key;
+            }
+
             function hexToRgb(h) {
                 var r = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(h);
                 return r ? { r: parseInt(r[1],16), g: parseInt(r[2],16), b: parseInt(r[3],16) } : { r:168,g:85,b:247 };
@@ -410,6 +443,10 @@
                 document.querySelectorAll('[data-i18n]').forEach(function(el) {
                     var k = el.getAttribute('data-i18n');
                     if (t[k]) el.textContent = t[k];
+                });
+                document.querySelectorAll('[data-i18n-placeholder]').forEach(function(el) {
+                    var k = el.getAttribute('data-i18n-placeholder');
+                    if (t[k]) el.placeholder = t[k];
                 });
                 if (lang === 'en') {
                     document.documentElement.setAttribute('dir', 'ltr');
@@ -465,8 +502,12 @@
 
             function renderRankList(list, myId) {
                 var el = document.getElementById('rankList');
+                var t = getTranslation('no_users');
+                var unknown = getTranslation('unknown');
+                var scoreLabel = getTranslation('score');
+                var youLabel = getTranslation('you');
                 if (list.length === 0) {
-                    el.innerHTML = '<div class="rank-empty"><img src="'+SAD_IMAGE+'" alt=""><p>کاربری یافت نشد</p></div>';
+                    el.innerHTML = '<div class="rank-empty"><img src="'+SAD_IMAGE+'" alt=""><p>'+t+'</p></div>';
                     return;
                 }
                 el.innerHTML = list.map(function(item, i) {
@@ -475,9 +516,9 @@
                     return '<div class="rank-item'+(isMe?' is-me':'')+'">'+
                         '<div class="rank-number '+getRankClass(i)+'">'+getRankIcon(i)+'</div>'+
                         '<div class="rank-avatar">'+avatar+'</div>'+
-                        '<div class="rank-info"><div class="rank-name">'+(item.name||item.username||'ناشناس')+'</div>'+
-                        '<div class="rank-score">امتیاز: '+(item.score||0)+'</div></div>'+
-                        (isMe?'<span class="rank-badge-me">شما</span>':'')+
+                        '<div class="rank-info"><div class="rank-name">'+(item.name||item.username||unknown)+'</div>'+
+                        '<div class="rank-score">'+scoreLabel+': '+(item.score||0)+'</div></div>'+
+                        (isMe?'<span class="rank-badge-me">'+youLabel+'</span>':'')+
                         '</div>';
                 }).join('');
             }
@@ -500,6 +541,7 @@
             async function loadRanking() {
                 try {
                     var myId = getUserId();
+                    var scoreLabel = getTranslation('score');
                     var result = await fetchData('leaderboard', { limit: 100 });
                     if (result.ok && Array.isArray(result.data) && result.data.length > 0) {
                         allRankings = result.data;
@@ -515,10 +557,13 @@
                             }
                         }
                         document.getElementById('myRankNumber').textContent = myRank ? '#'+myRank : '-';
-                        document.getElementById('myRankName').textContent = getEitaaUser() ? ((getEitaaUser().first_name||'')+' '+(getEitaaUser().last_name||'')).trim() : 'شما';
-                        document.getElementById('myRankScore').textContent = 'امتیاز: '+myScore;
+                        var u = getEitaaUser();
+                        var name = u ? ((u.first_name||'')+' '+(u.last_name||'')).trim() : getTranslation('you');
+                        document.getElementById('myRankName').textContent = name || getTranslation('you');
+                        document.getElementById('myRankScore').textContent = scoreLabel + ': ' + myScore;
                     } else {
-                        document.getElementById('rankList').innerHTML = '<div class="rank-empty"><img src="'+SAD_IMAGE+'" alt=""><p>کاربری یافت نشد</p></div>';
+                        var noUsers = getTranslation('no_users');
+                        document.getElementById('rankList').innerHTML = '<div class="rank-empty"><img src="'+SAD_IMAGE+'" alt=""><p>'+noUsers+'</p></div>';
                     }
                 } catch(e) {
                     console.error(e);
