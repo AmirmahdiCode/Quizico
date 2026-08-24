@@ -418,6 +418,7 @@
         .option-btn.selected-correct { background: #10b981; color: #fff; }
         .option-btn.selected-wrong { background: #ef4444; color: #fff; }
         .option-btn.disabled { pointer-events: none; opacity: 0.6; }
+        .option-btn.hidden-option { opacity: 0.2; pointer-events: none; text-decoration: line-through; }
 
         .option-letter {
             width: 16px;
@@ -580,6 +581,7 @@
             var gameStatus = 'waiting';
             var userCoins = 0;
             var actionUsedThisQuestion = false;
+            var isAnswered = false;
 
             var turnOrder = [
                 [1, 1], [1, 2],
@@ -781,9 +783,18 @@
                     html += '<div class="round-dots-row">';
                     html += '<span class="round-player">شما</span>';
                     html += '<div class="round-dots">';
+                    var myRoundData = roundData[myRoundKey];
                     for (var j = 0; j < QUESTIONS_PER_ROUND; j++) {
-                        var myRoundData = roundData[myRoundKey];
-                        html += '<span class="result-dot' + (myRoundData ? (myRoundData[j] ? '' : ' wrong') : ' empty') + '">' + (j + 1) + '</span>';
+                        var dotClass = 'empty';
+                        if (myRoundData) {
+                            try {
+                                var parsed = JSON.parse(myRoundData);
+                                dotClass = parsed[j] ? '' : ' wrong';
+                            } catch(e) {
+                                dotClass = 'empty';
+                            }
+                        }
+                        html += '<span class="result-dot ' + dotClass + '">' + (j + 1) + '</span>';
                     }
                     html += '</div>';
                     html += '</div>';
@@ -847,18 +858,18 @@
             function finishMyTurn() {
                 var myPlayerNum = getMyPlayerNum();
                 var roundKey = 'round' + currentRound + '_p' + myPlayerNum;
-                roundData[roundKey] = myAnswers;
+                roundData[roundKey] = JSON.stringify(myAnswers);
                 
                 var questionIds = roundQuestions.map(function(q) { return q.id; }).join(',');
                 var myAnsStr = myAnswers.map(function(a) { return a ? 'T' : 'F'; }).join(',');
-                var roundDataStr = '[' + questionIds + '][' + myAnsStr + '][]';
+                
+                var updates = {};
+                updates['round' + currentRound] = '[' + questionIds + '][' + myAnsStr + '][]';
+                updates[roundKey] = JSON.stringify(myAnswers);
                 
                 fetchData('updateGame', {
                     gameId: roomCode,
-                    updates: { 
-                        ['round' + currentRound]: roundDataStr,
-                        [roundKey]: JSON.stringify(myAnswers)
-                    }
+                    updates: updates
                 });
                 
                 myCorrectCount = 0;
@@ -867,7 +878,6 @@
                 currentTurn++;
                 
                 renderRoundsScreen();
-                startPolling();
             }
 
             function startPolling() {
@@ -1002,6 +1012,7 @@
 
             function endGame() {
                 clearInterval(checkInterval);
+                clearInterval(timerInterval);
                 var resultHtml = '';
                 resultHtml = '<div class="result-icon"><i class="fa-solid fa-flag-checkered" style="color:#f59e0b;"></i></div>';
                 resultHtml += '<div class="result-text">بازی تمام شد!</div>';
@@ -1037,6 +1048,7 @@
                 
                 renderWaitingScreen();
                 
+                // چک مداوم هر ۵ ثانیه
                 checkInterval = setInterval(async function() {
                     var gameResult = await fetchData('getGame', { gameId: roomCode });
                     if (gameResult.ok && gameResult.data) {
@@ -1044,7 +1056,7 @@
                         if (data.player2 && data.player2 !== myUserId) {
                             clearInterval(checkInterval);
                             gameStatus = 'in_progress';
-                            fetchData('updateGame', { gameId: roomCode, updates: { status: 'in_progress' } });
+                            await fetchData('updateGame', { gameId: roomCode, updates: { status: 'in_progress' } });
                             startOnlineGame();
                         }
                     }
@@ -1055,17 +1067,17 @@
                 isPlayer1 = false;
                 myUserId = getUserId();
                 
-                // چک کن که خودش player1 نباشه
                 var gameResult = await fetchData('getGame', { gameId: roomCode });
                 if (gameResult.ok && gameResult.data) {
                     if (gameResult.data.player1 === myUserId) {
-                        // خودش ساخته اتاق رو
+                        // خودش ساخته اتاق رو - منتظر بمون
                         renderWaitingScreen();
                         checkInterval = setInterval(async function() {
                             var checkResult = await fetchData('getGame', { gameId: roomCode });
                             if (checkResult.ok && checkResult.data && checkResult.data.player2 && checkResult.data.player2 !== myUserId) {
                                 clearInterval(checkInterval);
                                 gameStatus = 'in_progress';
+                                await fetchData('updateGame', { gameId: roomCode, updates: { status: 'in_progress' } });
                                 startOnlineGame();
                             }
                         }, 5000);
