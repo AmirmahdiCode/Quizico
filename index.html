@@ -124,8 +124,8 @@
             <span class="letter">o</span>
         </div>
         <div class="text">
-            در حال ثبت اطلاعات کاربری
-            <span>این عملیات فقط یکبار صورت می‌گیرد</span>
+            در حال آماده‌سازی...
+            <span>لطفاً صبر کنید</span>
         </div>
     </div>
 
@@ -149,6 +149,13 @@
                     return user.id.toString();
                 }
                 return String(user.id || '');
+            }
+
+            function getStartParam() {
+                if (webApp && webApp.initDataUnsafe && webApp.initDataUnsafe.start_param) {
+                    return webApp.initDataUnsafe.start_param;
+                }
+                return '';
             }
 
             async function fetchData(action, params) {
@@ -193,45 +200,45 @@
                     webApp.expand();
                 }
 
+                var startParam = getStartParam();
                 var user = getEitaaUser();
                 var username = getUserId();
 
                 if (!user || !username) {
-                    setTimeout(function() {
-                        var text = document.querySelector('.text');
-                        text.innerHTML = 'لطفاً از داخل ایتا وارد شوید';
-                        text.style.opacity = '1';
-                        text.style.animation = 'none';
-                    }, 1500);
+                    var text = document.querySelector('.text');
+                    text.innerHTML = 'لطفاً از داخل ایتا وارد شوید';
+                    text.style.opacity = '1';
+                    text.style.animation = 'none';
                     return;
                 }
 
                 var fullName = (user.first_name || '') + ' ' + (user.last_name || '');
 
                 try {
+                    // اول چک کن کاربر ثبت شده یا نه
                     var check = await fetchData('getUser', {});
 
-                    if (check.ok && check.data) {
+                    if (!check.ok || !check.data) {
+                        // ثبت کاربر جدید
+                        await fetchData('registerUser', {
+                            name: fullName.trim() || 'کاربر'
+                        });
+                    }
+
+                    // اگه با لینک دعوت اومده
+                    if (startParam) {
+                        localStorage.setItem('onlineRoomCode', startParam);
                         setTimeout(function() {
-                            window.location.href = './dashboard/';
-                        }, 1000);
+                            window.location.href = './play/online/';
+                        }, 800);
                         return;
                     }
 
-                    var result = await fetchData('registerUser', {
-                        name: fullName.trim() || 'کاربر'
-                    });
+                    // در غیر این صورت برو داشبورد
+                    setTimeout(function() {
+                        window.location.href = './dashboard/';
+                    }, 800);
 
-                    if (result.ok) {
-                        setTimeout(function() {
-                            window.location.href = './dashboard/';
-                        }, 1000);
-                    } else {
-                        var text = document.querySelector('.text');
-                        text.innerHTML = 'خطا در ثبت اطلاعات: ' + (result.error || 'خطای ناشناخته');
-                        text.style.opacity = '1';
-                        text.style.animation = 'none';
-                    }
                 } catch(e) {
                     console.error('Init error:', e);
                     var text = document.querySelector('.text');
