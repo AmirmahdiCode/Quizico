@@ -375,7 +375,6 @@
             var timerInterval = null;
             var timeLeft = QUESTION_TIME;
             var currentLang = 'fa';
-            var screen = 'rounds';
 
             var translations = {
                 fa: {
@@ -459,6 +458,10 @@
                 });
             }
 
+            function sleep(ms) {
+                return new Promise(function(resolve) { setTimeout(resolve, ms); });
+            }
+
             function translateText(text, targetLang) {
                 if (targetLang === 'fa') return Promise.resolve(text);
                 var url = 'https://translate.googleapis.com/translate_a/single?client=gtx&sl=fa&tl=' + targetLang + '&dt=t&q=' + encodeURIComponent(text);
@@ -469,8 +472,12 @@
                 if (lang === 'fa') return q;
                 var target = lang === 'en' ? 'en' : 'ar';
                 var tq = await translateText(q.question, target);
+                await sleep(50);
                 var topts = [];
-                for (var i = 0; i < q.options.length; i++) topts.push(await translateText(q.options[i], target));
+                for (var i = 0; i < q.options.length; i++) {
+                    topts.push(await translateText(q.options[i], target));
+                    await sleep(50);
+                }
                 return { id: q.id, question: tq, options: topts, correctOption: q.correctOption };
             }
 
@@ -510,7 +517,6 @@
             }
 
             function renderRoundsScreen() {
-                screen = 'rounds';
                 var t = getTranslation;
                 var html = '';
                 html += '<div class="players-row">';
@@ -572,7 +578,6 @@
             }
 
             function renderQuestionsScreen() {
-                screen = 'questions';
                 var html = '<div class="question-area">';
                 html += renderQuestionCard(1, p1Questions[currentQuestionIndex], currentQuestionIndex);
                 html += renderQuestionCard(2, p2Questions[currentQuestionIndex], currentQuestionIndex);
@@ -665,19 +670,26 @@
                 var qd = await fetchData('getQuestions', { limit: 100 });
                 if (qd.ok && Array.isArray(qd.data) && qd.data.length >= 8) {
                     questions = qd.data;
+                    
+                    var totalNeeded = TOTAL_ROUNDS * QUESTIONS_PER_ROUND;
+                    var selectedQuestions = shuffleArray(questions).slice(0, totalNeeded * 2);
+                    
                     if (currentLang !== 'fa') {
                         var translated = [];
-                        for (var i = 0; i < questions.length; i++) translated.push(await translateQuestion(questions[i], currentLang));
-                        questions = translated;
+                        for (var i = 0; i < selectedQuestions.length; i++) {
+                            translated.push(await translateQuestion(selectedQuestions[i], currentLang));
+                        }
+                        selectedQuestions = translated;
                     }
-                    var totalNeeded = TOTAL_ROUNDS * QUESTIONS_PER_ROUND;
-                    var half = Math.floor(questions.length / 2);
-                    p1Questions = shuffleArray(questions.slice(0, half)).slice(0, totalNeeded);
-                    p2Questions = shuffleArray(questions.slice(half)).slice(0, totalNeeded);
+                    
+                    p1Questions = selectedQuestions.slice(0, totalNeeded);
+                    p2Questions = selectedQuestions.slice(totalNeeded, totalNeeded * 2);
+                    
                     if (p1Questions.length < totalNeeded || p2Questions.length < totalNeeded) {
-                        p1Questions = shuffleArray(questions).slice(0, totalNeeded);
-                        p2Questions = shuffleArray(questions).slice(0, totalNeeded);
+                        p1Questions = selectedQuestions.slice(0, totalNeeded);
+                        p2Questions = shuffleArray(selectedQuestions).slice(0, totalNeeded);
                     }
+                    
                     renderRoundsScreen();
                 } else {
                     document.getElementById('gameContent').innerHTML = '<div class="result-banner"><div class="result-text">' + getTranslation('no_questions') + '</div></div>';
