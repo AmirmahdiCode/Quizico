@@ -196,22 +196,44 @@
             margin-bottom: 10px;
         }
 
+        .invite-box {
+            background: #fff7ed;
+            border: 2px solid #f97316;
+            border-radius: 10px;
+            padding: 12px;
+            margin-top: 10px;
+            text-align: center;
+        }
+
+        .invite-box-title {
+            font-size: 10px;
+            font-weight: 800;
+            color: #f97316;
+            margin-bottom: 6px;
+        }
+
+        .invite-box-desc {
+            font-size: 8px;
+            color: #9a3412;
+            margin-bottom: 8px;
+            line-height: 1.6;
+        }
+
         .invite-link-box {
             display: flex;
             align-items: center;
             gap: 6px;
-            background: var(--bg2);
-            border: var(--border);
-            border-radius: 8px;
-            padding: 8px 10px;
-            margin-top: 10px;
+            background: #fff;
+            border: 1px solid #f97316;
+            border-radius: 6px;
+            padding: 6px 8px;
         }
 
         .invite-link {
             flex: 1;
-            font-size: 9px;
+            font-size: 8px;
             font-weight: 600;
-            color: var(--text);
+            color: #9a3412;
             direction: ltr;
             text-align: center;
             overflow: hidden;
@@ -220,9 +242,9 @@
         }
 
         .copy-btn {
-            background: var(--primary);
+            background: #f97316;
             color: #fff;
-            border: var(--border);
+            border: 1px solid #000;
             border-radius: 6px;
             padding: 6px 10px;
             cursor: pointer;
@@ -412,6 +434,31 @@
             border: var(--border);
         }
 
+        .actions-row {
+            display: flex;
+            gap: 4px;
+            margin-bottom: 6px;
+        }
+
+        .action-btn {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 3px;
+            padding: 6px;
+            border: var(--border);
+            border-radius: 6px;
+            background: var(--card-bg);
+            cursor: pointer;
+            box-shadow: 1px 1px 0 #000;
+            font-family: 'IRANSans', Tahoma, sans-serif;
+            font-size: 7px;
+            font-weight: 700;
+        }
+
+        .action-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+
         .bottom-btn-container {
             position: fixed;
             bottom: 0;
@@ -529,10 +576,11 @@
             var myAnswers = [];
             var roundData = {};
             var isMyTurn = false;
-            var currentTurn = 1;
+            var currentTurn = 0;
             var gameStatus = 'waiting';
+            var userCoins = 0;
+            var actionUsedThisQuestion = false;
 
-            // ترتیب نوبت‌ها: [راند, بازیکن]
             var turnOrder = [
                 [1, 1], [1, 2],
                 [2, 2], [2, 1],
@@ -661,9 +709,13 @@
                 html += '<img class="waiting-image" src="' + SAD_IMAGE + '" alt="">';
                 html += '<div class="waiting-text">هنوز حریفت وارد نشده</div>';
                 html += '<div class="room-code-display">' + roomCode + '</div>';
+                html += '<div class="invite-box">';
+                html += '<div class="invite-box-title">دعوت از دوست</div>';
+                html += '<div class="invite-box-desc">برای بازی کردن با دوستت، لینک زیر رو کپی کن و براش بفرست. وقتی دوستت وارد شد، بازی خودکار شروع می‌شه!</div>';
                 html += '<div class="invite-link-box">';
                 html += '<span class="invite-link" id="inviteLink">' + inviteLink + '</span>';
                 html += '<button class="copy-btn" onclick="copyInviteLink()">کپی</button>';
+                html += '</div>';
                 html += '</div>';
                 html += '</div>';
                 document.getElementById('mainContainer').innerHTML = html;
@@ -678,8 +730,12 @@
                 if (webApp) webApp.HapticFeedback?.impactOccurred('light');
             };
 
-            function getMyTurnStatus(roundNum) {
-                var myPlayerNum = isPlayer1 ? 1 : 2;
+            function getMyPlayerNum() {
+                return isPlayer1 ? 1 : 2;
+            }
+
+            function getMyTurnIndex(roundNum) {
+                var myPlayerNum = getMyPlayerNum();
                 for (var i = 0; i < turnOrder.length; i++) {
                     if (turnOrder[i][0] === roundNum && turnOrder[i][1] === myPlayerNum) {
                         return i;
@@ -700,11 +756,13 @@
                     var status = 'waiting';
                     var statusText = 'در انتظار';
                     
-                    var myTurnIndex = getMyTurnStatus(r);
-                    var myTurnDone = roundData['round' + r + '_p' + (isPlayer1 ? 1 : 2)] !== undefined;
-                    var opponentDone = roundData['round' + r + '_p' + (isPlayer1 ? 2 : 1)] !== undefined;
+                    var myTurnIndex = getMyTurnIndex(r);
+                    var myRoundKey = 'round' + r + '_p' + getMyPlayerNum();
+                    var opponentRoundKey = 'round' + r + '_p' + (getMyPlayerNum() === 1 ? 2 : 1);
+                    var myDone = roundData[myRoundKey] !== undefined && roundData[myRoundKey] !== '';
+                    var opponentDone = roundData[opponentRoundKey] !== undefined && roundData[opponentRoundKey] !== '';
                     
-                    if (myTurnDone && opponentDone) {
+                    if (myDone && opponentDone) {
                         status = 'done';
                         statusText = 'پایان';
                     } else if (myTurnIndex === currentTurn) {
@@ -724,7 +782,7 @@
                     html += '<span class="round-player">شما</span>';
                     html += '<div class="round-dots">';
                     for (var j = 0; j < QUESTIONS_PER_ROUND; j++) {
-                        var myRoundData = roundData['round' + r + '_p' + (isPlayer1 ? 1 : 2)];
+                        var myRoundData = roundData[myRoundKey];
                         html += '<span class="result-dot' + (myRoundData ? (myRoundData[j] ? '' : ' wrong') : ' empty') + '">' + (j + 1) + '</span>';
                     }
                     html += '</div>';
@@ -735,9 +793,8 @@
                 
                 document.getElementById('mainContainer').innerHTML = html;
                 
-                // دکمه
                 var btn = document.getElementById('mainBtn');
-                var myTurnIndex = getMyTurnStatus(currentRound);
+                var myTurnIndex = getMyTurnIndex(currentRound);
                 if (myTurnIndex === currentTurn && gameStatus === 'in_progress') {
                     btn.textContent = 'شروع راند ' + currentRound;
                     btn.disabled = false;
@@ -753,11 +810,18 @@
             }
 
             function renderQuestionScreen() {
+                isAnswered = false;
+                actionUsedThisQuestion = false;
                 var q = roundQuestions[currentQuestionIndex];
                 var options = shuffleArray(q.options.slice());
                 var correctIdx = options.indexOf(q.options[q.correctOption - 1]);
                 
-                var html = '<div class="question-card">';
+                var html = '<div class="actions-row">';
+                html += '<button class="action-btn" id="btnRemove" onclick="useRemove50()"><i class="fa-solid fa-trash" style="color:#ef4444;"></i> ۵۰</button>';
+                html += '<button class="action-btn" id="btnSwap" onclick="useSwapQuestion()"><i class="fa-solid fa-arrows-rotate" style="color:#06b6d4;"></i> ۱۰۰</button>';
+                html += '<button class="action-btn" id="btnSkip" onclick="useSkipQuestion()"><i class="fa-solid fa-forward" style="color:#f59e0b;"></i> ۱۵۰</button>';
+                html += '</div>';
+                html += '<div class="question-card">';
                 html += '<div class="question-header">';
                 html += '<span class="question-player-tag">راند ' + currentRound + '</span>';
                 html += '<span class="question-progress">سوال ' + (currentQuestionIndex + 1) + ' از ' + QUESTIONS_PER_ROUND + '</span>';
@@ -767,7 +831,7 @@
                 html += '<div class="timer-text">60 ثانیه</div>';
                 html += '<div class="options-grid">';
                 for (var i = 0; i < options.length; i++) {
-                    html += '<button class="option-btn" data-correct="' + correctIdx + '" onclick="selectMyOption(' + i + ', this)">';
+                    html += '<button class="option-btn" data-text="' + options[i] + '" data-correct="' + correctIdx + '" onclick="selectMyOption(' + i + ', this)">';
                     html += '<span class="option-letter">' + (i + 1) + '</span>';
                     html += '<span>' + options[i] + '</span>';
                     html += '</button>';
@@ -781,7 +845,8 @@
             }
 
             function finishMyTurn() {
-                var roundKey = 'round' + currentRound + '_p' + (isPlayer1 ? 1 : 2);
+                var myPlayerNum = getMyPlayerNum();
+                var roundKey = 'round' + currentRound + '_p' + myPlayerNum;
                 roundData[roundKey] = myAnswers;
                 
                 var questionIds = roundQuestions.map(function(q) { return q.id; }).join(',');
@@ -792,7 +857,7 @@
                     gameId: roomCode,
                     updates: { 
                         ['round' + currentRound]: roundDataStr,
-                        ['round' + currentRound + '_p' + (isPlayer1 ? 1 : 2)]: JSON.stringify(myAnswers)
+                        [roundKey]: JSON.stringify(myAnswers)
                     }
                 });
                 
@@ -824,6 +889,8 @@
             }
 
             window.selectMyOption = function(selectedIndex, btn) {
+                if (isAnswered) return;
+                isAnswered = true;
                 var correctIndex = parseInt(btn.getAttribute('data-correct'));
                 var btns = document.querySelectorAll('.option-btn');
                 btns.forEach(function(b) { b.classList.add('disabled'); });
@@ -849,6 +916,76 @@
                         renderQuestionScreen();
                     }
                 }, 800);
+            };
+
+            window.useRemove50 = function() {
+                if (userCoins < 50 || isAnswered || actionUsedThisQuestion) return;
+                userCoins -= 50;
+                actionUsedThisQuestion = true;
+                
+                var q = roundQuestions[currentQuestionIndex];
+                var correctText = q.options[q.correctOption - 1];
+                var wrongOptions = q.options.filter(function(o) { return o !== correctText; });
+                var toHide = shuffleArray(wrongOptions).slice(0, 2);
+                
+                var allBtns = document.querySelectorAll('.option-btn');
+                allBtns.forEach(function(btn) {
+                    if (toHide.indexOf(btn.getAttribute('data-text')) !== -1) {
+                        btn.classList.add('hidden-option');
+                    }
+                });
+                
+                document.getElementById('btnRemove').disabled = true;
+                document.getElementById('btnSwap').disabled = true;
+                document.getElementById('btnSkip').disabled = true;
+                
+                fetchData('updateUser', { coins: userCoins });
+            };
+
+            window.useSwapQuestion = function() {
+                if (userCoins < 100 || isAnswered || actionUsedThisQuestion) return;
+                userCoins -= 100;
+                actionUsedThisQuestion = true;
+                
+                var remaining = questions.filter(function(q) {
+                    return roundQuestions.indexOf(q) === -1;
+                });
+                if (remaining.length > 0) {
+                    roundQuestions[currentQuestionIndex] = shuffleArray(remaining)[0];
+                }
+                
+                document.getElementById('btnRemove').disabled = true;
+                document.getElementById('btnSwap').disabled = true;
+                document.getElementById('btnSkip').disabled = true;
+                
+                fetchData('updateUser', { coins: userCoins });
+                renderQuestionScreen();
+            };
+
+            window.useSkipQuestion = function() {
+                if (userCoins < 150 || isAnswered || actionUsedThisQuestion) return;
+                userCoins -= 150;
+                actionUsedThisQuestion = true;
+                
+                myScore += 5;
+                myCorrectCount++;
+                myAnswers.push(true);
+                
+                document.getElementById('btnRemove').disabled = true;
+                document.getElementById('btnSwap').disabled = true;
+                document.getElementById('btnSkip').disabled = true;
+                
+                fetchData('updateUser', { coins: userCoins });
+                
+                clearInterval(timerInterval);
+                setTimeout(function() {
+                    currentQuestionIndex++;
+                    if (currentQuestionIndex >= QUESTIONS_PER_ROUND) {
+                        finishMyTurn();
+                    } else {
+                        renderQuestionScreen();
+                    }
+                }, 300);
             };
 
             window.handleMainBtn = function() {
@@ -902,11 +1039,14 @@
                 
                 checkInterval = setInterval(async function() {
                     var gameResult = await fetchData('getGame', { gameId: roomCode });
-                    if (gameResult.ok && gameResult.data && gameResult.data.player2) {
-                        clearInterval(checkInterval);
-                        gameStatus = 'in_progress';
-                        fetchData('updateGame', { gameId: roomCode, updates: { status: 'in_progress' } });
-                        startOnlineGame();
+                    if (gameResult.ok && gameResult.data) {
+                        var data = gameResult.data;
+                        if (data.player2 && data.player2 !== myUserId) {
+                            clearInterval(checkInterval);
+                            gameStatus = 'in_progress';
+                            fetchData('updateGame', { gameId: roomCode, updates: { status: 'in_progress' } });
+                            startOnlineGame();
+                        }
                     }
                 }, 5000);
             }
@@ -914,6 +1054,24 @@
             async function initPlayer2() {
                 isPlayer1 = false;
                 myUserId = getUserId();
+                
+                // چک کن که خودش player1 نباشه
+                var gameResult = await fetchData('getGame', { gameId: roomCode });
+                if (gameResult.ok && gameResult.data) {
+                    if (gameResult.data.player1 === myUserId) {
+                        // خودش ساخته اتاق رو
+                        renderWaitingScreen();
+                        checkInterval = setInterval(async function() {
+                            var checkResult = await fetchData('getGame', { gameId: roomCode });
+                            if (checkResult.ok && checkResult.data && checkResult.data.player2 && checkResult.data.player2 !== myUserId) {
+                                clearInterval(checkInterval);
+                                gameStatus = 'in_progress';
+                                startOnlineGame();
+                            }
+                        }, 5000);
+                        return;
+                    }
+                }
                 
                 await fetchData('updateGame', {
                     gameId: roomCode,
@@ -928,6 +1086,12 @@
                 var questionsData = await fetchData('getQuestions', { limit: 50 });
                 if (questionsData.ok && Array.isArray(questionsData.data) && questionsData.data.length >= QUESTIONS_PER_ROUND) {
                     questions = questionsData.data;
+                    
+                    var userData = await fetchData('getUser', { username: myUserId });
+                    if (userData.ok && userData.data) {
+                        userCoins = userData.data.coins || 0;
+                    }
+                    
                     renderRoundsScreen();
                     startPolling();
                 } else {
