@@ -23,7 +23,7 @@
             --card-bg: #ffffff;
             --header-bg: #ffffff;
             --shadow: 3px 3px 0 #000000;
-            --radius: 4px;
+            --radius: 12px;
             --border: 1px solid #000000;
         }
 
@@ -45,17 +45,6 @@
             --border: 1px solid #000000;
         }
 
-        [data-animation="off"] * {
-            animation: none !important;
-            transition: none !important;
-        }
-
-        [data-animation="off"] .header-title .t-letter {
-            opacity: 1 !important;
-            transform: translateY(0) !important;
-            animation: none !important;
-        }
-
         * {
             margin: 0;
             padding: 0;
@@ -69,52 +58,13 @@
             min-height: 100vh;
             display: flex;
             flex-direction: column;
-            transition: background 0.5s ease, color 0.5s ease;
         }
 
         .bg-animation {
             position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
+            top: 0; left: 0; right: 0; bottom: 0;
             z-index: 0;
             background: linear-gradient(135deg, var(--bg) 0%, var(--bg2) 40%, var(--bg3) 80%);
-            background-size: 400% 400%;
-            animation: gradientMove 15s ease infinite;
-            transition: background 0.8s ease;
-        }
-
-        @keyframes gradientMove {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-
-        .bg-particles {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            z-index: 1;
-            pointer-events: none;
-            overflow: hidden;
-        }
-
-        .particle {
-            position: absolute;
-            border-radius: 50%;
-            background: var(--primary);
-            opacity: 0.1;
-            animation: floatUp linear infinite;
-        }
-
-        @keyframes floatUp {
-            0% { transform: translateY(100vh) scale(0); opacity: 0; }
-            10% { opacity: 0.1; }
-            90% { opacity: 0.1; }
-            100% { transform: translateY(-10vh) scale(1); opacity: 0; }
         }
 
         .header {
@@ -126,20 +76,12 @@
             position: sticky;
             top: 0;
             box-shadow: var(--shadow);
-            animation: slideDown 0.5s ease;
-            transition: all 0.5s ease;
-        }
-
-        @keyframes slideDown {
-            from { transform: translateY(-100%); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
         }
 
         .header-inner {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            gap: 12px;
             max-width: 600px;
             margin: 0 auto;
         }
@@ -151,8 +93,8 @@
         }
 
         .header-logo {
-            width: 52px;
-            height: 52px;
+            width: 44px;
+            height: 44px;
             border-radius: var(--radius);
             background: var(--primary);
             display: flex;
@@ -162,82 +104,12 @@
             overflow: hidden;
             padding: 2px;
             border: var(--border);
-            transition: transform 0.3s ease, background 0.5s ease;
         }
 
-        .header-logo:hover {
-            transform: scale(1.05) rotate(-3deg);
-        }
-
-        .header-logo img {
-            width: 95%;
-            height: 95%;
-            object-fit: contain;
-            transform: scale(1.15);
-        }
-
-        .header-title {
-            display: flex;
-            direction: ltr;
-            gap: 0;
-            font-size: 18px;
-            font-weight: 800;
-            color: var(--dark);
-            letter-spacing: -0.5px;
-            transition: color 0.5s ease;
-            font-family: 'IRANSans', Tahoma, sans-serif;
-            overflow: hidden;
-        }
-
-        .header-title .t-letter {
-            display: inline-block;
-            opacity: 0;
-            transform: translateY(-20px);
-            animation: titleLetterIn 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
-        }
-
-        .header-title .t-letter:nth-child(1) { animation-delay: 0.1s; }
-        .header-title .t-letter:nth-child(2) { animation-delay: 0.15s; }
-        .header-title .t-letter:nth-child(3) { animation-delay: 0.2s; }
-        .header-title .t-letter:nth-child(4) { animation-delay: 0.25s; }
-        .header-title .t-letter:nth-child(5) { animation-delay: 0.3s; }
-        .header-title .t-letter:nth-child(6) { animation-delay: 0.35s; }
-        .header-title .t-letter:nth-child(7) { animation-delay: 0.4s; }
-
-        @keyframes titleLetterIn {
-            0% { opacity: 0; transform: translateY(-20px); }
-            60% { opacity: 1; transform: translateY(3px); }
-            80% { transform: translateY(-2px); }
-            100% { opacity: 1; transform: translateY(0); }
-        }
-
-        .header-title.animate-out .t-letter {
-            animation: titleLetterOut 0.4s ease forwards;
-        }
-
-        .header-title.animate-out .t-letter:nth-child(1) { animation-delay: 0s; }
-        .header-title.animate-out .t-letter:nth-child(2) { animation-delay: 0.05s; }
-        .header-title.animate-out .t-letter:nth-child(3) { animation-delay: 0.1s; }
-        .header-title.animate-out .t-letter:nth-child(4) { animation-delay: 0.15s; }
-        .header-title.animate-out .t-letter:nth-child(5) { animation-delay: 0.2s; }
-        .header-title.animate-out .t-letter:nth-child(6) { animation-delay: 0.25s; }
-        .header-title.animate-out .t-letter:nth-child(7) { animation-delay: 0.3s; }
-
-        @keyframes titleLetterOut {
-            0% { opacity: 1; transform: translateY(0); }
-            100% { opacity: 0; transform: translateY(-20px); }
-        }
-
-        .header-title .t-letter.t-accent {
-            color: var(--primary);
-        }
-
-        .header-subtitle {
-            font-size: 9px;
-            color: var(--text-light);
-            margin-top: -2px;
-            transition: color 0.5s ease;
-        }
+        .header-logo img { width: 95%; height: 95%; object-fit: contain; transform: scale(1.1); }
+        .header-title { font-size: 16px; font-weight: 800; }
+        .header-title .t-accent { color: var(--primary); }
+        .header-subtitle { font-size: 8px; color: var(--text-light); }
 
         .main-container {
             position: relative;
@@ -246,6 +118,9 @@
             width: 100%;
             margin: 16px auto;
             padding: 0 12px 80px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
         }
 
         .settings-card {
@@ -253,49 +128,27 @@
             border: var(--border);
             border-radius: var(--radius);
             padding: 16px;
-            margin-bottom: 14px;
             box-shadow: var(--shadow);
-            transition: all 0.3s ease;
-            animation: fadeInUp 0.4s ease backwards;
-        }
-
-        .settings-card:nth-child(1) { animation-delay: 0.05s; }
-        .settings-card:nth-child(2) { animation-delay: 0.1s; }
-        .settings-card:nth-child(3) { animation-delay: 0.15s; }
-
-        @keyframes fadeInUp {
-            from { transform: translateY(15px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
-        }
-
-        .settings-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 4px 4px 0 #000000;
         }
 
         .settings-title {
-            font-size: 13px;
-            font-weight: 700;
+            font-size: 12px;
+            font-weight: 800;
             color: var(--dark);
             margin-bottom: 12px;
             display: flex;
             align-items: center;
             gap: 8px;
-            transition: color 0.5s ease;
             border-bottom: 1px dashed var(--text-light);
-            padding-bottom: 6px;
+            padding-bottom: 8px;
         }
 
-        .settings-title i {
-            color: var(--primary);
-            font-size: 14px;
-        }
+        .settings-title i { color: var(--primary); }
 
         .theme-options {
             display: flex;
             flex-direction: column;
             gap: 8px;
-            padding: 4px 0;
         }
 
         .theme-option {
@@ -304,93 +157,52 @@
             gap: 10px;
             padding: 10px 14px;
             border: var(--border);
-            border-radius: var(--radius);
+            border-radius: 8px;
             cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-            box-shadow: var(--shadow);
+            box-shadow: 2px 2px 0 #000;
             background: var(--bg2);
+            transition: all 0.2s ease;
         }
 
-        .theme-option:hover {
-            transform: translateX(-3px);
-            box-shadow: 4px 4px 0 #000000;
-        }
-
-        .theme-option:active {
-            transform: translate(1px, 1px);
-            box-shadow: 1px 1px 0 #000000;
-        }
-
+        .theme-option:active { transform: translate(1px, 1px); box-shadow: 1px 1px 0 #000; }
         .theme-option.active {
             background: var(--primary);
             border-color: var(--primary);
         }
-
-        .theme-option.active .theme-option-label {
-            color: #ffffff;
-        }
-
-        .theme-option.active .theme-option-desc {
-            color: rgba(255, 255, 255, 0.8);
-        }
-
-        .theme-option.active i {
-            color: #ffffff;
-        }
+        .theme-option.active .theme-option-label { color: #fff; }
+        .theme-option.active .theme-option-desc { color: rgba(255,255,255,0.8); }
+        .theme-option.active i { color: #fff; }
 
         .theme-option i {
             font-size: 18px;
             color: var(--primary);
             width: 24px;
             text-align: center;
-            transition: color 0.3s ease;
         }
 
-        .theme-option-label {
-            font-size: 12px;
-            font-weight: 600;
-            color: var(--dark);
-            transition: color 0.3s ease;
-        }
-
-        .theme-option-desc {
-            font-size: 9px;
-            color: var(--text-light);
-            margin-top: 2px;
-            transition: color 0.3s ease;
-        }
+        .theme-option-label { font-size: 11px; font-weight: 700; }
+        .theme-option-desc { font-size: 8px; color: var(--text-light); }
 
         .color-options {
             display: flex;
             gap: 8px;
             flex-wrap: wrap;
-            padding: 4px 0;
         }
 
         .color-option {
-            width: 34px;
-            height: 34px;
-            border-radius: var(--radius);
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
             border: var(--border);
             cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-            box-shadow: var(--shadow);
-            position: relative;
+            box-shadow: 2px 2px 0 #000;
+            transition: all 0.2s ease;
         }
 
-        .color-option:hover {
-            transform: translateY(-3px) scale(1.05);
-            box-shadow: 4px 4px 0 #000000;
-        }
-
-        .color-option:active {
-            transform: translate(1px, 1px);
-            box-shadow: 1px 1px 0 #000000;
-        }
-
+        .color-option:active { transform: translate(1px, 1px); box-shadow: 1px 1px 0 #000; }
         .color-option.active {
-            box-shadow: 0 0 20px var(--primary), 0 0 40px var(--primary), 3px 3px 0 #000000;
-            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 0 15px var(--primary), 2px 2px 0 #000;
+            transform: scale(1.1);
         }
 
         .setting-item {
@@ -399,12 +211,8 @@
             justify-content: space-between;
             padding: 10px 0;
             border-bottom: 1px solid var(--bg3);
-            transition: border-color 0.5s ease;
         }
-
-        .setting-item:last-child {
-            border-bottom: none;
-        }
+        .setting-item:last-child { border-bottom: none; }
 
         .setting-info {
             display: flex;
@@ -412,70 +220,66 @@
             gap: 10px;
         }
 
-        .setting-info i {
-            font-size: 16px;
-            color: var(--primary);
-            width: 22px;
-            text-align: center;
-        }
-
-        .setting-label {
-            font-size: 12px;
-            font-weight: 600;
-            color: var(--dark);
-            transition: color 0.5s ease;
-        }
-
-        .setting-desc {
-            font-size: 9px;
-            color: var(--text-light);
-            margin-top: 2px;
-            transition: color 0.5s ease;
-        }
+        .setting-info i { font-size: 16px; color: var(--primary); width: 22px; text-align: center; }
+        .setting-label { font-size: 11px; font-weight: 700; }
+        .setting-desc { font-size: 8px; color: var(--text-light); }
 
         .toggle-switch {
-            position: relative;
             width: 40px;
             height: 22px;
             background: var(--bg3);
             border: var(--border);
             border-radius: 20px;
             cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-            box-shadow: var(--shadow);
+            position: relative;
+            transition: all 0.3s ease;
+            box-shadow: 2px 2px 0 #000;
             flex-shrink: 0;
         }
-
-        .toggle-switch:hover {
-            transform: scale(1.05);
-        }
-
-        .toggle-switch.active {
-            background: var(--primary);
-        }
-
+        .toggle-switch.active { background: var(--primary); }
         .toggle-switch::after {
             content: '';
             position: absolute;
-            top: 2px;
-            right: 20px;
-            width: 14px;
-            height: 14px;
-            background: #ffffff;
+            top: 2px; right: 20px;
+            width: 14px; height: 14px;
+            background: #fff;
             border: var(--border);
             border-radius: 50%;
-            transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            transition: all 0.3s ease;
+        }
+        .toggle-switch.active::after { right: 2px; }
+
+        .language-options {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
         }
 
-        .toggle-switch.active::after {
-            right: 2px;
+        .lang-btn {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 16px;
+            border: var(--border);
+            border-radius: 8px;
+            background: var(--bg2);
+            cursor: pointer;
+            box-shadow: 2px 2px 0 #000;
+            font-family: 'IRANSans', Tahoma, sans-serif;
+            font-size: 10px;
+            font-weight: 700;
+            transition: all 0.2s ease;
+        }
+        .lang-btn:active { transform: translate(1px, 1px); box-shadow: 1px 1px 0 #000; }
+        .lang-btn.active {
+            background: var(--primary);
+            color: #fff;
+            border-color: var(--primary);
         }
 
         .bottom-nav {
             position: fixed;
-            bottom: 0;
-            right: 0;
-            left: 0;
+            bottom: 0; right: 0; left: 0;
             background: var(--header-bg);
             border-top: var(--border);
             display: flex;
@@ -483,13 +287,6 @@
             align-items: center;
             padding: 6px 0;
             z-index: 999;
-            transition: all 0.5s ease;
-            animation: slideUp 0.5s ease;
-        }
-
-        @keyframes slideUp {
-            from { transform: translateY(100%); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
         }
 
         .nav-item {
@@ -500,68 +297,26 @@
             cursor: pointer;
             text-decoration: none;
             color: var(--text-light);
-            transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
             padding: 4px 12px;
-            border-radius: var(--radius);
+            font-family: inherit;
             background: none;
             border: none;
-            font-family: inherit;
         }
-
-        .nav-item i {
-            font-size: 18px;
-            transition: all 0.3s ease;
-        }
-
-        .nav-item span {
-            font-size: 8px;
-            font-weight: 600;
-        }
-
-        .nav-item.active {
-            color: var(--primary);
-        }
-
-        .nav-item.active i {
-            transform: translateY(-2px);
-        }
-
-        .nav-item:active {
-            transform: scale(0.9);
-        }
-
-        @media (max-width: 480px) {
-            .header-title { font-size: 15px; }
-            .header-logo {
-                width: 44px;
-                height: 44px;
-            }
-            .color-options { gap: 6px; }
-            .color-option { width: 30px; height: 30px; }
-        }
+        .nav-item i { font-size: 18px; }
+        .nav-item span { font-size: 8px; font-weight: 600; }
+        .nav-item.active { color: var(--primary); }
     </style>
 </head>
 <body>
 
     <div class="bg-animation"></div>
-    <div class="bg-particles" id="particles"></div>
 
     <header class="header">
         <div class="header-inner">
             <div class="header-right">
-                <div class="header-logo">
-                    <img src="https://cdn.imgurl.ir/uploads/f30974_InShot_20260821_174101103.png" alt="Quizico">
-                </div>
+                <div class="header-logo"><img src="https://cdn.imgurl.ir/uploads/f30974_InShot_20260821_174101103.png" alt="Quizico"></div>
                 <div>
-                    <div class="header-title" id="headerTitle">
-                        <span class="t-letter">Q</span>
-                        <span class="t-letter">u</span>
-                        <span class="t-letter">i</span>
-                        <span class="t-letter">z</span>
-                        <span class="t-letter t-accent">i</span>
-                        <span class="t-letter t-accent">c</span>
-                        <span class="t-letter t-accent">o</span>
-                    </div>
+                    <div class="header-title">Quiz<span class="t-accent">ico</span></div>
                     <div class="header-subtitle">تنظیمات</div>
                 </div>
             </div>
@@ -569,20 +324,27 @@
     </header>
 
     <main class="main-container">
+
         <div class="settings-card">
-            <div class="settings-title">
-                <i class="fa-solid fa-moon"></i>
-                حالت نمایش سایت
+            <div class="settings-title"><i class="fa-solid fa-language"></i> زبان</div>
+            <div class="language-options">
+                <button class="lang-btn" data-lang="fa" onclick="setLanguage('fa')"><i class="fa-solid fa-flag"></i> فارسی</button>
+                <button class="lang-btn" data-lang="ar" onclick="setLanguage('ar')"><i class="fa-solid fa-flag"></i> العربية</button>
+                <button class="lang-btn" data-lang="en" onclick="setLanguage('en')"><i class="fa-solid fa-flag"></i> English</button>
             </div>
+        </div>
+
+        <div class="settings-card">
+            <div class="settings-title"><i class="fa-solid fa-moon"></i> حالت نمایش</div>
             <div class="theme-options">
-                <div class="theme-option" data-theme-mode="light">
+                <div class="theme-option" data-theme-mode="light" onclick="setTheme('light')">
                     <i class="fa-regular fa-sun"></i>
                     <div>
                         <div class="theme-option-label">حالت روشن</div>
                         <div class="theme-option-desc">همیشه روشن</div>
                     </div>
                 </div>
-                <div class="theme-option" data-theme-mode="dark">
+                <div class="theme-option" data-theme-mode="dark" onclick="setTheme('dark')">
                     <i class="fa-regular fa-moon"></i>
                     <div>
                         <div class="theme-option-label">حالت تاریک</div>
@@ -593,33 +355,21 @@
         </div>
 
         <div class="settings-card">
-            <div class="settings-title">
-                <i class="fa-solid fa-palette"></i>
-                تم رنگ
-            </div>
+            <div class="settings-title"><i class="fa-solid fa-palette"></i> تم رنگ</div>
             <div class="color-options" id="colorOptions">
-                <div class="color-option" data-color="#ef4444" style="background: #ef4444;"></div>
-                <div class="color-option" data-color="#f97316" style="background: #f97316;"></div>
-                <div class="color-option" data-color="#f59e0b" style="background: #f59e0b;"></div>
-                <div class="color-option" data-color="#84cc16" style="background: #84cc16;"></div>
-                <div class="color-option" data-color="#10b981" style="background: #10b981;"></div>
-                <div class="color-option" data-color="#14b8a6" style="background: #14b8a6;"></div>
-                <div class="color-option" data-color="#06b6d4" style="background: #06b6d4;"></div>
-                <div class="color-option" data-color="#3b82f6" style="background: #3b82f6;"></div>
-                <div class="color-option" data-color="#6366f1" style="background: #6366f1;"></div>
-                <div class="color-option" data-color="#a855f7" style="background: #a855f7;"></div>
-                <div class="color-option" data-color="#8b5cf6" style="background: #8b5cf6;"></div>
-                <div class="color-option" data-color="#d946ef" style="background: #d946ef;"></div>
-                <div class="color-option" data-color="#ec4899" style="background: #ec4899;"></div>
-                <div class="color-option" data-color="#f43f5e" style="background: #f43f5e;"></div>
+                <div class="color-option" data-color="#ef4444" style="background:#ef4444;" onclick="setColor('#ef4444')"></div>
+                <div class="color-option" data-color="#f97316" style="background:#f97316;" onclick="setColor('#f97316')"></div>
+                <div class="color-option" data-color="#f59e0b" style="background:#f59e0b;" onclick="setColor('#f59e0b')"></div>
+                <div class="color-option" data-color="#10b981" style="background:#10b981;" onclick="setColor('#10b981')"></div>
+                <div class="color-option" data-color="#06b6d4" style="background:#06b6d4;" onclick="setColor('#06b6d4')"></div>
+                <div class="color-option" data-color="#3b82f6" style="background:#3b82f6;" onclick="setColor('#3b82f6')"></div>
+                <div class="color-option" data-color="#a855f7" style="background:#a855f7;" onclick="setColor('#a855f7')"></div>
+                <div class="color-option" data-color="#ec4899" style="background:#ec4899;" onclick="setColor('#ec4899')"></div>
             </div>
         </div>
 
         <div class="settings-card">
-            <div class="settings-title">
-                <i class="fa-solid fa-sliders"></i>
-                سایر تنظیمات
-            </div>
+            <div class="settings-title"><i class="fa-solid fa-sliders"></i> سایر</div>
             <div class="setting-item">
                 <div class="setting-info">
                     <i class="fa-solid fa-bolt"></i>
@@ -628,186 +378,119 @@
                         <div class="setting-desc">افکت‌های حرکتی</div>
                     </div>
                 </div>
-                <div class="toggle-switch active" id="animationToggle"></div>
+                <div class="toggle-switch active" id="animationToggle" onclick="toggleAnimation()"></div>
             </div>
             <div class="setting-item">
                 <div class="setting-info">
-                    <i class="fa-solid fa-mobile-screen-button"></i>
+                    <i class="fa-solid fa-mobile-screen"></i>
                     <div>
-                        <div class="setting-label">لرزش (هاپتیک)</div>
+                        <div class="setting-label">لرزش</div>
                         <div class="setting-desc">بازخورد لمسی</div>
                     </div>
                 </div>
-                <div class="toggle-switch active" id="hapticToggle"></div>
+                <div class="toggle-switch active" id="hapticToggle" onclick="toggleHaptic()"></div>
             </div>
         </div>
+
     </main>
 
     <nav class="bottom-nav">
-        <a href="../dashboard/" class="nav-item">
-            <i class="fa-solid fa-house"></i>
-            <span>خانه</span>
-        </a>
-        <a href="../ranking/" class="nav-item">
-            <i class="fa-solid fa-trophy"></i>
-            <span>رتبه</span>
-        </a>
-        <a href="../profile/" class="nav-item">
-            <i class="fa-solid fa-user"></i>
-            <span>پروفایل</span>
-        </a>
-        <a href="../setting/" class="nav-item active">
-            <i class="fa-solid fa-gear"></i>
-            <span>تنظیمات</span>
-        </a>
+        <a href="../dashboard/" class="nav-item"><i class="fa-solid fa-house"></i><span>خانه</span></a>
+        <a href="../ranking/" class="nav-item"><i class="fa-solid fa-trophy"></i><span>رتبه</span></a>
+        <a href="../profile/" class="nav-item"><i class="fa-solid fa-user"></i><span>پروفایل</span></a>
+        <a href="../setting/" class="nav-item active"><i class="fa-solid fa-gear"></i><span>تنظیمات</span></a>
     </nav>
 
     <script>
         (function() {
             var webApp = window.Eitaa?.WebApp;
 
-            function createParticles() {
-                var container = document.getElementById('particles');
-                for (var i = 0; i < 20; i++) {
-                    var p = document.createElement('div');
-                    p.className = 'particle';
-                    var size = 3 + Math.random() * 8;
-                    p.style.width = size + 'px';
-                    p.style.height = size + 'px';
-                    p.style.left = Math.random() * 100 + '%';
-                    p.style.animationDuration = 15 + Math.random() * 25 + 's';
-                    p.style.animationDelay = Math.random() * 20 + 's';
-                    container.appendChild(p);
-                }
-            }
-            createParticles();
-
             function getSettings() {
                 try {
                     var raw = localStorage.getItem('quizicoSettings');
-                    if (!raw) {
-                        var defaultSettings = {
-                            theme: 'light',
-                            primaryColor: '#a855f7',
-                            animation: true,
-                            haptic: true
-                        };
-                        localStorage.setItem('quizicoSettings', JSON.stringify(defaultSettings));
-                        return defaultSettings;
-                    }
+                    if (!raw) return { theme: 'light', primaryColor: '#a855f7', animation: true, haptic: true, language: 'fa' };
                     var parsed = JSON.parse(raw);
                     if (!parsed.theme) parsed.theme = 'light';
                     if (!parsed.primaryColor) parsed.primaryColor = '#a855f7';
                     if (parsed.animation === undefined) parsed.animation = true;
                     if (parsed.haptic === undefined) parsed.haptic = true;
+                    if (!parsed.language) parsed.language = 'fa';
                     return parsed;
-                } catch(e) {
-                    return { theme: 'light', primaryColor: '#a855f7', animation: true, haptic: true };
-                }
+                } catch(e) { return { theme: 'light', primaryColor: '#a855f7', animation: true, haptic: true, language: 'fa' }; }
             }
 
-            function saveSettings(settings) {
-                localStorage.setItem('quizicoSettings', JSON.stringify(settings));
+            function saveSettings(s) {
+                localStorage.setItem('quizicoSettings', JSON.stringify(s));
             }
 
             function hexToRgb(hex) {
-                var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-                return result ? {
-                    r: parseInt(result[1], 16),
-                    g: parseInt(result[2], 16),
-                    b: parseInt(result[3], 16)
-                } : { r: 168, g: 85, b: 247 };
+                var r = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+                return r ? { r: parseInt(r[1],16), g: parseInt(r[2],16), b: parseInt(r[3],16) } : { r:168,g:85,b:247 };
             }
-
-            function shadeColor(color, percent) {
-                var rgb = hexToRgb(color);
-                var r = Math.max(0, Math.min(255, rgb.r + percent));
-                var g = Math.max(0, Math.min(255, rgb.g + percent));
-                var b = Math.max(0, Math.min(255, rgb.b + percent));
-                return '#' + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
-            }
+            function shadeColor(c,p){var r=hexToRgb(c);var rr=Math.max(0,Math.min(255,r.r+p));var gg=Math.max(0,Math.min(255,r.g+p));var bb=Math.max(0,Math.min(255,r.b+p));return '#'+((1<<24)+(rr<<16)+(gg<<8)+bb).toString(16).slice(1);}
 
             function applyTheme() {
-                var settings = getSettings();
-                var theme = settings.theme || 'light';
-                var primaryColor = settings.primaryColor || '#a855f7';
-                
-                document.documentElement.setAttribute('data-theme', theme);
-                
-                if (theme === 'dark') {
-                    var darkPrimary = shadeColor(primaryColor, 40);
-                    document.documentElement.style.setProperty('--primary', darkPrimary);
-                    document.documentElement.style.setProperty('--primary-rgb', hexToRgb(darkPrimary).r + ', ' + hexToRgb(darkPrimary).g + ', ' + hexToRgb(darkPrimary).b);
+                var s = getSettings();
+                var t = s.theme || 'light';
+                var p = s.primaryColor || '#a855f7';
+                document.documentElement.setAttribute('data-theme', t);
+                if (t === 'dark') {
+                    var dp = shadeColor(p, 40);
+                    document.documentElement.style.setProperty('--primary', dp);
                 } else {
-                    document.documentElement.style.setProperty('--primary', primaryColor);
-                    document.documentElement.style.setProperty('--primary-rgb', hexToRgb(primaryColor).r + ', ' + hexToRgb(primaryColor).g + ', ' + hexToRgb(primaryColor).b);
-                }
-                
-                if (settings.animation === false) {
-                    document.documentElement.setAttribute('data-animation', 'off');
-                } else {
-                    document.documentElement.removeAttribute('data-animation');
-                }
-                
-                if (webApp) {
-                    webApp.setHeaderColor('bg_color');
-                    webApp.setBackgroundColor('bg_color');
+                    document.documentElement.style.setProperty('--primary', p);
                 }
 
-                var themeBtns = document.querySelectorAll('.theme-option');
-                themeBtns.forEach(function(btn) {
-                    btn.classList.toggle('active', btn.dataset.themeMode === settings.theme);
+                document.querySelectorAll('.theme-option').forEach(function(b) {
+                    b.classList.toggle('active', b.dataset.themeMode === t);
                 });
-
-                var colorBtns = document.querySelectorAll('.color-option');
-                colorBtns.forEach(function(btn) {
-                    btn.classList.toggle('active', btn.dataset.color === primaryColor);
+                document.querySelectorAll('.color-option').forEach(function(b) {
+                    b.classList.toggle('active', b.dataset.color === p);
                 });
-
-                var animToggle = document.getElementById('animationToggle');
-                animToggle.classList.toggle('active', settings.animation !== false);
-
-                var hapticToggle = document.getElementById('hapticToggle');
-                hapticToggle.classList.toggle('active', settings.haptic !== false);
+                document.querySelectorAll('.lang-btn').forEach(function(b) {
+                    b.classList.toggle('active', b.dataset.lang === s.language);
+                });
+                document.getElementById('animationToggle').classList.toggle('active', s.animation !== false);
+                document.getElementById('hapticToggle').classList.toggle('active', s.haptic !== false);
             }
 
-            function triggerHaptic() {
-                var settings = getSettings();
-                if (settings.haptic !== false && webApp) {
-                    webApp.HapticFeedback?.impactOccurred('light');
-                }
-            }
+            window.setTheme = function(t) {
+                var s = getSettings();
+                s.theme = t;
+                saveSettings(s);
+                applyTheme();
+                if (webApp) webApp.HapticFeedback?.impactOccurred('light');
+            };
 
-            function animateTitle() {
-                var title = document.getElementById('headerTitle');
-                if (!title) return;
-                
-                var settings = getSettings();
-                if (settings.animation === false) {
-                    title.classList.remove('animate-out');
-                    document.documentElement.setAttribute('data-animation', 'off');
-                    return;
-                }
+            window.setColor = function(c) {
+                var s = getSettings();
+                s.primaryColor = c;
+                saveSettings(s);
+                applyTheme();
+                if (webApp) webApp.HapticFeedback?.impactOccurred('light');
+            };
 
-                document.documentElement.removeAttribute('data-animation');
+            window.setLanguage = function(l) {
+                var s = getSettings();
+                s.language = l;
+                saveSettings(s);
+                applyTheme();
+                if (webApp) webApp.HapticFeedback?.impactOccurred('light');
+            };
 
-                function playIn() {
-                    title.classList.remove('animate-out');
-                }
+            window.toggleAnimation = function() {
+                var s = getSettings();
+                s.animation = !s.animation;
+                saveSettings(s);
+                applyTheme();
+            };
 
-                function playOut() {
-                    title.classList.add('animate-out');
-                }
-
-                var interval = setInterval(function() {
-                    playIn();
-                    setTimeout(function() {
-                        playOut();
-                    }, 10000);
-                }, 12400);
-
-                title._interval = interval;
-            }
+            window.toggleHaptic = function() {
+                var s = getSettings();
+                s.haptic = !s.haptic;
+                saveSettings(s);
+                applyTheme();
+            };
 
             if (webApp) {
                 webApp.ready();
@@ -817,52 +500,7 @@
                 });
             }
 
-            document.querySelectorAll('.theme-option').forEach(function(option) {
-                option.addEventListener('click', function() {
-                    triggerHaptic();
-                    var settings = getSettings();
-                    settings.theme = this.dataset.themeMode;
-                    saveSettings(settings);
-                    applyTheme();
-                });
-            });
-
-            document.querySelectorAll('.color-option').forEach(function(option) {
-                option.addEventListener('click', function() {
-                    triggerHaptic();
-                    var settings = getSettings();
-                    settings.primaryColor = this.dataset.color;
-                    saveSettings(settings);
-                    applyTheme();
-                });
-            });
-
-            document.getElementById('animationToggle').addEventListener('click', function() {
-                triggerHaptic();
-                var settings = getSettings();
-                settings.animation = !this.classList.contains('active');
-                saveSettings(settings);
-                applyTheme();
-                
-                var title = document.getElementById('headerTitle');
-                if (title && title._interval) {
-                    clearInterval(title._interval);
-                    title._interval = null;
-                }
-                
-                animateTitle();
-            });
-
-            document.getElementById('hapticToggle').addEventListener('click', function() {
-                triggerHaptic();
-                var settings = getSettings();
-                settings.haptic = !this.classList.contains('active');
-                saveSettings(settings);
-                applyTheme();
-            });
-
             applyTheme();
-            animateTitle();
         })();
     </script>
 </body>
