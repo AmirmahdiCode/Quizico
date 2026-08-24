@@ -188,6 +188,14 @@
             margin-bottom: 10px;
         }
 
+        .room-code-display {
+            font-size: 18px;
+            font-weight: 900;
+            color: var(--primary);
+            letter-spacing: 2px;
+            margin-bottom: 10px;
+        }
+
         .invite-link-box {
             display: flex;
             align-items: center;
@@ -382,36 +390,6 @@
             border: var(--border);
         }
 
-        .bottom-btn-container {
-            position: fixed;
-            bottom: 0;
-            right: 0;
-            left: 0;
-            padding: 8px 16px;
-            background: var(--header-bg);
-            border-top: var(--border);
-            z-index: 100;
-        }
-
-        .main-btn {
-            width: 100%;
-            max-width: 500px;
-            margin: 0 auto;
-            display: block;
-            padding: 10px;
-            background: var(--gold);
-            color: #fff;
-            border: var(--border);
-            border-radius: 8px;
-            font-family: 'IRANSans', Tahoma, sans-serif;
-            font-size: 11px;
-            font-weight: 800;
-            cursor: pointer;
-            box-shadow: 3px 3px 0 #000;
-        }
-
-        .main-btn:disabled { opacity: 0.5; cursor: not-allowed; }
-
         .result-banner {
             text-align: center;
             padding: 16px;
@@ -470,10 +448,6 @@
         </div>
     </main>
 
-    <div class="bottom-btn-container" id="bottomBtnContainer" style="display:none;">
-        <button class="main-btn" id="mainBtn" onclick="handleMainBtn()">شروع بازی</button>
-    </div>
-
     <script>
         (function() {
             var webApp = window.Eitaa?.WebApp;
@@ -497,7 +471,6 @@
             var checkInterval = null;
             var myUserId = '';
             var myAnswers = [];
-            var opponentAnswers = [];
 
             function getSettings() {
                 try {
@@ -592,10 +565,10 @@
             function startTimer() {
                 clearInterval(timerInterval);
                 timeLeft = QUESTION_TIME;
-                updateTimerBars();
+                updateTimerBar();
                 timerInterval = setInterval(function() {
                     timeLeft--;
-                    updateTimerBars();
+                    updateTimerBar();
                     if (timeLeft <= 0) {
                         clearInterval(timerInterval);
                         nextQuestion();
@@ -603,7 +576,7 @@
                 }, 1000);
             }
 
-            function updateTimerBars() {
+            function updateTimerBar() {
                 var fill = document.querySelector('.timer-bar-fill');
                 var text = document.querySelector('.timer-text');
                 if (!fill || !text) return;
@@ -618,13 +591,13 @@
                 var html = '<div class="waiting-card">';
                 html += '<img class="waiting-image" src="' + SAD_IMAGE + '" alt="">';
                 html += '<div class="waiting-text">هنوز حریفت وارد نشده</div>';
+                html += '<div class="room-code-display">' + roomCode + '</div>';
                 html += '<div class="invite-link-box">';
                 html += '<span class="invite-link" id="inviteLink">' + inviteLink + '</span>';
                 html += '<button class="copy-btn" onclick="copyInviteLink()">کپی</button>';
                 html += '</div>';
                 html += '</div>';
                 document.getElementById('mainContainer').innerHTML = html;
-                document.getElementById('bottomBtnContainer').style.display = 'none';
             }
 
             window.copyInviteLink = function() {
@@ -734,7 +707,7 @@
                 var roundData = '[' + questionIds + '][' + myAnsStr + '][]';
                 
                 var roundKey = 'round' + currentRound;
-                var updateData = { status: 'in_progress' };
+                var updateData = {};
                 updateData[roundKey] = roundData;
                 
                 fetchData('updateGame', {
@@ -769,7 +742,6 @@
                 resultHtml += '<button class="result-btn" onclick="backToDashboard()">بازگشت</button>';
                 
                 document.getElementById('mainContainer').innerHTML = '<div class="result-banner">' + resultHtml + '</div>';
-                document.getElementById('bottomBtnContainer').style.display = 'none';
                 
                 fetchData('updateGame', {
                     gameId: roomCode,
@@ -781,14 +753,13 @@
                 window.location.href = '../../dashboard/';
             };
 
-            window.handleMainBtn = function() {};
-
             async function initPlayer1() {
                 roomCode = generateRoomCode();
                 isPlayer1 = true;
                 myUserId = getUserId();
                 
-                fetchData('saveGame', {
+                // ذخیره فوری در شیت
+                var saveResult = await fetchData('saveGame', {
                     gameData: {
                         id: roomCode,
                         player1: myUserId,
@@ -804,6 +775,7 @@
                 
                 renderWaitingScreen();
                 
+                // چک هر ۵ ثانیه
                 checkInterval = setInterval(async function() {
                     var gameResult = await fetchData('getGame', { gameId: roomCode });
                     if (gameResult.ok && gameResult.data && gameResult.data.player2) {
@@ -817,7 +789,8 @@
                 isPlayer1 = false;
                 myUserId = getUserId();
                 
-                fetchData('updateGame', {
+                // آپدیت بازی با player2
+                await fetchData('updateGame', {
                     gameId: roomCode,
                     updates: { player2: myUserId, status: 'in_progress' }
                 });
@@ -826,8 +799,6 @@
             }
 
             async function startOnlineGame() {
-                document.getElementById('bottomBtnContainer').style.display = 'none';
-                
                 var questionsData = await fetchData('getQuestions', { limit: 50 });
                 if (questionsData.ok && Array.isArray(questionsData.data) && questionsData.data.length >= QUESTIONS_PER_ROUND) {
                     questions = questionsData.data;
