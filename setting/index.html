@@ -36,13 +36,13 @@
             --primary-light: #d8b4fe;
             --primary-rgb: 192, 132, 252;
             --dark: #f1f5f9;
-            --text: #cbd5e1;
+            --text: #e2e8f0;
             --text-light: #94a3b8;
             --white: #2d2a3e;
             --card-bg: #2d2a3e;
             --header-bg: #2d2a3e;
             --shadow: 3px 3px 0 #000000;
-            --border: 1px solid #000000;
+            --border: 1px solid #475569;
         }
 
         [data-animation="off"] * {
@@ -50,11 +50,7 @@
             transition: none !important;
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
             font-family: 'IRANSans', Tahoma, sans-serif;
@@ -71,7 +67,6 @@
             top: 0; left: 0; right: 0; bottom: 0;
             z-index: 0;
             background: linear-gradient(135deg, var(--bg) 0%, var(--bg2) 40%, var(--bg3) 80%);
-            transition: background 0.3s ease;
         }
 
         .header {
@@ -93,11 +88,7 @@
             margin: 0 auto;
         }
 
-        .header-right {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
+        .header-right { display: flex; align-items: center; gap: 10px; }
 
         .header-logo {
             width: 44px;
@@ -164,6 +155,7 @@
             background: var(--bg2);
             cursor: pointer;
             box-shadow: 2px 2px 0 #000;
+            font-family: 'IRANSans', Tahoma, sans-serif;
             font-size: 10px;
             font-weight: 700;
             color: var(--text);
@@ -248,6 +240,46 @@
         }
         .toggle-switch.active::after { right: 2px; }
 
+        .support-notification {
+            position: fixed;
+            top: 75px;
+            right: 10px;
+            left: 10px;
+            max-width: 400px;
+            margin: 0 auto;
+            background: var(--card-bg);
+            border: var(--border);
+            border-radius: var(--radius);
+            box-shadow: 5px 5px 0 #000;
+            padding: 10px 14px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            z-index: 2000;
+            animation: slideDownNotif 0.5s ease forwards, slideUpNotif 0.5s ease 4.5s forwards;
+            cursor: pointer;
+        }
+        .support-notification img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: var(--border);
+            object-fit: cover;
+        }
+        .support-notification .notif-info { flex: 1; }
+        .support-notification .notif-name { font-size: 10px; font-weight: 800; color: var(--dark); }
+        .support-notification .notif-desc { font-size: 8px; color: var(--text-light); }
+        .support-notification i { color: var(--text-light); font-size: 10px; }
+
+        @keyframes slideDownNotif {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes slideUpNotif {
+            from { opacity: 1; transform: translateY(0); }
+            to { opacity: 0; transform: translateY(-20px); }
+        }
+
         .bottom-nav {
             position: fixed;
             bottom: 0; right: 0; left: 0;
@@ -259,7 +291,6 @@
             padding: 6px 0;
             z-index: 999;
         }
-
         .nav-item {
             display: flex;
             flex-direction: column;
@@ -366,6 +397,15 @@
 
     </main>
 
+    <div class="support-notification" id="supportNotification" onclick="openSupportLink()">
+        <img src="https://cdn.imgurl.ir/uploads/v68396_InShot_20260817_190450653.jpg" alt="سازنده">
+        <div class="notif-info">
+            <div class="notif-name">امیرمهدی | Amirmahdi</div>
+            <div class="notif-desc" data-i18n="support">از سازنده حمایت کنید</div>
+        </div>
+        <i class="fa-solid fa-chevron-left"></i>
+    </div>
+
     <nav class="bottom-nav">
         <a href="../dashboard/" class="nav-item"><i class="fa-solid fa-house"></i><span data-i18n="home">خانه</span></a>
         <a href="../ranking/" class="nav-item"><i class="fa-solid fa-trophy"></i><span data-i18n="ranking">رتبه</span></a>
@@ -376,64 +416,38 @@
     <script>
         (function() {
             var webApp = window.Eitaa?.WebApp;
+            var currentLang = 'fa';
 
             var translations = {
                 fa: {
-                    settings: 'تنظیمات',
-                    language: 'زبان',
-                    theme: 'حالت نمایش',
-                    light: 'حالت روشن',
-                    light_desc: 'همیشه روشن',
-                    dark: 'حالت تاریک',
-                    dark_desc: 'همیشه تاریک',
-                    color_theme: 'تم رنگ',
-                    other: 'سایر',
-                    animation: 'انیمیشن‌ها',
-                    animation_desc: 'افکت‌های حرکتی',
-                    haptic: 'لرزش',
-                    haptic_desc: 'بازخورد لمسی',
-                    home: 'خانه',
-                    ranking: 'رتبه',
-                    profile: 'پروفایل',
-                    settings_nav: 'تنظیمات'
+                    settings: 'تنظیمات', language: 'زبان', theme: 'حالت نمایش',
+                    light: 'حالت روشن', light_desc: 'همیشه روشن',
+                    dark: 'حالت تاریک', dark_desc: 'همیشه تاریک',
+                    color_theme: 'تم رنگ', other: 'سایر',
+                    animation: 'انیمیشن‌ها', animation_desc: 'افکت‌های حرکتی',
+                    haptic: 'لرزش', haptic_desc: 'بازخورد لمسی',
+                    home: 'خانه', ranking: 'رتبه', profile: 'پروفایل', settings_nav: 'تنظیمات',
+                    support: 'از سازنده حمایت کنید'
                 },
                 en: {
-                    settings: 'Settings',
-                    language: 'Language',
-                    theme: 'Theme',
-                    light: 'Light Mode',
-                    light_desc: 'Always light',
-                    dark: 'Dark Mode',
-                    dark_desc: 'Always dark',
-                    color_theme: 'Color Theme',
-                    other: 'Other',
-                    animation: 'Animations',
-                    animation_desc: 'Motion effects',
-                    haptic: 'Haptic',
-                    haptic_desc: 'Tactile feedback',
-                    home: 'Home',
-                    ranking: 'Ranking',
-                    profile: 'Profile',
-                    settings_nav: 'Settings'
+                    settings: 'Settings', language: 'Language', theme: 'Theme',
+                    light: 'Light Mode', light_desc: 'Always light',
+                    dark: 'Dark Mode', dark_desc: 'Always dark',
+                    color_theme: 'Color Theme', other: 'Other',
+                    animation: 'Animations', animation_desc: 'Motion effects',
+                    haptic: 'Haptic', haptic_desc: 'Tactile feedback',
+                    home: 'Home', ranking: 'Ranking', profile: 'Profile', settings_nav: 'Settings',
+                    support: 'Support the developer'
                 },
                 ar: {
-                    settings: 'الإعدادات',
-                    language: 'اللغة',
-                    theme: 'المظهر',
-                    light: 'وضع فاتح',
-                    light_desc: 'فاتح دائمًا',
-                    dark: 'وضع داكن',
-                    dark_desc: 'داكن دائمًا',
-                    color_theme: 'لون السمة',
-                    other: 'أخرى',
-                    animation: 'الحركات',
-                    animation_desc: 'تأثيرات الحركة',
-                    haptic: 'الاهتزاز',
-                    haptic_desc: 'ردود فعل لمسية',
-                    home: 'الرئيسية',
-                    ranking: 'الترتيب',
-                    profile: 'الملف',
-                    settings_nav: 'الإعدادات'
+                    settings: 'الإعدادات', language: 'اللغة', theme: 'المظهر',
+                    light: 'وضع فاتح', light_desc: 'فاتح دائمًا',
+                    dark: 'وضع داكن', dark_desc: 'داكن دائمًا',
+                    color_theme: 'لون السمة', other: 'أخرى',
+                    animation: 'الحركات', animation_desc: 'تأثيرات الحركة',
+                    haptic: 'الاهتزاز', haptic_desc: 'ردود فعل لمسية',
+                    home: 'الرئيسية', ranking: 'الترتيب', profile: 'الملف', settings_nav: 'الإعدادات',
+                    support: 'ادعم المطور'
                 }
             };
 
@@ -441,13 +455,13 @@
                 try {
                     var raw = localStorage.getItem('quizicoSettings');
                     if (!raw) return { theme: 'light', primaryColor: '#a855f7', animation: true, haptic: true, language: 'fa' };
-                    var parsed = JSON.parse(raw);
-                    if (!parsed.theme) parsed.theme = 'light';
-                    if (!parsed.primaryColor) parsed.primaryColor = '#a855f7';
-                    if (parsed.animation === undefined) parsed.animation = true;
-                    if (parsed.haptic === undefined) parsed.haptic = true;
-                    if (!parsed.language) parsed.language = 'fa';
-                    return parsed;
+                    var p = JSON.parse(raw);
+                    if (!p.theme) p.theme = 'light';
+                    if (!p.primaryColor) p.primaryColor = '#a855f7';
+                    if (p.animation === undefined) p.animation = true;
+                    if (p.haptic === undefined) p.haptic = true;
+                    if (!p.language) p.language = 'fa';
+                    return p;
                 } catch(e) { return { theme: 'light', primaryColor: '#a855f7', animation: true, haptic: true, language: 'fa' }; }
             }
 
@@ -455,46 +469,25 @@
                 localStorage.setItem('quizicoSettings', JSON.stringify(s));
             }
 
+            function getTranslation(k) { var t = translations[currentLang] || translations.fa; return t[k] || translations.fa[k] || k; }
+
             function triggerHaptic(style) {
                 var s = getSettings();
                 if (s.haptic === false) return;
                 if (webApp && webApp.HapticFeedback && webApp.HapticFeedback.impactOccurred) {
-                    try {
-                        webApp.HapticFeedback.impactOccurred(style || 'light');
-                    } catch(e) {}
+                    try { webApp.HapticFeedback.impactOccurred(style || 'light'); } catch(e) {}
                 }
             }
 
-            function hapticNotify(type) {
-                var s = getSettings();
-                if (s.haptic === false) return;
-                if (webApp && webApp.HapticFeedback && webApp.HapticFeedback.notificationOccurred) {
-                    try {
-                        webApp.HapticFeedback.notificationOccurred(type || 'success');
-                    } catch(e) {}
-                }
-            }
-
-            function hexToRgb(hex) {
-                var r = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-                return r ? { r: parseInt(r[1],16), g: parseInt(r[2],16), b: parseInt(r[3],16) } : { r:168,g:85,b:247 };
-            }
-
-            function shadeColor(c,p) {
-                var r = hexToRgb(c);
-                var rr = Math.max(0, Math.min(255, r.r + p));
-                var gg = Math.max(0, Math.min(255, r.g + p));
-                var bb = Math.max(0, Math.min(255, r.b + p));
-                return '#' + ((1 << 24) + (rr << 16) + (gg << 8) + bb).toString(16).slice(1);
-            }
+            function hexToRgb(h) { var r = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(h); return r ? { r: parseInt(r[1],16), g: parseInt(r[2],16), b: parseInt(r[3],16) } : { r:168,g:85,b:247 }; }
+            function shadeColor(c,p){var r=hexToRgb(c);var rr=Math.max(0,Math.min(255,r.r+p));var gg=Math.max(0,Math.min(255,r.g+p));var bb=Math.max(0,Math.min(255,r.b+p));return '#'+((1<<24)+(rr<<16)+(gg<<8)+bb).toString(16).slice(1);}
 
             function applyLanguage(lang) {
                 var t = translations[lang] || translations.fa;
                 document.querySelectorAll('[data-i18n]').forEach(function(el) {
-                    var key = el.getAttribute('data-i18n');
-                    if (t[key]) el.textContent = t[key];
+                    var k = el.getAttribute('data-i18n');
+                    if (t[k]) el.textContent = t[k];
                 });
-
                 if (lang === 'en') {
                     document.documentElement.setAttribute('dir', 'ltr');
                     document.body.style.fontFamily = 'Arial, sans-serif';
@@ -509,24 +502,21 @@
 
             function applyTheme() {
                 var s = getSettings();
+                currentLang = s.language || 'fa';
                 var t = s.theme || 'light';
                 var p = s.primaryColor || '#a855f7';
                 document.documentElement.setAttribute('data-theme', t);
                 if (t === 'dark') {
                     var dp = shadeColor(p, 40);
                     document.documentElement.style.setProperty('--primary', dp);
-                    document.documentElement.style.setProperty('--primary-rgb', hexToRgb(dp).r + ', ' + hexToRgb(dp).g + ', ' + hexToRgb(dp).b);
                 } else {
                     document.documentElement.style.setProperty('--primary', p);
-                    document.documentElement.style.setProperty('--primary-rgb', hexToRgb(p).r + ', ' + hexToRgb(p).g + ', ' + hexToRgb(p).b);
                 }
-
                 if (s.animation === false) {
                     document.documentElement.setAttribute('data-animation', 'off');
                 } else {
                     document.documentElement.removeAttribute('data-animation');
                 }
-
                 document.querySelectorAll('.theme-option').forEach(function(b) {
                     b.classList.toggle('active', b.dataset.themeMode === t);
                 });
@@ -538,7 +528,6 @@
                 });
                 document.getElementById('animationToggle').classList.toggle('active', s.animation !== false);
                 document.getElementById('hapticToggle').classList.toggle('active', s.haptic !== false);
-
                 applyLanguage(s.language);
             }
 
@@ -579,10 +568,17 @@
                 s.haptic = !s.haptic;
                 saveSettings(s);
                 applyTheme();
-                if (s.haptic) {
-                    triggerHaptic('medium');
-                }
+                if (s.haptic) triggerHaptic('medium');
             };
+
+            function openSupportLink(){
+                if (webApp && webApp.openEitaaLink) {
+                    webApp.openEitaaLink('https://eitaa.com/Amirmahdi_code');
+                } else {
+                    window.open('https://eitaa.com/Amirmahdi_code', '_blank');
+                }
+            }
+            window.openSupportLink = openSupportLink;
 
             if (webApp) {
                 webApp.ready();
@@ -593,6 +589,13 @@
             }
 
             applyTheme();
+            
+            setTimeout(function() {
+                var notif = document.getElementById('supportNotification');
+                if (notif) {
+                    notif.style.display = 'none';
+                }
+            }, 5000);
         })();
     </script>
 </body>
