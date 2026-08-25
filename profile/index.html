@@ -37,13 +37,13 @@
             --primary-light: #d8b4fe;
             --primary-rgb: 192, 132, 252;
             --dark: #f1f5f9;
-            --text: #cbd5e1;
+            --text: #e2e8f0;
             --text-light: #94a3b8;
             --white: #2d2a3e;
             --card-bg: #2d2a3e;
             --header-bg: #2d2a3e;
             --shadow: 3px 3px 0 #000000;
-            --border: 1px solid #000000;
+            --border: 1px solid #475569;
         }
 
         [data-animation="off"] * {
@@ -51,11 +51,7 @@
             transition: none !important;
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
             font-family: 'IRANSans', Tahoma, sans-serif;
@@ -72,7 +68,6 @@
             top: 0; left: 0; right: 0; bottom: 0;
             z-index: 0;
             background: linear-gradient(135deg, var(--bg) 0%, var(--bg2) 40%, var(--bg3) 80%);
-            transition: background 0.3s ease;
         }
 
         .header {
@@ -94,11 +89,7 @@
             margin: 0 auto;
         }
 
-        .header-right {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
+        .header-right { display: flex; align-items: center; gap: 10px; }
 
         .header-logo {
             width: 44px;
@@ -139,7 +130,6 @@
             min-height: 60vh;
             gap: 12px;
         }
-
         .loader {
             width: 50px;
             height: 50px;
@@ -162,12 +152,7 @@
             box-shadow: var(--shadow);
         }
 
-        .profile-top {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 10px;
-        }
+        .profile-top { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
 
         .profile-avatar {
             width: 55px;
@@ -182,21 +167,17 @@
             color: var(--primary);
             overflow: hidden;
             flex-shrink: 0;
+            cursor: pointer;
+            transition: all 0.2s ease;
         }
+        .profile-avatar:active { transform: scale(0.95); }
         .profile-avatar img { width: 100%; height: 100%; object-fit: cover; }
 
         .profile-info { flex: 1; min-width: 0; }
         .profile-name { font-size: 14px; font-weight: 800; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .profile-username { font-size: 9px; color: rgba(255,255,255,0.7); direction: ltr; text-align: right; }
 
-        .profile-badges {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-            border-top: 1px solid rgba(255,255,255,0.2);
-            padding-top: 10px;
-        }
-
+        .profile-badges { display: flex; gap: 8px; flex-wrap: wrap; border-top: 1px solid rgba(255,255,255,0.2); padding-top: 10px; }
         .badge {
             display: flex;
             align-items: center;
@@ -210,11 +191,7 @@
             color: #fff;
         }
 
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 8px;
-        }
+        .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
 
         .stat-card {
             background: var(--card-bg);
@@ -272,13 +249,7 @@
         .league-title { font-size: 11px; font-weight: 800; color: var(--dark); margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
         .league-title i { color: var(--primary); }
         .league-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
-        .league-item {
-            text-align: center;
-            padding: 10px;
-            border-radius: 8px;
-            border: var(--border);
-            background: var(--bg2);
-        }
+        .league-item { text-align: center; padding: 10px; border-radius: 8px; border: var(--border); background: var(--bg2); }
         .league-item.win { background: #10b981; color: #fff; }
         .league-item.draw { background: #f59e0b; color: #fff; }
         .league-item.loss { background: #ef4444; color: #fff; }
@@ -295,13 +266,7 @@
         .achievements-title { font-size: 11px; font-weight: 800; color: var(--dark); margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
         .achievements-title i { color: var(--primary); }
         .achievements-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
-        .achievement-item {
-            text-align: center;
-            padding: 8px 4px;
-            border: var(--border);
-            border-radius: 8px;
-            background: var(--bg2);
-        }
+        .achievement-item { text-align: center; padding: 8px 4px; border: var(--border); border-radius: 8px; background: var(--bg2); }
         .achievement-icon { font-size: 20px; display: block; margin-bottom: 3px; }
         .achievement-name { font-size: 7px; font-weight: 700; color: var(--dark); }
         .achievement-item.locked { opacity: 0.3; filter: grayscale(1); }
@@ -314,28 +279,107 @@
             box-shadow: var(--shadow);
         }
         .games-list { display: flex; flex-direction: column; gap: 6px; max-height: 200px; overflow-y: auto; }
-        .game-item {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 8px 10px;
-            border: var(--border);
-            border-radius: 8px;
-            background: var(--bg2);
-        }
+        .game-item { display: flex; align-items: center; justify-content: space-between; padding: 8px 10px; border: var(--border); border-radius: 8px; background: var(--bg2); }
         .game-players { font-size: 9px; font-weight: 700; color: var(--dark); }
         .game-score { font-size: 9px; font-weight: 800; padding: 3px 10px; border-radius: 8px; border: var(--border); }
         .game-score.win { background: #10b981; color: #fff; }
         .game-score.loss { background: #ef4444; color: #fff; }
         .game-score.draw { background: #f59e0b; color: #fff; }
 
-        .empty-state {
-            text-align: center;
-            padding: 14px;
-            color: var(--text-light);
-            font-size: 10px;
-        }
+        .empty-state { text-align: center; padding: 14px; color: var(--text-light); font-size: 10px; }
         .empty-state img { width: 50px; height: 50px; object-fit: contain; margin: 0 auto 6px; display: block; }
+
+        .avatar-modal-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.7);
+            z-index: 1000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .avatar-modal-overlay.show { display: flex; }
+        .avatar-modal {
+            background: var(--card-bg);
+            border: var(--border);
+            border-radius: var(--radius);
+            padding: 16px;
+            box-shadow: 5px 5px 0 #000;
+            max-width: 500px;
+            width: 100%;
+            max-height: 80vh;
+            overflow-y: auto;
+            position: relative;
+        }
+        .avatar-modal-close {
+            position: sticky;
+            top: 0;
+            float: left;
+            width: 28px;
+            height: 28px;
+            border: var(--border);
+            border-radius: 50%;
+            background: var(--bg2);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+        }
+        .avatar-modal-title { text-align: center; font-size: 14px; font-weight: 800; color: var(--dark); margin-bottom: 12px; }
+
+        .avatar-category { margin-bottom: 14px; }
+        .avatar-category-title {
+            font-size: 10px;
+            font-weight: 800;
+            color: var(--dark);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .avatar-category-title .price-tag {
+            font-size: 8px;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: 10px;
+            background: var(--bg2);
+            border: var(--border);
+            color: var(--dark);
+        }
+        .avatar-category-title .price-tag.free { background: #d1fae5; color: #059669; }
+
+        .avatar-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; }
+
+        .avatar-item {
+            text-align: center;
+            padding: 8px 4px;
+            border: var(--border);
+            border-radius: 8px;
+            background: var(--bg2);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .avatar-item:active { transform: scale(0.95); }
+        .avatar-item.active { border-color: var(--gold); border-width: 2px; }
+        .avatar-item-img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin: 0 auto 4px;
+            background: #fff;
+            border: var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            color: var(--primary);
+            overflow: hidden;
+        }
+        .avatar-item-img img { width: 100%; height: 100%; object-fit: cover; }
+        .avatar-item-price { font-size: 7px; font-weight: 700; color: var(--text-light); }
+        .avatar-item-price.free { color: #059669; }
 
         .bottom-nav {
             position: fixed;
@@ -348,7 +392,6 @@
             padding: 6px 0;
             z-index: 999;
         }
-
         .nav-item {
             display: flex;
             flex-direction: column;
@@ -366,6 +409,10 @@
         .nav-item i { font-size: 18px; }
         .nav-item span { font-size: 8px; font-weight: 600; }
         .nav-item.active { color: var(--primary); }
+
+        @media (max-width: 480px) {
+            .avatar-grid { grid-template-columns: repeat(4, 1fr); }
+        }
     </style>
 </head>
 <body>
@@ -394,7 +441,9 @@
 
             <div class="profile-header-card">
                 <div class="profile-top">
-                    <div class="profile-avatar" id="profileAvatar"><i class="fa-solid fa-user"></i></div>
+                    <div class="profile-avatar" id="profileAvatar" onclick="openAvatarModal()">
+                        <i class="fa-solid fa-user"></i>
+                    </div>
                     <div class="profile-info">
                         <div class="profile-name" id="profileName"></div>
                         <div class="profile-username" id="profileUsername"></div>
@@ -407,21 +456,9 @@
             </div>
 
             <div class="stats-grid">
-                <div class="stat-card">
-                    <div class="stat-icon"><i class="fa-solid fa-star"></i></div>
-                    <div class="stat-value" id="totalScore">0</div>
-                    <div class="stat-label" data-i18n="total_score">امتیاز کل</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon"><i class="fa-solid fa-gamepad"></i></div>
-                    <div class="stat-value" id="totalGames">0</div>
-                    <div class="stat-label" data-i18n="total_games">تعداد بازی</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon"><i class="fa-solid fa-chart-line"></i></div>
-                    <div class="stat-value" id="winRate">0%</div>
-                    <div class="stat-label" data-i18n="win_rate">درصد برد</div>
-                </div>
+                <div class="stat-card"><div class="stat-icon"><i class="fa-solid fa-star"></i></div><div class="stat-value" id="totalScore">0</div><div class="stat-label" data-i18n="total_score">امتیاز کل</div></div>
+                <div class="stat-card"><div class="stat-icon"><i class="fa-solid fa-gamepad"></i></div><div class="stat-value" id="totalGames">0</div><div class="stat-label" data-i18n="total_games">تعداد بازی</div></div>
+                <div class="stat-card"><div class="stat-icon"><i class="fa-solid fa-chart-line"></i></div><div class="stat-value" id="winRate">0%</div><div class="stat-label" data-i18n="win_rate">درصد برد</div></div>
             </div>
 
             <div class="progress-card">
@@ -435,18 +472,9 @@
             <div class="league-card">
                 <div class="league-title"><i class="fa-solid fa-trophy"></i> <span data-i18n="league_stats">آمار لیگ</span></div>
                 <div class="league-stats">
-                    <div class="league-item win">
-                        <span class="league-item-value" id="winsCount">0</span>
-                        <span class="league-item-label" data-i18n="wins">برد</span>
-                    </div>
-                    <div class="league-item draw">
-                        <span class="league-item-value" id="drawsCount">0</span>
-                        <span class="league-item-label" data-i18n="draws">مساوی</span>
-                    </div>
-                    <div class="league-item loss">
-                        <span class="league-item-value" id="lossesCount">0</span>
-                        <span class="league-item-label" data-i18n="losses">باخت</span>
-                    </div>
+                    <div class="league-item win"><span class="league-item-value" id="winsCount">0</span><span class="league-item-label" data-i18n="wins">برد</span></div>
+                    <div class="league-item draw"><span class="league-item-value" id="drawsCount">0</span><span class="league-item-label" data-i18n="draws">مساوی</span></div>
+                    <div class="league-item loss"><span class="league-item-value" id="lossesCount">0</span><span class="league-item-label" data-i18n="losses">باخت</span></div>
                 </div>
             </div>
 
@@ -463,6 +491,14 @@
         </div>
     </main>
 
+    <div class="avatar-modal-overlay" id="avatarModalOverlay">
+        <div class="avatar-modal">
+            <div class="avatar-modal-close" onclick="closeAvatarModal()"><i class="fa-solid fa-xmark"></i></div>
+            <div class="avatar-modal-title" data-i18n="choose_avatar">انتخاب آواتار</div>
+            <div id="avatarCategories"></div>
+        </div>
+    </div>
+
     <nav class="bottom-nav">
         <a href="../dashboard/" class="nav-item"><i class="fa-solid fa-house"></i><span data-i18n="home">خانه</span></a>
         <a href="../ranking/" class="nav-item"><i class="fa-solid fa-trophy"></i><span data-i18n="ranking">رتبه</span></a>
@@ -473,8 +509,11 @@
     <script>
         (function() {
             var webApp = window.Eitaa?.WebApp;
-            var API_URL = 'https://script.google.com/macros/s/AKfycby39_m_-w42F1ps3z21aAW2jMXjgmDJjrPD6CfrLLczg-KPk1cbyXcVnUjaeFQ4TIP9ww/exec';
+            var API_URL = 'https://script.google.com/macros/s/AKfycbzls3pY6FEklM3GOGSyMQfbX2PpMwCxS6yroUSQ_7MKzJnni3H18ZCtSl12-EGt2GjBeQ/exec';
             var SAD_IMAGE = 'https://cdn.imgurl.ir/uploads/g58935_InShot_20260822_140943752.png';
+            var userDiamonds = 0;
+            var currentAvatar = 'default';
+            var currentLang = 'fa';
 
             var translations = {
                 fa: {
@@ -484,7 +523,10 @@
                     wins: 'برد', draws: 'مساوی', losses: 'باخت',
                     achievements: 'افتخارات', history: 'تاریخچه بازی‌ها',
                     home: 'خانه', ranking: 'رتبه', profile_nav: 'پروفایل', settings: 'تنظیمات',
-                    no_games: 'مسابقه‌ای یافت نشد'
+                    no_games: 'مسابقه‌ای یافت نشد', choose_avatar: 'انتخاب آواتار',
+                    icons: 'آیکون‌ها', boys: 'پسر بچه', girls: 'دختر بچه',
+                    free: 'رایگان', diamonds_short: 'الماس',
+                    not_enough_diamonds: 'الماس کافی نداری!', avatar_purchased: 'آواتار خریداری شد!'
                 },
                 en: {
                     profile: 'Profile', loading: 'Loading...', coins: 'Coins', diamonds: 'Diamonds',
@@ -493,7 +535,10 @@
                     wins: 'Wins', draws: 'Draws', losses: 'Losses',
                     achievements: 'Achievements', history: 'Game History',
                     home: 'Home', ranking: 'Ranking', profile_nav: 'Profile', settings: 'Settings',
-                    no_games: 'No games found'
+                    no_games: 'No games found', choose_avatar: 'Choose Avatar',
+                    icons: 'Icons', boys: 'Boys', girls: 'Girls',
+                    free: 'Free', diamonds_short: 'Diamonds',
+                    not_enough_diamonds: 'Not enough diamonds!', avatar_purchased: 'Avatar purchased!'
                 },
                 ar: {
                     profile: 'الملف', loading: 'جار التحميل...', coins: 'عملات', diamonds: 'ألماس',
@@ -502,84 +547,71 @@
                     wins: 'فوز', draws: 'تعادل', losses: 'خسارة',
                     achievements: 'الإنجازات', history: 'سجل الألعاب',
                     home: 'الرئيسية', ranking: 'الترتيب', profile_nav: 'الملف', settings: 'الإعدادات',
-                    no_games: 'لا توجد ألعاب'
+                    no_games: 'لا توجد ألعاب', choose_avatar: 'اختر الصورة الرمزية',
+                    icons: 'أيقونات', boys: 'أولاد', girls: 'بنات',
+                    free: 'مجاني', diamonds_short: 'ألماس',
+                    not_enough_diamonds: 'ألماس غير كافي!', avatar_purchased: 'تم شراء الصورة الرمزية!'
                 }
             };
 
-            function getSettings() {
-                try {
-                    var raw = localStorage.getItem('quizicoSettings');
-                    if (!raw) return { theme: 'light', primaryColor: '#a855f7', animation: true, haptic: true, language: 'fa' };
-                    var p = JSON.parse(raw);
-                    if (!p.theme) p.theme = 'light';
-                    if (!p.primaryColor) p.primaryColor = '#a855f7';
-                    if (p.animation === undefined) p.animation = true;
-                    if (p.haptic === undefined) p.haptic = true;
-                    if (!p.language) p.language = 'fa';
-                    return p;
-                } catch(e) { return { theme: 'light', primaryColor: '#a855f7', animation: true, haptic: true, language: 'fa' }; }
-            }
-
-            function hexToRgb(h) {
-                var r = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(h);
-                return r ? { r: parseInt(r[1],16), g: parseInt(r[2],16), b: parseInt(r[3],16) } : { r:168,g:85,b:247 };
-            }
-            function shadeColor(c,p){var r=hexToRgb(c);var rr=Math.max(0,Math.min(255,r.r+p));var gg=Math.max(0,Math.min(255,r.g+p));var bb=Math.max(0,Math.min(255,r.b+p));return '#'+((1<<24)+(rr<<16)+(gg<<8)+bb).toString(16).slice(1);}
-
-            function applyLanguage(lang) {
-                var t = translations[lang] || translations.fa;
-                document.querySelectorAll('[data-i18n]').forEach(function(el) {
-                    var k = el.getAttribute('data-i18n');
-                    if (t[k]) el.textContent = t[k];
-                });
-                if (lang === 'en') {
-                    document.documentElement.setAttribute('dir', 'ltr');
-                    document.body.style.fontFamily = 'Arial, sans-serif';
-                } else if (lang === 'ar') {
-                    document.documentElement.setAttribute('dir', 'rtl');
-                    document.body.style.fontFamily = 'Tahoma, sans-serif';
-                } else {
-                    document.documentElement.setAttribute('dir', 'rtl');
-                    document.body.style.fontFamily = "'IRANSans', Tahoma, sans-serif";
+            var avatarCategories = [
+                {
+                    id: 'icons',
+                    labelKey: 'icons',
+                    price: 0,
+                    items: [
+                        { id: 'icon_game', icon: 'fa-gamepad' },
+                        { id: 'icon_trophy', icon: 'fa-trophy' },
+                        { id: 'icon_star', icon: 'fa-star' },
+                        { id: 'icon_bolt', icon: 'fa-bolt' },
+                        { id: 'icon_fire', icon: 'fa-fire' },
+                        { id: 'icon_crown', icon: 'fa-crown' },
+                        { id: 'icon_medal', icon: 'fa-medal' },
+                        { id: 'icon_rocket', icon: 'fa-rocket' },
+                        { id: 'icon_ghost', icon: 'fa-ghost' },
+                        { id: 'icon_dragon', icon: 'fa-dragon' },
+                        { id: 'icon_wand', icon: 'fa-wand-magic-sparkles' },
+                        { id: 'icon_hat', icon: 'fa-hat-wizard' },
+                        { id: 'icon_helmet', icon: 'fa-helmet-safety' },
+                        { id: 'icon_shield', icon: 'fa-shield-halved' },
+                        { id: 'icon_sword', icon: 'fa-hand-fist' }
+                    ]
+                },
+                {
+                    id: 'boys',
+                    labelKey: 'boys',
+                    price: 20,
+                    items: [
+                        { id: 'boy_1', url: 'https://cdn.imgurl.ir/uploads/l17100_QkCRHe00vl64Bngk74ayYmWMyWA-NjfsC7SoRbGgrkm1mS-bpQ.png' },
+                        { id: 'boy_2', url: 'https://cdn.imgurl.ir/uploads/g87708_nYSMEcudjDVvsMsfO4B6nrWGmFI-J3OzSBMOSwKo6Mt48wolyg.png' },
+                        { id: 'boy_3', url: 'https://cdn.imgurl.ir/uploads/q01044_VWzDtI4NYQ660EGTVD_xToLVOvw-DkODf3dzQq2kbk2i1b-cIQ.png' },
+                        { id: 'boy_4', url: 'https://cdn.imgurl.ir/uploads/w428496_0RBfnEt77slNmis2YlNfIjtELkE-_nTEsqjVSQafpoCS0X1pXg.png' },
+                        { id: 'boy_5', url: 'https://cdn.imgurl.ir/uploads/h099226_Kaahld11_fKS5dcGDsq-5IvBiC0-olahkKmOTsSjohG4mMsVUw.png' },
+                        { id: 'boy_6', url: 'https://cdn.imgurl.ir/uploads/k778258_pd9TZqS3DHKaaJQOygY-3WFHMAE-NzGEJ7R1Sv-r5Dfc6Zi3Ig.png' },
+                        { id: 'boy_7', url: 'https://cdn.imgurl.ir/uploads/w221825_-1Xu8BzjzGa1I7ZIBVaYpoez4BM-zdVRFGLaRJGymjrVOu_yBA.png' },
+                        { id: 'boy_8', url: 'https://cdn.imgurl.ir/uploads/o12072_rsMh7nSKjcODxjSPFWwfrlpYFe4-RHju528wRf-FCo_v2tJX7w.png' },
+                        { id: 'boy_9', url: 'https://cdn.imgurl.ir/uploads/m007403_MNhHAeXQ-_-nEMVuihCtgYXUS90-5LFmX4D7T2-1RaoN058vnw.png' },
+                        { id: 'boy_10', url: 'https://cdn.imgurl.ir/uploads/h976855_MLDYzJITIyaUkB6efcWGamXK39M-yfLRI0_7RrCmky6p-jgXFw.png' }
+                    ]
+                },
+                {
+                    id: 'girls',
+                    labelKey: 'girls',
+                    price: 20,
+                    items: [
+                        { id: 'girl_1', url: 'https://cdn.imgurl.ir/uploads/h993569_G_wzhIk2ocoOPFhmmQHpUuS1mQc-IXeKOSBFSx6jn_y9tpVazg.png' },
+                        { id: 'girl_2', url: 'https://cdn.imgurl.ir/uploads/u2553__Yb1fK6xw6Di1SX-7xB5v2J7e-g-IYBMcl_wSmqXNTkmAQMGnA.png' },
+                        { id: 'girl_3', url: 'https://cdn.imgurl.ir/uploads/w03550__MlKSY3NXQ9cWkwVioa7hUpr6aI-2MRPg-L3QNOpRTm1oZTHtQ.png' },
+                        { id: 'girl_4', url: 'https://cdn.imgurl.ir/uploads/r074193_q1uxpQIZsrzslDhI1W69Su-XvbY-x5jd5EZ1SyKggCCSjbbxrg.png' },
+                        { id: 'girl_5', url: 'https://cdn.imgurl.ir/uploads/w035688_E2FfMOkE8ZGtuOZqU2q_VGTE6Yw-IU1JraRkSTub6ymIVXQuxA.png' },
+                        { id: 'girl_6', url: 'https://cdn.imgurl.ir/uploads/c895184_bt1drvChqXnDjtGhNgxJ9M2Ho4I-n1KpcnSiSXSboB5rKfBwCg.png' },
+                        { id: 'girl_7', url: 'https://cdn.imgurl.ir/uploads/u246883_b3j_B2NgyZNITErHK5c9A3dWFRA-5bV5bdzHSGi4neWTa9881A.png' },
+                        { id: 'girl_8', url: 'https://cdn.imgurl.ir/uploads/o0025_B1BkJ9n5GL25bnqG-YNn79Qvsds-Erx3uqovQtex6125wXCD7g.png' },
+                        { id: 'girl_9', url: 'https://cdn.imgurl.ir/uploads/t14047_NR8hWSzjLbSm2cXNrBnA2mEh43o-XhY5hyhBSU6s-9c4Fv5wRA.png' },
+                        { id: 'girl_10', url: 'https://cdn.imgurl.ir/uploads/v96829_FouVxzw8xOmCFvf0IEri962BmHQ-LxKzSWS_aj8dcNI5EWVw.png' }
+                    ]
                 }
-            }
-
-            function applyTheme() {
-                var s = getSettings();
-                var t = s.theme || 'light';
-                var p = s.primaryColor || '#a855f7';
-                document.documentElement.setAttribute('data-theme', t);
-                if (t === 'dark') {
-                    var dp = shadeColor(p, 40);
-                    document.documentElement.style.setProperty('--primary', dp);
-                } else {
-                    document.documentElement.style.setProperty('--primary', p);
-                }
-                if (s.animation === false) {
-                    document.documentElement.setAttribute('data-animation', 'off');
-                } else {
-                    document.documentElement.removeAttribute('data-animation');
-                }
-                applyLanguage(s.language);
-            }
-
-            function getEitaaUser(){return webApp&&webApp.initDataUnsafe&&webApp.initDataUnsafe.user?webApp.initDataUnsafe.user:null;}
-            function getUserId(){var u=getEitaaUser();return u?(typeof u.id==='number'?u.id.toString():String(u.id||'')):'';}
-            function fetchData(action,params){
-                var payload={action:action,username:getUserId()};
-                if(params){for(var k in params){if(params.hasOwnProperty(k))payload[k]=params[k];}}
-                return fetch(API_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(payload)}).then(function(r){return r.json();}).catch(function(){return{ok:false};});
-            }
-
-            function animateCount(el,target,dur){
-                var st=0,stt=null;
-                function step(ts){if(!stt)stt=ts;var p=Math.min((ts-stt)/dur,1);var e=1-Math.pow(1-p,3);el.textContent=Math.floor(e*target);if(p<1)requestAnimationFrame(step);else el.textContent=target;}
-                requestAnimationFrame(step);
-            }
-
-            function renderEmpty(text){
-                return '<div class="empty-state"><img src="'+SAD_IMAGE+'" alt=""><p>'+text+'</p></div>';
-            }
+            ];
 
             var allAchievements = [
                 { id: 'first_game', name: 'اولین بازی', icon: '🕹️' },
@@ -596,6 +628,56 @@
                 { id: '100000_score', name: '۱۰۰۰۰۰ امتیاز', icon: '☄️' }
             ];
 
+            function getSettings() {
+                try {
+                    var raw = localStorage.getItem('quizicoSettings');
+                    if (!raw) return { theme: 'light', primaryColor: '#a855f7', animation: true, language: 'fa' };
+                    var p = JSON.parse(raw);
+                    if (!p.theme) p.theme = 'light';
+                    if (!p.primaryColor) p.primaryColor = '#a855f7';
+                    if (p.animation === undefined) p.animation = true;
+                    if (!p.language) p.language = 'fa';
+                    return p;
+                } catch(e) { return { theme: 'light', primaryColor: '#a855f7', animation: true, language: 'fa' }; }
+            }
+
+            function getTranslation(k) { var t = translations[currentLang] || translations.fa; return t[k] || translations.fa[k] || k; }
+
+            function hexToRgb(h) { var r = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(h); return r ? { r: parseInt(r[1],16), g: parseInt(r[2],16), b: parseInt(r[3],16) } : { r:168,g:85,b:247 }; }
+            function shadeColor(c,p){var r=hexToRgb(c);var rr=Math.max(0,Math.min(255,r.r+p));var gg=Math.max(0,Math.min(255,r.g+p));var bb=Math.max(0,Math.min(255,r.b+p));return '#'+((1<<24)+(rr<<16)+(gg<<8)+bb).toString(16).slice(1);}
+
+            function applyTheme() {
+                var s = getSettings();
+                currentLang = s.language || 'fa';
+                var t = s.theme || 'light';
+                var p = s.primaryColor || '#a855f7';
+                document.documentElement.setAttribute('data-theme', t);
+                if (t === 'dark') { document.documentElement.style.setProperty('--primary', shadeColor(p, 40)); }
+                else { document.documentElement.style.setProperty('--primary', p); }
+                if (s.animation === false) { document.documentElement.setAttribute('data-animation', 'off'); }
+                else { document.documentElement.removeAttribute('data-animation'); }
+                if (currentLang === 'en') { document.documentElement.setAttribute('dir','ltr'); document.body.style.fontFamily='Arial, sans-serif'; }
+                else if (currentLang === 'ar') { document.documentElement.setAttribute('dir','rtl'); document.body.style.fontFamily='Tahoma, sans-serif'; }
+                else { document.documentElement.setAttribute('dir','rtl'); document.body.style.fontFamily="'IRANSans', Tahoma, sans-serif"; }
+                document.querySelectorAll('[data-i18n]').forEach(function(el){ var k=el.getAttribute('data-i18n'); var t2=translations[currentLang]||translations.fa; if(t2[k]) el.textContent=t2[k]; });
+            }
+
+            function getEitaaUser(){return webApp&&webApp.initDataUnsafe&&webApp.initDataUnsafe.user?webApp.initDataUnsafe.user:null;}
+            function getUserId(){var u=getEitaaUser();return u?(typeof u.id==='number'?u.id.toString():String(u.id||'')):'';}
+            function fetchData(action,params){
+                var payload={action:action,username:getUserId()};
+                if(params){for(var k in params){if(params.hasOwnProperty(k))payload[k]=params[k];}}
+                return fetch(API_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(payload)}).then(function(r){return r.json();}).catch(function(){return{ok:false};});
+            }
+
+            function animateCount(el,target,dur){
+                var st=0,stt=null;
+                function step(ts){if(!stt)stt=ts;var p=Math.min((ts-stt)/dur,1);var e=1-Math.pow(1-p,3);el.textContent=Math.floor(e*target);if(p<1)requestAnimationFrame(step);else el.textContent=target;}
+                requestAnimationFrame(step);
+            }
+
+            function renderEmpty(text){ return '<div class="empty-state"><img src="'+SAD_IMAGE+'" alt=""><p>'+text+'</p></div>'; }
+
             function renderAchievements(data) {
                 var grid = document.getElementById('achievementsGrid');
                 var stats = {};
@@ -604,7 +686,6 @@
                 var score = data.score || 0;
                 var games = stats.games || 0;
                 var wins = stats.wins || 0;
-                
                 if (games >= 1) earned.push('first_game');
                 if (games >= 10) earned.push('10_games');
                 if (games >= 100) earned.push('100_games');
@@ -617,16 +698,86 @@
                 if (score >= 1000) earned.push('1000_score');
                 if (score >= 10000) earned.push('10000_score');
                 if (score >= 100000) earned.push('100000_score');
-                
                 var uniqueEarned = [];
-                earned.forEach(function(e) { if (uniqueEarned.indexOf(e) === -1) uniqueEarned.push(e); });
-                
-                grid.innerHTML = allAchievements.map(function(a) {
+                earned.forEach(function(e){ if(uniqueEarned.indexOf(e)===-1) uniqueEarned.push(e); });
+                grid.innerHTML = allAchievements.map(function(a){
                     var unlocked = uniqueEarned.indexOf(a.id) !== -1;
-                    return '<div class="achievement-item'+(unlocked?'':' locked')+'">'+
-                        '<span class="achievement-icon">'+a.icon+'</span>'+
-                        '<span class="achievement-name">'+a.name+'</span></div>';
+                    return '<div class="achievement-item'+(unlocked?'':' locked')+'"><span class="achievement-icon">'+a.icon+'</span><span class="achievement-name">'+a.name+'</span></div>';
                 }).join('');
+            }
+
+            function renderAvatarModal() {
+                var html = '';
+                avatarCategories.forEach(function(cat) {
+                    var label = getTranslation(cat.labelKey);
+                    var priceText = cat.price === 0 ? getTranslation('free') : cat.price + ' ' + getTranslation('diamonds_short');
+                    var priceClass = cat.price === 0 ? ' free' : '';
+                    html += '<div class="avatar-category">';
+                    html += '<div class="avatar-category-title">'+label+' <span class="price-tag'+priceClass+'">'+priceText+'</span></div>';
+                    html += '<div class="avatar-grid">';
+                    cat.items.forEach(function(item) {
+                        var isActive = currentAvatar === item.id;
+                        var imgHtml;
+                        if (item.icon) {
+                            imgHtml = '<i class="fa-solid '+item.icon+'"></i>';
+                        } else {
+                            imgHtml = '<img src="'+item.url+'" alt="">';
+                        }
+                        var priceHtml = cat.price === 0 ? '<span class="avatar-item-price free">'+getTranslation('free')+'</span>' : '<span class="avatar-item-price">'+cat.price+' 💎</span>';
+                        html += '<div class="avatar-item'+(isActive?' active':'')+'" onclick="selectAvatar(\''+cat.id+'\',\''+item.id+'\','+cat.price+')">';
+                        html += '<div class="avatar-item-img">'+imgHtml+'</div>';
+                        html += priceHtml;
+                        html += '</div>';
+                    });
+                    html += '</div></div>';
+                });
+                document.getElementById('avatarCategories').innerHTML = html;
+            }
+
+            function openAvatarModal() {
+                renderAvatarModal();
+                document.getElementById('avatarModalOverlay').classList.add('show');
+            }
+            function closeAvatarModal() {
+                document.getElementById('avatarModalOverlay').classList.remove('show');
+            }
+            window.openAvatarModal = openAvatarModal;
+            window.closeAvatarModal = closeAvatarModal;
+
+            window.selectAvatar = function(catId, itemId, price) {
+                if (price > 0 && userDiamonds < price) {
+                    if (webApp) webApp.showAlert(getTranslation('not_enough_diamonds'));
+                    return;
+                }
+                if (price > 0) {
+                    userDiamonds -= price;
+                    document.getElementById('diamondsValue').textContent = userDiamonds;
+                    fetchData('updateUser', { diamonds: userDiamonds });
+                }
+                currentAvatar = itemId;
+                fetchData('updateUser', { avatar: itemId });
+                renderAvatarModal();
+                updateProfileAvatar();
+                if (webApp) webApp.showAlert(getTranslation('avatar_purchased'));
+            };
+
+            function updateProfileAvatar() {
+                var avatarEl = document.getElementById('profileAvatar');
+                var found = null;
+                avatarCategories.forEach(function(cat) {
+                    cat.items.forEach(function(item) {
+                        if (item.id === currentAvatar) found = { cat: cat, item: item };
+                    });
+                });
+                if (found) {
+                    if (found.item.icon) {
+                        avatarEl.innerHTML = '<i class="fa-solid '+found.item.icon+'"></i>';
+                    } else {
+                        avatarEl.innerHTML = '<img src="'+found.item.url+'" alt="">';
+                    }
+                } else {
+                    avatarEl.innerHTML = '<i class="fa-solid fa-user"></i>';
+                }
             }
 
             async function loadProfile() {
@@ -637,20 +788,18 @@
                         var fullName = (user.first_name||'')+' '+(user.last_name||'');
                         document.getElementById('profileName').textContent = fullName.trim() || 'کاربر';
                         document.getElementById('profileUsername').textContent = 'ID: '+username;
-                        if (user.photo_url) {
-                            document.getElementById('profileAvatar').innerHTML = '<img src="'+user.photo_url+'" alt="">';
-                        }
                     }
-
                     var userData = await fetchData('getUser', {});
                     if (userData.ok && userData.data) {
                         var d = userData.data;
+                        userDiamonds = d.diamonds || 0;
+                        currentAvatar = d.avatar || 'default';
                         animateCount(document.getElementById('totalScore'), d.score||0, 800);
                         animateCount(document.getElementById('coinsValue'), d.coins||0, 800);
-                        animateCount(document.getElementById('diamondsValue'), d.diamonds||0, 800);
+                        animateCount(document.getElementById('diamondsValue'), userDiamonds, 800);
                         renderAchievements(d);
+                        updateProfileAvatar();
                     }
-
                     var league = await fetchData('getLeague', {});
                     var wins=0,draws=0,losses=0;
                     if (league.ok && league.data) {
@@ -670,16 +819,14 @@
                         animateCount(document.getElementById('totalGames'), games.data.length, 600);
                         var list = document.getElementById('gamesList');
                         if (games.data.length === 0) {
-                            list.innerHTML = renderEmpty('مسابقه‌ای یافت نشد');
+                            list.innerHTML = renderEmpty(getTranslation('no_games'));
                         } else {
-                            list.innerHTML = games.data.slice(0,10).map(function(g) {
+                            list.innerHTML = games.data.slice(0,10).map(function(g){
                                 var isP1 = String(g.player1) === String(username);
                                 var opp = isP1 ? g.player2 : g.player1;
-                                var cls = 'draw', txt = 'مساوی';
-                                if (g.status === 'finished') {
-                                    if (isP1) { cls='win'; txt='برد'; } else { cls='loss'; txt='باخت'; }
-                                }
-                                return '<div class="game-item"><span class="game-players">'+(opp||'ناشناس')+'</span><span class="game-score '+cls+'">'+txt+'</span></div>';
+                                var cls = 'draw', txt = getTranslation('draws');
+                                if (g.status === 'finished') { if (isP1) { cls='win'; txt=getTranslation('wins'); } else { cls='loss'; txt=getTranslation('losses'); } }
+                                return '<div class="game-item"><span class="game-players">'+(opp||'?')+'</span><span class="game-score '+cls+'">'+txt+'</span></div>';
                             }).join('');
                         }
                     }
@@ -687,24 +834,15 @@
                     var leaderboardData = await fetchData('leaderboard', { limit: 100 });
                     if (leaderboardData.ok && Array.isArray(leaderboardData.data)) {
                         var list = leaderboardData.data;
-                        var myRank = null;
-                        var myScore = 0;
+                        var myRank = null, myScore = 0;
                         for (var i = 0; i < list.length; i++) {
-                            if (String(list[i].username) === String(username)) {
-                                myRank = i + 1;
-                                myScore = list[i].score || 0;
-                                break;
-                            }
+                            if (String(list[i].username) === String(username)) { myRank = i+1; myScore = list[i].score||0; break; }
                         }
                         var prog = 0;
-                        if (myRank === 1) {
-                            prog = 100;
-                        } else if (myRank && myRank > 1) {
-                            var nextScore = list[myRank - 2].score || 0;
-                            if (nextScore > 0) {
-                                prog = Math.round((myScore / nextScore) * 100);
-                                if (prog > 100) prog = 100;
-                            }
+                        if (myRank === 1) { prog = 100; }
+                        else if (myRank && myRank > 1) {
+                            var nextScore = list[myRank-2].score || 0;
+                            if (nextScore > 0) { prog = Math.round((myScore/nextScore)*100); if (prog>100) prog=100; }
                         }
                         setTimeout(function() {
                             document.getElementById('progressFill').style.width = prog+'%';
@@ -712,9 +850,8 @@
                         }, 400);
                     }
 
-                } catch(e) {
-                    console.error(e);
-                } finally {
+                } catch(e) { console.error(e); }
+                finally {
                     document.getElementById('loaderWrapper').style.display = 'none';
                     document.getElementById('profileContent').classList.add('show');
                 }
@@ -723,9 +860,7 @@
             if (webApp) {
                 webApp.ready();
                 webApp.BackButton.show();
-                webApp.BackButton.onClick(function() {
-                    window.location.href = '../dashboard/';
-                });
+                webApp.BackButton.onClick(function(){ window.location.href = '../dashboard/'; });
             }
 
             applyTheme();
