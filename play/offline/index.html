@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>تک‌نفره | Quizico</title>
+    <title>دو نفره آفلاین | Quizico</title>
     <script src="https://developer.eitaa.com/eitaa-web-app.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/gh/rastikerdar/iran-sans-font@v1.0.0/dist/font-face.css" rel="stylesheet">
@@ -110,21 +110,6 @@
         .header-title .t-accent { color: var(--primary); }
         .header-subtitle { font-size: 8px; color: var(--text-light); }
 
-        .currency-badge {
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            background: var(--bg2);
-            border: var(--border);
-            border-radius: 8px;
-            padding: 4px 10px;
-            font-size: 10px;
-            font-weight: 700;
-            color: var(--dark);
-            box-shadow: var(--shadow);
-        }
-        .currency-badge.coins i { color: #f59e0b; }
-
         .main-container {
             position: relative;
             z-index: 5;
@@ -170,34 +155,8 @@
             text-align: center;
             box-shadow: var(--shadow);
         }
-        .player-card.active { border-color: var(--gold); border-width: 2px; }
         .player-tag { font-size: 9px; font-weight: 800; color: var(--dark); margin-bottom: 4px; }
-        .player-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            margin: 0 auto 4px;
-            background: var(--bg2);
-            border: var(--border);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 16px;
-            color: var(--primary);
-        }
         .player-score { font-size: 13px; font-weight: 800; color: var(--gold); }
-
-        .message-card {
-            background: var(--card-bg);
-            border: var(--border);
-            border-radius: var(--radius);
-            padding: 8px 12px;
-            box-shadow: var(--shadow);
-            text-align: center;
-            font-size: 9px;
-            font-weight: 600;
-            color: var(--text);
-        }
 
         .rounds-results {
             background: var(--card-bg);
@@ -239,94 +198,82 @@
         .result-dot.wrong { background: #ef4444; }
         .round-result-count { font-weight: 800; font-size: 8px; color: var(--dark); }
 
+        .question-area { display: flex; flex-direction: column; gap: 8px; }
+
         .question-card {
             background: var(--card-bg);
             border: var(--border);
             border-radius: var(--radius);
-            padding: 12px;
+            padding: 10px;
             box-shadow: var(--shadow);
         }
+        .question-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 4px;
+        }
+        .question-player-tag { font-size: 9px; font-weight: 800; color: var(--primary); }
+        .question-progress { font-size: 7px; font-weight: 700; color: var(--text-light); }
         .question-text {
-            font-size: 11px;
+            font-size: 10px;
             font-weight: 700;
             color: var(--dark);
-            line-height: 1.7;
+            line-height: 1.6;
             text-align: center;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
         }
         .timer-bar-container {
             background: var(--bg3);
             border: var(--border);
             border-radius: 8px;
-            height: 6px;
+            height: 5px;
             overflow: hidden;
             margin-bottom: 4px;
         }
         .timer-bar-fill { height: 100%; background: #10b981; transition: width 1s linear; }
         .timer-bar-fill.warning { background: #f59e0b; }
         .timer-bar-fill.danger { background: #ef4444; }
-        .timer-text { font-size: 7px; font-weight: 700; color: var(--text-light); text-align: center; margin-bottom: 8px; }
+        .timer-text { font-size: 7px; font-weight: 700; color: var(--text-light); text-align: center; margin-bottom: 6px; }
 
-        .options-grid { display: flex; flex-direction: column; gap: 6px; }
+        .options-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 4px; }
 
         .option-btn {
             display: flex;
             align-items: center;
-            gap: 8px;
-            padding: 10px 12px;
+            gap: 4px;
+            padding: 6px 8px;
             border: var(--border);
-            border-radius: 8px;
+            border-radius: 6px;
             background: var(--bg2);
             cursor: pointer;
-            transition: all 0.2s ease;
-            box-shadow: 2px 2px 0 #000;
             font-family: 'IRANSans', Tahoma, sans-serif;
-            font-size: 10px;
+            font-size: 8px;
             font-weight: 600;
             color: var(--dark);
             text-align: right;
+            transition: all 0.2s ease;
+            box-shadow: 1px 1px 0 #000;
         }
-        .option-btn:active { transform: translate(1px, 1px); box-shadow: 1px 1px 0 #000; }
+        .option-btn:active { transform: translate(1px, 1px); box-shadow: none; }
         .option-btn.selected-correct { background: #10b981; color: #fff; }
         .option-btn.selected-wrong { background: #ef4444; color: #fff; }
         .option-btn.disabled { pointer-events: none; opacity: 0.6; }
-        .option-btn.hidden-option { opacity: 0.2; pointer-events: none; text-decoration: line-through; }
 
         .option-letter {
-            width: 22px;
-            height: 22px;
+            width: 16px;
+            height: 16px;
             border-radius: 50%;
             background: var(--primary);
             color: #fff;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 9px;
+            font-size: 7px;
             font-weight: 800;
             flex-shrink: 0;
             border: var(--border);
         }
-
-        .actions-row { display: flex; gap: 6px; margin-bottom: 8px; }
-
-        .action-btn {
-            flex: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 3px;
-            padding: 7px;
-            border: var(--border);
-            border-radius: 8px;
-            background: var(--card-bg);
-            cursor: pointer;
-            box-shadow: 2px 2px 0 #000;
-            font-family: 'IRANSans', Tahoma, sans-serif;
-            font-size: 8px;
-            font-weight: 700;
-            color: var(--dark);
-        }
-        .action-btn:disabled { opacity: 0.3; cursor: not-allowed; }
 
         .bottom-btn-container {
             position: fixed;
@@ -354,7 +301,7 @@
             box-shadow: 3px 3px 0 #000;
         }
         .main-btn:disabled { opacity: 0.5; cursor: not-allowed; }
-        .main-btn.waiting { background: var(--text-light); }
+        .main-btn.green { background: #10b981; }
 
         .result-banner {
             text-align: center;
@@ -392,10 +339,9 @@
                 <div class="header-logo"><img src="https://cdn.imgurl.ir/uploads/f30974_InShot_20260821_174101103.png" alt="Quizico"></div>
                 <div>
                     <div class="header-title">Quiz<span class="t-accent">ico</span></div>
-                    <div class="header-subtitle" data-i18n="single">تک‌نفره</div>
+                    <div class="header-subtitle" data-i18n="offline">دو نفره آفلاین</div>
                 </div>
             </div>
-            <span class="currency-badge coins"><i class="fa-solid fa-coins"></i> <span id="coinsHeader">0</span></span>
         </div>
     </header>
 
@@ -408,7 +354,7 @@
     </main>
 
     <div class="bottom-btn-container" id="bottomBtnContainer" style="display:none;">
-        <button class="main-btn" id="mainBtn" onclick="handleMainBtn()">شروع راند 1</button>
+        <button class="main-btn" id="mainBtn" onclick="handleMainBtn()">شروع بازی</button>
     </div>
 
     <script>
@@ -421,29 +367,22 @@
             var QUESTION_TIME = 60;
             var currentRound = 1;
             var currentQuestionIndex = 0;
-            var yourScore = 0, botScore = 0;
-            var yourCorrectCount = 0, botCorrectCount = 0;
-            var questions = [], currentQuestions = [];
-            var isAnswered = false;
-            var userCoins = 0, userDiamonds = 0, userTotalScore = 0;
+            var p1Score = 0, p2Score = 0;
+            var p1CorrectCount = 0, p2CorrectCount = 0;
+            var questions = [];
+            var p1Questions = [], p2Questions = [];
             var roundResults = [];
-            var isRoundActive = false;
             var timerInterval = null;
             var timeLeft = QUESTION_TIME;
-            var actionUsedThisQuestion = false;
             var currentLang = 'fa';
+            var p1AnsweredQuestions = [];
+            var p2AnsweredQuestions = [];
             var gameId = 'game_' + Date.now();
 
             var translations = {
-                fa: { single:'تک‌نفره', loading:'در حال دریافت...', start_round:'شروع راند', your_turn:'نوبت توست', opponent_turn:'نوبت حریفه...', round_done:'دست تمام شد!', you:'تو', opponent:'حریف', results:'نتایج راندها', question:'سوال', of:'از', round:'راند', win:'بردی!', lose:'باختی!', draw:'مساوی شدی!', score:'امتیاز', coins:'سکه', back:'بازگشت', no_questions:'سوالی یافت نشد', remove:'۵۰', swap:'۱۰۰', skip:'۱۵۰', not_enough:'سکه کافی نداری!' },
-                en: { single:'Single Player', loading:'Loading...', start_round:'Start Round', your_turn:'Your turn', opponent_turn:'Opponent turn...', round_done:'Round done!', you:'You', opponent:'Bot', results:'Round Results', question:'Question', of:'of', round:'Round', win:'You Win!', lose:'You Lose!', draw:'Draw!', score:'Score', coins:'Coins', back:'Back', no_questions:'No questions found', remove:'50', swap:'100', skip:'150', not_enough:'Not enough coins!' },
-                ar: { single:'فردي', loading:'جار التحميل...', start_round:'ابدأ الجولة', your_turn:'دورك', opponent_turn:'دور الخصم...', round_done:'انتهت الجولة!', you:'أنت', opponent:'الخصم', results:'نتائج الجولات', question:'سؤال', of:'من', round:'جولة', win:'فزت!', lose:'خسرت!', draw:'تعادل!', score:'النقاط', coins:'عملات', back:'رجوع', no_questions:'لا توجد أسئلة', remove:'50', swap:'100', skip:'150', not_enough:'عملات غير كافية!' }
-            };
-
-            var messages = {
-                fa: ['هر سوال درست یه قدم به برد نزدیک‌ترت می‌کنه!','تمرکزت رو بذار روی سوال!','تو از پسش برمیای!'],
-                en: ['Every correct answer brings you closer!','Stay focused!','You can do it!'],
-                ar: ['كل إجابة صحيحة تقربك من الفوز!','ركز!','يمكنك فعلها!']
+                fa: { offline:'دو نفره آفلاین', loading:'در حال دریافت...', start_game:'شروع بازی', p1:'بازیکن ۱', p2:'بازیکن ۲', results:'نتایج راندها', round:'راند', question:'سوال', of:'از', next_round:'شروع راند بعدی', p1_win:'بازیکن ۱ برنده شد!', p2_win:'بازیکن ۲ برنده شد!', draw:'مساوی شد!', back:'بازگشت', no_questions:'سوال کافی نیست', score:'امتیاز' },
+                en: { offline:'2P Offline', loading:'Loading...', start_game:'Start Game', p1:'Player 1', p2:'Player 2', results:'Round Results', round:'Round', question:'Question', of:'of', next_round:'Next Round', p1_win:'Player 1 Wins!', p2_win:'Player 2 Wins!', draw:'Draw!', back:'Back', no_questions:'Not enough questions', score:'Score' },
+                ar: { offline:'ثنائي بدون إنترنت', loading:'جار التحميل...', start_game:'ابدأ اللعبة', p1:'اللاعب ۱', p2:'اللاعب ۲', results:'نتائج الجولات', round:'جولة', question:'سؤال', of:'من', next_round:'الجولة التالية', p1_win:'اللاعب ۱ فاز!', p2_win:'اللاعب ۲ فاز!', draw:'تعادل!', back:'رجوع', no_questions:'أسئلة غير كافية', score:'النقاط' }
             };
 
             function getSettings() {
@@ -460,7 +399,6 @@
             }
 
             function getTranslation(k) { var t = translations[currentLang] || translations.fa; return t[k] || translations.fa[k] || k; }
-            function getRandomMessage() { var m = messages[currentLang] || messages.fa; return m[Math.floor(Math.random()*m.length)]; }
 
             function hexToRgb(h) { var r = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(h); return r ? { r:parseInt(r[1],16), g:parseInt(r[2],16), b:parseInt(r[3],16) } : { r:168,g:85,b:247 }; }
             function shadeColor(c,p){var r=hexToRgb(c);var rr=Math.max(0,Math.min(255,r.r+p));var gg=Math.max(0,Math.min(255,r.g+p));var bb=Math.max(0,Math.min(255,r.b+p));return '#'+((1<<24)+(rr<<16)+(gg<<8)+bb).toString(16).slice(1);}
@@ -518,203 +456,163 @@
                 return fetch(API_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(payload)}).then(function(r){return r.json();}).catch(function(){return{ok:false};});
             }
             function shuffleArray(a){for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t;}return a;}
-            function botAnswer(ci){return Math.random()<0.7?ci:Math.floor(Math.random()*4);}
 
             function startTimer() {
                 clearInterval(timerInterval);
                 timeLeft = QUESTION_TIME;
-                updateTimerBar();
+                updateTimerBars();
                 timerInterval = setInterval(function() {
                     timeLeft--;
-                    updateTimerBar();
-                    if (timeLeft <= 0) { clearInterval(timerInterval); if (!isAnswered) timeOut(); }
+                    updateTimerBars();
+                    if (timeLeft <= 0) {
+                        clearInterval(timerInterval);
+                        handleTimeout();
+                    }
                 }, 1000);
             }
-            function updateTimerBar() {
-                var f = document.getElementById('timerFill');
-                var t = document.getElementById('timerText');
-                if (!f || !t) return;
+
+            function updateTimerBars() {
+                var fills = document.querySelectorAll('.timer-bar-fill');
+                var texts = document.querySelectorAll('.timer-text');
                 var pct = (timeLeft / QUESTION_TIME) * 100;
-                f.style.width = pct + '%';
-                t.textContent = timeLeft + 's';
-                f.className = 'timer-bar-fill' + (timeLeft <= 10 ? ' danger' : timeLeft <= 20 ? ' warning' : '');
-            }
-            function timeOut() {
-                isAnswered = true;
-                var btns = document.querySelectorAll('.option-btn');
-                btns.forEach(function(b){b.classList.add('disabled');});
-                var q = currentQuestions[currentQuestionIndex];
-                var ct = q.options[q.correctOption - 1];
-                document.querySelectorAll('.option-btn').forEach(function(b){ if(b.getAttribute('data-text')===ct) b.classList.add('selected-correct'); });
-                setTimeout(goToNext, 800);
-            }
-            function goToNext() {
-                currentQuestionIndex++;
-                if (currentQuestionIndex >= QUESTIONS_PER_ROUND) {
-                    document.getElementById('mainBtn').textContent = getTranslation('round_done');
-                    document.getElementById('mainBtn').disabled = true;
-                    setTimeout(endYourRound, 800);
-                } else { renderQuestionScreen(); }
+                fills.forEach(function(f) {
+                    f.style.width = pct + '%';
+                    f.className = 'timer-bar-fill' + (timeLeft <= 10 ? ' danger' : timeLeft <= 20 ? ' warning' : '');
+                });
+                texts.forEach(function(t) { t.textContent = timeLeft + 's'; });
             }
 
-            function renderMainScreen() {
+            function handleTimeout() {
+                var p1Card = document.getElementById('p1Card');
+                var p2Card = document.getElementById('p2Card');
+                if (p1Card && p1Card.querySelectorAll('.option-btn.disabled').length < 4) p1AnsweredQuestions[currentQuestionIndex] = false;
+                if (p2Card && p2Card.querySelectorAll('.option-btn.disabled').length < 4) p2AnsweredQuestions[currentQuestionIndex] = false;
+                moveToNext();
+            }
+
+            function moveToNext() {
+                currentQuestionIndex++;
+                if (currentQuestionIndex >= QUESTIONS_PER_ROUND) { finishRound(); }
+                else { renderQuestionsScreen(); }
+            }
+
+            function renderRoundsScreen() {
                 var t = getTranslation;
                 var html = '';
                 html += '<div class="players-row">';
-                html += '<div class="player-card'+(isRoundActive?' active':'')+'"><div class="player-tag">'+t('you')+'</div><div class="player-avatar"><i class="fa-solid fa-user"></i></div><span class="player-score">'+yourScore+'</span></div>';
-                html += '<div class="player-card"><div class="player-tag">'+t('opponent')+'</div><div class="player-avatar"><i class="fa-solid fa-robot"></i></div><span class="player-score">'+botScore+'</span></div></div>';
-                html += '<div class="message-card">'+getRandomMessage()+'</div>';
+                html += '<div class="player-card"><div class="player-tag">'+t('p1')+'</div><span class="player-score">'+p1Score+'</span></div>';
+                html += '<div class="player-card"><div class="player-tag">'+t('p2')+'</div><span class="player-score">'+p2Score+'</span></div>';
+                html += '</div>';
                 if (roundResults.length > 0) {
                     html += '<div class="rounds-results"><div class="rounds-title">'+t('results')+'</div>';
                     for (var i = 0; i < roundResults.length; i++) {
                         var r = roundResults[i];
                         html += '<div class="round-result-item">';
                         html += '<div class="round-result-row"><span class="round-result-player">'+t('round')+' '+(i+1)+'</span></div>';
-                        html += '<div class="round-result-row"><span class="round-result-player">'+t('you')+'</span><div class="round-dots">';
-                        for (var j=0;j<QUESTIONS_PER_ROUND;j++) html += '<span class="result-dot'+(j<r.yourCorrect?'':' wrong')+'">'+(j+1)+'</span>';
-                        html += '</div><span class="round-result-count">+'+r.yourScore+'</span></div>';
-                        html += '<div class="round-result-row"><span class="round-result-player">'+t('opponent')+'</span><div class="round-dots">';
-                        for (var k=0;k<QUESTIONS_PER_ROUND;k++) html += '<span class="result-dot'+(k<r.botCorrect?'':' wrong')+'">'+(k+1)+'</span>';
-                        html += '</div><span class="round-result-count">+'+r.botScore+'</span></div>';
+                        html += '<div class="round-result-row"><span class="round-result-player">'+t('p1')+'</span><div class="round-dots">';
+                        for (var j=0;j<QUESTIONS_PER_ROUND;j++) html += '<span class="result-dot'+(j<r.p1Correct?'':' wrong')+'">'+(j+1)+'</span>';
+                        html += '</div><span class="round-result-count">+'+r.p1Score+'</span></div>';
+                        html += '<div class="round-result-row"><span class="round-result-player">'+t('p2')+'</span><div class="round-dots">';
+                        for (var k=0;k<QUESTIONS_PER_ROUND;k++) html += '<span class="result-dot'+(k<r.p2Correct?'':' wrong')+'">'+(k+1)+'</span>';
+                        html += '</div><span class="round-result-count">+'+r.p2Score+'</span></div>';
                         html += '</div>';
                     }
                     html += '</div>';
                 }
                 document.getElementById('gameContent').innerHTML = html;
+                var btn = document.getElementById('mainBtn');
+                if (currentRound > TOTAL_ROUNDS) { btn.textContent = t('back'); btn.className = 'main-btn'; }
+                else { btn.textContent = currentRound === 1 ? t('start_game') : t('next_round') + ' ' + currentRound; btn.className = 'main-btn green'; }
+                btn.disabled = false;
+                document.getElementById('bottomBtnContainer').style.display = 'block';
             }
 
-            function renderQuestionScreen() {
-                isAnswered = false;
-                actionUsedThisQuestion = false;
-                var q = currentQuestions[currentQuestionIndex];
+            function renderQuestionCard(pn, q, qi) {
+                var tag = getTranslation(pn === 1 ? 'p1' : 'p2');
                 var opts = shuffleArray(q.options.slice());
-                var ct = q.options[q.correctOption - 1];
-                var ci = opts.indexOf(ct);
-                var html = '<div class="actions-row">';
-                html += '<button class="action-btn" id="btnRemove" onclick="useRemove50()"><i class="fa-solid fa-trash" style="color:#ef4444;"></i> '+getTranslation('remove')+'</button>';
-                html += '<button class="action-btn" id="btnSwap" onclick="useSwapQuestion()"><i class="fa-solid fa-arrows-rotate" style="color:#06b6d4;"></i> '+getTranslation('swap')+'</button>';
-                html += '<button class="action-btn" id="btnSkip" onclick="useSkipQuestion()"><i class="fa-solid fa-forward" style="color:#f59e0b;"></i> '+getTranslation('skip')+'</button>';
-                html += '</div>';
-                html += '<div class="question-card">';
+                var ci = opts.indexOf(q.options[q.correctOption - 1]);
+                var html = '<div class="question-card" id="p'+pn+'Card">';
+                html += '<div class="question-header"><span class="question-player-tag">'+tag+'</span>';
+                html += '<span class="question-progress">'+getTranslation('question')+' '+(qi+1)+' '+getTranslation('of')+' '+QUESTIONS_PER_ROUND+'</span></div>';
                 html += '<div class="question-text">'+q.question+'</div>';
-                html += '<div class="timer-bar-container"><div class="timer-bar-fill" id="timerFill" style="width:100%;"></div></div>';
-                html += '<div class="timer-text" id="timerText">60s</div>';
+                html += '<div class="timer-bar-container"><div class="timer-bar-fill" style="width:100%;"></div></div>';
+                html += '<div class="timer-text">60s</div>';
                 html += '<div class="options-grid">';
                 for (var i = 0; i < opts.length; i++) {
-                    html += '<button class="option-btn" data-text="'+opts[i]+'" onclick="selectOption('+i+','+ci+',this)">';
+                    html += '<button class="option-btn" data-player="'+pn+'" data-correct="'+ci+'" onclick="selectOption('+pn+','+i+',this)">';
                     html += '<span class="option-letter">'+(i+1)+'</span><span>'+opts[i]+'</span></button>';
                 }
                 html += '</div></div>';
+                return html;
+            }
+
+            function renderQuestionsScreen() {
+                p1AnsweredQuestions[currentQuestionIndex] = undefined;
+                p2AnsweredQuestions[currentQuestionIndex] = undefined;
+                var html = '<div class="question-area">';
+                html += renderQuestionCard(1, p1Questions[currentQuestionIndex], currentQuestionIndex);
+                html += renderQuestionCard(2, p2Questions[currentQuestionIndex], currentQuestionIndex);
+                html += '</div>';
                 document.getElementById('gameContent').innerHTML = html;
+                document.getElementById('bottomBtnContainer').style.display = 'none';
                 startTimer();
             }
 
-            window.selectOption = function(sel, ci, btn) {
-                if (isAnswered) return;
-                isAnswered = true;
-                clearInterval(timerInterval);
-                var btns = document.querySelectorAll('.option-btn');
+            window.selectOption = function(pn, sel, btn) {
+                var ci = parseInt(btn.getAttribute('data-correct'));
+                var card = document.getElementById('p'+pn+'Card');
+                var btns = card.querySelectorAll('.option-btn');
                 btns.forEach(function(b){b.classList.add('disabled');});
-                if (sel === ci) { btn.classList.add('selected-correct'); yourScore += 5; yourCorrectCount++; }
-                else { btn.classList.add('selected-wrong'); btns[ci].classList.add('selected-correct'); }
-                setTimeout(goToNext, 800);
+                if (sel === ci) {
+                    btn.classList.add('selected-correct');
+                    if (pn === 1) { p1Score += 5; p1AnsweredQuestions[currentQuestionIndex] = true; }
+                    else { p2Score += 5; p2AnsweredQuestions[currentQuestionIndex] = true; }
+                } else {
+                    btn.classList.add('selected-wrong');
+                    btns[ci].classList.add('selected-correct');
+                    if (pn === 1) { p1AnsweredQuestions[currentQuestionIndex] = false; }
+                    else { p2AnsweredQuestions[currentQuestionIndex] = false; }
+                }
+                var allAnswered = true;
+                document.querySelectorAll('.question-card').forEach(function(c){ if(c.querySelectorAll('.option-btn.disabled').length<4) allAnswered=false; });
+                if (allAnswered) { clearInterval(timerInterval); setTimeout(moveToNext, 800); }
             };
 
-            function endYourRound() {
-                clearInterval(timerInterval);
-                document.getElementById('mainBtn').textContent = getTranslation('opponent_turn');
-                document.getElementById('mainBtn').disabled = true;
-                var brs = 0;
+            function finishRound() {
+                var p1c = 0, p2c = 0;
                 for (var i = 0; i < QUESTIONS_PER_ROUND; i++) {
-                    var q = currentQuestions[i];
-                    if (botAnswer(q.correctOption - 1) === q.correctOption - 1) { brs += 5; botCorrectCount++; }
+                    if (p1AnsweredQuestions[i] === true) p1c++;
+                    if (p2AnsweredQuestions[i] === true) p2c++;
                 }
-                botScore += brs;
-                roundResults.push({ yourScore: yourCorrectCount*5, botScore: brs, yourCorrect: yourCorrectCount, botCorrect: botCorrectCount });
+                roundResults.push({ p1Score: p1c*5, p2Score: p2c*5, p1Correct: p1c, p2Correct: p2c });
+                p1AnsweredQuestions = [];
+                p2AnsweredQuestions = [];
                 currentRound++;
-                isRoundActive = false;
-                renderMainScreen();
-                if (currentRound > TOTAL_ROUNDS) { endGame(); }
-                else { document.getElementById('mainBtn').textContent = getTranslation('start_round') + ' ' + currentRound; document.getElementById('mainBtn').disabled = false; }
+                currentQuestionIndex = 0;
+                renderRoundsScreen();
             }
 
-            window.useRemove50 = function() {
-                if (userCoins < 50 || isAnswered || actionUsedThisQuestion) return;
-                userCoins -= 50;
-                actionUsedThisQuestion = true;
-                document.getElementById('coinsHeader').textContent = userCoins;
-                var q = currentQuestions[currentQuestionIndex];
-                var ct = q.options[q.correctOption - 1];
-                var wo = q.options.filter(function(o){return o!==ct;});
-                var th = shuffleArray(wo).slice(0,2);
-                document.querySelectorAll('.option-btn').forEach(function(b){ if(th.indexOf(b.getAttribute('data-text'))!==-1) b.classList.add('hidden-option'); });
-                disableActions();
-                fetchData('updateUser', { coins: userCoins, diamonds: userDiamonds });
-            };
-
-            window.useSwapQuestion = function() {
-                if (userCoins < 100 || isAnswered || actionUsedThisQuestion) return;
-                userCoins -= 100;
-                actionUsedThisQuestion = true;
-                document.getElementById('coinsHeader').textContent = userCoins;
-                var rem = questions.filter(function(q){return currentQuestions.indexOf(q)===-1;});
-                if (rem.length > 0) currentQuestions[currentQuestionIndex] = shuffleArray(rem)[0];
-                disableActions();
-                fetchData('updateUser', { coins: userCoins, diamonds: userDiamonds });
-                renderQuestionScreen();
-            };
-
-            window.useSkipQuestion = function() {
-                if (userCoins < 150 || isAnswered || actionUsedThisQuestion) return;
-                userCoins -= 150;
-                actionUsedThisQuestion = true;
-                document.getElementById('coinsHeader').textContent = userCoins;
-                yourScore += 5;
-                yourCorrectCount++;
-                disableActions();
-                fetchData('updateUser', { coins: userCoins, diamonds: userDiamonds });
-                clearInterval(timerInterval);
-                setTimeout(goToNext, 300);
-            };
-
-            function disableActions(){ document.querySelectorAll('.action-btn').forEach(function(b){b.disabled=true;}); }
-
-            window.handleMainBtn = function() {
-                if (!isRoundActive) {
-                    isRoundActive = true;
-                    currentQuestionIndex = 0;
-                    yourCorrectCount = 0;
-                    botCorrectCount = 0;
-                    currentQuestions = shuffleArray(questions).slice(0, QUESTIONS_PER_ROUND);
-                    document.getElementById('mainBtn').textContent = getTranslation('your_turn');
-                    document.getElementById('mainBtn').disabled = true;
-                    renderQuestionScreen();
-                }
-            };
-
             function endGame() {
-                var sc = 0, cr = 0;
+                clearInterval(timerInterval);
                 var t = getTranslation;
-                if (yourScore > botScore) { sc = 75; cr = 300; }
-                else if (yourScore < botScore) { sc = -25; }
-                else { sc = 25; }
-                userTotalScore += sc;
-                userCoins += cr;
-                fetchData('updateUser', { score: userTotalScore, coins: userCoins, diamonds: userDiamonds });
-                var gd = { id: gameId, player1: getUserId(), player2: 'bot', round1: JSON.stringify(roundResults[0]||{}), round2: JSON.stringify(roundResults[1]||{}), round3: JSON.stringify(roundResults[2]||{}), round4: JSON.stringify(roundResults[3]||{}), round5: JSON.stringify(roundResults[4]||{}), status: 'finished' };
-                fetchData('saveGame', { gameData: gd });
                 var html = '<div class="result-banner">';
-                html += '<div class="result-icon">'+(sc>0?'<i class="fa-solid fa-trophy" style="color:#f59e0b;"></i>':sc<0?'<i class="fa-solid fa-face-frown" style="color:#ef4444;"></i>':'<i class="fa-solid fa-handshake" style="color:#f59e0b;"></i>')+'</div>';
-                html += '<div class="result-text">'+(sc>0?t('win'):sc<0?t('lose'):t('draw'))+'</div>';
-                html += '<div class="result-score">'+t('you')+': '+yourScore+' - '+t('opponent')+': '+botScore+'</div>';
-                html += '<div class="result-score">'+t('score')+': '+(sc>=0?'+':'')+sc+'</div>';
-                if (cr>0) html += '<div class="result-score">'+t('coins')+': +'+cr+'</div>';
+                if (p1Score > p2Score) html += '<div class="result-icon"><i class="fa-solid fa-trophy" style="color:#f59e0b;"></i></div><div class="result-text">'+t('p1_win')+'</div>';
+                else if (p2Score > p1Score) html += '<div class="result-icon"><i class="fa-solid fa-trophy" style="color:#f59e0b;"></i></div><div class="result-text">'+t('p2_win')+'</div>';
+                else html += '<div class="result-icon"><i class="fa-solid fa-handshake" style="color:#f59e0b;"></i></div><div class="result-text">'+t('draw')+'</div>';
+                html += '<div class="result-score">'+t('p1')+': '+p1Score+' - '+t('p2')+': '+p2Score+'</div>';
                 html += '<button class="result-btn" onclick="backToDashboard()">'+t('back')+'</button></div>';
                 document.getElementById('gameContent').innerHTML = html;
                 document.getElementById('bottomBtnContainer').style.display = 'none';
+                var gd = { id: gameId, player1: 'player1', player2: 'player2', round1: JSON.stringify(roundResults[0]||{}), round2: JSON.stringify(roundResults[1]||{}), round3: JSON.stringify(roundResults[2]||{}), round4: JSON.stringify(roundResults[3]||{}), round5: JSON.stringify(roundResults[4]||{}), status: 'finished' };
+                fetchData('saveGame', { gameData: gd });
             }
 
             window.backToDashboard = function() { window.location.href = '../../dashboard/'; };
+
+            window.handleMainBtn = function() {
+                if (currentRound > TOTAL_ROUNDS) { endGame(); }
+                else { renderQuestionsScreen(); }
+            };
 
             async function init() {
                 applyTheme();
@@ -724,26 +622,19 @@
                     webApp.BackButton.show();
                     webApp.BackButton.onClick(function(){ window.location.href = '../../dashboard/'; });
                 }
-                var ud = await fetchData('getUser', {});
-                if (ud.ok && ud.data) {
-                    userCoins = ud.data.coins || 0;
-                    userDiamonds = ud.data.diamonds || 0;
-                    userTotalScore = ud.data.score || 0;
-                    document.getElementById('coinsHeader').textContent = userCoins;
-                }
-                var qd = await fetchData('getQuestions', { limit: 50 });
-                if (qd.ok && Array.isArray(qd.data) && qd.data.length > 0) {
+                var qd = await fetchData('getQuestions', { limit: 100 });
+                if (qd.ok && Array.isArray(qd.data) && qd.data.length >= 8) {
                     questions = qd.data;
+                    var totalNeeded = TOTAL_ROUNDS * QUESTIONS_PER_ROUND;
+                    var selectedQuestions = shuffleArray(questions).slice(0, totalNeeded * 2);
                     if (currentLang !== 'fa') {
                         var translated = [];
-                        var needed = TOTAL_ROUNDS * QUESTIONS_PER_ROUND;
-                        var selected = shuffleArray(questions).slice(0, needed);
-                        for (var i = 0; i < selected.length; i++) translated.push(await translateQuestion(selected[i], currentLang));
-                        questions = translated;
+                        for (var i = 0; i < selectedQuestions.length; i++) translated.push(await translateQuestion(selectedQuestions[i], currentLang));
+                        selectedQuestions = translated;
                     }
-                    renderMainScreen();
-                    document.getElementById('mainBtn').textContent = getTranslation('start_round') + ' 1';
-                    document.getElementById('bottomBtnContainer').style.display = 'block';
+                    p1Questions = selectedQuestions.slice(0, totalNeeded);
+                    p2Questions = selectedQuestions.slice(totalNeeded, totalNeeded * 2);
+                    renderRoundsScreen();
                 } else {
                     document.getElementById('gameContent').innerHTML = '<div class="result-banner"><div class="result-text">'+getTranslation('no_questions')+'</div></div>';
                 }
