@@ -383,6 +383,46 @@
         .avatar-item-price.free { color: #059669; }
         .avatar-item-price.owned { color: #10b981; }
 
+        .support-notification {
+            position: fixed;
+            top: 75px;
+            right: 10px;
+            left: 10px;
+            max-width: 400px;
+            margin: 0 auto;
+            background: var(--card-bg);
+            border: var(--border);
+            border-radius: var(--radius);
+            box-shadow: 5px 5px 0 #000;
+            padding: 10px 14px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            z-index: 2000;
+            animation: slideDownNotif 0.5s ease forwards, slideUpNotif 0.5s ease 4.5s forwards;
+            cursor: pointer;
+        }
+        .support-notification img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: var(--border);
+            object-fit: cover;
+        }
+        .support-notification .notif-info { flex: 1; }
+        .support-notification .notif-name { font-size: 10px; font-weight: 800; color: var(--dark); }
+        .support-notification .notif-desc { font-size: 8px; color: var(--text-light); }
+        .support-notification i { color: var(--text-light); font-size: 10px; }
+
+        @keyframes slideDownNotif {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes slideUpNotif {
+            from { opacity: 1; transform: translateY(0); }
+            to { opacity: 0; transform: translateY(-20px); }
+        }
+
         .bottom-nav {
             position: fixed;
             bottom: 0; right: 0; left: 0;
@@ -501,6 +541,15 @@
         </div>
     </div>
 
+    <div class="support-notification" id="supportNotification" onclick="openSupportLink()">
+        <img src="https://cdn.imgurl.ir/uploads/v68396_InShot_20260817_190450653.jpg" alt="سازنده">
+        <div class="notif-info">
+            <div class="notif-name">امیرمهدی | Amirmahdi</div>
+            <div class="notif-desc" data-i18n="support">از سازنده حمایت کنید</div>
+        </div>
+        <i class="fa-solid fa-chevron-left"></i>
+    </div>
+
     <nav class="bottom-nav">
         <a href="../dashboard/" class="nav-item"><i class="fa-solid fa-house"></i><span data-i18n="home">خانه</span></a>
         <a href="../ranking/" class="nav-item"><i class="fa-solid fa-trophy"></i><span data-i18n="ranking">رتبه</span></a>
@@ -529,7 +578,7 @@
                     icons: 'آیکون‌ها', boys: 'پسر بچه', girls: 'دختر بچه',
                     free: 'رایگان', diamonds_short: 'الماس',
                     not_enough_diamonds: 'الماس کافی نداری!', avatar_purchased: 'آواتار خریداری شد!',
-                    owned: 'خریداری شده'
+                    owned: 'خریداری شده', support: 'از سازنده حمایت کنید'
                 },
                 en: {
                     profile: 'Profile', loading: 'Loading...', coins: 'Coins', diamonds: 'Diamonds',
@@ -542,7 +591,7 @@
                     icons: 'Icons', boys: 'Boys', girls: 'Girls',
                     free: 'Free', diamonds_short: 'Diamonds',
                     not_enough_diamonds: 'Not enough diamonds!', avatar_purchased: 'Avatar purchased!',
-                    owned: 'Owned'
+                    owned: 'Owned', support: 'Support the developer'
                 },
                 ar: {
                     profile: 'الملف', loading: 'جار التحميل...', coins: 'عملات', diamonds: 'ألماس',
@@ -555,7 +604,7 @@
                     icons: 'أيقونات', boys: 'أولاد', girls: 'بنات',
                     free: 'مجاني', diamonds_short: 'ألماس',
                     not_enough_diamonds: 'ألماس غير كافي!', avatar_purchased: 'تم شراء الصورة الرمزية!',
-                    owned: 'مملوك'
+                    owned: 'مملوك', support: 'ادعم المطور'
                 }
             };
 
@@ -815,6 +864,15 @@
                 }
             }
 
+            function openSupportLink(){
+                if (webApp && webApp.openEitaaLink) {
+                    webApp.openEitaaLink('https://eitaa.com/Amirmahdi_code');
+                } else {
+                    window.open('https://eitaa.com/Amirmahdi_code', '_blank');
+                }
+            }
+            window.openSupportLink = openSupportLink;
+
             async function loadProfile() {
                 try {
                     var user = getEitaaUser();
@@ -900,6 +958,13 @@
 
             applyTheme();
             loadProfile();
+            
+            setTimeout(function() {
+                var notif = document.getElementById('supportNotification');
+                if (notif) {
+                    notif.style.display = 'none';
+                }
+            }, 5000);
         })();
     </script>
 </body>
