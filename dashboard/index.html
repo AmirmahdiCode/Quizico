@@ -233,27 +233,38 @@
             text-align: center;
         }
 
-        .section-title {
+        .game-modes-wrapper {
+            background: var(--card-bg);
+            border: var(--border);
+            border-radius: var(--radius);
+            padding: 12px;
+            box-shadow: var(--shadow);
+        }
+
+        .game-modes-header {
             font-size: 12px;
             font-weight: 800;
             color: var(--dark);
             display: flex;
             align-items: center;
             gap: 8px;
+            margin-bottom: 10px;
         }
-        .section-title i { color: var(--primary); }
+        .game-modes-header i { color: var(--primary); }
 
         .game-modes-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
 
         .game-mode-card {
-            background: var(--card-bg);
+            background: var(--bg2);
             border: var(--border);
             border-radius: var(--radius);
             overflow: hidden;
             cursor: pointer;
-            box-shadow: var(--shadow);
+            box-shadow: 2px 2px 0 #000;
             position: relative;
+            transition: all 0.2s ease;
         }
+        .game-mode-card:active { transform: translate(1px, 1px); box-shadow: 1px 1px 0 #000; }
         .game-mode-card img {
             width: 100%;
             aspect-ratio: 1 / 1;
@@ -394,6 +405,46 @@
         .support-desc { font-size: 8px; color: var(--text-light); }
         .support-card i { color: var(--text-light); font-size: 12px; }
 
+        .support-notification {
+            position: fixed;
+            top: 70px;
+            right: 10px;
+            left: 10px;
+            max-width: 400px;
+            margin: 0 auto;
+            background: var(--card-bg);
+            border: var(--border);
+            border-radius: var(--radius);
+            box-shadow: 5px 5px 0 #000;
+            padding: 10px 14px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            z-index: 2000;
+            animation: slideDownNotif 0.5s ease forwards, slideUpNotif 0.5s ease 4.5s forwards;
+            cursor: pointer;
+        }
+        .support-notification img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: var(--border);
+            object-fit: cover;
+        }
+        .support-notification .notif-info { flex: 1; }
+        .support-notification .notif-name { font-size: 10px; font-weight: 800; color: var(--dark); }
+        .support-notification .notif-desc { font-size: 8px; color: var(--text-light); }
+        .support-notification i { color: var(--text-light); font-size: 10px; }
+
+        @keyframes slideDownNotif {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes slideUpNotif {
+            from { opacity: 1; transform: translateY(0); }
+            to { opacity: 0; transform: translateY(-20px); }
+        }
+
         .bottom-nav {
             position: fixed;
             bottom: 0; right: 0; left: 0;
@@ -507,13 +558,14 @@
                 </div>
             </div>
 
-            <div class="section-title" data-i18n="start_game"><i class="fa-solid fa-gamepad"></i> شروع مسابقه</div>
-
-            <div class="game-modes-grid">
-                <div class="game-mode-card" onclick="goToPlay('single')"><img src="https://cdn.imgurl.ir/uploads/f711120_InShot_20260821_200930706.jpg" alt=""><div class="game-mode-label" data-i18n="single">تک‌نفره</div></div>
-                <div class="game-mode-card" onclick="goToPlay('offline')"><img src="https://cdn.imgurl.ir/uploads/k5971_InShot_20260821_201008883.jpg" alt=""><div class="game-mode-label" data-i18n="offline">دوستانه</div></div>
-                <div class="game-mode-card" onclick="goToPlay('online')"><img src="https://cdn.imgurl.ir/uploads/h2464_InShot_20260821_201207943.jpg" alt=""><div class="game-mode-label" data-i18n="online">آنلاین</div></div>
-                <div class="game-mode-card" onclick="goToPlay('league')"><img src="https://cdn.imgurl.ir/uploads/e135154_InShot_20260821_201323323.jpg" alt=""><div class="game-mode-label" data-i18n="league">لیگ</div></div>
+            <div class="game-modes-wrapper">
+                <div class="game-modes-header" data-i18n="start_game"><i class="fa-solid fa-gamepad"></i> شروع مسابقه</div>
+                <div class="game-modes-grid">
+                    <div class="game-mode-card" onclick="goToPlay('single')"><img src="https://cdn.imgurl.ir/uploads/f711120_InShot_20260821_200930706.jpg" alt=""><div class="game-mode-label" data-i18n="single">تک‌نفره</div></div>
+                    <div class="game-mode-card" onclick="goToPlay('offline')"><img src="https://cdn.imgurl.ir/uploads/k5971_InShot_20260821_201008883.jpg" alt=""><div class="game-mode-label" data-i18n="offline">دوستانه</div></div>
+                    <div class="game-mode-card" onclick="goToPlay('online')"><img src="https://cdn.imgurl.ir/uploads/h2464_InShot_20260821_201207943.jpg" alt=""><div class="game-mode-label" data-i18n="online">آنلاین</div></div>
+                    <div class="game-mode-card" onclick="goToPlay('league')"><img src="https://cdn.imgurl.ir/uploads/e135154_InShot_20260821_201323323.jpg" alt=""><div class="game-mode-label" data-i18n="league">لیگ</div></div>
+                </div>
             </div>
 
             <div class="games-section">
@@ -543,6 +595,15 @@
 
         </div>
     </main>
+
+    <div class="support-notification" id="supportNotification" onclick="openSupportLink()">
+        <img src="https://cdn.imgurl.ir/uploads/v68396_InShot_20260817_190450653.jpg" alt="سازنده">
+        <div class="notif-info">
+            <div class="notif-name">امیرمهدی | Amirmahdi</div>
+            <div class="notif-desc" data-i18n="support">از سازنده حمایت کنید</div>
+        </div>
+        <i class="fa-solid fa-chevron-left"></i>
+    </div>
 
     <nav class="bottom-nav">
         <a href="../dashboard/" class="nav-item active"><i class="fa-solid fa-house"></i><span data-i18n="home">خانه</span></a>
@@ -601,7 +662,7 @@
                     you_p1: 'تو سازنده بازی هستی', you_p2: 'تو مهمون بازی هستی',
                     you_were_p1: 'تو بازیکن ۱ بودی', you_were_p2: 'تو بازیکن ۲ بودی',
                     not_enough_coins: 'سکه کافی نداری!', empty: 'پوچ!',
-                    support: 'از سازنده حمایت کنید'
+                    support: 'از سازنده حمایت کنید', exit_confirm: 'مطمئن هستید که خارج می‌شوید؟'
                 },
                 en: {
                     tagline: 'Test your knowledge', loading: 'Loading...',
@@ -616,7 +677,7 @@
                     you_p1: 'You are Player 1', you_p2: 'You are Player 2',
                     you_were_p1: 'You were Player 1', you_were_p2: 'You were Player 2',
                     not_enough_coins: 'Not enough coins!', empty: 'Empty!',
-                    support: 'Support the developer'
+                    support: 'Support the developer', exit_confirm: 'Are you sure you want to exit?'
                 },
                 ar: {
                     tagline: 'اختبر معلوماتك', loading: 'جار التحميل...',
@@ -631,7 +692,7 @@
                     you_p1: 'أنت اللاعب 1', you_p2: 'أنت اللاعب 2',
                     you_were_p1: 'كنت اللاعب 1', you_were_p2: 'كنت اللاعب 2',
                     not_enough_coins: 'عملات غير كافية!', empty: 'فارغ!',
-                    support: 'ادعم المطور'
+                    support: 'ادعم المطور', exit_confirm: 'هل أنت متأكد من الخروج؟'
                 }
             };
 
@@ -850,11 +911,23 @@
                 webApp.expand();
                 webApp.BackButton.show();
                 webApp.BackButton.onClick(function() {
-                    webApp.close();
+                    webApp.showConfirm(getTranslation('exit_confirm'), function(confirmed) {
+                        if (confirmed) {
+                            webApp.close();
+                        }
+                    });
                 });
             }
+            
             applyTheme();
             loadDashboard();
+            
+            setTimeout(function() {
+                var notif = document.getElementById('supportNotification');
+                if (notif) {
+                    notif.style.display = 'none';
+                }
+            }, 5000);
         })();
     </script>
 </body>
