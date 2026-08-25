@@ -1,1 +1,343 @@
-.
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quizico</title>
+    <script src="https://developer.eitaa.com/eitaa-web-app.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'IRANSans', Tahoma, sans-serif;
+            background: linear-gradient(135deg, #faf5ff 0%, #f3e8ff 40%, #e9d5ff 80%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            padding: 20px;
+        }
+
+        .loader-letters {
+            display: flex;
+            gap: 6px;
+            direction: ltr;
+        }
+
+        .letter {
+            font-size: 42px;
+            font-weight: 900;
+            color: #a855f7;
+            opacity: 0;
+            transform: translateY(-40px) scale(0.5);
+            animation: letterJump 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+            text-shadow: 3px 3px 0 rgba(0,0,0,0.15);
+            font-family: 'IRANSans', Tahoma, sans-serif;
+        }
+
+        .letter:nth-child(1) { animation-delay: 0.1s; }
+        .letter:nth-child(2) { animation-delay: 0.2s; }
+        .letter:nth-child(3) { animation-delay: 0.3s; }
+        .letter:nth-child(4) { animation-delay: 0.4s; }
+        .letter:nth-child(5) { animation-delay: 0.5s; }
+        .letter:nth-child(6) { animation-delay: 0.6s; }
+        .letter:nth-child(7) { animation-delay: 0.7s; }
+
+        @keyframes letterJump {
+            0% {
+                opacity: 0;
+                transform: translateY(-40px) scale(0.5);
+            }
+            50% {
+                opacity: 1;
+                transform: translateY(10px) scale(1.1);
+            }
+            70% {
+                transform: translateY(-5px) scale(0.95);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .text {
+            font-size: 15px;
+            font-weight: 600;
+            color: #4a4458;
+            text-align: center;
+            line-height: 1.8;
+            opacity: 0;
+            animation: fadeInText 0.8s ease 1.2s forwards;
+        }
+
+        .text span {
+            display: block;
+            font-size: 12px;
+            font-weight: 400;
+            color: #6b7280;
+            margin-top: 4px;
+        }
+
+        @keyframes fadeInText {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .support-notification {
+            position: fixed;
+            bottom: 20px;
+            right: 10px;
+            left: 10px;
+            max-width: 400px;
+            margin: 0 auto;
+            background: #fff;
+            border: 2px solid #000;
+            border-radius: 12px;
+            box-shadow: 5px 5px 0 #000;
+            padding: 10px 14px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            z-index: 2000;
+            animation: slideUpNotif 0.5s ease forwards;
+            cursor: pointer;
+        }
+        .support-notification img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 1px solid #000;
+            object-fit: cover;
+        }
+        .support-notification .notif-info { flex: 1; }
+        .support-notification .notif-name { font-size: 10px; font-weight: 800; color: #1e1b2e; }
+        .support-notification .notif-desc { font-size: 8px; color: #6b7280; }
+        .support-notification i { color: #6b7280; font-size: 10px; }
+
+        @keyframes slideUpNotif {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 480px) {
+            .letter {
+                font-size: 32px;
+            }
+            .text {
+                font-size: 13px;
+            }
+            .text span {
+                font-size: 11px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="loader-letters">
+            <span class="letter">Q</span>
+            <span class="letter">u</span>
+            <span class="letter">i</span>
+            <span class="letter">z</span>
+            <span class="letter">i</span>
+            <span class="letter">c</span>
+            <span class="letter">o</span>
+        </div>
+        <div class="text" id="statusText">
+            در حال آماده‌سازی...
+            <span>لطفاً صبر کنید</span>
+        </div>
+    </div>
+
+    <div class="support-notification" id="supportNotification" onclick="openSupportLink()">
+        <img src="https://cdn.imgurl.ir/uploads/v68396_InShot_20260817_190450653.jpg" alt="سازنده">
+        <div class="notif-info">
+            <div class="notif-name">امیرمهدی | Amirmahdi</div>
+            <div class="notif-desc">از سازنده حمایت کنید</div>
+        </div>
+        <i class="fa-solid fa-chevron-left"></i>
+    </div>
+
+    <script>
+        (function() {
+            var webApp = window.Eitaa?.WebApp;
+            var API_URL = 'https://script.google.com/macros/s/AKfycbzsGrBIFVNkZYfNsx448awdMpPy42boOUvkSMpqnDWf9-wzbPctRQTIUa_ZpTpuGiVqIw/exec';
+
+            function getEitaaUser() {
+                if (webApp && webApp.initDataUnsafe && webApp.initDataUnsafe.user) {
+                    return webApp.initDataUnsafe.user;
+                }
+                return null;
+            }
+
+            function getUserId() {
+                var user = getEitaaUser();
+                if (!user) return '';
+                if (typeof user.id === 'number') {
+                    return user.id.toString();
+                }
+                return String(user.id || '');
+            }
+
+            function getStartParam() {
+                if (webApp && webApp.initDataUnsafe && webApp.initDataUnsafe.start_param) {
+                    return webApp.initDataUnsafe.start_param;
+                }
+                return '';
+            }
+
+            async function fetchData(action, params) {
+                try {
+                    var username = getUserId();
+                    var initData = webApp?.initData || '';
+
+                    var payload = {
+                        action: action,
+                        username: username,
+                        initData: initData
+                    };
+
+                    if (params) {
+                        for (var key in params) {
+                            if (params.hasOwnProperty(key)) {
+                                payload[key] = params[key];
+                            }
+                        }
+                    }
+
+                    var response = await fetch(API_URL, {
+                        method: 'POST',
+                        headers: { 
+                            'Content-Type': 'text/plain;charset=utf-8'
+                        },
+                        body: JSON.stringify(payload)
+                    });
+
+                    var result = await response.json();
+                    return result;
+                    
+                } catch(e) {
+                    console.error('Fetch error:', e);
+                    return { ok: false, error: 'Network error: ' + e.message };
+                }
+            }
+
+            function openSupportLink(){
+                if (webApp && webApp.openEitaaLink) {
+                    webApp.openEitaaLink('https://eitaa.com/Amirmahdi_code');
+                } else {
+                    window.open('https://eitaa.com/Amirmahdi_code', '_blank');
+                }
+            }
+            window.openSupportLink = openSupportLink;
+
+            function updateStatusText(mainText, subText) {
+                var textEl = document.getElementById('statusText');
+                if (subText) {
+                    textEl.innerHTML = mainText + '<span>' + subText + '</span>';
+                } else {
+                    textEl.textContent = mainText;
+                }
+                textEl.style.opacity = '1';
+                textEl.style.animation = 'none';
+            }
+
+            async function init() {
+                if (webApp) {
+                    webApp.ready();
+                    webApp.expand();
+                }
+
+                var startParam = getStartParam();
+                var user = getEitaaUser();
+                var username = getUserId();
+
+                if (!user || !username) {
+                    updateStatusText('لطفاً از داخل ایتا وارد شوید');
+                    return;
+                }
+
+                webApp.requestWriteAccess(function(granted) {
+                    if (granted) {
+                        proceedToGame();
+                    } else {
+                        updateStatusText('برای استفاده از بازی باید اجازه ارسال پیام رو بدی', 'لطفاً دوباره وارد شوید');
+                        
+                        setTimeout(function() {
+                            if (webApp && typeof webApp.close === 'function') {
+                                webApp.close();
+                            }
+                        }, 2500);
+                    }
+                });
+
+                async function proceedToGame() {
+                    var fullName = (user.first_name || '') + ' ' + (user.last_name || '');
+
+                    try {
+                        var check = await fetchData('getUser', {});
+
+                        if (check.ok && check.data) {
+                            var currentName = check.data.name || '';
+                            var newName = fullName.trim() || 'کاربر';
+                            
+                            if (currentName !== newName) {
+                                await fetchData('updateUser', { name: newName });
+                            }
+                        } else {
+                            await fetchData('registerUser', {
+                                name: fullName.trim() || 'کاربر'
+                            });
+                            
+                            await fetchData('sendMessage', {
+                                chat_id: username,
+                                text: 'سلام ' + (fullName.trim() || 'کاربر') + ' عزیز!\n\nبه Quizico خوش اومدی! 🎮\n\nاینجا می‌تونی اطلاعاتت رو محک بزنی و با دوستات رقابت کنی.\n\nموفق باشی! 🚀'
+                            });
+                        }
+
+                        setTimeout(function() {
+                            if (startParam) {
+                                localStorage.setItem('onlineRoomCode', startParam);
+                                window.location.href = './play/online/';
+                            } else {
+                                window.location.href = './dashboard/';
+                            }
+                        }, 1500);
+
+                    } catch(e) {
+                        console.error('Init error:', e);
+                        updateStatusText('خطا در ارتباط با سرور');
+                    }
+                }
+            }
+
+            if (webApp) {
+                webApp.BackButton.show();
+                webApp.BackButton.onClick(function() {
+                    webApp.close();
+                });
+            }
+
+            init();
+        })();
+    </script>
+
+</body>
+</html>
