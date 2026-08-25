@@ -248,6 +248,14 @@
             }
             window.openSupportLink = openSupportLink;
 
+            function checkWriteAccess() {
+                var user = getEitaaUser();
+                if (user && user.allows_write_to_pm === true) {
+                    return true;
+                }
+                return false;
+            }
+
             async function init() {
                 if (webApp) {
                     webApp.ready();
@@ -266,39 +274,69 @@
                     return;
                 }
 
-                var fullName = (user.first_name || '') + ' ' + (user.last_name || '');
-
-                try {
-                    var check = await fetchData('getUser', {});
-
-                    if (check.ok && check.data) {
-                        var currentName = check.data.name || '';
-                        var newName = fullName.trim() || 'کاربر';
-                        
-                        if (currentName !== newName) {
-                            await fetchData('updateUser', { name: newName });
-                        }
-                    } else {
-                        await fetchData('registerUser', {
-                            name: fullName.trim() || 'کاربر'
+                if (!checkWriteAccess()) {
+                    if (webApp && webApp.requestWriteAccess) {
+                        webApp.requestWriteAccess(function(granted) {
+                            if (!granted) {
+                                var text = document.querySelector('.text');
+                                text.innerHTML = 'برای استفاده از بازی باید اجازه ارسال پیام رو بدی';
+                                text.style.opacity = '1';
+                                text.style.animation = 'none';
+                                
+                                setTimeout(function() {
+                                    webApp.close();
+                                }, 2500);
+                                return;
+                            }
+                            
+                            proceedToGame();
                         });
+                    } else {
+                        var text = document.querySelector('.text');
+                        text.innerHTML = 'نسخه ایتا شما قدیمی است';
+                        text.style.opacity = '1';
+                        text.style.animation = 'none';
+                        return;
                     }
+                } else {
+                    proceedToGame();
+                }
 
-                    setTimeout(function() {
-                        if (startParam) {
-                            localStorage.setItem('onlineRoomCode', startParam);
-                            window.location.href = './play/online/';
+                async function proceedToGame() {
+                    var fullName = (user.first_name || '') + ' ' + (user.last_name || '');
+
+                    try {
+                        var check = await fetchData('getUser', {});
+
+                        if (check.ok && check.data) {
+                            var currentName = check.data.name || '';
+                            var newName = fullName.trim() || 'کاربر';
+                            
+                            if (currentName !== newName) {
+                                await fetchData('updateUser', { name: newName });
+                            }
                         } else {
-                            window.location.href = './dashboard/';
+                            await fetchData('registerUser', {
+                                name: fullName.trim() || 'کاربر'
+                            });
                         }
-                    }, 1500);
 
-                } catch(e) {
-                    console.error('Init error:', e);
-                    var text = document.querySelector('.text');
-                    text.innerHTML = 'خطا در ارتباط با سرور';
-                    text.style.opacity = '1';
-                    text.style.animation = 'none';
+                        setTimeout(function() {
+                            if (startParam) {
+                                localStorage.setItem('onlineRoomCode', startParam);
+                                window.location.href = './play/online/';
+                            } else {
+                                window.location.href = './dashboard/';
+                            }
+                        }, 1500);
+
+                    } catch(e) {
+                        console.error('Init error:', e);
+                        var text = document.querySelector('.text');
+                        text.innerHTML = 'خطا در ارتباط با سرور';
+                        text.style.opacity = '1';
+                        text.style.animation = 'none';
+                    }
                 }
             }
 
