@@ -51,11 +51,7 @@
             transition: none !important;
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
             font-family: 'IRANSans', Tahoma, sans-serif;
@@ -93,11 +89,7 @@
             margin: 0 auto;
         }
 
-        .header-right {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
+        .header-right { display: flex; align-items: center; gap: 8px; }
 
         .header-logo {
             width: 38px;
@@ -214,13 +206,7 @@
             padding: 12px;
             box-shadow: var(--shadow);
         }
-        .rounds-title {
-            font-size: 10px;
-            font-weight: 800;
-            color: var(--dark);
-            margin-bottom: 8px;
-            text-align: center;
-        }
+        .rounds-title { font-size: 10px; font-weight: 800; color: var(--dark); margin-bottom: 8px; text-align: center; }
         .round-result-item {
             background: rgba(245, 158, 11, 0.1);
             border: 1px solid var(--gold);
@@ -418,7 +404,6 @@
             <div class="loader"></div>
             <div class="loader-text" data-i18n="loading">در حال دریافت...</div>
         </div>
-
         <div class="game-content" id="gameContent"></div>
     </main>
 
@@ -436,88 +421,48 @@
             var QUESTION_TIME = 60;
             var currentRound = 1;
             var currentQuestionIndex = 0;
-            var yourScore = 0;
-            var botScore = 0;
-            var questions = [];
-            var currentQuestions = [];
+            var yourScore = 0, botScore = 0;
+            var yourCorrectCount = 0, botCorrectCount = 0;
+            var questions = [], currentQuestions = [];
             var isAnswered = false;
-            var userCoins = 0;
-            var userTotalScore = 0;
+            var userCoins = 0, userTotalScore = 0;
             var roundResults = [];
             var isRoundActive = false;
-            var yourCorrectCount = 0;
-            var botCorrectCount = 0;
             var timerInterval = null;
             var timeLeft = QUESTION_TIME;
             var actionUsedThisQuestion = false;
             var currentLang = 'fa';
+            var gameId = 'game_' + Date.now();
 
             var translations = {
-                fa: {
-                    single: 'تک‌نفره', loading: 'در حال دریافت...', start_round: 'شروع راند',
-                    your_turn: 'نوبت توست', opponent_turn: 'نوبت حریفه...', round_done: 'دست تمام شد!',
-                    you: 'تو', opponent: 'حریف', results: 'نتایج راندها',
-                    question: 'سوال', of: 'از', round: 'راند',
-                    win: 'بردی!', lose: 'باختی!', draw: 'مساوی شدی!',
-                    score: 'امتیاز', coins: 'سکه', back: 'بازگشت',
-                    no_questions: 'سوالی یافت نشد', remove: '۵۰', swap: '۱۰۰', skip: '۱۵۰',
-                    not_enough: 'سکه کافی نداری!'
-                },
-                en: {
-                    single: 'Single Player', loading: 'Loading...', start_round: 'Start Round',
-                    your_turn: 'Your turn', opponent_turn: 'Opponent turn...', round_done: 'Round done!',
-                    you: 'You', opponent: 'Bot', results: 'Round Results',
-                    question: 'Question', of: 'of', round: 'Round',
-                    win: 'You Win!', lose: 'You Lose!', draw: 'Draw!',
-                    score: 'Score', coins: 'Coins', back: 'Back',
-                    no_questions: 'No questions found', remove: '50', swap: '100', skip: '150',
-                    not_enough: 'Not enough coins!'
-                },
-                ar: {
-                    single: 'فردي', loading: 'جار التحميل...', start_round: 'ابدأ الجولة',
-                    your_turn: 'دورك', opponent_turn: 'دور الخصم...', round_done: 'انتهت الجولة!',
-                    you: 'أنت', opponent: 'الخصم', results: 'نتائج الجولات',
-                    question: 'سؤال', of: 'من', round: 'جولة',
-                    win: 'فزت!', lose: 'خسرت!', draw: 'تعادل!',
-                    score: 'النقاط', coins: 'عملات', back: 'رجوع',
-                    no_questions: 'لا توجد أسئلة', remove: '50', swap: '100', skip: '150',
-                    not_enough: 'عملات غير كافية!'
-                }
+                fa: { single:'تک‌نفره', loading:'در حال دریافت...', start_round:'شروع راند', your_turn:'نوبت توست', opponent_turn:'نوبت حریفه...', round_done:'دست تمام شد!', you:'تو', opponent:'حریف', results:'نتایج راندها', question:'سوال', of:'از', round:'راند', win:'بردی!', lose:'باختی!', draw:'مساوی شدی!', score:'امتیاز', coins:'سکه', back:'بازگشت', no_questions:'سوالی یافت نشد', remove:'۵۰', swap:'۱۰۰', skip:'۱۵۰', not_enough:'سکه کافی نداری!' },
+                en: { single:'Single Player', loading:'Loading...', start_round:'Start Round', your_turn:'Your turn', opponent_turn:'Opponent turn...', round_done:'Round done!', you:'You', opponent:'Bot', results:'Round Results', question:'Question', of:'of', round:'Round', win:'You Win!', lose:'You Lose!', draw:'Draw!', score:'Score', coins:'Coins', back:'Back', no_questions:'No questions found', remove:'50', swap:'100', skip:'150', not_enough:'Not enough coins!' },
+                ar: { single:'فردي', loading:'جار التحميل...', start_round:'ابدأ الجولة', your_turn:'دورك', opponent_turn:'دور الخصم...', round_done:'انتهت الجولة!', you:'أنت', opponent:'الخصم', results:'نتائج الجولات', question:'سؤال', of:'من', round:'جولة', win:'فزت!', lose:'خسرت!', draw:'تعادل!', score:'النقاط', coins:'عملات', back:'رجوع', no_questions:'لا توجد أسئلة', remove:'50', swap:'100', skip:'150', not_enough:'عملات غير كافية!' }
             };
 
             var messages = {
                 fa: ['هر سوال درست یه قدم به برد نزدیک‌ترت می‌کنه!','تمرکزت رو بذار روی سوال!','تو از پسش برمیای!'],
-                en: ['Every correct answer brings you closer to victory!','Stay focused!','You can do it!'],
+                en: ['Every correct answer brings you closer!','Stay focused!','You can do it!'],
                 ar: ['كل إجابة صحيحة تقربك من الفوز!','ركز!','يمكنك فعلها!']
             };
 
             function getSettings() {
                 try {
                     var raw = localStorage.getItem('quizicoSettings');
-                    if (!raw) return { theme: 'light', primaryColor: '#a855f7', animation: true, language: 'fa' };
+                    if (!raw) return { theme:'light', primaryColor:'#a855f7', animation:true, language:'fa' };
                     var p = JSON.parse(raw);
                     if (!p.theme) p.theme = 'light';
                     if (!p.primaryColor) p.primaryColor = '#a855f7';
                     if (p.animation === undefined) p.animation = true;
                     if (!p.language) p.language = 'fa';
                     return p;
-                } catch(e) { return { theme: 'light', primaryColor: '#a855f7', animation: true, language: 'fa' }; }
+                } catch(e) { return { theme:'light', primaryColor:'#a855f7', animation:true, language:'fa' }; }
             }
 
-            function getTranslation(key) {
-                var t = translations[currentLang] || translations.fa;
-                return t[key] || translations.fa[key] || key;
-            }
+            function getTranslation(k) { var t = translations[currentLang] || translations.fa; return t[k] || translations.fa[k] || k; }
+            function getRandomMessage() { var m = messages[currentLang] || messages.fa; return m[Math.floor(Math.random()*m.length)]; }
 
-            function getRandomMessage() {
-                var m = messages[currentLang] || messages.fa;
-                return m[Math.floor(Math.random() * m.length)];
-            }
-
-            function hexToRgb(h) {
-                var r = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(h);
-                return r ? { r: parseInt(r[1],16), g: parseInt(r[2],16), b: parseInt(r[3],16) } : { r:168,g:85,b:247 };
-            }
+            function hexToRgb(h) { var r = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(h); return r ? { r:parseInt(r[1],16), g:parseInt(r[2],16), b:parseInt(r[3],16) } : { r:168,g:85,b:247 }; }
             function shadeColor(c,p){var r=hexToRgb(c);var rr=Math.max(0,Math.min(255,r.r+p));var gg=Math.max(0,Math.min(255,r.g+p));var bb=Math.max(0,Math.min(255,r.b+p));return '#'+((1<<24)+(rr<<16)+(gg<<8)+bb).toString(16).slice(1);}
 
             function applyTheme() {
@@ -526,52 +471,43 @@
                 var t = s.theme || 'light';
                 var p = s.primaryColor || '#a855f7';
                 document.documentElement.setAttribute('data-theme', t);
-                if (t === 'dark') {
-                    var dp = shadeColor(p, 40);
-                    document.documentElement.style.setProperty('--primary', dp);
-                } else {
-                    document.documentElement.style.setProperty('--primary', p);
-                }
-                if (s.animation === false) {
-                    document.documentElement.setAttribute('data-animation', 'off');
-                } else {
-                    document.documentElement.removeAttribute('data-animation');
-                }
-                if (currentLang === 'en') {
-                    document.documentElement.setAttribute('dir', 'ltr');
-                    document.body.style.fontFamily = 'Arial, sans-serif';
-                } else if (currentLang === 'ar') {
-                    document.documentElement.setAttribute('dir', 'rtl');
-                    document.body.style.fontFamily = 'Tahoma, sans-serif';
-                } else {
-                    document.documentElement.setAttribute('dir', 'rtl');
-                    document.body.style.fontFamily = "'IRANSans', Tahoma, sans-serif";
-                }
-                document.querySelectorAll('[data-i18n]').forEach(function(el) {
-                    var k = el.getAttribute('data-i18n');
-                    var t2 = translations[currentLang] || translations.fa;
-                    if (t2[k]) el.textContent = t2[k];
-                });
+                if (t === 'dark') { document.documentElement.style.setProperty('--primary', shadeColor(p, 40)); }
+                else { document.documentElement.style.setProperty('--primary', p); }
+                if (s.animation === false) { document.documentElement.setAttribute('data-animation', 'off'); }
+                else { document.documentElement.removeAttribute('data-animation'); }
+                if (currentLang === 'en') { document.documentElement.setAttribute('dir','ltr'); document.body.style.fontFamily='Arial, sans-serif'; }
+                else if (currentLang === 'ar') { document.documentElement.setAttribute('dir','rtl'); document.body.style.fontFamily='Tahoma, sans-serif'; }
+                else { document.documentElement.setAttribute('dir','rtl'); document.body.style.fontFamily="'IRANSans', Tahoma, sans-serif"; }
+                document.querySelectorAll('[data-i18n]').forEach(function(el){ var k=el.getAttribute('data-i18n'); var t2=translations[currentLang]||translations.fa; if(t2[k]) el.textContent=t2[k]; });
             }
 
-            function translateText(text, targetLang) {
-                if (targetLang === 'fa') return Promise.resolve(text);
-                var url = 'https://translate.googleapis.com/translate_a/single?client=gtx&sl=fa&tl=' + targetLang + '&dt=t&q=' + encodeURIComponent(text);
-                return fetch(url)
-                    .then(function(r) { return r.json(); })
-                    .then(function(d) { return d && d[0] && d[0][0] ? d[0][0][0] : text; })
-                    .catch(function() { return text; });
-            }
+            function sleep(ms){return new Promise(function(r){setTimeout(r,ms);});}
 
+            function translateGoogle(text, tl) {
+                var url = 'https://translate.googleapis.com/translate_a/single?client=gtx&sl=fa&tl='+tl+'&dt=t&q='+encodeURIComponent(text);
+                return fetch(url).then(function(r){return r.json();}).then(function(d){return d&&d[0]&&d[0][0]?d[0][0][0]:null;}).catch(function(){return null;});
+            }
+            function translateMyMemory(text, tl) {
+                var url = 'https://api.mymemory.translated.net/get?q='+encodeURIComponent(text)+'&langpair=fa|'+tl;
+                return fetch(url).then(function(r){return r.json();}).then(function(d){return d&&d.responseData&&d.responseData.translatedText?d.responseData.translatedText:null;}).catch(function(){return null;});
+            }
+            async function translateText(text, tl) {
+                if (tl === 'fa') return text;
+                var r = await translateGoogle(text, tl);
+                if (r) return r;
+                await sleep(100);
+                r = await translateMyMemory(text, tl);
+                if (r) return r;
+                return text;
+            }
             async function translateQuestion(q, lang) {
                 if (lang === 'fa') return q;
-                var target = lang === 'en' ? 'en' : 'ar';
-                var tq = await translateText(q.question, target);
+                var tl = lang === 'en' ? 'en' : 'ar';
+                var tq = await translateText(q.question, tl);
+                await sleep(80);
                 var topts = [];
-                for (var i = 0; i < q.options.length; i++) {
-                    topts.push(await translateText(q.options[i], target));
-                }
-                return { id: q.id, question: tq, options: topts, correctOption: q.correctOption };
+                for (var i = 0; i < q.options.length; i++) { topts.push(await translateText(q.options[i], tl)); await sleep(80); }
+                return { id:q.id, question:tq, options:topts, correctOption:q.correctOption };
             }
 
             function getEitaaUser(){return webApp&&webApp.initDataUnsafe&&webApp.initDataUnsafe.user?webApp.initDataUnsafe.user:null;}
@@ -581,9 +517,7 @@
                 if(params){for(var k in params){if(params.hasOwnProperty(k))payload[k]=params[k];}}
                 return fetch(API_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(payload)}).then(function(r){return r.json();}).catch(function(){return{ok:false};});
             }
-
             function shuffleArray(a){for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t;}return a;}
-
             function botAnswer(ci){return Math.random()<0.7?ci:Math.floor(Math.random()*4);}
 
             function startTimer() {
@@ -593,63 +527,45 @@
                 timerInterval = setInterval(function() {
                     timeLeft--;
                     updateTimerBar();
-                    if (timeLeft <= 0) {
-                        clearInterval(timerInterval);
-                        if (!isAnswered) timeOut();
-                    }
+                    if (timeLeft <= 0) { clearInterval(timerInterval); if (!isAnswered) timeOut(); }
                 }, 1000);
             }
-
             function updateTimerBar() {
-                var fill = document.getElementById('timerFill');
-                var text = document.getElementById('timerText');
-                if (!fill || !text) return;
+                var f = document.getElementById('timerFill');
+                var t = document.getElementById('timerText');
+                if (!f || !t) return;
                 var pct = (timeLeft / QUESTION_TIME) * 100;
-                fill.style.width = pct + '%';
-                text.textContent = timeLeft + 's';
-                fill.className = 'timer-bar-fill' + (timeLeft <= 10 ? ' danger' : timeLeft <= 20 ? ' warning' : '');
+                f.style.width = pct + '%';
+                t.textContent = timeLeft + 's';
+                f.className = 'timer-bar-fill' + (timeLeft <= 10 ? ' danger' : timeLeft <= 20 ? ' warning' : '');
             }
-
             function timeOut() {
                 isAnswered = true;
                 var btns = document.querySelectorAll('.option-btn');
                 btns.forEach(function(b){b.classList.add('disabled');});
                 var q = currentQuestions[currentQuestionIndex];
                 var ct = q.options[q.correctOption - 1];
-                document.querySelectorAll('.option-btn').forEach(function(b){
-                    if (b.getAttribute('data-text') === ct) b.classList.add('selected-correct');
-                });
+                document.querySelectorAll('.option-btn').forEach(function(b){ if(b.getAttribute('data-text')===ct) b.classList.add('selected-correct'); });
                 setTimeout(goToNext, 800);
             }
-
             function goToNext() {
                 currentQuestionIndex++;
                 if (currentQuestionIndex >= QUESTIONS_PER_ROUND) {
                     document.getElementById('mainBtn').textContent = getTranslation('round_done');
                     document.getElementById('mainBtn').disabled = true;
                     setTimeout(endYourRound, 800);
-                } else {
-                    renderQuestionScreen();
-                }
+                } else { renderQuestionScreen(); }
             }
 
             function renderMainScreen() {
                 var t = getTranslation;
                 var html = '';
                 html += '<div class="players-row">';
-                html += '<div class="player-card'+(isRoundActive?' active':'')+'">';
-                html += '<div class="player-tag">'+t('you')+'</div>';
-                html += '<div class="player-avatar"><i class="fa-solid fa-user"></i></div>';
-                html += '<span class="player-score">'+yourScore+'</span></div>';
-                html += '<div class="player-card">';
-                html += '<div class="player-tag">'+t('opponent')+'</div>';
-                html += '<div class="player-avatar"><i class="fa-solid fa-robot"></i></div>';
-                html += '<span class="player-score">'+botScore+'</span></div></div>';
+                html += '<div class="player-card'+(isRoundActive?' active':'')+'"><div class="player-tag">'+t('you')+'</div><div class="player-avatar"><i class="fa-solid fa-user"></i></div><span class="player-score">'+yourScore+'</span></div>';
+                html += '<div class="player-card"><div class="player-tag">'+t('opponent')+'</div><div class="player-avatar"><i class="fa-solid fa-robot"></i></div><span class="player-score">'+botScore+'</span></div></div>';
                 html += '<div class="message-card">'+getRandomMessage()+'</div>';
-                
                 if (roundResults.length > 0) {
-                    html += '<div class="rounds-results">';
-                    html += '<div class="rounds-title">'+t('results')+'</div>';
+                    html += '<div class="rounds-results"><div class="rounds-title">'+t('results')+'</div>';
                     for (var i = 0; i < roundResults.length; i++) {
                         var r = roundResults[i];
                         html += '<div class="round-result-item">';
@@ -674,7 +590,6 @@
                 var opts = shuffleArray(q.options.slice());
                 var ct = q.options[q.correctOption - 1];
                 var ci = opts.indexOf(ct);
-
                 var html = '<div class="actions-row">';
                 html += '<button class="action-btn" id="btnRemove" onclick="useRemove50()"><i class="fa-solid fa-trash" style="color:#ef4444;"></i> '+getTranslation('remove')+'</button>';
                 html += '<button class="action-btn" id="btnSwap" onclick="useSwapQuestion()"><i class="fa-solid fa-arrows-rotate" style="color:#06b6d4;"></i> '+getTranslation('swap')+'</button>';
@@ -700,14 +615,8 @@
                 clearInterval(timerInterval);
                 var btns = document.querySelectorAll('.option-btn');
                 btns.forEach(function(b){b.classList.add('disabled');});
-                if (sel === ci) {
-                    btn.classList.add('selected-correct');
-                    yourScore += 5;
-                    yourCorrectCount++;
-                } else {
-                    btn.classList.add('selected-wrong');
-                    btns[ci].classList.add('selected-correct');
-                }
+                if (sel === ci) { btn.classList.add('selected-correct'); yourScore += 5; yourCorrectCount++; }
+                else { btn.classList.add('selected-wrong'); btns[ci].classList.add('selected-correct'); }
                 setTimeout(goToNext, 800);
             };
 
@@ -725,12 +634,8 @@
                 currentRound++;
                 isRoundActive = false;
                 renderMainScreen();
-                if (currentRound > TOTAL_ROUNDS) {
-                    endGame();
-                } else {
-                    document.getElementById('mainBtn').textContent = getTranslation('start_round') + ' ' + currentRound;
-                    document.getElementById('mainBtn').disabled = false;
-                }
+                if (currentRound > TOTAL_ROUNDS) { endGame(); }
+                else { document.getElementById('mainBtn').textContent = getTranslation('start_round') + ' ' + currentRound; document.getElementById('mainBtn').disabled = false; }
             }
 
             window.useRemove50 = function() {
@@ -742,11 +647,9 @@
                 var ct = q.options[q.correctOption - 1];
                 var wo = q.options.filter(function(o){return o!==ct;});
                 var th = shuffleArray(wo).slice(0,2);
-                document.querySelectorAll('.option-btn').forEach(function(b){
-                    if (th.indexOf(b.getAttribute('data-text')) !== -1) b.classList.add('hidden-option');
-                });
+                document.querySelectorAll('.option-btn').forEach(function(b){ if(th.indexOf(b.getAttribute('data-text'))!==-1) b.classList.add('hidden-option'); });
                 disableActions();
-                fetchData('updateUser',{coins:userCoins});
+                fetchData('updateUser', { coins: userCoins });
             };
 
             window.useSwapQuestion = function() {
@@ -757,7 +660,7 @@
                 var rem = questions.filter(function(q){return currentQuestions.indexOf(q)===-1;});
                 if (rem.length > 0) currentQuestions[currentQuestionIndex] = shuffleArray(rem)[0];
                 disableActions();
-                fetchData('updateUser',{coins:userCoins});
+                fetchData('updateUser', { coins: userCoins });
                 renderQuestionScreen();
             };
 
@@ -769,14 +672,12 @@
                 yourScore += 5;
                 yourCorrectCount++;
                 disableActions();
-                fetchData('updateUser',{coins:userCoins});
+                fetchData('updateUser', { coins: userCoins });
                 clearInterval(timerInterval);
                 setTimeout(goToNext, 300);
             };
 
-            function disableActions() {
-                document.querySelectorAll('.action-btn').forEach(function(b){b.disabled=true;});
-            }
+            function disableActions(){ document.querySelectorAll('.action-btn').forEach(function(b){b.disabled=true;}); }
 
             window.handleMainBtn = function() {
                 if (!isRoundActive) {
@@ -784,8 +685,7 @@
                     currentQuestionIndex = 0;
                     yourCorrectCount = 0;
                     botCorrectCount = 0;
-                    var sq = shuffleArray(questions).slice(0, QUESTIONS_PER_ROUND);
-                    currentQuestions = sq;
+                    currentQuestions = shuffleArray(questions).slice(0, QUESTIONS_PER_ROUND);
                     document.getElementById('mainBtn').textContent = getTranslation('your_turn');
                     document.getElementById('mainBtn').disabled = true;
                     renderQuestionScreen();
@@ -801,6 +701,8 @@
                 userTotalScore += sc;
                 userCoins += cr;
                 fetchData('updateUser', { score: userTotalScore, coins: userCoins });
+                var gd = { id: gameId, player1: getUserId(), player2: 'bot', round1: JSON.stringify(roundResults[0]||{}), round2: JSON.stringify(roundResults[1]||{}), round3: JSON.stringify(roundResults[2]||{}), round4: JSON.stringify(roundResults[3]||{}), round5: JSON.stringify(roundResults[4]||{}), status: 'finished' };
+                fetchData('saveGame', { gameData: gd });
                 var html = '<div class="result-banner">';
                 html += '<div class="result-icon">'+(sc>0?'<i class="fa-solid fa-trophy" style="color:#f59e0b;"></i>':sc<0?'<i class="fa-solid fa-face-frown" style="color:#ef4444;"></i>':'<i class="fa-solid fa-handshake" style="color:#f59e0b;"></i>')+'</div>';
                 html += '<div class="result-text">'+(sc>0?t('win'):sc<0?t('lose'):t('draw'))+'</div>';
@@ -812,9 +714,7 @@
                 document.getElementById('bottomBtnContainer').style.display = 'none';
             }
 
-            window.backToDashboard = function() {
-                window.location.href = '../../dashboard/';
-            };
+            window.backToDashboard = function() { window.location.href = '../../dashboard/'; };
 
             async function init() {
                 applyTheme();
@@ -824,22 +724,20 @@
                     webApp.BackButton.show();
                     webApp.BackButton.onClick(function(){ window.location.href = '../../dashboard/'; });
                 }
-
                 var ud = await fetchData('getUser', {});
                 if (ud.ok && ud.data) {
                     userCoins = ud.data.coins || 0;
                     userTotalScore = ud.data.score || 0;
                     document.getElementById('coinsHeader').textContent = userCoins;
                 }
-
                 var qd = await fetchData('getQuestions', { limit: 50 });
                 if (qd.ok && Array.isArray(qd.data) && qd.data.length > 0) {
                     questions = qd.data;
                     if (currentLang !== 'fa') {
                         var translated = [];
-                        for (var i = 0; i < questions.length; i++) {
-                            translated.push(await translateQuestion(questions[i], currentLang));
-                        }
+                        var needed = TOTAL_ROUNDS * QUESTIONS_PER_ROUND;
+                        var selected = shuffleArray(questions).slice(0, needed);
+                        for (var i = 0; i < selected.length; i++) translated.push(await translateQuestion(selected[i], currentLang));
                         questions = translated;
                     }
                     renderMainScreen();
