@@ -207,13 +207,18 @@
             padding: 10px;
             box-shadow: var(--shadow);
         }
+        .question-card.p1-card { border-right: 4px solid #3b82f6; }
+        .question-card.p2-card { border-left: 4px solid #ef4444; }
+
         .question-header {
             display: flex;
             align-items: center;
             justify-content: space-between;
             margin-bottom: 4px;
         }
-        .question-player-tag { font-size: 9px; font-weight: 800; color: var(--primary); }
+        .question-player-tag { font-size: 9px; font-weight: 800; }
+        .question-card.p1-card .question-player-tag { color: #3b82f6; }
+        .question-card.p2-card .question-player-tag { color: #ef4444; }
         .question-progress { font-size: 7px; font-weight: 700; color: var(--text-light); }
         .question-text {
             font-size: 10px;
@@ -377,6 +382,7 @@
             var p1AnsweredQuestions = [];
             var p2AnsweredQuestions = [];
             var gameId = 'game_' + Date.now();
+            var isStarted = false;
 
             var translations = {
                 fa: { offline:'دو نفره آفلاین', loading:'در حال دریافت...', start_game:'شروع بازی', p1:'بازیکن ۱', p2:'بازیکن ۲', results:'نتایج راندها', round:'راند', question:'سوال', of:'از', next_round:'شروع راند بعدی', p1_win:'بازیکن ۱ برنده شد!', p2_win:'بازیکن ۲ برنده شد!', draw:'مساوی شد!', back:'بازگشت', no_questions:'سوال کافی نیست', score:'امتیاز' },
@@ -530,7 +536,8 @@
                 var tag = getTranslation(pn === 1 ? 'p1' : 'p2');
                 var opts = shuffleArray(q.options.slice());
                 var ci = opts.indexOf(q.options[q.correctOption - 1]);
-                var html = '<div class="question-card" id="p'+pn+'Card">';
+                var cardClass = pn === 1 ? 'p1-card' : 'p2-card';
+                var html = '<div class="question-card '+cardClass+'" id="p'+pn+'Card">';
                 html += '<div class="question-header"><span class="question-player-tag">'+tag+'</span>';
                 html += '<span class="question-progress">'+getTranslation('question')+' '+(qi+1)+' '+getTranslation('of')+' '+QUESTIONS_PER_ROUND+'</span></div>';
                 html += '<div class="question-text">'+q.question+'</div>';
@@ -610,7 +617,13 @@
 
             window.handleMainBtn = function() {
                 if (currentRound > TOTAL_ROUNDS) { endGame(); }
-                else { renderQuestionsScreen(); }
+                else {
+                    if (p1Questions.length > 0 && p2Questions.length > 0) {
+                        renderQuestionsScreen();
+                    } else {
+                        document.getElementById('gameContent').innerHTML = '<div class="result-banner"><div class="result-text">'+getTranslation('no_questions')+'</div></div>';
+                    }
+                }
             };
 
             async function init() {
@@ -626,6 +639,9 @@
                     questions = qd.data;
                     var totalNeeded = TOTAL_ROUNDS * QUESTIONS_PER_ROUND;
                     var selectedQuestions = shuffleArray(questions).slice(0, totalNeeded * 2);
+                    if (selectedQuestions.length < totalNeeded * 2) {
+                        selectedQuestions = shuffleArray(questions).concat(shuffleArray(questions)).slice(0, totalNeeded * 2);
+                    }
                     if (currentLang !== 'fa') {
                         var translated = [];
                         for (var i = 0; i < selectedQuestions.length; i++) translated.push(await translateQuestion(selectedQuestions[i], currentLang));
