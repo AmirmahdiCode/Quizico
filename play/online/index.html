@@ -23,7 +23,7 @@
             --card-bg: #ffffff;
             --header-bg: #ffffff;
             --shadow: 3px 3px 0 #000000;
-            --radius: 4px;
+            --radius: 12px;
             --border: 1px solid #000000;
             --gold: #f59e0b;
         }
@@ -37,20 +37,21 @@
             --primary-light: #d8b4fe;
             --primary-rgb: 192, 132, 252;
             --dark: #f1f5f9;
-            --text: #cbd5e1;
+            --text: #e2e8f0;
             --text-light: #94a3b8;
             --white: #2d2a3e;
             --card-bg: #2d2a3e;
             --header-bg: #2d2a3e;
             --shadow: 3px 3px 0 #000000;
-            --border: 1px solid #000000;
+            --border: 1px solid #475569;
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        [data-animation="off"] * {
+            animation: none !important;
+            transition: none !important;
         }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
             font-family: 'IRANSans', Tahoma, sans-serif;
@@ -59,14 +60,12 @@
             min-height: 100vh;
             display: flex;
             flex-direction: column;
+            transition: font-family 0.3s ease;
         }
 
         .bg-animation {
             position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
+            top: 0; left: 0; right: 0; bottom: 0;
             z-index: 0;
             background: linear-gradient(135deg, var(--bg) 0%, var(--bg2) 40%, var(--bg3) 80%);
         }
@@ -76,7 +75,9 @@
             z-index: 10;
             background: var(--header-bg);
             border-bottom: var(--border);
-            padding: 8px 16px;
+            padding: 10px 16px;
+            position: sticky;
+            top: 0;
             box-shadow: var(--shadow);
         }
 
@@ -88,15 +89,11 @@
             margin: 0 auto;
         }
 
-        .header-right {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
+        .header-right { display: flex; align-items: center; gap: 8px; }
 
         .header-logo {
-            width: 36px;
-            height: 36px;
+            width: 38px;
+            height: 38px;
             border-radius: var(--radius);
             background: var(--primary);
             display: flex;
@@ -108,14 +105,8 @@
             border: var(--border);
         }
 
-        .header-logo img {
-            width: 95%;
-            height: 95%;
-            object-fit: contain;
-            transform: scale(1.1);
-        }
-
-        .header-title { font-size: 14px; font-weight: 800; }
+        .header-logo img { width: 95%; height: 95%; object-fit: contain; transform: scale(1.1); }
+        .header-title { font-size: 14px; font-weight: 800; color: var(--dark); }
         .header-title .t-accent { color: var(--primary); }
         .header-subtitle { font-size: 8px; color: var(--text-light); }
 
@@ -124,50 +115,39 @@
             z-index: 5;
             max-width: 500px;
             width: 100%;
-            margin: 8px auto;
+            margin: 12px auto;
             padding: 0 10px 100px;
             display: flex;
             flex-direction: column;
-            gap: 8px;
-            flex: 1;
-            overflow-y: auto;
+            gap: 10px;
         }
 
-        .loader-letters {
+        .loader-wrapper {
             display: flex;
-            gap: 3px;
-            justify-content: center;
+            flex-direction: column;
             align-items: center;
-            padding: 20px 0;
-            direction: ltr;
+            justify-content: center;
+            min-height: 50vh;
+            gap: 10px;
         }
-
-        .loader-letter {
-            font-size: 24px;
-            font-weight: 900;
-            color: var(--primary);
-            opacity: 0;
-            animation: letterBounce 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+        .loader {
+            width: 45px;
+            height: 45px;
+            border: 5px solid var(--bg3);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
         }
+        .loader-text { font-size: 11px; font-weight: 700; color: var(--text); }
+        @keyframes spin { to { transform: rotate(360deg); } }
 
-        .loader-letter:nth-child(1) { animation-delay: 0.1s; }
-        .loader-letter:nth-child(2) { animation-delay: 0.15s; }
-        .loader-letter:nth-child(3) { animation-delay: 0.2s; }
-        .loader-letter:nth-child(4) { animation-delay: 0.25s; }
-        .loader-letter:nth-child(5) { animation-delay: 0.3s; color: #f59e0b; }
-        .loader-letter:nth-child(6) { animation-delay: 0.35s; color: #f59e0b; }
-        .loader-letter:nth-child(7) { animation-delay: 0.4s; color: #f59e0b; }
-
-        @keyframes letterBounce {
-            0% { opacity: 0; transform: translateY(-20px) scale(0.3); }
-            50% { opacity: 1; transform: translateY(5px) scale(1.2); }
-            100% { opacity: 1; transform: translateY(0) scale(1); }
-        }
+        .game-content { display: none; }
+        .game-content.show { display: flex; flex-direction: column; gap: 10px; }
 
         .waiting-card {
             background: var(--card-bg);
             border: var(--border);
-            border-radius: 12px;
+            border-radius: var(--radius);
             padding: 20px;
             box-shadow: var(--shadow);
             text-align: center;
@@ -257,80 +237,148 @@
 
         .copy-btn:active { transform: translate(1px, 1px); box-shadow: 1px 1px 0 #000; }
 
-        .players-row {
-            display: flex;
-            gap: 6px;
+        .players-invite-section {
+            margin-top: 12px;
+            text-align: right;
         }
+
+        .players-invite-title {
+            font-size: 10px;
+            font-weight: 800;
+            color: var(--dark);
+            margin-bottom: 8px;
+            text-align: center;
+        }
+
+        .players-search-box {
+            position: relative;
+            margin-bottom: 8px;
+        }
+
+        .players-search-box input {
+            width: 100%;
+            padding: 8px 35px 8px 10px;
+            border: var(--border);
+            border-radius: 8px;
+            background: var(--bg2);
+            color: var(--text);
+            font-family: inherit;
+            font-size: 9px;
+            outline: none;
+        }
+
+        .players-search-box i {
+            position: absolute;
+            top: 50%;
+            right: 10px;
+            transform: translateY(-50%);
+            color: var(--text-light);
+            font-size: 11px;
+        }
+
+        .players-invite-list {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            max-height: 250px;
+            overflow-y: auto;
+        }
+
+        .invite-player-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 10px;
+            border: var(--border);
+            border-radius: 8px;
+            background: var(--bg2);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .invite-player-item:active { transform: translateX(-2px); }
+
+        .invite-avatar {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: var(--bg2);
+            border: var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            color: var(--primary);
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+        .invite-avatar img { width: 100%; height: 100%; object-fit: cover; }
+
+        .invite-info { flex: 1; min-width: 0; }
+        .invite-name {
+            font-size: 10px;
+            font-weight: 700;
+            color: var(--dark);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .invite-score { font-size: 8px; color: var(--text-light); }
+
+        .invite-btn {
+            padding: 5px 12px;
+            background: var(--primary);
+            color: #fff;
+            border: var(--border);
+            border-radius: 6px;
+            font-family: 'IRANSans', Tahoma, sans-serif;
+            font-size: 8px;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 2px 2px 0 #000;
+            flex-shrink: 0;
+        }
+
+        .invite-btn:active { transform: translate(1px, 1px); box-shadow: 1px 1px 0 #000; }
+
+        .players-row { display: flex; gap: 8px; }
 
         .player-card {
             flex: 1;
             background: var(--card-bg);
             border: var(--border);
-            border-radius: 10px;
-            padding: 8px;
+            border-radius: var(--radius);
+            padding: 10px;
             text-align: center;
             box-shadow: var(--shadow);
         }
-
-        .player-tag { font-size: 9px; font-weight: 800; }
+        .player-tag { font-size: 9px; font-weight: 800; color: var(--dark); margin-bottom: 4px; }
         .player-score { font-size: 13px; font-weight: 800; color: var(--gold); }
 
-        .rounds-list {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-        }
-
-        .round-item {
+        .rounds-results {
             background: var(--card-bg);
             border: var(--border);
-            border-radius: 10px;
-            padding: 10px;
+            border-radius: var(--radius);
+            padding: 12px;
             box-shadow: var(--shadow);
         }
-
-        .round-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
+        .rounds-title { font-size: 10px; font-weight: 800; color: var(--dark); margin-bottom: 8px; text-align: center; }
+        .round-result-item {
+            background: rgba(245, 158, 11, 0.1);
+            border: 1px solid var(--gold);
+            border-radius: 8px;
+            padding: 8px;
             margin-bottom: 6px;
         }
-
-        .round-title {
-            font-size: 10px;
-            font-weight: 800;
-            color: var(--dark);
-        }
-
-        .round-status {
-            font-size: 8px;
-            font-weight: 700;
-            padding: 3px 8px;
-            border-radius: 4px;
-            border: var(--border);
-        }
-
-        .round-status.waiting { background: #fef3c7; color: #d97706; }
-        .round-status.my_turn { background: #dbeafe; color: #2563eb; }
-        .round-status.opponent_turn { background: #fee2e2; color: #dc2626; }
-        .round-status.done { background: #d1fae5; color: #059669; }
-
-        .round-dots-row {
+        .round-result-row {
             display: flex;
             align-items: center;
             justify-content: space-between;
             font-size: 8px;
+            padding: 2px 0;
         }
-
-        .round-player { font-weight: 700; min-width: 25px; }
-
-        .round-dots {
-            display: flex;
-            gap: 3px;
-            flex: 1;
-            justify-content: center;
-        }
-
+        .round-result-player { font-weight: 700; color: var(--dark); min-width: 25px; }
+        .round-dots { display: flex; gap: 3px; flex: 1; justify-content: center; }
         .result-dot {
             width: 14px;
             height: 14px;
@@ -340,131 +388,83 @@
             justify-content: center;
             font-size: 6px;
             font-weight: 800;
-            border: 1px solid #000;
+            border: var(--border);
             background: #10b981;
             color: #fff;
         }
-
         .result-dot.wrong { background: #ef4444; }
-        .result-dot.empty { background: var(--bg3); }
-
-        .round-score { font-weight: 800; font-size: 8px; }
+        .round-result-count { font-weight: 800; font-size: 8px; color: var(--dark); }
 
         .question-card {
             background: var(--card-bg);
             border: var(--border);
-            border-radius: 10px;
-            padding: 10px;
+            border-radius: var(--radius);
+            padding: 12px;
             box-shadow: var(--shadow);
         }
-
-        .question-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 4px;
-        }
-
-        .question-player-tag { font-size: 9px; font-weight: 800; color: var(--primary); }
-        .question-progress { font-size: 7px; font-weight: 700; color: var(--text-light); }
-
         .question-text {
-            font-size: 10px;
+            font-size: 11px;
             font-weight: 700;
-            line-height: 1.5;
+            color: var(--dark);
+            line-height: 1.7;
             text-align: center;
-            margin-bottom: 6px;
+            margin-bottom: 8px;
         }
-
         .timer-bar-container {
             background: var(--bg3);
             border: var(--border);
             border-radius: 8px;
-            height: 5px;
+            height: 6px;
             overflow: hidden;
             margin-bottom: 4px;
         }
-
         .timer-bar-fill { height: 100%; background: #10b981; transition: width 1s linear; }
         .timer-bar-fill.warning { background: #f59e0b; }
         .timer-bar-fill.danger { background: #ef4444; }
+        .timer-text { font-size: 7px; font-weight: 700; color: var(--text-light); text-align: center; margin-bottom: 8px; }
 
-        .timer-text { font-size: 7px; font-weight: 700; text-align: center; margin-bottom: 6px; }
-
-        .options-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 4px;
-        }
+        .options-grid { display: flex; flex-direction: column; gap: 6px; }
 
         .option-btn {
             display: flex;
             align-items: center;
-            gap: 4px;
-            padding: 6px 8px;
+            gap: 8px;
+            padding: 10px 12px;
             border: var(--border);
-            border-radius: 6px;
+            border-radius: 8px;
             background: var(--bg2);
             cursor: pointer;
-            font-family: 'IRANSans', Tahoma, sans-serif;
-            font-size: 8px;
-            font-weight: 600;
-            text-align: right;
             transition: all 0.2s ease;
-            box-shadow: 1px 1px 0 #000;
+            box-shadow: 2px 2px 0 #000;
+            font-family: 'IRANSans', Tahoma, sans-serif;
+            font-size: 10px;
+            font-weight: 600;
+            color: var(--dark);
+            text-align: right;
         }
-
-        .option-btn:active { transform: translate(1px, 1px); box-shadow: none; }
+        .option-btn:active { transform: translate(1px, 1px); box-shadow: 1px 1px 0 #000; }
         .option-btn.selected-correct { background: #10b981; color: #fff; }
         .option-btn.selected-wrong { background: #ef4444; color: #fff; }
         .option-btn.disabled { pointer-events: none; opacity: 0.6; }
-        .option-btn.hidden-option { opacity: 0.2; pointer-events: none; text-decoration: line-through; }
 
         .option-letter {
-            width: 16px;
-            height: 16px;
+            width: 22px;
+            height: 22px;
             border-radius: 50%;
             background: var(--primary);
             color: #fff;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 7px;
+            font-size: 9px;
             font-weight: 800;
             flex-shrink: 0;
             border: var(--border);
         }
 
-        .actions-row {
-            display: flex;
-            gap: 4px;
-            margin-bottom: 6px;
-        }
-
-        .action-btn {
-            flex: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 3px;
-            padding: 6px;
-            border: var(--border);
-            border-radius: 6px;
-            background: var(--card-bg);
-            cursor: pointer;
-            box-shadow: 1px 1px 0 #000;
-            font-family: 'IRANSans', Tahoma, sans-serif;
-            font-size: 7px;
-            font-weight: 700;
-        }
-
-        .action-btn:disabled { opacity: 0.3; cursor: not-allowed; }
-
         .bottom-btn-container {
             position: fixed;
-            bottom: 0;
-            right: 0;
-            left: 0;
+            bottom: 0; right: 0; left: 0;
             padding: 8px 16px;
             background: var(--header-bg);
             border-top: var(--border);
@@ -487,35 +487,39 @@
             cursor: pointer;
             box-shadow: 3px 3px 0 #000;
         }
-
         .main-btn:disabled { opacity: 0.5; cursor: not-allowed; }
-        .main-btn.waiting { background: var(--text-light); }
+        .main-btn.green { background: #10b981; }
 
         .result-banner {
             text-align: center;
-            padding: 16px;
+            padding: 20px;
             background: var(--card-bg);
             border: var(--border);
-            border-radius: 10px;
+            border-radius: var(--radius);
             box-shadow: var(--shadow);
         }
-
         .result-icon { font-size: 40px; margin-bottom: 8px; }
-        .result-text { font-size: 14px; font-weight: 800; margin-bottom: 4px; }
-        .result-score { font-size: 10px; color: var(--text-light); margin-bottom: 8px; }
-
+        .result-text { font-size: 14px; font-weight: 800; color: var(--dark); margin-bottom: 6px; }
+        .result-score { font-size: 10px; color: var(--text-light); margin-bottom: 10px; }
         .result-btn {
             display: inline-block;
             padding: 8px 20px;
             background: var(--primary);
             color: #fff;
             border: var(--border);
-            border-radius: 6px;
+            border-radius: 8px;
             font-family: 'IRANSans', Tahoma, sans-serif;
             font-size: 10px;
             font-weight: 700;
             cursor: pointer;
             box-shadow: 2px 2px 0 #000;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 10px;
+            color: var(--text-light);
+            font-size: 9px;
         }
     </style>
 </head>
@@ -526,27 +530,21 @@
     <header class="header">
         <div class="header-inner">
             <div class="header-right">
-                <div class="header-logo">
-                    <img src="https://cdn.imgurl.ir/uploads/f30974_InShot_20260821_174101103.png" alt="Quizico">
-                </div>
+                <div class="header-logo"><img src="https://cdn.imgurl.ir/uploads/f30974_InShot_20260821_174101103.png" alt="Quizico"></div>
                 <div>
                     <div class="header-title">Quiz<span class="t-accent">ico</span></div>
-                    <div class="header-subtitle">دو نفره آنلاین</div>
+                    <div class="header-subtitle" data-i18n="online">آنلاین</div>
                 </div>
             </div>
         </div>
     </header>
 
-    <main class="main-container" id="mainContainer">
-        <div class="loader-letters" id="loaderLetters">
-            <span class="loader-letter">Q</span>
-            <span class="loader-letter">u</span>
-            <span class="loader-letter">i</span>
-            <span class="loader-letter">z</span>
-            <span class="loader-letter">i</span>
-            <span class="loader-letter">c</span>
-            <span class="loader-letter">o</span>
+    <main class="main-container">
+        <div class="loader-wrapper" id="loaderWrapper">
+            <div class="loader"></div>
+            <div class="loader-text" data-i18n="loading">در حال دریافت...</div>
         </div>
+        <div class="game-content" id="gameContent"></div>
     </main>
 
     <div class="bottom-btn-container" id="bottomBtnContainer" style="display:none;">
@@ -556,7 +554,7 @@
     <script>
         (function() {
             var webApp = window.Eitaa?.WebApp;
-            var API_URL = 'https://script.google.com/macros/s/AKfycby39_m_-w42F1ps3z21aAW2jMXjgmDJjrPD6CfrLLczg-KPk1cbyXcVnUjaeFQ4TIP9ww/exec';
+            var API_URL = 'https://script.google.com/macros/s/AKfycbzsGrBIFVNkZYfNsx448awdMpPy42boOUvkSMpqnDWf9-wzbPctRQTIUa_ZpTpuGiVqIw/exec';
             var SAD_IMAGE = 'https://cdn.imgurl.ir/uploads/g58935_InShot_20260822_140943752.png';
 
             var TOTAL_ROUNDS = 5;
@@ -568,6 +566,7 @@
             var myCorrectCount = 0;
             var questions = [];
             var roundQuestions = [];
+            var roundResults = [];
             var timerInterval = null;
             var timeLeft = QUESTION_TIME;
             var roomCode = null;
@@ -575,111 +574,217 @@
             var checkInterval = null;
             var myUserId = '';
             var myAnswers = [];
-            var roundData = {};
-            var isMyTurn = false;
-            var currentTurn = 0;
-            var gameStatus = 'waiting';
-            var userCoins = 0;
-            var actionUsedThisQuestion = false;
-            var isAnswered = false;
+            var currentLang = 'fa';
+            var allPlayers = [];
 
-            var turnOrder = [
-                [1, 1], [1, 2],
-                [2, 2], [2, 1],
-                [3, 1], [3, 2],
-                [4, 2], [4, 1],
-                [5, 1], [5, 2]
-            ];
+            var translations = {
+                fa: {
+                    online: 'آنلاین', loading: 'در حال دریافت...', start_game: 'شروع بازی',
+                    waiting: 'منتظر حریف', live: 'در جریان', finished: 'پایان',
+                    you: 'تو', opponent: 'حریف', results: 'نتایج راندها',
+                    round: 'راند', question: 'سوال', of: 'از',
+                    win: 'بردی!', lose: 'باختی!', draw: 'مساوی شدی!',
+                    score: 'امتیاز', back: 'بازگشت', no_questions: 'سوال کافی نیست',
+                    room_full: 'دیر اومدی! یکی دیگه وارد شده',
+                    create_new_room: 'ساخت اتاق جدید',
+                    waiting_opponent: 'هنوز حریفت وارد نشده',
+                    invite_from_players: 'انتخاب از لیست بازیکنا',
+                    search_players: 'جستجوی بازیکن...',
+                    invite: 'دعوت',
+                    invite_sent: 'دعوت ارسال شد!',
+                    invite_error: 'خطا در ارسال دعوت'
+                },
+                en: {
+                    online: 'Online', loading: 'Loading...', start_game: 'Start Game',
+                    waiting: 'Waiting', live: 'Live', finished: 'Finished',
+                    you: 'You', opponent: 'Opponent', results: 'Round Results',
+                    round: 'Round', question: 'Question', of: 'of',
+                    win: 'You Win!', lose: 'You Lose!', draw: 'Draw!',
+                    score: 'Score', back: 'Back', no_questions: 'Not enough questions',
+                    room_full: 'Too late! Someone else joined',
+                    create_new_room: 'Create New Room',
+                    waiting_opponent: 'Waiting for opponent...',
+                    invite_from_players: 'Invite from players list',
+                    search_players: 'Search players...',
+                    invite: 'Invite',
+                    invite_sent: 'Invite sent!',
+                    invite_error: 'Error sending invite'
+                },
+                ar: {
+                    online: 'عبر الإنترنت', loading: 'جار التحميل...', start_game: 'ابدأ اللعبة',
+                    waiting: 'بانتظار الخصم', live: 'جارية', finished: 'انتهت',
+                    you: 'أنت', opponent: 'الخصم', results: 'نتائج الجولات',
+                    round: 'جولة', question: 'سؤال', of: 'من',
+                    win: 'فزت!', lose: 'خسرت!', draw: 'تعادل!',
+                    score: 'النقاط', back: 'رجوع', no_questions: 'أسئلة غير كافية',
+                    room_full: 'متأخر! شخص آخر انضم',
+                    create_new_room: 'إنشاء غرفة جديدة',
+                    waiting_opponent: 'بانتظار الخصم...',
+                    invite_from_players: 'اختر من قائمة اللاعبين',
+                    search_players: 'ابحث عن لاعب...',
+                    invite: 'دعوة',
+                    invite_sent: 'تم إرسال الدعوة!',
+                    invite_error: 'خطأ في إرسال الدعوة'
+                }
+            };
 
             function getSettings() {
                 try {
                     var raw = localStorage.getItem('quizicoSettings');
-                    if (!raw) return { theme: 'light', primaryColor: '#a855f7' };
-                    var parsed = JSON.parse(raw);
-                    if (!parsed.theme) parsed.theme = 'light';
-                    if (!parsed.primaryColor) parsed.primaryColor = '#a855f7';
-                    return parsed;
-                } catch(e) { return { theme: 'light', primaryColor: '#a855f7' }; }
+                    if (!raw) return { theme: 'light', primaryColor: '#a855f7', animation: true, language: 'fa' };
+                    var p = JSON.parse(raw);
+                    if (!p.theme) p.theme = 'light';
+                    if (!p.primaryColor) p.primaryColor = '#a855f7';
+                    if (p.animation === undefined) p.animation = true;
+                    if (!p.language) p.language = 'fa';
+                    return p;
+                } catch(e) { return { theme: 'light', primaryColor: '#a855f7', animation: true, language: 'fa' }; }
             }
 
-            function hexToRgb(hex) {
-                var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-                return result ? { r: parseInt(result[1], 16), g: parseInt(result[2], 16), b: parseInt(result[3], 16) } : { r: 168, g: 85, b: 247 };
-            }
+            function getTranslation(k) { var t = translations[currentLang] || translations.fa; return t[k] || translations.fa[k] || k; }
 
-            function shadeColor(color, percent) {
-                var rgb = hexToRgb(color);
-                var r = Math.max(0, Math.min(255, rgb.r + percent));
-                var g = Math.max(0, Math.min(255, rgb.g + percent));
-                var b = Math.max(0, Math.min(255, rgb.b + percent));
-                return '#' + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
-            }
+            function hexToRgb(h) { var r = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(h); return r ? { r: parseInt(r[1],16), g: parseInt(r[2],16), b: parseInt(r[3],16) } : { r:168,g:85,b:247 }; }
+            function shadeColor(c,p){var r=hexToRgb(c);var rr=Math.max(0,Math.min(255,r.r+p));var gg=Math.max(0,Math.min(255,r.g+p));var bb=Math.max(0,Math.min(255,r.b+p));return '#'+((1<<24)+(rr<<16)+(gg<<8)+bb).toString(16).slice(1);}
 
             function applyTheme() {
-                var settings = getSettings();
-                var theme = settings.theme || 'light';
-                var primaryColor = settings.primaryColor || '#a855f7';
-                document.documentElement.setAttribute('data-theme', theme);
-                if (theme === 'dark') {
-                    var darkPrimary = shadeColor(primaryColor, 40);
-                    document.documentElement.style.setProperty('--primary', darkPrimary);
+                var s = getSettings();
+                currentLang = s.language || 'fa';
+                var t = s.theme || 'light';
+                var p = s.primaryColor || '#a855f7';
+                document.documentElement.setAttribute('data-theme', t);
+                if (t === 'dark') { document.documentElement.style.setProperty('--primary', shadeColor(p, 40)); }
+                else { document.documentElement.style.setProperty('--primary', p); }
+                if (s.animation === false) { document.documentElement.setAttribute('data-animation', 'off'); }
+                else { document.documentElement.removeAttribute('data-animation'); }
+                if (currentLang === 'en') { document.documentElement.setAttribute('dir','ltr'); document.body.style.fontFamily='Arial, sans-serif'; }
+                else if (currentLang === 'ar') { document.documentElement.setAttribute('dir','rtl'); document.body.style.fontFamily='Tahoma, sans-serif'; }
+                else { document.documentElement.setAttribute('dir','rtl'); document.body.style.fontFamily="'IRANSans', Tahoma, sans-serif"; }
+                document.querySelectorAll('[data-i18n]').forEach(function(el){ var k=el.getAttribute('data-i18n'); var t2=translations[currentLang]||translations.fa; if(t2[k]) el.textContent=t2[k]; });
+            }
+
+            function getEitaaUser(){return webApp&&webApp.initDataUnsafe&&webApp.initDataUnsafe.user?webApp.initDataUnsafe.user:null;}
+            function getUserId(){var u=getEitaaUser();return u?(typeof u.id==='number'?u.id.toString():String(u.id||'')):'';}
+            function getStartParam(){if(webApp&&webApp.initDataUnsafe&&webApp.initDataUnsafe.start_param)return webApp.initDataUnsafe.start_param;return '';}
+            function generateRoomCode(){var c='G';for(var i=0;i<5;i++){c+=Math.floor(Math.random()*10);}return c;}
+
+            function fetchData(action,params){
+                var payload={action:action,username:getUserId()};
+                if(params){for(var k in params){if(params.hasOwnProperty(k))payload[k]=params[k];}}
+                return fetch(API_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(payload)}).then(function(r){return r.json();}).catch(function(){return{ok:false};});
+            }
+
+            function shuffleArray(a){for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t;}return a;}
+
+            function getAvatarHtml(avatarId) {
+                if (!avatarId || avatarId === 'default') return '<i class="fa-solid fa-user"></i>';
+                var iconAvatars = {'icon_game':'fa-gamepad','icon_trophy':'fa-trophy','icon_star':'fa-star','icon_bolt':'fa-bolt','icon_fire':'fa-fire','icon_crown':'fa-crown','icon_medal':'fa-medal','icon_rocket':'fa-rocket','icon_ghost':'fa-ghost','icon_dragon':'fa-dragon','icon_wand':'fa-wand-magic-sparkles','icon_hat':'fa-hat-wizard','icon_helmet':'fa-helmet-safety','icon_shield':'fa-shield-halved','icon_sword':'fa-hand-fist'};
+                if (iconAvatars[avatarId]) return '<i class="fa-solid '+iconAvatars[avatarId]+'"></i>';
+                if (avatarId.startsWith('boy_') || avatarId.startsWith('girl_')) return '<img src="https://cdn.imgurl.ir/uploads/'+avatarId+'.png" alt="">';
+                return '<i class="fa-solid fa-user"></i>';
+            }
+
+            function renderWaitingScreen() {
+                var t = getTranslation;
+                var inviteLink = 'https://eitaa.com/gameland_app/Quizico?startapp=' + roomCode + '&btn=بزن.بریم.🚀';
+                var html = '<div class="waiting-card">';
+                html += '<img class="waiting-image" src="' + SAD_IMAGE + '" alt="">';
+                html += '<div class="waiting-text">' + t('waiting_opponent') + '</div>';
+                html += '<div class="room-code-display">' + roomCode + '</div>';
+                html += '<div class="invite-box">';
+                html += '<div class="invite-box-title">دعوت از دوست</div>';
+                html += '<div class="invite-box-desc">لینک زیر رو کپی کن یا از لیست بازیکنا یکی رو انتخاب کن!</div>';
+                html += '<div class="invite-link-box">';
+                html += '<span class="invite-link" id="inviteLink">' + inviteLink + '</span>';
+                html += '<button class="copy-btn" onclick="copyInviteLink()">کپی</button>';
+                html += '</div>';
+                html += '</div>';
+                html += '<div class="players-invite-section">';
+                html += '<div class="players-invite-title">' + t('invite_from_players') + '</div>';
+                html += '<div class="players-search-box"><i class="fa-solid fa-search"></i><input type="text" id="playerSearchInput" placeholder="' + t('search_players') + '" oninput="filterInvitePlayers()"></div>';
+                html += '<div class="players-invite-list" id="playersInviteList"></div>';
+                html += '</div>';
+                html += '</div>';
+                document.getElementById('gameContent').innerHTML = html;
+                document.getElementById('bottomBtnContainer').style.display = 'none';
+                loadInvitePlayers();
+            }
+
+            window.copyInviteLink = function() {
+                var link = document.getElementById('inviteLink').textContent;
+                if (navigator.clipboard) { navigator.clipboard.writeText(link).then(function(){}); }
+                if (webApp) webApp.HapticFeedback?.impactOccurred('light');
+            };
+
+            async function loadInvitePlayers() {
+                var result = await fetchData('leaderboard', { limit: 50 });
+                if (result.ok && Array.isArray(result.data)) {
+                    allPlayers = result.data.filter(function(p) {
+                        return String(p.username) !== String(myUserId);
+                    });
+                    renderInvitePlayersList(allPlayers);
+                }
+            }
+
+            function renderInvitePlayersList(list) {
+                var el = document.getElementById('playersInviteList');
+                if (!el) return;
+                if (list.length === 0) {
+                    el.innerHTML = '<div class="empty-state">بازیکنی یافت نشد</div>';
+                    return;
+                }
+                el.innerHTML = list.map(function(p) {
+                    return '<div class="invite-player-item">' +
+                        '<div class="invite-avatar">' + getAvatarHtml(p.avatar) + '</div>' +
+                        '<div class="invite-info"><div class="invite-name">' + (p.name || p.username) + '</div>' +
+                        '<div class="invite-score">' + getTranslation('score') + ': ' + (p.score || 0) + '</div></div>' +
+                        '<button class="invite-btn" onclick="invitePlayer(\'' + p.username + '\')">' + getTranslation('invite') + '</button></div>';
+                }).join('');
+            }
+
+            window.filterInvitePlayers = function() {
+                var q = document.getElementById('playerSearchInput').value.toLowerCase().trim();
+                if (!q) { renderInvitePlayersList(allPlayers); return; }
+                var filtered = allPlayers.filter(function(p) {
+                    var n = (p.name||'').toLowerCase();
+                    var u = String(p.username||'').toLowerCase();
+                    return n.includes(q) || u.includes(q);
+                });
+                renderInvitePlayersList(filtered);
+            };
+
+            window.invitePlayer = async function(targetUserId) {
+                if (webApp) webApp.HapticFeedback?.impactOccurred('light');
+                var myUser = getEitaaUser();
+                var myName = (myUser.first_name || '') + ' ' + (myUser.last_name || '');
+                var inviteLink = 'https://eitaa.com/gameland_app/Quizico?startapp=' + roomCode + '&btn=بزن.بریم.🚀';
+                var message = myName.trim() + ' ازت دعوت کرد تا یه مسابقه داشته باشید؛\nهمین حالا وارد شو تا نشون بدی چند مرده حلاجی 😎💪\n\n' + inviteLink;
+                
+                var result = await fetchData('sendMessage', {
+                    chat_id: targetUserId,
+                    text: message
+                });
+                
+                if (result.ok) {
+                    if (webApp) webApp.showAlert(getTranslation('invite_sent'));
                 } else {
-                    document.documentElement.style.setProperty('--primary', primaryColor);
+                    if (webApp) webApp.showAlert(getTranslation('invite_error'));
                 }
+            };
+
+            function renderRoomFullScreen() {
+                var t = getTranslation;
+                var html = '<div class="result-banner">';
+                html += '<div class="result-icon"><i class="fa-solid fa-user-clock" style="color:#f59e0b;"></i></div>';
+                html += '<div class="result-text">' + t('room_full') + '</div>';
+                html += '<button class="result-btn" onclick="createNewRoom()">' + t('create_new_room') + '</button>';
+                html += '</div>';
+                document.getElementById('gameContent').innerHTML = html;
+                document.getElementById('bottomBtnContainer').style.display = 'none';
             }
 
-            function shuffleArray(arr) {
-                for (var i = arr.length - 1; i > 0; i--) {
-                    var j = Math.floor(Math.random() * (i + 1));
-                    var temp = arr[i];
-                    arr[i] = arr[j];
-                    arr[j] = temp;
-                }
-                return arr;
-            }
-
-            function getEitaaUser() {
-                if (webApp && webApp.initDataUnsafe && webApp.initDataUnsafe.user) {
-                    return webApp.initDataUnsafe.user;
-                }
-                return null;
-            }
-
-            function getUserId() {
-                var user = getEitaaUser();
-                if (!user) return '';
-                if (typeof user.id === 'number') return user.id.toString();
-                return String(user.id || '');
-            }
-
-            function getStartParam() {
-                if (webApp && webApp.initDataUnsafe && webApp.initDataUnsafe.start_param) {
-                    return webApp.initDataUnsafe.start_param;
-                }
-                return '';
-            }
-
-            function generateRoomCode() {
-                var code = 'G';
-                for (var i = 0; i < 5; i++) {
-                    code += Math.floor(Math.random() * 10);
-                }
-                return code;
-            }
-
-            function fetchData(action, params) {
-                var payload = { action: action };
-                if (params) {
-                    for (var key in params) {
-                        if (params.hasOwnProperty(key)) payload[key] = params[key];
-                    }
-                }
-                return fetch(API_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                    body: JSON.stringify(payload)
-                }).then(function(r) { return r.json(); }).catch(function() { return { ok: false }; });
-            }
+            window.createNewRoom = function() {
+                initPlayer1();
+            };
 
             function startTimer() {
                 clearInterval(timerInterval);
@@ -688,344 +793,138 @@
                 timerInterval = setInterval(function() {
                     timeLeft--;
                     updateTimerBar();
-                    if (timeLeft <= 0) {
-                        clearInterval(timerInterval);
-                        finishMyTurn();
-                    }
+                    if (timeLeft <= 0) { clearInterval(timerInterval); if (!isAnswered) timeOut(); }
                 }, 1000);
             }
 
+            var isAnswered = false;
+
             function updateTimerBar() {
-                var fill = document.querySelector('.timer-bar-fill');
-                var text = document.querySelector('.timer-text');
-                if (!fill || !text) return;
-                var percent = (timeLeft / QUESTION_TIME) * 100;
-                fill.style.width = percent + '%';
-                text.textContent = timeLeft + ' ثانیه';
-                fill.className = 'timer-bar-fill' + (timeLeft <= 10 ? ' danger' : timeLeft <= 20 ? ' warning' : '');
+                var f = document.getElementById('timerFill');
+                var t = document.getElementById('timerText');
+                if (!f || !t) return;
+                var pct = (timeLeft / QUESTION_TIME) * 100;
+                f.style.width = pct + '%';
+                t.textContent = timeLeft + 's';
+                f.className = 'timer-bar-fill' + (timeLeft <= 10 ? ' danger' : timeLeft <= 20 ? ' warning' : '');
             }
 
-            function renderWaitingScreen() {
-                var inviteLink = 'https://eitaa.com/gameland_app/Quizico?startapp=' + roomCode;
-                var html = '<div class="waiting-card">';
-                html += '<img class="waiting-image" src="' + SAD_IMAGE + '" alt="">';
-                html += '<div class="waiting-text">هنوز حریفت وارد نشده</div>';
-                html += '<div class="room-code-display">' + roomCode + '</div>';
-                html += '<div class="invite-box">';
-                html += '<div class="invite-box-title">دعوت از دوست</div>';
-                html += '<div class="invite-box-desc">برای بازی کردن با دوستت، لینک زیر رو کپی کن و براش بفرست. وقتی دوستت وارد شد، بازی خودکار شروع می‌شه!</div>';
-                html += '<div class="invite-link-box">';
-                html += '<span class="invite-link" id="inviteLink">' + inviteLink + '</span>';
-                html += '<button class="copy-btn" onclick="copyInviteLink()">کپی</button>';
-                html += '</div>';
-                html += '</div>';
-                html += '</div>';
-                document.getElementById('mainContainer').innerHTML = html;
-                document.getElementById('bottomBtnContainer').style.display = 'none';
+            function timeOut() {
+                isAnswered = true;
+                var btns = document.querySelectorAll('.option-btn');
+                btns.forEach(function(b){b.classList.add('disabled');});
+                var q = roundQuestions[currentQuestionIndex];
+                var ct = q.options[q.correctOption - 1];
+                document.querySelectorAll('.option-btn').forEach(function(b){ if(b.textContent.trim().indexOf(ct)!==-1) b.classList.add('selected-correct'); });
+                setTimeout(goToNext, 800);
             }
 
-            window.copyInviteLink = function() {
-                var link = document.getElementById('inviteLink').textContent;
-                if (navigator.clipboard) {
-                    navigator.clipboard.writeText(link).then(function() {});
-                }
-                if (webApp) webApp.HapticFeedback?.impactOccurred('light');
-            };
-
-            function getMyPlayerNum() {
-                return isPlayer1 ? 1 : 2;
+            function goToNext() {
+                currentQuestionIndex++;
+                if (currentQuestionIndex >= QUESTIONS_PER_ROUND) { finishRound(); }
+                else { renderQuestionScreen(); }
             }
 
-            function getMyTurnIndex(roundNum) {
-                var myPlayerNum = getMyPlayerNum();
-                for (var i = 0; i < turnOrder.length; i++) {
-                    if (turnOrder[i][0] === roundNum && turnOrder[i][1] === myPlayerNum) {
-                        return i;
-                    }
-                }
-                return -1;
-            }
-
-            function renderRoundsScreen() {
+            function renderGame() {
+                var t = getTranslation;
                 var html = '';
                 html += '<div class="players-row">';
-                html += '<div class="player-card"><div class="player-tag">شما</div><span class="player-score">' + myScore + '</span></div>';
-                html += '<div class="player-card"><div class="player-tag">حریف</div><span class="player-score">?</span></div>';
+                html += '<div class="player-card"><div class="player-tag">' + t('you') + '</div><span class="player-score">' + myScore + '</span></div>';
+                html += '<div class="player-card"><div class="player-tag">' + t('opponent') + '</div><span class="player-score">?</span></div>';
                 html += '</div>';
-                
-                html += '<div class="rounds-list">';
-                for (var r = 1; r <= TOTAL_ROUNDS; r++) {
-                    var status = 'waiting';
-                    var statusText = 'در انتظار';
-                    
-                    var myTurnIndex = getMyTurnIndex(r);
-                    var myRoundKey = 'round' + r + '_p' + getMyPlayerNum();
-                    var opponentRoundKey = 'round' + r + '_p' + (getMyPlayerNum() === 1 ? 2 : 1);
-                    var myDone = roundData[myRoundKey] !== undefined && roundData[myRoundKey] !== '';
-                    var opponentDone = roundData[opponentRoundKey] !== undefined && roundData[opponentRoundKey] !== '';
-                    
-                    if (myDone && opponentDone) {
-                        status = 'done';
-                        statusText = 'پایان';
-                    } else if (myTurnIndex === currentTurn) {
-                        status = 'my_turn';
-                        statusText = 'نوبت شما';
-                    } else if (myTurnIndex < currentTurn) {
-                        status = 'opponent_turn';
-                        statusText = 'نوبت حریف';
-                    }
-                    
-                    html += '<div class="round-item">';
-                    html += '<div class="round-header">';
-                    html += '<span class="round-title">راند ' + r + '</span>';
-                    html += '<span class="round-status ' + status + '">' + statusText + '</span>';
-                    html += '</div>';
-                    html += '<div class="round-dots-row">';
-                    html += '<span class="round-player">شما</span>';
-                    html += '<div class="round-dots">';
-                    var myRoundData = roundData[myRoundKey];
-                    for (var j = 0; j < QUESTIONS_PER_ROUND; j++) {
-                        var dotClass = 'empty';
-                        if (myRoundData) {
-                            try {
-                                var parsed = JSON.parse(myRoundData);
-                                dotClass = parsed[j] ? '' : ' wrong';
-                            } catch(e) {
-                                dotClass = 'empty';
-                            }
-                        }
-                        html += '<span class="result-dot ' + dotClass + '">' + (j + 1) + '</span>';
+                if (roundResults.length > 0) {
+                    html += '<div class="rounds-results"><div class="rounds-title">' + t('results') + '</div>';
+                    for (var i = 0; i < roundResults.length; i++) {
+                        var r = roundResults[i];
+                        html += '<div class="round-result-item">';
+                        html += '<div class="round-result-row"><span class="round-result-player">' + t('round') + ' ' + (i+1) + '</span></div>';
+                        html += '<div class="round-result-row"><span class="round-result-player">' + t('you') + '</span><div class="round-dots">';
+                        for (var j=0;j<QUESTIONS_PER_ROUND;j++) html += '<span class="result-dot'+(j<r.myCorrect?'':' wrong')+'">'+(j+1)+'</span>';
+                        html += '</div><span class="round-result-count">+' + r.myScore + '</span></div>';
+                        html += '</div>';
                     }
                     html += '</div>';
-                    html += '</div>';
-                    html += '</div>';
                 }
-                html += '</div>';
-                
-                document.getElementById('mainContainer').innerHTML = html;
-                
-                var btn = document.getElementById('mainBtn');
-                var myTurnIndex = getMyTurnIndex(currentRound);
-                if (myTurnIndex === currentTurn && gameStatus === 'in_progress') {
-                    btn.textContent = 'شروع راند ' + currentRound;
-                    btn.disabled = false;
-                    btn.className = 'main-btn';
-                    isMyTurn = true;
-                } else {
-                    btn.textContent = 'منتظر حریف...';
-                    btn.disabled = true;
-                    btn.className = 'main-btn waiting';
-                    isMyTurn = false;
-                }
+                document.getElementById('gameContent').innerHTML = html;
                 document.getElementById('bottomBtnContainer').style.display = 'block';
+                var btn = document.getElementById('mainBtn');
+                btn.textContent = t('start_game') + ' ' + currentRound;
+                btn.className = 'main-btn green';
+                btn.disabled = false;
             }
 
             function renderQuestionScreen() {
                 isAnswered = false;
-                actionUsedThisQuestion = false;
                 var q = roundQuestions[currentQuestionIndex];
-                var options = shuffleArray(q.options.slice());
-                var correctIdx = options.indexOf(q.options[q.correctOption - 1]);
-                
-                var html = '<div class="actions-row">';
-                html += '<button class="action-btn" id="btnRemove" onclick="useRemove50()"><i class="fa-solid fa-trash" style="color:#ef4444;"></i> ۵۰</button>';
-                html += '<button class="action-btn" id="btnSwap" onclick="useSwapQuestion()"><i class="fa-solid fa-arrows-rotate" style="color:#06b6d4;"></i> ۱۰۰</button>';
-                html += '<button class="action-btn" id="btnSkip" onclick="useSkipQuestion()"><i class="fa-solid fa-forward" style="color:#f59e0b;"></i> ۱۵۰</button>';
-                html += '</div>';
-                html += '<div class="question-card">';
-                html += '<div class="question-header">';
-                html += '<span class="question-player-tag">راند ' + currentRound + '</span>';
-                html += '<span class="question-progress">سوال ' + (currentQuestionIndex + 1) + ' از ' + QUESTIONS_PER_ROUND + '</span>';
-                html += '</div>';
+                var opts = shuffleArray(q.options.slice());
+                var ci = opts.indexOf(q.options[q.correctOption - 1]);
+                var html = '<div class="question-card">';
                 html += '<div class="question-text">' + q.question + '</div>';
-                html += '<div class="timer-bar-container"><div class="timer-bar-fill" style="width:100%;"></div></div>';
-                html += '<div class="timer-text">60 ثانیه</div>';
+                html += '<div class="timer-bar-container"><div class="timer-bar-fill" id="timerFill" style="width:100%;"></div></div>';
+                html += '<div class="timer-text" id="timerText">60s</div>';
                 html += '<div class="options-grid">';
-                for (var i = 0; i < options.length; i++) {
-                    html += '<button class="option-btn" data-text="' + options[i] + '" data-correct="' + correctIdx + '" onclick="selectMyOption(' + i + ', this)">';
-                    html += '<span class="option-letter">' + (i + 1) + '</span>';
-                    html += '<span>' + options[i] + '</span>';
-                    html += '</button>';
+                for (var i = 0; i < opts.length; i++) {
+                    html += '<button class="option-btn" onclick="selectOption('+i+','+ci+',this)">';
+                    html += '<span class="option-letter">'+(i+1)+'</span><span>'+opts[i]+'</span></button>';
                 }
-                html += '</div>';
-                html += '</div>';
-                
-                document.getElementById('mainContainer').innerHTML = html;
+                html += '</div></div>';
+                document.getElementById('gameContent').innerHTML = html;
                 document.getElementById('bottomBtnContainer').style.display = 'none';
                 startTimer();
             }
 
-            function finishMyTurn() {
-                var myPlayerNum = getMyPlayerNum();
-                var roundKey = 'round' + currentRound + '_p' + myPlayerNum;
-                roundData[roundKey] = JSON.stringify(myAnswers);
-                
-                var questionIds = roundQuestions.map(function(q) { return q.id; }).join(',');
-                var myAnsStr = myAnswers.map(function(a) { return a ? 'T' : 'F'; }).join(',');
-                
-                var updates = {};
-                updates['round' + currentRound] = '[' + questionIds + '][' + myAnsStr + '][]';
-                updates[roundKey] = JSON.stringify(myAnswers);
-                
-                fetchData('updateGame', {
-                    gameId: roomCode,
-                    updates: updates
-                });
-                
-                myCorrectCount = 0;
-                myAnswers = [];
-                currentQuestionIndex = 0;
-                currentTurn++;
-                
-                renderRoundsScreen();
-            }
-
-            function startPolling() {
-                clearInterval(checkInterval);
-                checkInterval = setInterval(async function() {
-                    var gameResult = await fetchData('getGame', { gameId: roomCode });
-                    if (gameResult.ok && gameResult.data) {
-                        roundData = gameResult.data;
-                        gameStatus = gameResult.data.status || 'waiting';
-                        
-                        if (gameStatus === 'finished') {
-                            clearInterval(checkInterval);
-                            endGame();
-                        } else {
-                            renderRoundsScreen();
-                        }
-                    }
-                }, 5000);
-            }
-
-            window.selectMyOption = function(selectedIndex, btn) {
+            window.selectOption = function(sel, ci, btn) {
                 if (isAnswered) return;
                 isAnswered = true;
-                var correctIndex = parseInt(btn.getAttribute('data-correct'));
+                clearInterval(timerInterval);
                 var btns = document.querySelectorAll('.option-btn');
-                btns.forEach(function(b) { b.classList.add('disabled'); });
-                
-                var isCorrect = selectedIndex === correctIndex;
-                if (isCorrect) {
-                    btn.classList.add('selected-correct');
-                    myScore += 5;
-                    myCorrectCount++;
-                    myAnswers.push(true);
-                } else {
-                    btn.classList.add('selected-wrong');
-                    btns[correctIndex].classList.add('selected-correct');
-                    myAnswers.push(false);
-                }
-                
+                btns.forEach(function(b){b.classList.add('disabled');});
+                if (sel === ci) { btn.classList.add('selected-correct'); myScore += 5; myCorrectCount++; myAnswers.push(true); }
+                else { btn.classList.add('selected-wrong'); btns[ci].classList.add('selected-correct'); myAnswers.push(false); }
+                setTimeout(goToNext, 800);
+            };
+
+            function finishRound() {
+                roundResults.push({ myAnswers: myAnswers, myScore: myCorrectCount * 5, myCorrect: myCorrectCount });
+                var qIds = roundQuestions.map(function(q){return q.id;}).join(',');
+                var ansStr = myAnswers.map(function(a){return a?'T':'F';}).join(',');
+                var rData = '['+qIds+']['+ansStr+'][]';
+                var updateData = {};
+                updateData['round'+currentRound] = rData;
+                updateData['round'+currentRound+'_p'+(isPlayer1?'1':'2')] = JSON.stringify(myAnswers);
+                fetchData('updateGame', { gameId: roomCode, updates: updateData });
+                myCorrectCount = 0;
+                myAnswers = [];
+                currentRound++;
+                currentQuestionIndex = 0;
+                if (currentRound > TOTAL_ROUNDS) { endGame(); }
+                else { renderGame(); }
+            }
+
+            function endGame() {
                 clearInterval(timerInterval);
-                setTimeout(function() {
-                    currentQuestionIndex++;
-                    if (currentQuestionIndex >= QUESTIONS_PER_ROUND) {
-                        finishMyTurn();
-                    } else {
-                        renderQuestionScreen();
-                    }
-                }, 800);
-            };
+                var t = getTranslation;
+                var html = '<div class="result-banner">';
+                html += '<div class="result-icon"><i class="fa-solid fa-flag-checkered" style="color:#f59e0b;"></i></div>';
+                html += '<div class="result-text">' + t('finished') + '</div>';
+                html += '<div class="result-score">' + t('score') + ': ' + myScore + '</div>';
+                html += '<button class="result-btn" onclick="backToDashboard()">' + t('back') + '</button></div>';
+                document.getElementById('gameContent').innerHTML = html;
+                document.getElementById('bottomBtnContainer').style.display = 'none';
+                fetchData('updateGame', { gameId: roomCode, updates: { status: 'finished' } });
+            }
 
-            window.useRemove50 = function() {
-                if (userCoins < 50 || isAnswered || actionUsedThisQuestion) return;
-                userCoins -= 50;
-                actionUsedThisQuestion = true;
-                
-                var q = roundQuestions[currentQuestionIndex];
-                var correctText = q.options[q.correctOption - 1];
-                var wrongOptions = q.options.filter(function(o) { return o !== correctText; });
-                var toHide = shuffleArray(wrongOptions).slice(0, 2);
-                
-                var allBtns = document.querySelectorAll('.option-btn');
-                allBtns.forEach(function(btn) {
-                    if (toHide.indexOf(btn.getAttribute('data-text')) !== -1) {
-                        btn.classList.add('hidden-option');
-                    }
-                });
-                
-                document.getElementById('btnRemove').disabled = true;
-                document.getElementById('btnSwap').disabled = true;
-                document.getElementById('btnSkip').disabled = true;
-                
-                fetchData('updateUser', { coins: userCoins });
-            };
-
-            window.useSwapQuestion = function() {
-                if (userCoins < 100 || isAnswered || actionUsedThisQuestion) return;
-                userCoins -= 100;
-                actionUsedThisQuestion = true;
-                
-                var remaining = questions.filter(function(q) {
-                    return roundQuestions.indexOf(q) === -1;
-                });
-                if (remaining.length > 0) {
-                    roundQuestions[currentQuestionIndex] = shuffleArray(remaining)[0];
-                }
-                
-                document.getElementById('btnRemove').disabled = true;
-                document.getElementById('btnSwap').disabled = true;
-                document.getElementById('btnSkip').disabled = true;
-                
-                fetchData('updateUser', { coins: userCoins });
-                renderQuestionScreen();
-            };
-
-            window.useSkipQuestion = function() {
-                if (userCoins < 150 || isAnswered || actionUsedThisQuestion) return;
-                userCoins -= 150;
-                actionUsedThisQuestion = true;
-                
-                myScore += 5;
-                myCorrectCount++;
-                myAnswers.push(true);
-                
-                document.getElementById('btnRemove').disabled = true;
-                document.getElementById('btnSwap').disabled = true;
-                document.getElementById('btnSkip').disabled = true;
-                
-                fetchData('updateUser', { coins: userCoins });
-                
-                clearInterval(timerInterval);
-                setTimeout(function() {
-                    currentQuestionIndex++;
-                    if (currentQuestionIndex >= QUESTIONS_PER_ROUND) {
-                        finishMyTurn();
-                    } else {
-                        renderQuestionScreen();
-                    }
-                }, 300);
-            };
+            window.backToDashboard = function() { window.location.href = '../../dashboard/'; };
 
             window.handleMainBtn = function() {
-                if (isMyTurn) {
-                    loadRoundQuestions();
-                    renderQuestionScreen();
-                }
+                loadRoundQuestions();
+                renderQuestionScreen();
             };
 
             function loadRoundQuestions() {
                 var allShuffled = shuffleArray(questions);
                 roundQuestions = allShuffled.slice(0, QUESTIONS_PER_ROUND);
             }
-
-            function endGame() {
-                clearInterval(checkInterval);
-                clearInterval(timerInterval);
-                var resultHtml = '';
-                resultHtml = '<div class="result-icon"><i class="fa-solid fa-flag-checkered" style="color:#f59e0b;"></i></div>';
-                resultHtml += '<div class="result-text">بازی تمام شد!</div>';
-                resultHtml += '<div class="result-score">امتیاز شما: ' + myScore + '</div>';
-                resultHtml += '<button class="result-btn" onclick="backToDashboard()">بازگشت</button>';
-                
-                document.getElementById('mainContainer').innerHTML = '<div class="result-banner">' + resultHtml + '</div>';
-                document.getElementById('bottomBtnContainer').style.display = 'none';
-            }
-
-            window.backToDashboard = function() {
-                window.location.href = '../../dashboard/';
-            };
 
             async function initPlayer1() {
                 roomCode = generateRoomCode();
@@ -1048,14 +947,12 @@
                 
                 renderWaitingScreen();
                 
-                // چک مداوم هر ۵ ثانیه
                 checkInterval = setInterval(async function() {
                     var gameResult = await fetchData('getGame', { gameId: roomCode });
                     if (gameResult.ok && gameResult.data) {
                         var data = gameResult.data;
                         if (data.player2 && data.player2 !== myUserId) {
                             clearInterval(checkInterval);
-                            gameStatus = 'in_progress';
                             await fetchData('updateGame', { gameId: roomCode, updates: { status: 'in_progress' } });
                             startOnlineGame();
                         }
@@ -1069,46 +966,50 @@
                 
                 var gameResult = await fetchData('getGame', { gameId: roomCode });
                 if (gameResult.ok && gameResult.data) {
-                    if (gameResult.data.player1 === myUserId) {
-                        // خودش ساخته اتاق رو - منتظر بمون
+                    var data = gameResult.data;
+                    
+                    if (data.player1 === myUserId) {
+                        isPlayer1 = true;
                         renderWaitingScreen();
                         checkInterval = setInterval(async function() {
                             var checkResult = await fetchData('getGame', { gameId: roomCode });
                             if (checkResult.ok && checkResult.data && checkResult.data.player2 && checkResult.data.player2 !== myUserId) {
                                 clearInterval(checkInterval);
-                                gameStatus = 'in_progress';
                                 await fetchData('updateGame', { gameId: roomCode, updates: { status: 'in_progress' } });
                                 startOnlineGame();
                             }
                         }, 5000);
                         return;
                     }
+                    
+                    if (data.player2 && data.player2 !== myUserId && data.player1 !== myUserId) {
+                        renderRoomFullScreen();
+                        return;
+                    }
+                    
+                    if (!data.player2) {
+                        await fetchData('updateGame', { gameId: roomCode, updates: { player2: myUserId, status: 'in_progress' } });
+                        startOnlineGame();
+                        return;
+                    }
+                    
+                    if (data.player2 === myUserId) {
+                        startOnlineGame();
+                        return;
+                    }
                 }
-                
-                await fetchData('updateGame', {
-                    gameId: roomCode,
-                    updates: { player2: myUserId, status: 'in_progress' }
-                });
-                
-                startOnlineGame();
             }
 
             async function startOnlineGame() {
-                gameStatus = 'in_progress';
                 var questionsData = await fetchData('getQuestions', { limit: 50 });
                 if (questionsData.ok && Array.isArray(questionsData.data) && questionsData.data.length >= QUESTIONS_PER_ROUND) {
                     questions = questionsData.data;
-                    
-                    var userData = await fetchData('getUser', { username: myUserId });
-                    if (userData.ok && userData.data) {
-                        userCoins = userData.data.coins || 0;
-                    }
-                    
-                    renderRoundsScreen();
-                    startPolling();
+                    renderGame();
                 } else {
-                    document.getElementById('mainContainer').innerHTML = '<div class="result-banner"><div class="result-text">سوال کافی نیست</div></div>';
+                    document.getElementById('gameContent').innerHTML = '<div class="result-banner"><div class="result-text">' + getTranslation('no_questions') + '</div></div>';
                 }
+                document.getElementById('loaderWrapper').style.display = 'none';
+                document.getElementById('gameContent').classList.add('show');
             }
 
             async function init() {
@@ -1117,9 +1018,7 @@
                     webApp.ready();
                     webApp.expand();
                     webApp.BackButton.show();
-                    webApp.BackButton.onClick(function() {
-                        window.location.href = '../../dashboard/';
-                    });
+                    webApp.BackButton.onClick(function(){ window.location.href = '../../dashboard/'; });
                 }
 
                 myUserId = getUserId();
