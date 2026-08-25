@@ -376,13 +376,12 @@
             var questions = [];
             var p1Questions = [], p2Questions = [];
             var roundResults = [];
-            var timerInterval = null;
-            var timeLeft = QUESTION_TIME;
+            var p1TimerInterval = null, p2TimerInterval = null;
+            var p1TimeLeft = QUESTION_TIME, p2TimeLeft = QUESTION_TIME;
             var currentLang = 'fa';
             var p1AnsweredQuestions = [];
             var p2AnsweredQuestions = [];
             var gameId = 'game_' + Date.now();
-            var isStarted = false;
 
             var translations = {
                 fa: { offline:'دو نفره آفلاین', loading:'در حال دریافت...', start_game:'شروع بازی', p1:'بازیکن ۱', p2:'بازیکن ۲', results:'نتایج راندها', round:'راند', question:'سوال', of:'از', next_round:'شروع راند بعدی', p1_win:'بازیکن ۱ برنده شد!', p2_win:'بازیکن ۲ برنده شد!', draw:'مساوی شد!', back:'بازگشت', no_questions:'سوال کافی نیست', score:'امتیاز' },
@@ -462,37 +461,66 @@
             }
             function shuffleArray(a){for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t;}return a;}
 
-            function startTimer() {
-                clearInterval(timerInterval);
-                timeLeft = QUESTION_TIME;
-                updateTimerBars();
-                timerInterval = setInterval(function() {
-                    timeLeft--;
-                    updateTimerBars();
-                    if (timeLeft <= 0) {
-                        clearInterval(timerInterval);
-                        handleTimeout();
-                    }
-                }, 1000);
+            function startPlayerTimer(pn) {
+                if (pn === 1) {
+                    clearInterval(p1TimerInterval);
+                    p1TimeLeft = QUESTION_TIME;
+                    updatePlayerTimerBar(1);
+                    p1TimerInterval = setInterval(function() {
+                        p1TimeLeft--;
+                        updatePlayerTimerBar(1);
+                        if (p1TimeLeft <= 0) { clearInterval(p1TimerInterval); handlePlayerTimeout(1); }
+                    }, 1000);
+                } else {
+                    clearInterval(p2TimerInterval);
+                    p2TimeLeft = QUESTION_TIME;
+                    updatePlayerTimerBar(2);
+                    p2TimerInterval = setInterval(function() {
+                        p2TimeLeft--;
+                        updatePlayerTimerBar(2);
+                        if (p2TimeLeft <= 0) { clearInterval(p2TimerInterval); handlePlayerTimeout(2); }
+                    }, 1000);
+                }
             }
 
-            function updateTimerBars() {
-                var fills = document.querySelectorAll('.timer-bar-fill');
-                var texts = document.querySelectorAll('.timer-text');
-                var pct = (timeLeft / QUESTION_TIME) * 100;
-                fills.forEach(function(f) {
-                    f.style.width = pct + '%';
-                    f.className = 'timer-bar-fill' + (timeLeft <= 10 ? ' danger' : timeLeft <= 20 ? ' warning' : '');
-                });
-                texts.forEach(function(t) { t.textContent = timeLeft + 's'; });
+            function updatePlayerTimerBar(pn) {
+                var fill = document.getElementById('p'+pn+'TimerFill');
+                var text = document.getElementById('p'+pn+'TimerText');
+                if (!fill || !text) return;
+                var time = pn === 1 ? p1TimeLeft : p2TimeLeft;
+                var pct = (time / QUESTION_TIME) * 100;
+                fill.style.width = pct + '%';
+                text.textContent = time + 's';
+                fill.className = 'timer-bar-fill' + (time <= 10 ? ' danger' : time <= 20 ? ' warning' : '');
             }
 
-            function handleTimeout() {
+            function handlePlayerTimeout(pn) {
+                var card = document.getElementById('p'+pn+'Card');
+                if (card && card.querySelectorAll('.option-btn.disabled').length < 4) {
+                    if (pn === 1) { p1AnsweredQuestions[currentQuestionIndex] = false; }
+                    else { p2AnsweredQuestions[currentQuestionIndex] = false; }
+                    var btns = card.querySelectorAll('.option-btn');
+                    btns.forEach(function(b){ b.classList.add('disabled'); });
+                    var q = pn === 1 ? p1Questions[currentQuestionIndex] : p2Questions[currentQuestionIndex];
+                    var ct = q.options[q.correctOption - 1];
+                    var opts = card.querySelectorAll('.option-btn span:last-child');
+                    btns.forEach(function(b){
+                        if (b.textContent.trim().indexOf(ct) !== -1) b.classList.add('selected-correct');
+                    });
+                }
+                checkBothAnswered();
+            }
+
+            function checkBothAnswered() {
                 var p1Card = document.getElementById('p1Card');
                 var p2Card = document.getElementById('p2Card');
-                if (p1Card && p1Card.querySelectorAll('.option-btn.disabled').length < 4) p1AnsweredQuestions[currentQuestionIndex] = false;
-                if (p2Card && p2Card.querySelectorAll('.option-btn.disabled').length < 4) p2AnsweredQuestions[currentQuestionIndex] = false;
-                moveToNext();
+                var p1Done = p1Card && p1Card.querySelectorAll('.option-btn.disabled').length === 4;
+                var p2Done = p2Card && p2Card.querySelectorAll('.option-btn.disabled').length === 4;
+                if (p1Done && p2Done) {
+                    clearInterval(p1TimerInterval);
+                    clearInterval(p2TimerInterval);
+                    setTimeout(moveToNext, 800);
+                }
             }
 
             function moveToNext() {
@@ -541,8 +569,8 @@
                 html += '<div class="question-header"><span class="question-player-tag">'+tag+'</span>';
                 html += '<span class="question-progress">'+getTranslation('question')+' '+(qi+1)+' '+getTranslation('of')+' '+QUESTIONS_PER_ROUND+'</span></div>';
                 html += '<div class="question-text">'+q.question+'</div>';
-                html += '<div class="timer-bar-container"><div class="timer-bar-fill" style="width:100%;"></div></div>';
-                html += '<div class="timer-text">60s</div>';
+                html += '<div class="timer-bar-container"><div class="timer-bar-fill" id="p'+pn+'TimerFill" style="width:100%;"></div></div>';
+                html += '<div class="timer-text" id="p'+pn+'TimerText">60s</div>';
                 html += '<div class="options-grid">';
                 for (var i = 0; i < opts.length; i++) {
                     html += '<button class="option-btn" data-player="'+pn+'" data-correct="'+ci+'" onclick="selectOption('+pn+','+i+',this)">';
@@ -561,7 +589,8 @@
                 html += '</div>';
                 document.getElementById('gameContent').innerHTML = html;
                 document.getElementById('bottomBtnContainer').style.display = 'none';
-                startTimer();
+                startPlayerTimer(1);
+                startPlayerTimer(2);
             }
 
             window.selectOption = function(pn, sel, btn) {
@@ -569,6 +598,8 @@
                 var card = document.getElementById('p'+pn+'Card');
                 var btns = card.querySelectorAll('.option-btn');
                 btns.forEach(function(b){b.classList.add('disabled');});
+                if (pn === 1) { clearInterval(p1TimerInterval); }
+                else { clearInterval(p2TimerInterval); }
                 if (sel === ci) {
                     btn.classList.add('selected-correct');
                     if (pn === 1) { p1Score += 5; p1AnsweredQuestions[currentQuestionIndex] = true; }
@@ -579,9 +610,7 @@
                     if (pn === 1) { p1AnsweredQuestions[currentQuestionIndex] = false; }
                     else { p2AnsweredQuestions[currentQuestionIndex] = false; }
                 }
-                var allAnswered = true;
-                document.querySelectorAll('.question-card').forEach(function(c){ if(c.querySelectorAll('.option-btn.disabled').length<4) allAnswered=false; });
-                if (allAnswered) { clearInterval(timerInterval); setTimeout(moveToNext, 800); }
+                checkBothAnswered();
             };
 
             function finishRound() {
@@ -599,7 +628,8 @@
             }
 
             function endGame() {
-                clearInterval(timerInterval);
+                clearInterval(p1TimerInterval);
+                clearInterval(p2TimerInterval);
                 var t = getTranslation;
                 var html = '<div class="result-banner">';
                 if (p1Score > p2Score) html += '<div class="result-icon"><i class="fa-solid fa-trophy" style="color:#f59e0b;"></i></div><div class="result-text">'+t('p1_win')+'</div>';
