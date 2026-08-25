@@ -37,13 +37,13 @@
             --primary-light: #d8b4fe;
             --primary-rgb: 192, 132, 252;
             --dark: #f1f5f9;
-            --text: #cbd5e1;
+            --text: #e2e8f0;
             --text-light: #94a3b8;
             --white: #2d2a3e;
             --card-bg: #2d2a3e;
             --header-bg: #2d2a3e;
             --shadow: 3px 3px 0 #000000;
-            --border: 1px solid #000000;
+            --border: 1px solid #475569;
         }
 
         [data-animation="off"] * {
@@ -51,11 +51,7 @@
             transition: none !important;
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
             font-family: 'IRANSans', Tahoma, sans-serif;
@@ -93,11 +89,7 @@
             margin: 0 auto;
         }
 
-        .header-right {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
+        .header-right { display: flex; align-items: center; gap: 10px; }
 
         .header-logo {
             width: 44px;
@@ -118,12 +110,7 @@
         .header-title .t-accent { color: var(--primary); }
         .header-subtitle { font-size: 8px; color: var(--text-light); }
 
-        .header-currency {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
+        .header-currency { display: flex; align-items: center; gap: 6px; }
         .currency-badge {
             display: flex;
             align-items: center;
@@ -256,11 +243,7 @@
         }
         .section-title i { color: var(--primary); }
 
-        .game-modes-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 8px;
-        }
+        .game-modes-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
 
         .game-mode-card {
             background: var(--card-bg);
@@ -386,6 +369,31 @@
             display: block;
         }
 
+        .support-card {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px;
+            background: var(--card-bg);
+            border: var(--border);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .support-card:active { transform: translateX(-3px); }
+        .support-card img {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            border: var(--border);
+            object-fit: cover;
+        }
+        .support-info { flex: 1; }
+        .support-name { font-size: 11px; font-weight: 800; color: var(--dark); }
+        .support-desc { font-size: 8px; color: var(--text-light); }
+        .support-card i { color: var(--text-light); font-size: 12px; }
+
         .bottom-nav {
             position: fixed;
             bottom: 0; right: 0; left: 0;
@@ -397,7 +405,6 @@
             padding: 6px 0;
             z-index: 999;
         }
-
         .nav-item {
             display: flex;
             flex-direction: column;
@@ -504,7 +511,7 @@
 
             <div class="game-modes-grid">
                 <div class="game-mode-card" onclick="goToPlay('single')"><img src="https://cdn.imgurl.ir/uploads/f711120_InShot_20260821_200930706.jpg" alt=""><div class="game-mode-label" data-i18n="single">تک‌نفره</div></div>
-                <div class="game-mode-card" onclick="goToPlay('offline')"><img src="https://cdn.imgurl.ir/uploads/k5971_InShot_20260821_201008883.jpg" alt=""><div class="game-mode-label" data-i18n="offline">دو نفره</div></div>
+                <div class="game-mode-card" onclick="goToPlay('offline')"><img src="https://cdn.imgurl.ir/uploads/k5971_InShot_20260821_201008883.jpg" alt=""><div class="game-mode-label" data-i18n="offline">دوستانه</div></div>
                 <div class="game-mode-card" onclick="goToPlay('online')"><img src="https://cdn.imgurl.ir/uploads/h2464_InShot_20260821_201207943.jpg" alt=""><div class="game-mode-label" data-i18n="online">آنلاین</div></div>
                 <div class="game-mode-card" onclick="goToPlay('league')"><img src="https://cdn.imgurl.ir/uploads/e135154_InShot_20260821_201323323.jpg" alt=""><div class="game-mode-label" data-i18n="league">لیگ</div></div>
             </div>
@@ -523,6 +530,15 @@
                     <span class="games-section-badge" id="pastCount">0</span>
                 </div>
                 <div class="games-list" id="pastList"></div>
+            </div>
+
+            <div class="support-card" onclick="openSupportLink()">
+                <img src="https://cdn.imgurl.ir/uploads/v68396_InShot_20260817_190450653.jpg" alt="سازنده">
+                <div class="support-info">
+                    <div class="support-name">امیرمهدی | Amirmahdi</div>
+                    <div class="support-desc" data-i18n="support">از سازنده حمایت کنید</div>
+                </div>
+                <i class="fa-solid fa-chevron-left"></i>
             </div>
 
         </div>
@@ -552,12 +568,13 @@
     <script>
         (function() {
             var webApp = window.Eitaa?.WebApp;
-            var API_URL = 'https://script.google.com/macros/s/AKfycby39_m_-w42F1ps3z21aAW2jMXjgmDJjrPD6CfrLLczg-KPk1cbyXcVnUjaeFQ4TIP9ww/exec';
+            var API_URL = 'https://script.google.com/macros/s/AKfycbzsGrBIFVNkZYfNsx448awdMpPy42boOUvkSMpqnDWf9-wzbPctRQTIUa_ZpTpuGiVqIw/exec';
             var SAD_IMAGE = 'https://cdn.imgurl.ir/uploads/g58935_InShot_20260822_140943752.png';
 
             var userCoins = 0, userDiamonds = 0;
             var currentRotation = 0, isSpinning = false;
             var SPIN_COST = 50;
+            var currentLang = 'fa';
             var wheelPrizes = [
                 { label: 'پوچ', type: 'empty', value: 0 },
                 { label: '۲۰ سکه', type: 'coins', value: 20 },
@@ -572,97 +589,49 @@
 
             var translations = {
                 fa: {
-                    tagline: 'اطلاعات خودت رو محک بزن',
-                    loading: 'در حال دریافت...',
+                    tagline: 'اطلاعات خودت رو محک بزن', loading: 'در حال دریافت...',
                     daily_challenge: '<i class="fa-solid fa-trophy"></i> مسابقه روزانه',
-                    wheel: 'گردونه',
-                    start_game: 'شروع مسابقه',
-                    single: 'تک‌نفره',
-                    offline: 'دو نفره',
-                    online: 'آنلاین',
-                    league: 'لیگ',
-                    in_progress_games: 'بازی‌های در حال برگزاری',
-                    past_games: '۵ بازی گذشته',
-                    home: 'خانه',
-                    ranking: 'رتبه',
-                    profile: 'پروفایل',
-                    settings: 'تنظیمات',
-                    spin: 'چرخش',
-                    cost: 'هزینه',
-                    coins_50: '۵۰ سکه',
-                    no_active_games: 'بازی در جریانی نیست',
-                    no_past_games: 'بازی گذشته‌ای نیست',
-                    waiting: 'منتظر حریف',
-                    live: 'در جریان',
-                    finished: 'پایان',
-                    you_p1: 'تو سازنده بازی هستی',
-                    you_p2: 'تو مهمون بازی هستی',
-                    you_were_p1: 'تو بازیکن ۱ بودی',
-                    you_were_p2: 'تو بازیکن ۲ بودی',
-                    not_enough_coins: 'سکه کافی نداری!',
-                    empty: 'پوچ!'
+                    wheel: 'گردونه', start_game: 'شروع مسابقه',
+                    single: 'تک‌نفره', offline: 'دوستانه', online: 'آنلاین', league: 'لیگ',
+                    in_progress_games: 'بازی‌های در حال برگزاری', past_games: '۵ بازی گذشته',
+                    home: 'خانه', ranking: 'رتبه', profile: 'پروفایل', settings: 'تنظیمات',
+                    spin: 'چرخش', cost: 'هزینه', coins_50: '۵۰ سکه',
+                    no_active_games: 'بازی در جریانی نیست', no_past_games: 'بازی گذشته‌ای نیست',
+                    waiting: 'منتظر حریف', live: 'در جریان', finished: 'پایان',
+                    you_p1: 'تو سازنده بازی هستی', you_p2: 'تو مهمون بازی هستی',
+                    you_were_p1: 'تو بازیکن ۱ بودی', you_were_p2: 'تو بازیکن ۲ بودی',
+                    not_enough_coins: 'سکه کافی نداری!', empty: 'پوچ!',
+                    support: 'از سازنده حمایت کنید'
                 },
                 en: {
-                    tagline: 'Test your knowledge',
-                    loading: 'Loading...',
+                    tagline: 'Test your knowledge', loading: 'Loading...',
                     daily_challenge: '<i class="fa-solid fa-trophy"></i> Daily Challenge',
-                    wheel: 'Wheel',
-                    start_game: 'Start Game',
-                    single: 'Single',
-                    offline: '2P Offline',
-                    online: 'Online',
-                    league: 'League',
-                    in_progress_games: 'Games in Progress',
-                    past_games: 'Last 5 Games',
-                    home: 'Home',
-                    ranking: 'Ranking',
-                    profile: 'Profile',
-                    settings: 'Settings',
-                    spin: 'Spin',
-                    cost: 'Cost',
-                    coins_50: '50 Coins',
-                    no_active_games: 'No active games',
-                    no_past_games: 'No past games',
-                    waiting: 'Waiting',
-                    live: 'Live',
-                    finished: 'Finished',
-                    you_p1: 'You are Player 1',
-                    you_p2: 'You are Player 2',
-                    you_were_p1: 'You were Player 1',
-                    you_were_p2: 'You were Player 2',
-                    not_enough_coins: 'Not enough coins!',
-                    empty: 'Empty!'
+                    wheel: 'Wheel', start_game: 'Start Game',
+                    single: 'Single', offline: 'Friendly', online: 'Online', league: 'League',
+                    in_progress_games: 'Games in Progress', past_games: 'Last 5 Games',
+                    home: 'Home', ranking: 'Ranking', profile: 'Profile', settings: 'Settings',
+                    spin: 'Spin', cost: 'Cost', coins_50: '50 Coins',
+                    no_active_games: 'No active games', no_past_games: 'No past games',
+                    waiting: 'Waiting', live: 'Live', finished: 'Finished',
+                    you_p1: 'You are Player 1', you_p2: 'You are Player 2',
+                    you_were_p1: 'You were Player 1', you_were_p2: 'You were Player 2',
+                    not_enough_coins: 'Not enough coins!', empty: 'Empty!',
+                    support: 'Support the developer'
                 },
                 ar: {
-                    tagline: 'اختبر معلوماتك',
-                    loading: 'جار التحميل...',
+                    tagline: 'اختبر معلوماتك', loading: 'جار التحميل...',
                     daily_challenge: '<i class="fa-solid fa-trophy"></i> التحدي اليومي',
-                    wheel: 'العجلة',
-                    start_game: 'ابدأ اللعبة',
-                    single: 'فردي',
-                    offline: 'ثنائي بدون إنترنت',
-                    online: 'عبر الإنترنت',
-                    league: 'الدوري',
-                    in_progress_games: 'الألعاب الجارية',
-                    past_games: 'آخر 5 ألعاب',
-                    home: 'الرئيسية',
-                    ranking: 'الترتيب',
-                    profile: 'الملف',
-                    settings: 'الإعدادات',
-                    spin: 'تدوير',
-                    cost: 'التكلفة',
-                    coins_50: '50 عملة',
-                    no_active_games: 'لا توجد ألعاب جارية',
-                    no_past_games: 'لا توجد ألعاب سابقة',
-                    waiting: 'بانتظار الخصم',
-                    live: 'جارية',
-                    finished: 'انتهت',
-                    you_p1: 'أنت اللاعب 1',
-                    you_p2: 'أنت اللاعب 2',
-                    you_were_p1: 'كنت اللاعب 1',
-                    you_were_p2: 'كنت اللاعب 2',
-                    not_enough_coins: 'عملات غير كافية!',
-                    empty: 'فارغ!'
+                    wheel: 'العجلة', start_game: 'ابدأ اللعبة',
+                    single: 'فردي', offline: 'ودي', online: 'عبر الإنترنت', league: 'الدوري',
+                    in_progress_games: 'الألعاب الجارية', past_games: 'آخر 5 ألعاب',
+                    home: 'الرئيسية', ranking: 'الترتيب', profile: 'الملف', settings: 'الإعدادات',
+                    spin: 'تدوير', cost: 'التكلفة', coins_50: '50 عملة',
+                    no_active_games: 'لا توجد ألعاب جارية', no_past_games: 'لا توجد ألعاب سابقة',
+                    waiting: 'بانتظار الخصم', live: 'جارية', finished: 'انتهت',
+                    you_p1: 'أنت اللاعب 1', you_p2: 'أنت اللاعب 2',
+                    you_were_p1: 'كنت اللاعب 1', you_were_p2: 'كنت اللاعب 2',
+                    not_enough_coins: 'عملات غير كافية!', empty: 'فارغ!',
+                    support: 'ادعم المطور'
                 }
             };
 
@@ -679,53 +648,25 @@
                 } catch(e) { return { theme: 'light', primaryColor: '#a855f7', animation: true, language: 'fa' }; }
             }
 
-            function getTranslation(key) {
-                var s = getSettings();
-                var t = translations[s.language] || translations.fa;
-                return t[key] || translations.fa[key] || key;
-            }
+            function getTranslation(k) { var t = translations[currentLang] || translations.fa; return t[k] || translations.fa[k] || k; }
 
-            function hexToRgb(h) {
-                var r = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(h);
-                return r ? { r: parseInt(r[1],16), g: parseInt(r[2],16), b: parseInt(r[3],16) } : { r:168,g:85,b:247 };
-            }
+            function hexToRgb(h) { var r = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(h); return r ? { r: parseInt(r[1],16), g: parseInt(r[2],16), b: parseInt(r[3],16) } : { r:168,g:85,b:247 }; }
             function shadeColor(c,p){var r=hexToRgb(c);var rr=Math.max(0,Math.min(255,r.r+p));var gg=Math.max(0,Math.min(255,r.g+p));var bb=Math.max(0,Math.min(255,r.b+p));return '#'+((1<<24)+(rr<<16)+(gg<<8)+bb).toString(16).slice(1);}
-
-            function applyLanguage(lang) {
-                var t = translations[lang] || translations.fa;
-                document.querySelectorAll('[data-i18n]').forEach(function(el) {
-                    var k = el.getAttribute('data-i18n');
-                    if (t[k]) el.innerHTML = t[k];
-                });
-                if (lang === 'en') {
-                    document.documentElement.setAttribute('dir', 'ltr');
-                    document.body.style.fontFamily = 'Arial, sans-serif';
-                } else if (lang === 'ar') {
-                    document.documentElement.setAttribute('dir', 'rtl');
-                    document.body.style.fontFamily = 'Tahoma, sans-serif';
-                } else {
-                    document.documentElement.setAttribute('dir', 'rtl');
-                    document.body.style.fontFamily = "'IRANSans', Tahoma, sans-serif";
-                }
-            }
 
             function applyTheme() {
                 var s = getSettings();
+                currentLang = s.language || 'fa';
                 var t = s.theme || 'light';
                 var p = s.primaryColor || '#a855f7';
                 document.documentElement.setAttribute('data-theme', t);
-                if (t === 'dark') {
-                    var dp = shadeColor(p, 40);
-                    document.documentElement.style.setProperty('--primary', dp);
-                } else {
-                    document.documentElement.style.setProperty('--primary', p);
-                }
-                if (s.animation === false) {
-                    document.documentElement.setAttribute('data-animation', 'off');
-                } else {
-                    document.documentElement.removeAttribute('data-animation');
-                }
-                applyLanguage(s.language);
+                if (t === 'dark') { document.documentElement.style.setProperty('--primary', shadeColor(p, 40)); }
+                else { document.documentElement.style.setProperty('--primary', p); }
+                if (s.animation === false) { document.documentElement.setAttribute('data-animation', 'off'); }
+                else { document.documentElement.removeAttribute('data-animation'); }
+                if (currentLang === 'en') { document.documentElement.setAttribute('dir','ltr'); document.body.style.fontFamily='Arial, sans-serif'; }
+                else if (currentLang === 'ar') { document.documentElement.setAttribute('dir','rtl'); document.body.style.fontFamily='Tahoma, sans-serif'; }
+                else { document.documentElement.setAttribute('dir','rtl'); document.body.style.fontFamily="'IRANSans', Tahoma, sans-serif"; }
+                document.querySelectorAll('[data-i18n]').forEach(function(el){ var k=el.getAttribute('data-i18n'); var t2=translations[currentLang]||translations.fa; if(t2[k]) el.innerHTML=t2[k]; });
             }
 
             function getEitaaUser(){return webApp&&webApp.initDataUnsafe&&webApp.initDataUnsafe.user?webApp.initDataUnsafe.user:null;}
@@ -740,7 +681,15 @@
 
             function goToPlay(mode){localStorage.setItem('gameMode',mode);window.location.href='../play/'+mode+'/';}
             function continueGame(id){localStorage.setItem('onlineRoomCode',id);window.location.href='../play/online/';}
-            window.goToPlay=goToPlay;window.continueGame=continueGame;
+            function goToResult(id){window.location.href='../result/?id='+id;}
+            function openSupportLink(){
+                if (webApp && webApp.openEitaaLink) {
+                    webApp.openEitaaLink('https://eitaa.com/Amirmahdi_code');
+                } else {
+                    window.open('https://eitaa.com/Amirmahdi_code', '_blank');
+                }
+            }
+            window.goToPlay=goToPlay;window.continueGame=continueGame;window.goToResult=goToResult;window.openSupportLink=openSupportLink;
 
             function animateCount(el,target,dur){
                 var st=0,stt=null;
@@ -748,9 +697,7 @@
                 requestAnimationFrame(step);
             }
 
-            function renderEmpty(text){
-                return '<div class="empty-state"><img src="'+SAD_IMAGE+'" alt=""><p>'+text+'</p></div>';
-            }
+            function renderEmpty(text){ return '<div class="empty-state"><img src="'+SAD_IMAGE+'" alt=""><p>'+text+'</p></div>'; }
 
             function renderGameCard(g, myId, type) {
                 var isP1 = String(g.player1) === String(myId);
@@ -764,7 +711,7 @@
                 } else {
                     subtitle = getTranslation(isP1 ? 'you_p1' : 'you_p2');
                 }
-                var onclick = type === 'past' ? '' : ' onclick="continueGame(\'' + g.id + '\')"';
+                var onclick = type === 'past' ? ' onclick="goToResult(\'' + g.id + '\')"' : ' onclick="continueGame(\'' + g.id + '\')"';
                 var icon = type === 'past' ? 'fa-flag-checkered' : 'fa-globe';
                 return '<div class="game-card"' + onclick + '>' +
                     '<div class="game-icon"><i class="fa-solid ' + icon + '"></i></div>' +
@@ -878,25 +825,34 @@
                     if (prize.type === 'empty') { 
                         userCoins -= SPIN_COST; 
                         document.getElementById('wheelResult').textContent = getTranslation('empty'); 
+                        fetchData('updateUser', { coins: userCoins });
                     }
                     else if (prize.type === 'coins') { 
                         userCoins = userCoins - SPIN_COST + prize.value; 
                         document.getElementById('wheelResult').textContent = prize.label; 
+                        fetchData('updateUser', { coins: userCoins });
                     }
                     else { 
                         userDiamonds += prize.value; 
                         userCoins -= SPIN_COST; 
                         document.getElementById('wheelResult').textContent = prize.label; 
+                        fetchData('updateUser', { coins: userCoins, diamonds: userDiamonds });
                     }
                     document.getElementById('coinsHeader').textContent = userCoins;
                     document.getElementById('diamondsHeader').textContent = userDiamonds;
-                    fetchData('updateUser', { coins: userCoins, diamonds: userDiamonds });
                     isSpinning = false;
                 }, 4200);
             }
             window.spinWheel = spinWheel;
 
-            if (webApp) { webApp.ready(); webApp.expand(); }
+            if (webApp) {
+                webApp.ready();
+                webApp.expand();
+                webApp.BackButton.show();
+                webApp.BackButton.onClick(function() {
+                    webApp.close();
+                });
+            }
             applyTheme();
             loadDashboard();
         })();
