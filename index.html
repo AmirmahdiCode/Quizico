@@ -179,6 +179,7 @@
         (function() {
             var webApp = window.Eitaa?.WebApp;
             var API_URL = 'https://script.google.com/macros/s/AKfycbzsGrBIFVNkZYfNsx448awdMpPy42boOUvkSMpqnDWf9-wzbPctRQTIUa_ZpTpuGiVqIw/exec';
+            var BOT_TOKEN = '77781793:V~KcJC7%-6R[6mluX-n9AC9!5]-lOe4sYy/-po?thoGR-XohE.2zg-VYpqW,v4-L~5cj?ry-IAuujqcE-2x2nnxNk-8OOXj2BC-qMLC%s6E-eP3rAgzQ-Ja4z(F5e-yb1#0dlr-Vjf8HltQ-YsFu,3mL-M';
 
             function getEitaaUser() {
                 if (webApp && webApp.initDataUnsafe && webApp.initDataUnsafe.user) {
@@ -239,6 +240,27 @@
                 }
             }
 
+            async function sendMessageDirect(chatId, text) {
+                try {
+                    var response = await fetch('https://eitaayar.ir/api/app/sendMessage', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            token: BOT_TOKEN,
+                            chat_id: parseInt(chatId),
+                            text: text
+                        })
+                    });
+                    
+                    var result = await response.json();
+                    console.log('نتیجه ارسال پیام:', result);
+                    return result;
+                } catch(e) {
+                    console.error('خطا در ارسال پیام:', e);
+                    return { ok: false, error: e.message };
+                }
+            }
+
             function openSupportLink(){
                 if (webApp && webApp.openEitaaLink) {
                     webApp.openEitaaLink('https://eitaa.com/Amirmahdi_code');
@@ -274,25 +296,37 @@
                     return;
                 }
 
-                webApp.requestWriteAccess(function(granted) {
-                    if (granted) {
-                        proceedToGame();
-                    } else {
-                        updateStatusText('برای استفاده از بازی باید اجازه ارسال پیام رو بدی', 'لطفاً دوباره وارد شوید');
-                        
-                        setTimeout(function() {
-                            if (webApp && typeof webApp.close === 'function') {
-                                webApp.close();
-                            }
-                        }, 2500);
-                    }
-                });
+                var allowsWrite = user.allows_write_to_pm === true;
 
-                async function proceedToGame() {
+                if (!allowsWrite) {
+                    if (webApp && typeof webApp.requestWriteAccess === 'function') {
+                        webApp.requestWriteAccess(function(granted) {
+                            if (granted) {
+                                proceedToGame(true);
+                            } else {
+                                updateStatusText('برای استفاده از بازی باید اجازه ارسال پیام رو بدی', 'لطفاً دوباره وارد شوید');
+                                
+                                setTimeout(function() {
+                                    if (webApp && typeof webApp.close === 'function') {
+                                        webApp.close();
+                                    }
+                                }, 2500);
+                            }
+                        });
+                    } else {
+                        proceedToGame(false);
+                    }
+                } else {
+                    proceedToGame(false);
+                }
+
+                async function proceedToGame(isNewAccess) {
                     var fullName = (user.first_name || '') + ' ' + (user.last_name || '');
 
                     try {
                         var check = await fetchData('getUser', {});
+
+                        var isNewUser = false;
 
                         if (check.ok && check.data) {
                             var currentName = check.data.name || '';
@@ -302,14 +336,14 @@
                                 await fetchData('updateUser', { name: newName });
                             }
                         } else {
+                            isNewUser = true;
                             await fetchData('registerUser', {
                                 name: fullName.trim() || 'کاربر'
                             });
-                            
-                            await fetchData('sendMessage', {
-                                chat_id: username,
-                                text: 'سلام ' + (fullName.trim() || 'کاربر') + ' عزیز!\n\nبه Quizico خوش اومدی! 🎮\n\nاینجا می‌تونی اطلاعاتت رو محک بزنی و با دوستات رقابت کنی.\n\nموفق باشی! 🚀'
-                            });
+                        }
+
+                        if (isNewUser || isNewAccess) {
+                            await sendMessageDirect(username, 'سلام ' + (fullName.trim() || 'کاربر') + ' عزیز!\n\nبه Quizico خوش اومدی! 🎮\n\nاینجا می‌تونی اطلاعاتت رو محک بزنی و با دوستات رقابت کنی.\n\nموفق باشی! 🚀');
                         }
 
                         setTimeout(function() {
