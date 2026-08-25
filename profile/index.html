@@ -363,6 +363,7 @@
         }
         .avatar-item:active { transform: scale(0.95); }
         .avatar-item.active { border-color: var(--gold); border-width: 2px; }
+        .avatar-item.owned { border-color: #10b981; }
         .avatar-item-img {
             width: 40px;
             height: 40px;
@@ -380,6 +381,7 @@
         .avatar-item-img img { width: 100%; height: 100%; object-fit: cover; }
         .avatar-item-price { font-size: 7px; font-weight: 700; color: var(--text-light); }
         .avatar-item-price.free { color: #059669; }
+        .avatar-item-price.owned { color: #10b981; }
 
         .bottom-nav {
             position: fixed;
@@ -509,7 +511,7 @@
     <script>
         (function() {
             var webApp = window.Eitaa?.WebApp;
-            var API_URL = 'https://script.google.com/macros/s/AKfycbzls3pY6FEklM3GOGSyMQfbX2PpMwCxS6yroUSQ_7MKzJnni3H18ZCtSl12-EGt2GjBeQ/exec';
+            var API_URL = 'https://script.google.com/macros/s/AKfycbzsGrBIFVNkZYfNsx448awdMpPy42boOUvkSMpqnDWf9-wzbPctRQTIUa_ZpTpuGiVqIw/exec';
             var SAD_IMAGE = 'https://cdn.imgurl.ir/uploads/g58935_InShot_20260822_140943752.png';
             var userDiamonds = 0;
             var currentAvatar = 'default';
@@ -526,7 +528,8 @@
                     no_games: 'مسابقه‌ای یافت نشد', choose_avatar: 'انتخاب آواتار',
                     icons: 'آیکون‌ها', boys: 'پسر بچه', girls: 'دختر بچه',
                     free: 'رایگان', diamonds_short: 'الماس',
-                    not_enough_diamonds: 'الماس کافی نداری!', avatar_purchased: 'آواتار خریداری شد!'
+                    not_enough_diamonds: 'الماس کافی نداری!', avatar_purchased: 'آواتار خریداری شد!',
+                    owned: 'خریداری شده'
                 },
                 en: {
                     profile: 'Profile', loading: 'Loading...', coins: 'Coins', diamonds: 'Diamonds',
@@ -538,7 +541,8 @@
                     no_games: 'No games found', choose_avatar: 'Choose Avatar',
                     icons: 'Icons', boys: 'Boys', girls: 'Girls',
                     free: 'Free', diamonds_short: 'Diamonds',
-                    not_enough_diamonds: 'Not enough diamonds!', avatar_purchased: 'Avatar purchased!'
+                    not_enough_diamonds: 'Not enough diamonds!', avatar_purchased: 'Avatar purchased!',
+                    owned: 'Owned'
                 },
                 ar: {
                     profile: 'الملف', loading: 'جار التحميل...', coins: 'عملات', diamonds: 'ألماس',
@@ -550,7 +554,8 @@
                     no_games: 'لا توجد ألعاب', choose_avatar: 'اختر الصورة الرمزية',
                     icons: 'أيقونات', boys: 'أولاد', girls: 'بنات',
                     free: 'مجاني', diamonds_short: 'ألماس',
-                    not_enough_diamonds: 'ألماس غير كافي!', avatar_purchased: 'تم شراء الصورة الرمزية!'
+                    not_enough_diamonds: 'ألماس غير كافي!', avatar_purchased: 'تم شراء الصورة الرمزية!',
+                    owned: 'مملوك'
                 }
             };
 
@@ -678,6 +683,13 @@
 
             function renderEmpty(text){ return '<div class="empty-state"><img src="'+SAD_IMAGE+'" alt=""><p>'+text+'</p></div>'; }
 
+            function isAvatarOwned(itemId) {
+                try {
+                    var owned = JSON.parse(localStorage.getItem('ownedAvatars') || '[]');
+                    return owned.indexOf(itemId) !== -1;
+                } catch(e) { return false; }
+            }
+
             function renderAchievements(data) {
                 var grid = document.getElementById('achievementsGrid');
                 var stats = {};
@@ -717,14 +729,20 @@
                     html += '<div class="avatar-grid">';
                     cat.items.forEach(function(item) {
                         var isActive = currentAvatar === item.id;
+                        var isOwned = isAvatarOwned(item.id);
                         var imgHtml;
                         if (item.icon) {
                             imgHtml = '<i class="fa-solid '+item.icon+'"></i>';
                         } else {
                             imgHtml = '<img src="'+item.url+'" alt="">';
                         }
-                        var priceHtml = cat.price === 0 ? '<span class="avatar-item-price free">'+getTranslation('free')+'</span>' : '<span class="avatar-item-price">'+cat.price+' 💎</span>';
-                        html += '<div class="avatar-item'+(isActive?' active':'')+'" onclick="selectAvatar(\''+cat.id+'\',\''+item.id+'\','+cat.price+')">';
+                        var priceHtml;
+                        if (cat.price === 0 || isOwned) {
+                            priceHtml = '<span class="avatar-item-price owned">'+(cat.price===0?getTranslation('free'):getTranslation('owned'))+'</span>';
+                        } else {
+                            priceHtml = '<span class="avatar-item-price">'+cat.price+' 💎</span>';
+                        }
+                        html += '<div class="avatar-item'+(isActive?' active':'')+(isOwned?' owned':'')+'" onclick="selectAvatar(\''+cat.id+'\',\''+item.id+'\','+cat.price+')">';
                         html += '<div class="avatar-item-img">'+imgHtml+'</div>';
                         html += priceHtml;
                         html += '</div>';
@@ -745,15 +763,32 @@
             window.closeAvatarModal = closeAvatarModal;
 
             window.selectAvatar = function(catId, itemId, price) {
-                if (price > 0 && userDiamonds < price) {
+                var owned = isAvatarOwned(itemId);
+                
+                if (price === 0 || owned) {
+                    currentAvatar = itemId;
+                    fetchData('updateUser', { avatar: itemId });
+                    renderAvatarModal();
+                    updateProfileAvatar();
+                    return;
+                }
+                
+                if (userDiamonds < price) {
                     if (webApp) webApp.showAlert(getTranslation('not_enough_diamonds'));
                     return;
                 }
-                if (price > 0) {
-                    userDiamonds -= price;
-                    document.getElementById('diamondsValue').textContent = userDiamonds;
-                    fetchData('updateUser', { diamonds: userDiamonds });
+                
+                userDiamonds -= price;
+                document.getElementById('diamondsValue').textContent = userDiamonds;
+                fetchData('updateUser', { diamonds: userDiamonds });
+                
+                var ownedAvatars = [];
+                try { ownedAvatars = JSON.parse(localStorage.getItem('ownedAvatars') || '[]'); } catch(e) {}
+                if (ownedAvatars.indexOf(itemId) === -1) {
+                    ownedAvatars.push(itemId);
+                    localStorage.setItem('ownedAvatars', JSON.stringify(ownedAvatars));
                 }
+                
                 currentAvatar = itemId;
                 fetchData('updateUser', { avatar: itemId });
                 renderAvatarModal();
