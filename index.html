@@ -160,7 +160,7 @@
             <span class="letter">c</span>
             <span class="letter">o</span>
         </div>
-        <div class="text">
+        <div class="text" id="statusText">
             در حال آماده‌سازی...
             <span>لطفاً صبر کنید</span>
         </div>
@@ -248,6 +248,17 @@
             }
             window.openSupportLink = openSupportLink;
 
+            function updateStatusText(mainText, subText) {
+                var textEl = document.getElementById('statusText');
+                if (subText) {
+                    textEl.innerHTML = mainText + '<span>' + subText + '</span>';
+                } else {
+                    textEl.textContent = mainText;
+                }
+                textEl.style.opacity = '1';
+                textEl.style.animation = 'none';
+            }
+
             function checkWriteAccess() {
                 var user = getEitaaUser();
                 if (user && user.allows_write_to_pm === true) {
@@ -267,36 +278,27 @@
                 var username = getUserId();
 
                 if (!user || !username) {
-                    var text = document.querySelector('.text');
-                    text.innerHTML = 'لطفاً از داخل ایتا وارد شوید';
-                    text.style.opacity = '1';
-                    text.style.animation = 'none';
+                    updateStatusText('لطفاً از داخل ایتا وارد شوید');
                     return;
                 }
 
                 if (!checkWriteAccess()) {
-                    if (webApp && webApp.requestWriteAccess) {
+                    if (webApp && typeof webApp.requestWriteAccess === 'function') {
                         webApp.requestWriteAccess(function(granted) {
-                            if (!granted) {
-                                var text = document.querySelector('.text');
-                                text.innerHTML = 'برای استفاده از بازی باید اجازه ارسال پیام رو بدی';
-                                text.style.opacity = '1';
-                                text.style.animation = 'none';
+                            if (granted) {
+                                proceedToGame();
+                            } else {
+                                updateStatusText('برای استفاده از بازی باید اجازه ارسال پیام رو بدی', 'لطفاً دوباره وارد شوید');
                                 
                                 setTimeout(function() {
-                                    webApp.close();
+                                    if (webApp && typeof webApp.close === 'function') {
+                                        webApp.close();
+                                    }
                                 }, 2500);
-                                return;
                             }
-                            
-                            proceedToGame();
                         });
                     } else {
-                        var text = document.querySelector('.text');
-                        text.innerHTML = 'نسخه ایتا شما قدیمی است';
-                        text.style.opacity = '1';
-                        text.style.animation = 'none';
-                        return;
+                        updateStatusText('لطفاً ابتدا دکمه Start برنامه رو بزنید', 'بعد دوباره وارد شوید');
                     }
                 } else {
                     proceedToGame();
@@ -332,10 +334,7 @@
 
                     } catch(e) {
                         console.error('Init error:', e);
-                        var text = document.querySelector('.text');
-                        text.innerHTML = 'خطا در ارتباط با سرور';
-                        text.style.opacity = '1';
-                        text.style.animation = 'none';
+                        updateStatusText('خطا در ارتباط با سرور');
                     }
                 }
             }
