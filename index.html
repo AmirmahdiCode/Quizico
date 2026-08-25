@@ -304,13 +304,13 @@
                             if (granted) {
                                 proceedToGame(true);
                             } else {
-                                updateStatusText('برای استفاده از بازی باید اجازه ارسال پیام رو بدی', 'لطفاً دوباره وارد شوید');
+                                updateStatusText('دسترسی رد شد', 'برنامه بسته می‌شود...');
                                 
                                 setTimeout(function() {
                                     if (webApp && typeof webApp.close === 'function') {
                                         webApp.close();
                                     }
-                                }, 2500);
+                                }, 1500);
                             }
                         });
                     } else {
