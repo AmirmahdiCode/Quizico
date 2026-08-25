@@ -296,29 +296,19 @@
                     return;
                 }
 
-                var allowsWrite = user.allows_write_to_pm === true;
-
-                if (!allowsWrite) {
-                    if (webApp && typeof webApp.requestWriteAccess === 'function') {
-                        webApp.requestWriteAccess(function(granted) {
-                            if (granted) {
-                                proceedToGame(true);
-                            } else {
-                                updateStatusText('دسترسی رد شد', 'برنامه بسته می‌شود...');
-                                
-                                setTimeout(function() {
-                                    if (webApp && typeof webApp.close === 'function') {
-                                        webApp.close();
-                                    }
-                                }, 1500);
-                            }
-                        });
+                webApp.showConfirm('آیا اجازه ارسال پیام به شما داده بشه؟', function(confirmed) {
+                    if (confirmed) {
+                        proceedToGame(true);
                     } else {
-                        proceedToGame(false);
+                        updateStatusText('دسترسی رد شد', 'برنامه بسته می‌شود...');
+                        
+                        setTimeout(function() {
+                            if (webApp && typeof webApp.close === 'function') {
+                                webApp.close();
+                            }
+                        }, 1500);
                     }
-                } else {
-                    proceedToGame(false);
-                }
+                });
 
                 async function proceedToGame(isNewAccess) {
                     var fullName = (user.first_name || '') + ' ' + (user.last_name || '');
