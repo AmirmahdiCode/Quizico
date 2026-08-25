@@ -345,6 +345,46 @@
             color: var(--dark);
         }
 
+        .support-notification {
+            position: fixed;
+            top: 85px;
+            right: 10px;
+            left: 10px;
+            max-width: 400px;
+            margin: 0 auto;
+            background: var(--card-bg);
+            border: var(--border);
+            border-radius: var(--radius);
+            box-shadow: 5px 5px 0 #000;
+            padding: 10px 14px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            z-index: 2000;
+            animation: slideDownNotif 0.5s ease forwards, slideUpNotif 0.5s ease 4.5s forwards;
+            cursor: pointer;
+        }
+        .support-notification img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: var(--border);
+            object-fit: cover;
+        }
+        .support-notification .notif-info { flex: 1; }
+        .support-notification .notif-name { font-size: 10px; font-weight: 800; color: var(--dark); }
+        .support-notification .notif-desc { font-size: 8px; color: var(--text-light); }
+        .support-notification i { color: var(--text-light); font-size: 10px; }
+
+        @keyframes slideDownNotif {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes slideUpNotif {
+            from { opacity: 1; transform: translateY(0); }
+            to { opacity: 0; transform: translateY(-20px); }
+        }
+
         .bottom-nav {
             position: fixed;
             bottom: 0; right: 0; left: 0;
@@ -435,6 +475,15 @@
         </div>
     </div>
 
+    <div class="support-notification" id="supportNotification" onclick="openSupportLink()">
+        <img src="https://cdn.imgurl.ir/uploads/v68396_InShot_20260817_190450653.jpg" alt="سازنده">
+        <div class="notif-info">
+            <div class="notif-name">امیرمهدی | Amirmahdi</div>
+            <div class="notif-desc" data-i18n="support">از سازنده حمایت کنید</div>
+        </div>
+        <i class="fa-solid fa-chevron-left"></i>
+    </div>
+
     <nav class="bottom-nav">
         <a href="../dashboard/" class="nav-item"><i class="fa-solid fa-house"></i><span data-i18n="home">خانه</span></a>
         <a href="../ranking/" class="nav-item active"><i class="fa-solid fa-trophy"></i><span data-i18n="ranking_nav">رتبه</span></a>
@@ -455,19 +504,22 @@
                     ranking: 'رتبه‌بندی', loading: 'در حال دریافت...', your_rank: 'رتبه شما',
                     home: 'خانه', ranking_nav: 'رتبه', profile: 'پروفایل', settings: 'تنظیمات',
                     no_users: 'کاربری یافت نشد', search_placeholder: 'جستجوی کاربر...',
-                    score: 'امتیاز', you: 'شما', unknown: 'ناشناس', coins: 'سکه', diamonds: 'الماس'
+                    score: 'امتیاز', you: 'شما', unknown: 'ناشناس', coins: 'سکه', diamonds: 'الماس',
+                    support: 'از سازنده حمایت کنید'
                 },
                 en: {
                     ranking: 'Ranking', loading: 'Loading...', your_rank: 'Your Rank',
                     home: 'Home', ranking_nav: 'Ranking', profile: 'Profile', settings: 'Settings',
                     no_users: 'No users found', search_placeholder: 'Search users...',
-                    score: 'Score', you: 'You', unknown: 'Unknown', coins: 'Coins', diamonds: 'Diamonds'
+                    score: 'Score', you: 'You', unknown: 'Unknown', coins: 'Coins', diamonds: 'Diamonds',
+                    support: 'Support the developer'
                 },
                 ar: {
                     ranking: 'الترتيب', loading: 'جار التحميل...', your_rank: 'رتبتك',
                     home: 'الرئيسية', ranking_nav: 'الترتيب', profile: 'الملف', settings: 'الإعدادات',
                     no_users: 'لا يوجد مستخدمين', search_placeholder: 'ابحث عن مستخدم...',
-                    score: 'النقاط', you: 'أنت', unknown: 'غير معروف', coins: 'عملات', diamonds: 'ألماس'
+                    score: 'النقاط', you: 'أنت', unknown: 'غير معروف', coins: 'عملات', diamonds: 'ألماس',
+                    support: 'ادعم المطور'
                 }
             };
 
@@ -625,6 +677,15 @@
                 document.getElementById('profileModalOverlay').classList.remove('show');
             };
 
+            function openSupportLink(){
+                if (webApp && webApp.openEitaaLink) {
+                    webApp.openEitaaLink('https://eitaa.com/Amirmahdi_code');
+                } else {
+                    window.open('https://eitaa.com/Amirmahdi_code', '_blank');
+                }
+            }
+            window.openSupportLink = openSupportLink;
+
             async function loadRanking() {
                 try {
                     var myId = getUserId();
@@ -661,6 +722,13 @@
 
             applyTheme();
             loadRanking();
+            
+            setTimeout(function() {
+                var notif = document.getElementById('supportNotification');
+                if (notif) {
+                    notif.style.display = 'none';
+                }
+            }, 5000);
         })();
     </script>
 </body>
