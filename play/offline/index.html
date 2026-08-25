@@ -461,6 +461,14 @@
             }
             function shuffleArray(a){for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t;}return a;}
 
+            function getQuestionsForPlayer(qs, count) {
+                var result = [];
+                while (result.length < count) {
+                    result = result.concat(shuffleArray(qs));
+                }
+                return result.slice(0, count);
+            }
+
             function startPlayerTimer(pn) {
                 if (pn === 1) {
                     clearInterval(p1TimerInterval);
@@ -503,7 +511,6 @@
                     btns.forEach(function(b){ b.classList.add('disabled'); });
                     var q = pn === 1 ? p1Questions[currentQuestionIndex] : p2Questions[currentQuestionIndex];
                     var ct = q.options[q.correctOption - 1];
-                    var opts = card.querySelectorAll('.option-btn span:last-child');
                     btns.forEach(function(b){
                         if (b.textContent.trim().indexOf(ct) !== -1) b.classList.add('selected-correct');
                     });
@@ -665,20 +672,19 @@
                     webApp.BackButton.onClick(function(){ window.location.href = '../../dashboard/'; });
                 }
                 var qd = await fetchData('getQuestions', { limit: 100 });
-                if (qd.ok && Array.isArray(qd.data) && qd.data.length >= 8) {
+                if (qd.ok && Array.isArray(qd.data) && qd.data.length >= 6) {
                     questions = qd.data;
                     var totalNeeded = TOTAL_ROUNDS * QUESTIONS_PER_ROUND;
-                    var selectedQuestions = shuffleArray(questions).slice(0, totalNeeded * 2);
-                    if (selectedQuestions.length < totalNeeded * 2) {
-                        selectedQuestions = shuffleArray(questions).concat(shuffleArray(questions)).slice(0, totalNeeded * 2);
-                    }
+                    
                     if (currentLang !== 'fa') {
                         var translated = [];
-                        for (var i = 0; i < selectedQuestions.length; i++) translated.push(await translateQuestion(selectedQuestions[i], currentLang));
-                        selectedQuestions = translated;
+                        for (var i = 0; i < questions.length; i++) translated.push(await translateQuestion(questions[i], currentLang));
+                        questions = translated;
                     }
-                    p1Questions = selectedQuestions.slice(0, totalNeeded);
-                    p2Questions = selectedQuestions.slice(totalNeeded, totalNeeded * 2);
+                    
+                    p1Questions = getQuestionsForPlayer(questions, totalNeeded);
+                    p2Questions = getQuestionsForPlayer(questions, totalNeeded);
+                    
                     renderRoundsScreen();
                 } else {
                     document.getElementById('gameContent').innerHTML = '<div class="result-banner"><div class="result-text">'+getTranslation('no_questions')+'</div></div>';
