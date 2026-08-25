@@ -259,14 +259,6 @@
                 textEl.style.animation = 'none';
             }
 
-            function checkWriteAccess() {
-                var user = getEitaaUser();
-                if (user && user.allows_write_to_pm === true) {
-                    return true;
-                }
-                return false;
-            }
-
             async function init() {
                 if (webApp) {
                     webApp.ready();
@@ -282,27 +274,7 @@
                     return;
                 }
 
-                if (!checkWriteAccess()) {
-                    if (webApp && typeof webApp.requestWriteAccess === 'function') {
-                        webApp.requestWriteAccess(function(granted) {
-                            if (granted) {
-                                proceedToGame();
-                            } else {
-                                updateStatusText('برای استفاده از بازی باید اجازه ارسال پیام رو بدی', 'لطفاً دوباره وارد شوید');
-                                
-                                setTimeout(function() {
-                                    if (webApp && typeof webApp.close === 'function') {
-                                        webApp.close();
-                                    }
-                                }, 2500);
-                            }
-                        });
-                    } else {
-                        updateStatusText('لطفاً ابتدا دکمه Start برنامه رو بزنید', 'بعد دوباره وارد شوید');
-                    }
-                } else {
-                    proceedToGame();
-                }
+                await proceedToGame();
 
                 async function proceedToGame() {
                     var fullName = (user.first_name || '') + ' ' + (user.last_name || '');
@@ -320,6 +292,11 @@
                         } else {
                             await fetchData('registerUser', {
                                 name: fullName.trim() || 'کاربر'
+                            });
+                            
+                            await fetchData('sendMessage', {
+                                chat_id: username,
+                                text: 'سلام ' + (fullName.trim() || 'کاربر') + ' عزیز!\n\nبه Quizico خوش اومدی! 🎮\n\nاینجا می‌تونی اطلاعاتت رو محک بزنی و با دوستات رقابت کنی.\n\nموفق باشی! 🚀'
                             });
                         }
 
