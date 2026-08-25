@@ -375,6 +375,8 @@
             var timerInterval = null;
             var timeLeft = QUESTION_TIME;
             var currentLang = 'fa';
+            var p1AnsweredQuestions = [];
+            var p2AnsweredQuestions = [];
 
             var translations = {
                 fa: {
@@ -462,21 +464,35 @@
                 return new Promise(function(resolve) { setTimeout(resolve, ms); });
             }
 
-            function translateText(text, targetLang) {
-                if (targetLang === 'fa') return Promise.resolve(text);
+            function translateGoogle(text, targetLang) {
                 var url = 'https://translate.googleapis.com/translate_a/single?client=gtx&sl=fa&tl=' + targetLang + '&dt=t&q=' + encodeURIComponent(text);
-                return fetch(url).then(function(r){return r.json();}).then(function(d){return d&&d[0]&&d[0][0]?d[0][0][0]:text;}).catch(function(){return text;});
+                return fetch(url).then(function(r){return r.json();}).then(function(d){return d&&d[0]&&d[0][0]?d[0][0][0]:null;}).catch(function(){return null;});
+            }
+
+            function translateMyMemory(text, targetLang) {
+                var url = 'https://api.mymemory.translated.net/get?q=' + encodeURIComponent(text) + '&langpair=fa|' + targetLang;
+                return fetch(url).then(function(r){return r.json();}).then(function(d){return d&&d.responseData&&d.responseData.translatedText?d.responseData.translatedText:null;}).catch(function(){return null;});
+            }
+
+            async function translateText(text, targetLang) {
+                if (targetLang === 'fa') return text;
+                var result = await translateGoogle(text, targetLang);
+                if (result) return result;
+                await sleep(100);
+                result = await translateMyMemory(text, targetLang);
+                if (result) return result;
+                return text;
             }
 
             async function translateQuestion(q, lang) {
                 if (lang === 'fa') return q;
                 var target = lang === 'en' ? 'en' : 'ar';
                 var tq = await translateText(q.question, target);
-                await sleep(50);
+                await sleep(80);
                 var topts = [];
                 for (var i = 0; i < q.options.length; i++) {
                     topts.push(await translateText(q.options[i], target));
-                    await sleep(50);
+                    await sleep(80);
                 }
                 return { id: q.id, question: tq, options: topts, correctOption: q.correctOption };
             }
@@ -500,7 +516,7 @@
                     updateTimerBars();
                     if (timeLeft <= 0) {
                         clearInterval(timerInterval);
-                        finishRound();
+                        handleTimeout();
                     }
                 }, 1000);
             }
@@ -514,6 +530,27 @@
                     f.className = 'timer-bar-fill' + (timeLeft <= 10 ? ' danger' : timeLeft <= 20 ? ' warning' : '');
                 });
                 texts.forEach(function(t) { t.textContent = timeLeft + 's'; });
+            }
+
+            function handleTimeout() {
+                var p1Card = document.getElementById('p1Card');
+                var p2Card = document.getElementById('p2Card');
+                if (p1Card && p1Card.querySelectorAll('.option-btn.disabled').length < 4) {
+                    p1AnsweredQuestions[currentQuestionIndex] = false;
+                }
+                if (p2Card && p2Card.querySelectorAll('.option-btn.disabled').length < 4) {
+                    p2AnsweredQuestions[currentQuestionIndex] = false;
+                }
+                moveToNext();
+            }
+
+            function moveToNext() {
+                currentQuestionIndex++;
+                if (currentQuestionIndex >= QUESTIONS_PER_ROUND) {
+                    finishRound();
+                } else {
+                    renderQuestionsScreen();
+                }
             }
 
             function renderRoundsScreen() {
@@ -578,6 +615,8 @@
             }
 
             function renderQuestionsScreen() {
+                p1AnsweredQuestions[currentQuestionIndex] = undefined;
+                p2AnsweredQuestions[currentQuestionIndex] = undefined;
                 var html = '<div class="question-area">';
                 html += renderQuestionCard(1, p1Questions[currentQuestionIndex], currentQuestionIndex);
                 html += renderQuestionCard(2, p2Questions[currentQuestionIndex], currentQuestionIndex);
@@ -594,11 +633,13 @@
                 btns.forEach(function(b) { b.classList.add('disabled'); });
                 if (sel === ci) {
                     btn.classList.add('selected-correct');
-                    if (playerNum === 1) { p1Score += 5; p1CorrectCount++; }
-                    else { p2Score += 5; p2CorrectCount++; }
+                    if (playerNum === 1) { p1Score += 5; p1CorrectCount++; p1AnsweredQuestions[currentQuestionIndex] = true; }
+                    else { p2Score += 5; p2CorrectCount++; p2AnsweredQuestions[currentQuestionIndex] = true; }
                 } else {
                     btn.classList.add('selected-wrong');
                     btns[ci].classList.add('selected-correct');
+                    if (playerNum === 1) { p1AnsweredQuestions[currentQuestionIndex] = false; }
+                    else { p2AnsweredQuestions[currentQuestionIndex] = false; }
                 }
                 
                 var allAnswered = true;
@@ -608,26 +649,26 @@
                 
                 if (allAnswered) {
                     clearInterval(timerInterval);
-                    setTimeout(function() {
-                        currentQuestionIndex++;
-                        if (currentQuestionIndex >= QUESTIONS_PER_ROUND) {
-                            finishRound();
-                        } else {
-                            renderQuestionsScreen();
-                        }
-                    }, 800);
+                    setTimeout(moveToNext, 800);
                 }
             };
 
             function finishRound() {
+                var p1Corr = 0, p2Corr = 0;
+                for (var i = 0; i < QUESTIONS_PER_ROUND; i++) {
+                    if (p1AnsweredQuestions[i] === true) p1Corr++;
+                    if (p2AnsweredQuestions[i] === true) p2Corr++;
+                }
                 roundResults.push({
-                    p1Score: p1CorrectCount * 5,
-                    p2Score: p2CorrectCount * 5,
-                    p1Correct: p1CorrectCount,
-                    p2Correct: p2CorrectCount
+                    p1Score: p1Corr * 5,
+                    p2Score: p2Corr * 5,
+                    p1Correct: p1Corr,
+                    p2Correct: p2Corr
                 });
                 p1CorrectCount = 0;
                 p2CorrectCount = 0;
+                p1AnsweredQuestions = [];
+                p2AnsweredQuestions = [];
                 currentRound++;
                 currentQuestionIndex = 0;
                 renderRoundsScreen();
@@ -670,7 +711,6 @@
                 var qd = await fetchData('getQuestions', { limit: 100 });
                 if (qd.ok && Array.isArray(qd.data) && qd.data.length >= 8) {
                     questions = qd.data;
-                    
                     var totalNeeded = TOTAL_ROUNDS * QUESTIONS_PER_ROUND;
                     var selectedQuestions = shuffleArray(questions).slice(0, totalNeeded * 2);
                     
@@ -684,12 +724,6 @@
                     
                     p1Questions = selectedQuestions.slice(0, totalNeeded);
                     p2Questions = selectedQuestions.slice(totalNeeded, totalNeeded * 2);
-                    
-                    if (p1Questions.length < totalNeeded || p2Questions.length < totalNeeded) {
-                        p1Questions = selectedQuestions.slice(0, totalNeeded);
-                        p2Questions = shuffleArray(selectedQuestions).slice(0, totalNeeded);
-                    }
-                    
                     renderRoundsScreen();
                 } else {
                     document.getElementById('gameContent').innerHTML = '<div class="result-banner"><div class="result-text">' + getTranslation('no_questions') + '</div></div>';
