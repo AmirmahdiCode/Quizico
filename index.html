@@ -274,7 +274,19 @@
                     return;
                 }
 
-                await proceedToGame();
+                webApp.requestWriteAccess(function(granted) {
+                    if (granted) {
+                        proceedToGame();
+                    } else {
+                        updateStatusText('برای استفاده از بازی باید اجازه ارسال پیام رو بدی', 'لطفاً دوباره وارد شوید');
+                        
+                        setTimeout(function() {
+                            if (webApp && typeof webApp.close === 'function') {
+                                webApp.close();
+                            }
+                        }, 2500);
+                    }
+                });
 
                 async function proceedToGame() {
                     var fullName = (user.first_name || '') + ' ' + (user.last_name || '');
