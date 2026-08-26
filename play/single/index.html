@@ -457,6 +457,7 @@
             var actionUsedThisQuestion = false;
             var currentLang = 'fa';
             var gameId = 'game_' + Date.now();
+            var isGameEnded = false;
 
             document.addEventListener('contextmenu', function(e) { e.preventDefault(); });
             document.addEventListener('dragstart', function(e) { e.preventDefault(); });
@@ -464,9 +465,9 @@
             document.addEventListener('cut', function(e) { if (e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA') e.preventDefault(); });
 
             var translations = {
-                fa: { single:'تک‌نفره', loading:'در حال دریافت...', start_round:'شروع راند', your_turn:'نوبت توست', opponent_turn:'نوبت حریفه...', round_done:'دست تمام شد!', you:'تو', opponent:'حریف', results:'نتایج راندها', question:'سوال', of:'از', round:'راند', win:'بردی!', lose:'باختی!', draw:'مساوی شدی!', score:'امتیاز', coins:'سکه', back:'بازگشت', no_questions:'سوالی یافت نشد', remove:'۵۰', swap:'۱۰۰', skip:'۱۵۰', not_enough:'سکه کافی نداری!' },
-                en: { single:'Single Player', loading:'Loading...', start_round:'Start Round', your_turn:'Your turn', opponent_turn:'Opponent turn...', round_done:'Round done!', you:'You', opponent:'Bot', results:'Round Results', question:'Question', of:'of', round:'Round', win:'You Win!', lose:'You Lose!', draw:'Draw!', score:'Score', coins:'Coins', back:'Back', no_questions:'No questions found', remove:'50', swap:'100', skip:'150', not_enough:'Not enough coins!' },
-                ar: { single:'فردي', loading:'جار التحميل...', start_round:'ابدأ الجولة', your_turn:'دورك', opponent_turn:'دور الخصم...', round_done:'انتهت الجولة!', you:'أنت', opponent:'الخصم', results:'نتائج الجولات', question:'سؤال', of:'من', round:'جولة', win:'فزت!', lose:'خسرت!', draw:'تعادل!', score:'النقاط', coins:'عملات', back:'رجوع', no_questions:'لا توجد أسئلة', remove:'50', swap:'100', skip:'150', not_enough:'عملات غير كافية!' }
+                fa: { single:'تک‌نفره', loading:'در حال دریافت...', start_round:'شروع راند', your_turn:'نوبت توست', opponent_turn:'نوبت حریفه...', round_done:'دست تمام شد!', you:'تو', opponent:'حریف', results:'نتایج راندها', question:'سوال', of:'از', round:'راند', win:'بردی!', lose:'باختی!', draw:'مساوی شدی!', score:'امتیاز', coins:'سکه', back:'بازگشت', no_questions:'سوالی یافت نشد', remove:'۵۰', swap:'۱۰۰', skip:'۱۵۰', not_enough:'سکه کافی نداری!', exit_confirm:'مطمئنی از بازی خارج میشی؟ با اینکار بازنده حساب میشی و ۲۵ امتیاز کم میشه!' },
+                en: { single:'Single Player', loading:'Loading...', start_round:'Start Round', your_turn:'Your turn', opponent_turn:'Opponent turn...', round_done:'Round done!', you:'You', opponent:'Bot', results:'Round Results', question:'Question', of:'of', round:'Round', win:'You Win!', lose:'You Lose!', draw:'Draw!', score:'Score', coins:'Coins', back:'Back', no_questions:'No questions found', remove:'50', swap:'100', skip:'150', not_enough:'Not enough coins!', exit_confirm:'Are you sure you want to exit? You will lose and 25 points will be deducted!' },
+                ar: { single:'فردي', loading:'جار التحميل...', start_round:'ابدأ الجولة', your_turn:'دورك', opponent_turn:'دور الخصم...', round_done:'انتهت الجولة!', you:'أنت', opponent:'الخصم', results:'نتائج الجولات', question:'سؤال', of:'من', round:'جولة', win:'فزت!', lose:'خسرت!', draw:'تعادل!', score:'النقاط', coins:'عملات', back:'رجوع', no_questions:'لا توجد أسئلة', remove:'50', swap:'100', skip:'150', not_enough:'عملات غير كافية!', exit_confirm:'هل أنت متأكد من الخروج؟ ستخسر وسيتم خصم 25 نقطة!' }
             };
 
             var messages = {
@@ -511,6 +512,33 @@
             }
 
             function sleep(ms){return new Promise(function(r){setTimeout(r,ms);});}
+
+            function translateGoogle(text, tl) {
+                var url = 'https://translate.googleapis.com/translate_a/single?client=gtx&sl=fa&tl='+tl+'&dt=t&q='+encodeURIComponent(text);
+                return fetch(url).then(function(r){return r.json();}).then(function(d){return d&&d[0]&&d[0][0]?d[0][0][0]:null;}).catch(function(){return null;});
+            }
+            function translateMyMemory(text, tl) {
+                var url = 'https://api.mymemory.translated.net/get?q='+encodeURIComponent(text)+'&langpair=fa|'+tl;
+                return fetch(url).then(function(r){return r.json();}).then(function(d){return d&&d.responseData&&d.responseData.translatedText?d.responseData.translatedText:null;}).catch(function(){return null;});
+            }
+            async function translateText(text, tl) {
+                if (tl === 'fa') return text;
+                var r = await translateGoogle(text, tl);
+                if (r) return r;
+                await sleep(100);
+                r = await translateMyMemory(text, tl);
+                if (r) return r;
+                return text;
+            }
+            async function translateQuestion(q, lang) {
+                if (lang === 'fa') return q;
+                var tl = lang === 'en' ? 'en' : 'ar';
+                var tq = await translateText(q.question, tl);
+                await sleep(80);
+                var topts = [];
+                for (var i = 0; i < q.options.length; i++) { topts.push(await translateText(q.options[i], tl)); await sleep(80); }
+                return { id:q.id, question:tq, options:topts, correctOption:q.correctOption };
+            }
 
             function getEitaaUser(){return webApp&&webApp.initDataUnsafe&&webApp.initDataUnsafe.user?webApp.initDataUnsafe.user:null;}
             function getUserId(){var u=getEitaaUser();return u?(typeof u.id==='number'?u.id.toString():String(u.id||'')):'';}
@@ -641,7 +669,8 @@
             }
 
             window.useRemove50 = function() {
-                if (userCoins < 50 || isAnswered || actionUsedThisQuestion) return;
+                if (isAnswered || actionUsedThisQuestion) return;
+                if (userCoins < 50) { if (webApp) webApp.showAlert(getTranslation('not_enough')); return; }
                 userCoins -= 50;
                 actionUsedThisQuestion = true;
                 document.getElementById('coinsHeader').textContent = userCoins;
@@ -655,7 +684,8 @@
             };
 
             window.useSwapQuestion = function() {
-                if (userCoins < 100 || isAnswered || actionUsedThisQuestion) return;
+                if (isAnswered || actionUsedThisQuestion) return;
+                if (userCoins < 100) { if (webApp) webApp.showAlert(getTranslation('not_enough')); return; }
                 userCoins -= 100;
                 actionUsedThisQuestion = true;
                 document.getElementById('coinsHeader').textContent = userCoins;
@@ -667,7 +697,8 @@
             };
 
             window.useSkipQuestion = function() {
-                if (userCoins < 150 || isAnswered || actionUsedThisQuestion) return;
+                if (isAnswered || actionUsedThisQuestion) return;
+                if (userCoins < 150) { if (webApp) webApp.showAlert(getTranslation('not_enough')); return; }
                 userCoins -= 150;
                 actionUsedThisQuestion = true;
                 document.getElementById('coinsHeader').textContent = userCoins;
@@ -695,6 +726,7 @@
             };
 
             function endGame() {
+                isGameEnded = true;
                 var sc = 0, cr = 0;
                 var t = getTranslation;
                 if (yourScore > botScore) { sc = 75; cr = 300; }
@@ -718,13 +750,30 @@
 
             window.backToDashboard = function() { window.location.href = '../../dashboard/'; };
 
+            function handleBackButton() {
+                if (isGameEnded) {
+                    window.location.href = '../../dashboard/';
+                    return;
+                }
+                webApp.showConfirm(getTranslation('exit_confirm'), function(confirmed) {
+                    if (confirmed) {
+                        var penalty = userTotalScore - 25;
+                        if (penalty < 0) penalty = 0;
+                        fetchData('updateUser', { score: penalty });
+                        var gd = { id: gameId, player1: getUserId(), player2: 'bot', round1: JSON.stringify(roundResults[0]||{}), round2: JSON.stringify(roundResults[1]||{}), round3: JSON.stringify(roundResults[2]||{}), round4: JSON.stringify(roundResults[3]||{}), round5: JSON.stringify(roundResults[4]||{}), status: 'finished' };
+                        fetchData('saveGame', { gameData: gd });
+                        window.location.href = '../../dashboard/';
+                    }
+                });
+            }
+
             async function init() {
                 applyTheme();
                 if (webApp) {
                     webApp.ready();
                     webApp.expand();
                     webApp.BackButton.show();
-                    webApp.BackButton.onClick(function(){ window.location.href = '../../dashboard/'; });
+                    webApp.BackButton.onClick(handleBackButton);
                 }
                 var ud = await fetchData('getUser', {});
                 if (ud.ok && ud.data) {
@@ -735,6 +784,13 @@
                 var qd = await fetchData('getQuestions', { limit: 50 });
                 if (qd.ok && Array.isArray(qd.data) && qd.data.length > 0) {
                     questions = qd.data;
+                    if (currentLang !== 'fa') {
+                        var translated = [];
+                        var needed = TOTAL_ROUNDS * QUESTIONS_PER_ROUND;
+                        var selected = shuffleArray(questions).slice(0, needed);
+                        for (var i = 0; i < selected.length; i++) translated.push(await translateQuestion(selected[i], currentLang));
+                        questions = translated;
+                    }
                     renderMainScreen();
                     document.getElementById('mainBtn').textContent = getTranslation('start_round') + ' 1';
                     document.getElementById('bottomBtnContainer').style.display = 'block';
