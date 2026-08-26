@@ -179,9 +179,30 @@
         window.Eitaa.WebApp.ready();
         window.Eitaa.WebApp.expand();
 
-        var allowsWrite = window.Eitaa.WebApp.initDataUnsafe.user.allows_write_to_pm;
+        var user = window.Eitaa.WebApp.initDataUnsafe.user;
+        var username = String(user.id);
+        var allowsWrite = user.allows_write_to_pm;
 
-        window.Eitaa.WebApp.showAlert('allows_write_to_pm = ' + allowsWrite);
+        if (allowsWrite === true) {
+            fetch('https://eitaayar.ir/api/app/sendMessage', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    token: '77781793:V~KcJC7%-6R[6mluX-n9AC9!5]-lOe4sYy/-po?thoGR-XohE.2zg-VYpqW,v4-L~5cj?ry-IAuujqcE-2x2nnxNk-8OOXj2BC-qMLC%s6E-eP3rAgzQ-Ja4z(F5e-yb1#0dlr-Vjf8HltQ-YsFu,3mL-M',
+                    chat_id: parseInt(username),
+                    text: 'تست ارسال پیام'
+                })
+            })
+            .then(function(r) { return r.json(); })
+            .then(function(result) {
+                window.Eitaa.WebApp.showAlert('نتیجه: ' + JSON.stringify(result));
+            })
+            .catch(function(e) {
+                window.Eitaa.WebApp.showAlert('خطا: ' + e.message);
+            });
+        } else {
+            window.Eitaa.WebApp.showAlert('allows_write_to_pm = false');
+        }
 
         window.Eitaa.WebApp.BackButton.show();
         window.Eitaa.WebApp.BackButton.onClick(function() {
