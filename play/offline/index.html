@@ -406,6 +406,7 @@
             var p1AnsweredQuestions = [];
             var p2AnsweredQuestions = [];
             var gameId = 'game_' + Date.now();
+            var isGameEnded = false;
 
             document.addEventListener('contextmenu', function(e) { e.preventDefault(); });
             document.addEventListener('dragstart', function(e) { e.preventDefault(); });
@@ -413,9 +414,9 @@
             document.addEventListener('cut', function(e) { if (e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA') e.preventDefault(); });
 
             var translations = {
-                fa: { offline:'دوستانه', loading:'در حال دریافت...', start_game:'شروع بازی', p1:'بازیکن ۱', p2:'بازیکن ۲', results:'نتایج راندها', round:'راند', question:'سوال', of:'از', next_round:'شروع راند بعدی', p1_win:'بازیکن ۱ برنده شد!', p2_win:'بازیکن ۲ برنده شد!', draw:'مساوی شد!', back:'بازگشت', no_questions:'سوال کافی نیست', score:'امتیاز' },
-                en: { offline:'Friendly', loading:'Loading...', start_game:'Start Game', p1:'Player 1', p2:'Player 2', results:'Round Results', round:'Round', question:'Question', of:'of', next_round:'Next Round', p1_win:'Player 1 Wins!', p2_win:'Player 2 Wins!', draw:'Draw!', back:'Back', no_questions:'Not enough questions', score:'Score' },
-                ar: { offline:'ودي', loading:'جار التحميل...', start_game:'ابدأ اللعبة', p1:'اللاعب ۱', p2:'اللاعب ۲', results:'نتائج الجولات', round:'جولة', question:'سؤال', of:'من', next_round:'الجولة التالية', p1_win:'اللاعب ۱ فاز!', p2_win:'اللاعب ۲ فاز!', draw:'تعادل!', back:'رجوع', no_questions:'أسئلة غير كافية', score:'النقاط' }
+                fa: { offline:'دوستانه', loading:'در حال دریافت...', start_game:'شروع بازی', p1:'بازیکن ۱', p2:'بازیکن ۲', results:'نتایج راندها', round:'راند', question:'سوال', of:'از', next_round:'شروع راند بعدی', p1_win:'بازیکن ۱ برنده شد!', p2_win:'بازیکن ۲ برنده شد!', draw:'مساوی شد!', back:'بازگشت', no_questions:'سوال کافی نیست', score:'امتیاز', exit_confirm:'مطمئنی از بازی خارج میشی؟ با اینکار بازنده حساب میشی!' },
+                en: { offline:'Friendly', loading:'Loading...', start_game:'Start Game', p1:'Player 1', p2:'Player 2', results:'Round Results', round:'Round', question:'Question', of:'of', next_round:'Next Round', p1_win:'Player 1 Wins!', p2_win:'Player 2 Wins!', draw:'Draw!', back:'Back', no_questions:'Not enough questions', score:'Score', exit_confirm:'Are you sure you want to exit? You will lose!' },
+                ar: { offline:'ودي', loading:'جار التحميل...', start_game:'ابدأ اللعبة', p1:'اللاعب ۱', p2:'اللاعب ۲', results:'نتائج الجولات', round:'جولة', question:'سؤال', of:'من', next_round:'الجولة التالية', p1_win:'اللاعب ۱ فاز!', p2_win:'اللاعب ۲ فاز!', draw:'تعادل!', back:'رجوع', no_questions:'أسئلة غير كافية', score:'النقاط', exit_confirm:'هل أنت متأكد من الخروج؟ ستخسر!' }
             };
 
             function getSettings() {
@@ -450,6 +451,35 @@
                 else if (currentLang === 'ar') { document.documentElement.setAttribute('dir','rtl'); document.body.style.fontFamily='Tahoma, sans-serif'; }
                 else { document.documentElement.setAttribute('dir','rtl'); document.body.style.fontFamily="'IRANSans', Tahoma, sans-serif"; }
                 document.querySelectorAll('[data-i18n]').forEach(function(el){ var k=el.getAttribute('data-i18n'); var t2=translations[currentLang]||translations.fa; if(t2[k]) el.textContent=t2[k]; });
+            }
+
+            function sleep(ms){return new Promise(function(r){setTimeout(r,ms);});}
+
+            function translateGoogle(text, tl) {
+                var url = 'https://translate.googleapis.com/translate_a/single?client=gtx&sl=fa&tl='+tl+'&dt=t&q='+encodeURIComponent(text);
+                return fetch(url).then(function(r){return r.json();}).then(function(d){return d&&d[0]&&d[0][0]?d[0][0][0]:null;}).catch(function(){return null;});
+            }
+            function translateMyMemory(text, tl) {
+                var url = 'https://api.mymemory.translated.net/get?q='+encodeURIComponent(text)+'&langpair=fa|'+tl;
+                return fetch(url).then(function(r){return r.json();}).then(function(d){return d&&d.responseData&&d.responseData.translatedText?d.responseData.translatedText:null;}).catch(function(){return null;});
+            }
+            async function translateText(text, tl) {
+                if (tl === 'fa') return text;
+                var r = await translateGoogle(text, tl);
+                if (r) return r;
+                await sleep(100);
+                r = await translateMyMemory(text, tl);
+                if (r) return r;
+                return text;
+            }
+            async function translateQuestion(q, lang) {
+                if (lang === 'fa') return q;
+                var tl = lang === 'en' ? 'en' : 'ar';
+                var tq = await translateText(q.question, tl);
+                await sleep(80);
+                var topts = [];
+                for (var i = 0; i < q.options.length; i++) { topts.push(await translateText(q.options[i], tl)); await sleep(80); }
+                return { id:q.id, question:tq, options:topts, correctOption:q.correctOption };
             }
 
             function getEitaaUser(){return webApp&&webApp.initDataUnsafe&&webApp.initDataUnsafe.user?webApp.initDataUnsafe.user:null;}
@@ -635,6 +665,7 @@
             }
 
             function endGame() {
+                isGameEnded = true;
                 clearInterval(p1TimerInterval);
                 clearInterval(p2TimerInterval);
                 var t = getTranslation;
@@ -651,6 +682,20 @@
             }
 
             window.backToDashboard = function() { window.location.href = '../../dashboard/'; };
+
+            function handleBackButton() {
+                if (isGameEnded) {
+                    window.location.href = '../../dashboard/';
+                    return;
+                }
+                webApp.showConfirm(getTranslation('exit_confirm'), function(confirmed) {
+                    if (confirmed) {
+                        var gd = { id: gameId, player1: 'player1', player2: 'player2', round1: JSON.stringify(roundResults[0]||{}), round2: JSON.stringify(roundResults[1]||{}), round3: JSON.stringify(roundResults[2]||{}), round4: JSON.stringify(roundResults[3]||{}), round5: JSON.stringify(roundResults[4]||{}), status: 'finished' };
+                        fetchData('saveGame', { gameData: gd });
+                        window.location.href = '../../dashboard/';
+                    }
+                });
+            }
 
             window.handleMainBtn = function() {
                 if (currentRound > TOTAL_ROUNDS) { endGame(); }
@@ -669,12 +714,18 @@
                     webApp.ready();
                     webApp.expand();
                     webApp.BackButton.show();
-                    webApp.BackButton.onClick(function(){ window.location.href = '../../dashboard/'; });
+                    webApp.BackButton.onClick(handleBackButton);
                 }
                 var qd = await fetchData('getQuestions', { limit: 100 });
                 if (qd.ok && Array.isArray(qd.data) && qd.data.length >= 6) {
                     questions = qd.data;
                     var totalNeeded = TOTAL_ROUNDS * QUESTIONS_PER_ROUND;
+                    
+                    if (currentLang !== 'fa') {
+                        var translated = [];
+                        for (var i = 0; i < questions.length; i++) translated.push(await translateQuestion(questions[i], currentLang));
+                        questions = translated;
+                    }
                     
                     p1Questions = getQuestionsForPlayer(questions, totalNeeded);
                     p2Questions = getQuestionsForPlayer(questions, totalNeeded);
