@@ -29,22 +29,24 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            gap: 20px;
+            gap: 24px;
             padding: 20px;
+            width: 100%;
+            max-width: 400px;
         }
 
-        .loader-letters {
+        .logo-letters {
             display: flex;
             gap: 6px;
             direction: ltr;
         }
 
         .letter {
-            font-size: 42px;
+            font-size: 38px;
             font-weight: 900;
             color: #a855f7;
             opacity: 0;
-            transform: translateY(-40px) scale(0.5);
+            transform: translateY(-30px) scale(0.5);
             animation: letterJump 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
             text-shadow: 3px 3px 0 rgba(0,0,0,0.15);
             font-family: 'IRANSans', Tahoma, sans-serif;
@@ -59,44 +61,60 @@
         .letter:nth-child(7) { animation-delay: 0.7s; }
 
         @keyframes letterJump {
-            0% {
-                opacity: 0;
-                transform: translateY(-40px) scale(0.5);
-            }
-            50% {
-                opacity: 1;
-                transform: translateY(10px) scale(1.1);
-            }
-            70% {
-                transform: translateY(-5px) scale(0.95);
-            }
-            100% {
-                opacity: 1;
-                transform: translateY(0) scale(1);
-            }
+            0% { opacity: 0; transform: translateY(-30px) scale(0.5); }
+            50% { opacity: 1; transform: translateY(8px) scale(1.1); }
+            70% { transform: translateY(-4px) scale(0.95); }
+            100% { opacity: 1; transform: translateY(0) scale(1); }
         }
 
-        .text {
-            font-size: 15px;
+        .progress-wrapper {
+            width: 100%;
+            background: #fff;
+            border: 2px solid #000;
+            border-radius: 20px;
+            padding: 4px;
+            box-shadow: 4px 4px 0 #000;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            width: 0%;
+            height: 14px;
+            background: linear-gradient(90deg, #a855f7, #c084fc, #e9d5ff);
+            border-radius: 20px;
+            transition: width 0.3s ease;
+            position: relative;
+        }
+
+        .progress-bar::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            animation: shimmer 1.5s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        .status-text {
+            font-size: 13px;
             font-weight: 600;
             color: #4a4458;
             text-align: center;
-            line-height: 1.8;
-            opacity: 0;
-            animation: fadeInText 0.8s ease 1.2s forwards;
         }
 
-        .text span {
+        .status-text span {
             display: block;
-            font-size: 12px;
+            font-size: 11px;
             font-weight: 400;
             color: #6b7280;
             margin-top: 4px;
-        }
-
-        @keyframes fadeInText {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
         }
 
         .support-notification {
@@ -115,7 +133,6 @@
             align-items: center;
             gap: 10px;
             z-index: 2000;
-            animation: slideUpNotif 0.5s ease forwards;
             cursor: pointer;
         }
         .support-notification img {
@@ -130,28 +147,17 @@
         .support-notification .notif-desc { font-size: 8px; color: #6b7280; }
         .support-notification i { color: #6b7280; font-size: 10px; }
 
-        @keyframes slideUpNotif {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
         @media (max-width: 480px) {
-            .letter {
-                font-size: 32px;
-            }
-            .text {
-                font-size: 13px;
-            }
-            .text span {
-                font-size: 11px;
-            }
+            .letter { font-size: 30px; }
+            .status-text { font-size: 12px; }
+            .status-text span { font-size: 10px; }
         }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <div class="loader-letters">
+        <div class="logo-letters">
             <span class="letter">Q</span>
             <span class="letter">u</span>
             <span class="letter">i</span>
@@ -160,9 +166,14 @@
             <span class="letter">c</span>
             <span class="letter">o</span>
         </div>
-        <div class="text" id="statusText">
+        
+        <div class="progress-wrapper">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+
+        <div class="status-text" id="statusText">
             در حال آماده‌سازی...
-            <span>لطفاً صبر کنید</span>
+            <span id="statusSub">لطفاً صبر کنید</span>
         </div>
     </div>
 
@@ -176,43 +187,135 @@
     </div>
 
     <script>
-        var API_URL = 'https://script.google.com/macros/s/AKfycbyyB-dNpTwWYfoloiS-ccQJ7gBBk8z-PuYMrYklgcCeub1kToEH8AFgIqyfAjeF43JU/exec';
+        (function() {
+            var webApp = window.Eitaa?.WebApp;
+            var API_URL = 'https://script.google.com/macros/s/AKfycbwV2X5hZB6WSJSezWWsYXq-94gIRu6z6kuzTIupTnHx2VqDKpzlZLcBohnZO2Lk1KHmxA/exec';
 
-        window.Eitaa.WebApp.ready();
-        window.Eitaa.WebApp.expand();
+            var progressBar = document.getElementById('progressBar');
+            var statusText = document.getElementById('statusText');
+            var statusSub = document.getElementById('statusSub');
 
-        var user = window.Eitaa.WebApp.initDataUnsafe.user;
-        var username = String(user.id);
-
-        fetch(API_URL, {
-            method: 'POST',
-            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-            body: JSON.stringify({
-                action: 'sendMessage',
-                chat_id: username,
-                text: 'سلام! این یک پیام تست از Quizico است.'
-            })
-        })
-        .then(function(r) { return r.json(); })
-        .then(function(result) {
-            if (result.ok) {
-                window.Eitaa.WebApp.showAlert('پیام ارسال شد!');
-            } else {
-                window.Eitaa.WebApp.showAlert('خطا: ' + (result.error || 'نامشخص'));
+            function setProgress(pct, mainText, subText) {
+                progressBar.style.width = pct + '%';
+                if (mainText) statusText.textContent = mainText;
+                if (subText) statusSub.textContent = subText;
             }
-        })
-        .catch(function(e) {
-            window.Eitaa.WebApp.showAlert('خطا: ' + e.message);
-        });
 
-        window.Eitaa.WebApp.BackButton.show();
-        window.Eitaa.WebApp.BackButton.onClick(function() {
-            window.Eitaa.WebApp.close();
-        });
+            function getEitaaUser() {
+                if (webApp && webApp.initDataUnsafe && webApp.initDataUnsafe.user) {
+                    return webApp.initDataUnsafe.user;
+                }
+                return null;
+            }
 
-        function openSupportLink(){
-            window.Eitaa.WebApp.openEitaaLink('https://eitaa.com/Amirmahdi_code');
-        }
+            function getUserId() {
+                var user = getEitaaUser();
+                if (!user) return '';
+                if (typeof user.id === 'number') return user.id.toString();
+                return String(user.id || '');
+            }
+
+            function getStartParam() {
+                if (webApp && webApp.initDataUnsafe && webApp.initDataUnsafe.start_param) {
+                    return webApp.initDataUnsafe.start_param;
+                }
+                return '';
+            }
+
+            async function fetchData(action, params) {
+                var payload = {
+                    action: action,
+                    username: getUserId(),
+                    initData: webApp?.initData || ''
+                };
+
+                if (params) {
+                    for (var key in params) {
+                        payload[key] = params[key];
+                    }
+                }
+
+                var response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify(payload)
+                });
+
+                return await response.json();
+            }
+
+            function openSupportLink(){
+                if (webApp && webApp.openEitaaLink) {
+                    webApp.openEitaaLink('https://eitaa.com/Amirmahdi_code');
+                } else {
+                    window.open('https://eitaa.com/Amirmahdi_code', '_blank');
+                }
+            }
+            window.openSupportLink = openSupportLink;
+
+            async function init() {
+                if (webApp) {
+                    webApp.ready();
+                    webApp.expand();
+                }
+
+                var startParam = getStartParam();
+                var user = getEitaaUser();
+                var username = getUserId();
+
+                if (!user || !username) {
+                    setProgress(0, 'لطفاً از داخل ایتا وارد شوید', '');
+                    return;
+                }
+
+                var fullName = (user.first_name || '') + ' ' + (user.last_name || '');
+
+                setProgress(20, 'در حال بررسی اطلاعات...', 'چک کردن حساب کاربری');
+
+                var check = await fetchData('getUser', {});
+
+                if (check.ok && check.data) {
+                    setProgress(50, 'اطلاعات پیدا شد', 'به‌روزرسانی نام...');
+
+                    var currentName = check.data.name || '';
+                    var newName = fullName.trim() || 'کاربر';
+                    
+                    if (currentName !== newName) {
+                        await fetchData('updateUser', { name: newName });
+                    }
+                } else {
+                    setProgress(50, 'حساب جدید', 'در حال ساخت حساب...');
+
+                    await fetchData('registerUser', {
+                        name: fullName.trim() || 'کاربر'
+                    });
+                }
+
+                setProgress(80, 'آماده‌سازی کامل شد', 'در حال انتقال...');
+
+                setTimeout(function() {
+                    setProgress(100, 'خوش آمدید!', '');
+                    
+                    setTimeout(function() {
+                        if (startParam) {
+                            localStorage.setItem('onlineRoomCode', startParam);
+                            window.location.href = './play/online/';
+                        } else {
+                            window.location.href = './dashboard/';
+                        }
+                    }, 400);
+                }, 500);
+            }
+
+            if (webApp) {
+                webApp.BackButton.show();
+                webApp.BackButton.onClick(function() {
+                    webApp.close();
+                });
+            }
+
+            init();
+        })();
     </script>
 
 </body>
