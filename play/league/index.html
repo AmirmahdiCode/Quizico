@@ -418,7 +418,25 @@
             font-weight: 700;
             cursor: pointer;
             box-shadow: 2px 2px 0 #000;
+            margin: 4px;
         }
+        .submitting-loader { width: 50px; height: 50px; border: 5px solid var(--bg3); border-top-color: var(--primary); border-radius: 50%; animation: spin .8s linear infinite; margin: 20px auto; }
+        .player-avatar { width: 35px; height: 35px; border-radius: 50%; margin: 0 auto 4px; background: var(--bg2); border: var(--border); display: flex; align-items: center; justify-content: center; font-size: 16px; color: var(--primary); overflow: hidden; }
+        .player-avatar img { width: 100%; height: 100%; object-fit: cover; }
+        .players-row { display: flex; gap: 8px; }
+        .player-card { flex: 1; background: var(--card-bg); border: var(--border); border-radius: var(--radius); padding: 10px; text-align: center; box-shadow: var(--shadow); }
+        .player-card.active { border-color: var(--gold); border-width: 2px; }
+        .player-tag { font-size: 9px; font-weight: 800; color: var(--dark); margin-bottom: 4px; }
+        .player-score { font-size: 13px; font-weight: 800; color: var(--gold); }
+        .rounds-results { background: var(--card-bg); border: var(--border); border-radius: var(--radius); padding: 12px; box-shadow: var(--shadow); }
+        .rounds-title { font-size: 10px; font-weight: 800; color: var(--dark); margin-bottom: 8px; text-align: center; }
+        .round-result-item { background: rgba(245,158,11,.1); border: 1px solid var(--gold); border-radius: 8px; padding: 8px; margin-bottom: 6px; }
+        .round-result-row { display: flex; align-items: center; justify-content: space-between; font-size: 8px; padding: 2px 0; }
+        .round-result-player { font-weight: 700; color: var(--dark); min-width: 25px; }
+        .round-dots { display: flex; gap: 3px; flex: 1; justify-content: center; }
+        .result-dot { width: 14px; height: 14px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 6px; font-weight: 800; border: var(--border); background: #10b981; color: #fff; }
+        .result-dot.wrong { background: #ef4444; }
+        .round-result-count { font-weight: 800; font-size: 8px; color: var(--dark); }
     </style>
 </head>
 <body>
@@ -470,7 +488,6 @@
             var myScore = 0;
             var myCorrectCount = 0;
             var myAnswers = [];
-            var roundResults = [];
             var checkInterval = null;
             var myUserId = '';
             var timerInterval = null;
@@ -484,6 +501,11 @@
             var gameCreatedAt = '';
             var actionUsedThisQuestion = false;
             var currentLang = 'fa';
+            var isSubmitting = false;
+            var myName = '';
+            var opponentName = '';
+            var myAvatar = 'default';
+            var opponentAvatar = 'default';
 
             var leagueMatches = [
                 [1, 2], [2, 3], [1, 5], [3, 4], [1, 4],
@@ -491,7 +513,6 @@
             ];
 
             var turnOrder = [[1,1],[1,2],[2,2],[2,1],[3,1],[3,2],[4,2],[4,1],[5,1],[5,2]];
-            var currentTurn = 0;
 
             var translations = {
                 fa: {
@@ -503,13 +524,15 @@
                     players_joined: 'بازیکن‌های وارد شده', empty_slot: 'جای خالی ⬜',
                     league_table: 'جدول لیگ', points: 'امتیاز', game: 'بازی', done: 'انجام شد',
                     waiting: 'در انتظار', not_enough: 'سکه کافی نداری!', back: 'بازگشت',
-                    league_full: 'لیگ پره!', league_finished: 'لیگ تموم شد!',
-                    game_finished: 'بازی تموم شد!', your_score: 'امتیاز تو',
-                    back_to_league: 'بازگشت به لیگ', waiting_opponent: 'منتظر حریف...',
-                    game_time_limit: 'بازی حداکثر ۶۰ دقیقه وقت داره', time_expired: 'وقت بازی تموم شد!',
+                    league_full: 'لیگ پره! دیر اومدی!', create_new_league: 'ساخت لیگ جدید',
+                    league_finished: 'لیگ تموم شد!', game_finished: 'بازی تموم شد!',
+                    your_score: 'امتیاز تو', back_to_league: 'بازگشت به لیگ',
+                    waiting_opponent: 'منتظر حریف...', game_time_limit: 'بازی حداکثر ۶۰ دقیقه وقت داره',
+                    time_expired: 'وقت بازی تموم شد!',
                     time_expired_lose: 'تو نتونستی به موقع جواب بدی، حریفت برنده شد!',
                     time_expired_win: 'حریفت نتونست به موقع جواب بده، تو برنده شدی!',
                     exit_confirm: 'اگه خارج بشی این راند رو با ۰ تمام می‌کنی!',
+                    submitting: 'در حال ثبت پاسخ‌ها...', submitting_wait: 'لطفاً صبر کنید',
                     you: 'تو', opponent: 'حریف', round: 'راند'
                 },
                 en: {
@@ -521,13 +544,15 @@
                     players_joined: 'Players Joined', empty_slot: 'Empty Slot ⬜',
                     league_table: 'League Table', points: 'Points', game: 'Game', done: 'Done',
                     waiting: 'Waiting', not_enough: 'Not enough coins!', back: 'Back',
-                    league_full: 'League is full!', league_finished: 'League finished!',
-                    game_finished: 'Game finished!', your_score: 'Your Score',
-                    back_to_league: 'Back to League', waiting_opponent: 'Waiting for opponent...',
-                    game_time_limit: 'Game has a 60 minute time limit', time_expired: 'Time expired!',
+                    league_full: 'League is full! Too late!', create_new_league: 'Create New League',
+                    league_finished: 'League finished!', game_finished: 'Game finished!',
+                    your_score: 'Your Score', back_to_league: 'Back to League',
+                    waiting_opponent: 'Waiting for opponent...', game_time_limit: 'Game has a 60 minute time limit',
+                    time_expired: 'Time expired!',
                     time_expired_lose: 'You did not answer in time, your opponent won!',
                     time_expired_win: 'Your opponent did not answer in time, you won!',
                     exit_confirm: 'If you leave, this round will be 0!',
+                    submitting: 'Saving answers...', submitting_wait: 'Please wait',
                     you: 'You', opponent: 'Opponent', round: 'Round'
                 },
                 ar: {
@@ -539,13 +564,15 @@
                     players_joined: 'اللاعبون المنضمون', empty_slot: 'مكان فارغ ⬜',
                     league_table: 'جدول الدوري', points: 'النقاط', game: 'لعبة', done: 'تم',
                     waiting: 'بانتظار', not_enough: 'عملات غير كافية!', back: 'رجوع',
-                    league_full: 'الدوري ممتلئ!', league_finished: 'انتهى الدوري!',
-                    game_finished: 'انتهت اللعبة!', your_score: 'نقاطك',
-                    back_to_league: 'العودة إلى الدوري', waiting_opponent: 'بانتظار الخصم...',
-                    game_time_limit: 'اللعبة لها حد زمني 60 دقيقة', time_expired: 'انتهى الوقت!',
+                    league_full: 'الدوري ممتلئ! متأخر!', create_new_league: 'إنشاء دوري جديد',
+                    league_finished: 'انتهى الدوري!', game_finished: 'انتهت اللعبة!',
+                    your_score: 'نقاطك', back_to_league: 'العودة إلى الدوري',
+                    waiting_opponent: 'بانتظار الخصم...', game_time_limit: 'اللعبة لها حد زمني 60 دقيقة',
+                    time_expired: 'انتهى الوقت!',
                     time_expired_lose: 'لم تجب في الوقت، خصمك فاز!',
                     time_expired_win: 'خصمك لم يجب في الوقت، أنت فزت!',
                     exit_confirm: 'إذا غادرت، ستكون هذه الجولة 0!',
+                    submitting: 'جار حفظ الإجابات...', submitting_wait: 'يرجى الانتظار',
                     you: 'أنت', opponent: 'الخصم', round: 'جولة'
                 }
             };
@@ -579,617 +606,554 @@
             function shuffleArray(a){for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t;}return a;}
             function hideLoader(){document.getElementById('loaderWrapper').style.display='none';document.getElementById('gameContent').classList.add('show');}
 
-            async function getPlayerName(userId, fallback) {
-                var result = await fetchData('getUser', { username: userId });
-                if (result.ok && result.data && result.data.name) {
-                    return result.data.name;
-                }
-                return fallback;
+            function getAvatarHtml(avatarId){
+                var iconAvatars={'icon_game':'fa-gamepad','icon_trophy':'fa-trophy','icon_star':'fa-star','icon_bolt':'fa-bolt','icon_fire':'fa-fire','icon_crown':'fa-crown','icon_medal':'fa-medal','icon_rocket':'fa-rocket','icon_ghost':'fa-ghost','icon_dragon':'fa-dragon','icon_wand':'fa-wand-magic-sparkles','icon_hat':'fa-hat-wizard','icon_helmet':'fa-helmet-safety','icon_shield':'fa-shield-halved','icon_sword':'fa-hand-fist'};
+                var boyAvatars={'boy_1':'https://cdn.imgurl.ir/uploads/l17100_QkCRHe00vl64Bngk74ayYmWMyWA-NjfsC7SoRbGgrkm1mS-bpQ.png','boy_2':'https://cdn.imgurl.ir/uploads/g87708_nYSMEcudjDVvsMsfO4B6nrWGmFI-J3OzSBMOSwKo6Mt48wolyg.png','boy_3':'https://cdn.imgurl.ir/uploads/q01044_VWzDtI4NYQ660EGTVD_xToLVOvw-DkODf3dzQq2kbk2i1b-cIQ.png','boy_4':'https://cdn.imgurl.ir/uploads/w428496_0RBfnEt77slNmis2YlNfIjtELkE-_nTEsqjVSQafpoCS0X1pXg.png','boy_5':'https://cdn.imgurl.ir/uploads/h099226_Kaahld11_fKS5dcGDsq-5IvBiC0-olahkKmOTsSjohG4mMsVUw.png','boy_6':'https://cdn.imgurl.ir/uploads/k778258_pd9TZqS3DHKaaJQOygY-3WFHMAE-NzGEJ7R1Sv-r5Dfc6Zi3Ig.png','boy_7':'https://cdn.imgurl.ir/uploads/w221825_-1Xu8BzjzGa1I7ZIBVaYpoez4BM-zdVRFGLaRJGymjrVOu_yBA.png','boy_8':'https://cdn.imgurl.ir/uploads/o12072_rsMh7nSKjcODxjSPFWwfrlpYFe4-RHju528wRf-FCo_v2tJX7w.png','boy_9':'https://cdn.imgurl.ir/uploads/m007403_MNhHAeXQ-_-nEMVuihCtgYXUS90-5LFmX4D7T2-1RaoN058vnw.png','boy_10':'https://cdn.imgurl.ir/uploads/h976855_MLDYzJITIyaUkB6efcWGamXK39M-yfLRI0_7RrCmky6p-jgXFw.png'};
+                var girlAvatars={'girl_1':'https://cdn.imgurl.ir/uploads/h993569_G_wzhIk2ocoOPFhmmQHpUuS1mQc-IXeKOSBFSx6jn_y9tpVazg.png','girl_2':'https://cdn.imgurl.ir/uploads/u2553__Yb1fK6xw6Di1SX-7xB5v2J7e-g-IYBMcl_wSmqXNTkmAQMGnA.png','girl_3':'https://cdn.imgurl.ir/uploads/w03550__MlKSY3NXQ9cWkwVioa7hUpr6aI-2MRPg-L3QNOpRTm1oZTHtQ.png','girl_4':'https://cdn.imgurl.ir/uploads/r074193_q1uxpQIZsrzslDhI1W69Su-XvbY-x5jd5EZ1SyKggCCSjbbxrg.png','girl_5':'https://cdn.imgurl.ir/uploads/w035688_E2FfMOkE8ZGtuOZqU2q_VGTE6Yw-IU1JraRkSTub6ymIVXQuxA.png','girl_6':'https://cdn.imgurl.ir/uploads/c895184_bt1drvChqXnDjtGhNgxJ9M2Ho4I-n1KpcnSiSXSboB5rKfBwCg.png','girl_7':'https://cdn.imgurl.ir/uploads/u246883_b3j_B2NgyZNITErHK5c9A3dWFRA-5bV5bdzHSGi4neWTa9881A.png','girl_8':'https://cdn.imgurl.ir/uploads/o0025_B1BkJ9n5GL25bnqG-YNn79Qvsds-Erx3uqovQtex6125wXCD7g.png','girl_9':'https://cdn.imgurl.ir/uploads/t14047_NR8hWSzjLbSm2cXNrBnA2mEh43o-XhY5hyhBSU6s-9c4Fv5wRA.png','girl_10':'https://cdn.imgurl.ir/uploads/v96829_FouVxzw8xOmCFvf0IEri962BmHQ-LxKzSWS_aj8dcNI5EWVw.png'};
+                if(!avatarId||avatarId==='default')return '<i class="fa-solid fa-user"></i>';
+                if(iconAvatars[avatarId])return '<i class="fa-solid '+iconAvatars[avatarId]+'"></i>';
+                if(boyAvatars[avatarId])return '<img src="'+boyAvatars[avatarId]+'" alt="" draggable="false" oncontextmenu="return false;" ondragstart="return false;">';
+                if(girlAvatars[avatarId])return '<img src="'+girlAvatars[avatarId]+'" alt="" draggable="false" oncontextmenu="return false;" ondragstart="return false;">';
+                return '<i class="fa-solid fa-user"></i>';
             }
 
-            function checkTimeExpired(createdAt) {
-                if (!createdAt) return false;
-                var now = new Date();
-                var created = new Date(createdAt);
-                var diffMinutes = (now - created) / (1000 * 60);
-                return diffMinutes >= GAME_TIME_LIMIT;
+            async function getPlayerInfo(userId,fallbackName){
+                var result=await fetchData('getUser',{username:userId});
+                if(result.ok&&result.data){return {name:result.data.name||fallbackName,avatar:result.data.avatar||'default'};}
+                return {name:fallbackName,avatar:'default'};
             }
 
-            function handleTimeExpired() {
-                clearInterval(timerInterval);
-                clearInterval(checkInterval);
-                isInGame = false;
-                var result = isMyTurn ? '0' : '3';
-                fetchData('updateLeagueResult', { leagueId: leagueCode, gameNum: currentGameIndex + 1, result: result });
-                fetchData('updateGame', { gameId: currentGameId, updates: { status: 'finished' } });
-                
-                var t = getTranslation;
-                var html = '<div class="result-banner">';
-                html += '<div class="result-icon"><i class="fa-solid fa-clock" style="color:#ef4444;"></i></div>';
-                html += '<div class="result-text">' + t('time_expired') + '</div>';
-                if (isMyTurn) {
-                    html += '<div class="result-score">' + t('time_expired_lose') + '</div>';
-                } else {
-                    html += '<div class="result-score">' + t('time_expired_win') + '</div>';
+            function checkTimeExpired(createdAt){if(!createdAt)return false;var now=new Date();var created=new Date(createdAt);return (now-created)/(1000*60)>=GAME_TIME_LIMIT;}
+
+            function getTurnFromSheet(roundData){
+                if(!roundData||roundData==='')return 0;
+                var parts=roundData.split('][');
+                var p1Ans=parts[1]?parts[1].replace('[','').replace(']',''):'waiting';
+                var p2Ans=parts[2]?parts[2].replace('[','').replace(']',''):'waiting';
+                if(p1Ans!=='waiting'&&p2Ans==='waiting')return 1;
+                if(p1Ans==='waiting'&&p2Ans!=='waiting')return 0;
+                return 2;
+            }
+
+            function getRoundResultsFromSheet(gameData){
+                var results=[];
+                for(var r=1;r<=5;r++){
+                    var roundData=gameData['round'+r]||'';
+                    if(roundData!==''){
+                        var parts=roundData.split('][');
+                        var p1Ans=parts[1]?parts[1].replace('[','').replace(']',''):'';
+                        var p2Ans=parts[2]?parts[2].replace('[','').replace(']',''):'';
+                        var myAns=isCreator?p1Ans:p2Ans;
+                        var oppAns=isCreator?p2Ans:p1Ans;
+                        if(myAns!=='waiting'&&myAns!==''){
+                            var myCorrect=0;
+                            for(var i=0;i<myAns.length;i++){if(myAns[i]==='T')myCorrect++;}
+                            results.push({myCorrect:myCorrect,myScore:myCorrect*5,oppAns:oppAns});
+                        }
+                    }
                 }
-                html += '<button class="result-btn" onclick="backToLeague()">' + t('back_to_league') + '</button></div>';
-                document.getElementById('gameContent').innerHTML = html;
-                document.getElementById('bottomBtnContainer').style.display = 'none';
+                return results;
+            }
+
+            function handleTimeExpired(){
+                clearInterval(timerInterval);clearInterval(checkInterval);isInGame=false;isSubmitting=false;
+                var result=isMyTurn?'0':'3';
+                fetchData('updateLeagueResult',{leagueId:leagueCode,gameNum:currentGameIndex+1,result:result});
+                fetchData('updateGame',{gameId:currentGameId,updates:{status:'finished'}});
+                var t=getTranslation;
+                var html='<div class="result-banner">';
+                html+='<div class="result-icon"><i class="fa-solid fa-clock" style="color:#ef4444;"></i></div>';
+                html+='<div class="result-text">'+t('time_expired')+'</div>';
+                html+=isMyTurn?'<div class="result-score">'+t('time_expired_lose')+'</div>':'<div class="result-score">'+t('time_expired_win')+'</div>';
+                html+='<button class="result-btn" onclick="backToLeague()">'+t('back_to_league')+'</button></div>';
+                document.getElementById('gameContent').innerHTML=html;
+                document.getElementById('bottomBtnContainer').style.display='none';
                 hideLoader();
             }
 
-            function renderWaitingScreen() {
-                var t = getTranslation;
-                var inviteLink = 'https://eitaa.com/gameland_app/Quizico?startapp=' + leagueCode + '&btn=بزن.بریم.🚀';
-                var html = '<div class="waiting-card">';
-                html += '<img class="waiting-image" src="' + SAD_IMAGE + '" alt="" draggable="false" oncontextmenu="return false;" ondragstart="return false;">';
-                html += '<div class="waiting-text">' + t('waiting_players') + '</div>';
-                html += '<div class="room-code-display">' + leagueCode + '</div>';
-                html += '<div class="invite-box">';
-                html += '<div class="invite-box-title">' + t('invite_friends') + '</div>';
-                html += '<div class="invite-box-desc">' + t('invite_desc') + '</div>';
-                html += '<div class="invite-link-box">';
-                html += '<span class="invite-link" id="inviteLink">' + inviteLink + '</span>';
-                html += '<button class="copy-btn" onclick="copyInviteLink()">' + t('copy') + '</button>';
-                html += '</div>';
-                html += '</div>';
-                html += '<div class="players-invite-section">';
-                html += '<div class="coming-soon-overlay">' + t('coming_soon') + '</div>';
-                html += '<div class="players-invite-title">' + t('invite_from_players') + '</div>';
-                html += '<div class="players-search-box"><i class="fa-solid fa-search"></i><input type="text" placeholder="' + t('search_players') + '"></div>';
-                html += '<div class="players-invite-list"></div>';
-                html += '</div>';
-                html += '<div class="league-table"><div class="league-table-title">' + t('players_joined') + '</div><div id="leaguePlayersList"></div></div>';
-                html += '</div>';
-                document.getElementById('gameContent').innerHTML = html;
-                document.getElementById('bottomBtnContainer').style.display = 'none';
+            function renderWaitingScreen(){
+                var t=getTranslation;
+                var inviteLink='https://eitaa.com/gameland_app/Quizico?startapp='+leagueCode+'&btn=بزن.بریم.🚀';
+                var html='<div class="waiting-card">';
+                html+='<img class="waiting-image" src="'+SAD_IMAGE+'" alt="" draggable="false" oncontextmenu="return false;" ondragstart="return false;">';
+                html+='<div class="waiting-text">'+t('waiting_players')+'</div>';
+                html+='<div class="room-code-display">'+leagueCode+'</div>';
+                html+='<div class="invite-box">';
+                html+='<div class="invite-box-title">'+t('invite_friends')+'</div>';
+                html+='<div class="invite-box-desc">'+t('invite_desc')+'</div>';
+                html+='<div class="invite-link-box">';
+                html+='<span class="invite-link" id="inviteLink">'+inviteLink+'</span>';
+                html+='<button class="copy-btn" onclick="copyInviteLink()">'+t('copy')+'</button></div></div>';
+                html+='<div class="players-invite-section">';
+                html+='<div class="coming-soon-overlay">'+t('coming_soon')+'</div>';
+                html+='<div class="players-invite-title">'+t('invite_from_players')+'</div>';
+                html+='<div class="players-search-box"><i class="fa-solid fa-search"></i><input type="text" placeholder="'+t('search_players')+'"></div>';
+                html+='<div class="players-invite-list"></div></div>';
+                html+='<div class="league-table"><div class="league-table-title">'+t('players_joined')+'</div><div id="leaguePlayersList"></div></div></div>';
+                document.getElementById('gameContent').innerHTML=html;
+                document.getElementById('bottomBtnContainer').style.display='none';
                 hideLoader();
                 loadLeaguePlayers();
             }
 
-            window.copyInviteLink = function() {
-                var link = document.getElementById('inviteLink').textContent;
-                if (navigator.clipboard) {
-                    navigator.clipboard.writeText(link).then(function() {
-                        if (webApp) webApp.showAlert(getTranslation('link_copied'));
-                    });
-                }
-                if (webApp) webApp.HapticFeedback?.impactOccurred('light');
+            window.copyInviteLink=function(){
+                var link=document.getElementById('inviteLink').textContent;
+                if(navigator.clipboard){navigator.clipboard.writeText(link).then(function(){if(webApp)webApp.showAlert(getTranslation('link_copied'));});}
+                if(webApp)webApp.HapticFeedback?.impactOccurred('light');
             };
 
-            async function loadLeaguePlayers() {
-                var result = await fetchData('getLeague', { leagueId: leagueCode });
-                if (result.ok && result.data) {
-                    var playersHtml = '';
-                    for (var i = 1; i <= 5; i++) {
-                        if (result.data['player' + i]) {
-                            var pId = String(result.data['player' + i]).split(',')[0];
-                            var pName = await getPlayerName(pId, 'بازیکن ' + i);
-                            playersHtml += '<div class="league-table-row"><span class="name">' + pName + ' ✅</span></div>';
-                        } else {
-                            playersHtml += '<div class="league-table-row"><span class="name">' + getTranslation('empty_slot') + '</span></div>';
+            async function loadLeaguePlayers(){
+                var result=await fetchData('getLeague',{leagueId:leagueCode});
+                if(result.ok&&result.data){
+                    var playersHtml='';
+                    for(var i=1;i<=5;i++){
+                        if(result.data['player'+i]){
+                            var pId=String(result.data['player'+i]).split(',')[0];
+                            var pInfo=await getPlayerInfo(pId,'بازیکن '+i);
+                            playersHtml+='<div class="league-table-row"><span class="player-avatar" style="width:20px;height:20px;font-size:10px;margin:0;">'+getAvatarHtml(pInfo.avatar)+'</span><span class="name">'+pInfo.name+' ✅</span></div>';
+                        }else{
+                            playersHtml+='<div class="league-table-row"><span class="name">'+getTranslation('empty_slot')+'</span></div>';
                         }
                     }
-                    document.getElementById('leaguePlayersList').innerHTML = playersHtml;
+                    document.getElementById('leaguePlayersList').innerHTML=playersHtml;
                 }
             }
 
-            function renderLeagueTable() {
-                var t = getTranslation;
-                var html = '<div class="league-table"><div class="league-table-title">' + t('league_table') + '</div><div id="leagueTableBody"></div></div>';
-                html += '<div class="games-list" id="leagueGamesList"></div>';
-                document.getElementById('gameContent').innerHTML = html;
-                document.getElementById('bottomBtnContainer').style.display = 'none';
+            function renderLeagueTable(){
+                var t=getTranslation;
+                var html='<div class="league-table"><div class="league-table-title">'+t('league_table')+'</div><div id="leagueTableBody"></div></div>';
+                html+='<div class="games-list" id="leagueGamesList"></div>';
+                document.getElementById('gameContent').innerHTML=html;
+                document.getElementById('bottomBtnContainer').style.display='none';
                 hideLoader();
                 loadLeagueData();
             }
 
-            async function loadLeagueData() {
-                var t = getTranslation;
-                var result = await fetchData('getLeague', { leagueId: leagueCode });
-                if (result.ok && result.data) {
-                    var players = [];
-                    for (var i = 1; i <= 5; i++) {
-                        if (result.data['player' + i]) {
-                            var pData = String(result.data['player' + i]).split(',');
-                            var pId = pData[0];
-                            var pName = await getPlayerName(pId, 'بازیکن ' + i);
-                            players.push({ num: i, name: pName, pts: parseInt(pData[1]) || 0 });
+            async function loadLeagueData(){
+                var t=getTranslation;
+                var result=await fetchData('getLeague',{leagueId:leagueCode});
+                if(result.ok&&result.data){
+                    var players=[];
+                    for(var i=1;i<=5;i++){
+                        if(result.data['player'+i]){
+                            var pData=String(result.data['player'+i]).split(',');
+                            var pId=pData[0];
+                            var pInfo=await getPlayerInfo(pId,'بازیکن '+i);
+                            players.push({num:i,name:pInfo.name,avatar:pInfo.avatar,pts:parseInt(pData[1])||0});
                         }
                     }
-                    players.sort(function(a, b) { return b.pts - a.pts; });
-                    document.getElementById('leagueTableBody').innerHTML = players.map(function(p, idx) {
-                        return '<div class="league-table-row"><span class="rank">#' + (idx+1) + '</span><span class="name">' + p.name + '</span><span class="pts">' + p.pts + ' ' + t('points') + '</span></div>';
+                    players.sort(function(a,b){return b.pts-a.pts;});
+                    document.getElementById('leagueTableBody').innerHTML=players.map(function(p,idx){
+                        return '<div class="league-table-row"><span class="rank">#'+(idx+1)+'</span><span class="player-avatar" style="width:20px;height:20px;font-size:10px;margin:0;">'+getAvatarHtml(p.avatar)+'</span><span class="name">'+p.name+'</span><span class="pts">'+p.pts+' '+t('points')+'</span></div>';
                     }).join('');
 
-                    var results = String(result.data.results || '').split(',').filter(function(r) { return r !== ''; });
-                    var gamesHtml = '';
-                    for (var j = 0; j < leagueMatches.length; j++) {
-                        var m = leagueMatches[j];
-                        var gameResult = results[j] || '';
-                        var status = gameResult ? 'done' : 'waiting';
-                        var statusText = gameResult ? t('done') : t('waiting');
-                        
-                        var p1Name = await getPlayerName(String(result.data['player' + m[0]]).split(',')[0], 'بازیکن ' + m[0]);
-                        var p2Name = await getPlayerName(String(result.data['player' + m[1]]).split(',')[0], 'بازیکن ' + m[1]);
-                        
-                        gamesHtml += '<div class="game-item"><span>' + t('game') + ' ' + (j+1) + ':</span><span class="vs">' + p1Name + ' vs ' + p2Name + '</span><span class="status ' + status + '">' + statusText + '</span></div>';
+                    var results=String(result.data.results||'').split(',').filter(function(r){return r!=='';});
+                    var gamesHtml='';
+                    for(var j=0;j<leagueMatches.length;j++){
+                        var m=leagueMatches[j];
+                        var gameResult=results[j]||'';
+                        var status=gameResult?'done':'waiting';
+                        var statusText=gameResult?t('done'):t('waiting');
+                        var p1Info=await getPlayerInfo(String(result.data['player'+m[0]]).split(',')[0],'بازیکن '+m[0]);
+                        var p2Info=await getPlayerInfo(String(result.data['player'+m[1]]).split(',')[0],'بازیکن '+m[1]);
+                        gamesHtml+='<div class="game-item"><span>'+t('game')+' '+(j+1)+':</span><span class="vs">'+p1Info.name+' vs '+p2Info.name+'</span><span class="status '+status+'">'+statusText+'</span></div>';
                     }
-                    document.getElementById('leagueGamesList').innerHTML = gamesHtml;
+                    document.getElementById('leagueGamesList').innerHTML=gamesHtml;
                 }
             }
 
-            function renderQuestionScreen() {
-                var t = getTranslation;
-                isAnswered = false;
-                isInGame = true;
-                actionUsedThisQuestion = false;
-                var q = currentQuestions[currentQuestionIndex];
-                var opts = shuffleArray(q.options.slice());
-                var ci = opts.indexOf(q.options[q.correctOption - 1]);
-                var html = '<div class="actions-row">';
-                html += '<button class="action-btn" id="btnRemove" onclick="useRemove50()"><i class="fa-solid fa-trash" style="color:#ef4444;"></i> ۵۰</button>';
-                html += '<button class="action-btn" id="btnSwap" onclick="useSwapQuestion()"><i class="fa-solid fa-arrows-rotate" style="color:#06b6d4;"></i> ۱۰۰</button>';
-                html += '<button class="action-btn" id="btnSkip" onclick="useSkipQuestion()"><i class="fa-solid fa-forward" style="color:#f59e0b;"></i> ۱۵۰</button>';
-                html += '</div>';
-                html += '<div class="question-card">';
-                html += '<div class="question-text">' + q.question + '</div>';
-                html += '<div class="timer-bar-container"><div class="timer-bar-fill" id="timerFill" style="width:100%;"></div></div>';
-                html += '<div class="timer-text" id="timerText">60s</div>';
-                html += '<div class="options-grid">';
-                for (var i = 0; i < opts.length; i++) {
-                    html += '<button class="option-btn" data-text="'+opts[i]+'" onclick="selectOption('+i+','+ci+',this)">';
-                    html += '<span class="option-letter">'+(i+1)+'</span><span>'+opts[i]+'</span></button>';
+            function renderQuestionScreen(){
+                var t=getTranslation;
+                isAnswered=false;isInGame=true;actionUsedThisQuestion=false;
+                var q=currentQuestions[currentQuestionIndex];
+                var opts=shuffleArray(q.options.slice());
+                var ci=opts.indexOf(q.options[q.correctOption-1]);
+                var html='<div class="actions-row">';
+                html+='<button class="action-btn" onclick="useRemove50()"><i class="fa-solid fa-trash" style="color:#ef4444;"></i> ۵۰</button>';
+                html+='<button class="action-btn" onclick="useSwapQuestion()"><i class="fa-solid fa-arrows-rotate" style="color:#06b6d4;"></i> ۱۰۰</button>';
+                html+='<button class="action-btn" onclick="useSkipQuestion()"><i class="fa-solid fa-forward" style="color:#f59e0b;"></i> ۱۵۰</button></div>';
+                html+='<div class="question-card">';
+                html+='<div class="question-text">'+q.question+'</div>';
+                html+='<div class="timer-bar-container"><div class="timer-bar-fill" id="timerFill" style="width:100%;"></div></div>';
+                html+='<div class="timer-text" id="timerText">60s</div>';
+                html+='<div class="options-grid">';
+                for(var i=0;i<opts.length;i++){
+                    html+='<button class="option-btn" data-text="'+opts[i]+'" onclick="selectOption('+i+','+ci+',this)">';
+                    html+='<span class="option-letter">'+(i+1)+'</span><span>'+opts[i]+'</span></button>';
                 }
-                html += '</div></div>';
-                document.getElementById('gameContent').innerHTML = html;
-                document.getElementById('bottomBtnContainer').style.display = 'none';
+                html+='</div></div>';
+                document.getElementById('gameContent').innerHTML=html;
+                document.getElementById('bottomBtnContainer').style.display='none';
                 hideLoader();
                 startTimer();
             }
 
-            function startTimer() {
-                clearInterval(timerInterval);
-                timeLeft = QUESTION_TIME;
-                updateTimerBar();
-                timerInterval = setInterval(function() {
-                    timeLeft--;
-                    updateTimerBar();
-                    if (timeLeft <= 0) { clearInterval(timerInterval); if (!isAnswered) timeOut(); }
-                }, 1000);
-            }
-            function updateTimerBar() {
-                var f = document.getElementById('timerFill');
-                var t = document.getElementById('timerText');
-                if (!f || !t) return;
-                var pct = (timeLeft / QUESTION_TIME) * 100;
-                f.style.width = pct + '%';
-                t.textContent = timeLeft + 's';
-                f.className = 'timer-bar-fill' + (timeLeft <= 10 ? ' danger' : timeLeft <= 20 ? ' warning' : '');
-            }
-            function timeOut() {
-                isAnswered = true;
-                var btns = document.querySelectorAll('.option-btn');
-                btns.forEach(function(b){b.classList.add('disabled');});
-                var q = currentQuestions[currentQuestionIndex];
-                var ct = q.options[q.correctOption - 1];
-                document.querySelectorAll('.option-btn').forEach(function(b){ if(b.getAttribute('data-text')===ct) b.classList.add('selected-correct'); });
-                setTimeout(goToNext, 800);
-            }
-            function goToNext() {
-                currentQuestionIndex++;
-                if (currentQuestionIndex >= QUESTIONS_PER_ROUND) {
-                    finishRound();
-                } else {
-                    renderQuestionScreen();
-                }
-            }
+            function startTimer(){clearInterval(timerInterval);timeLeft=QUESTION_TIME;updateTimerBar();timerInterval=setInterval(function(){timeLeft--;updateTimerBar();if(timeLeft<=0){clearInterval(timerInterval);if(!isAnswered)timeOut();}},1000);}
+            function updateTimerBar(){var f=document.getElementById('timerFill');var t=document.getElementById('timerText');if(!f||!t)return;var pct=(timeLeft/QUESTION_TIME)*100;f.style.width=pct+'%';t.textContent=timeLeft+'s';f.className='timer-bar-fill'+(timeLeft<=10?' danger':timeLeft<=20?' warning':'');}
+            function timeOut(){isAnswered=true;var btns=document.querySelectorAll('.option-btn');btns.forEach(function(b){b.classList.add('disabled');});var q=currentQuestions[currentQuestionIndex];var ct=q.options[q.correctOption-1];document.querySelectorAll('.option-btn').forEach(function(b){if(b.getAttribute('data-text')===ct)b.classList.add('selected-correct');});setTimeout(goToNext,800);}
+            function goToNext(){currentQuestionIndex++;if(currentQuestionIndex>=QUESTIONS_PER_ROUND){finishRound();}else{renderQuestionScreen();}}
 
-            window.selectOption = function(sel, ci, btn) {
-                if (isAnswered) return;
-                isAnswered = true;
-                clearInterval(timerInterval);
-                var btns = document.querySelectorAll('.option-btn');
-                btns.forEach(function(b){b.classList.add('disabled');});
-                if (sel === ci) { btn.classList.add('selected-correct'); myScore += 5; myCorrectCount++; myAnswers.push(true); }
-                else { btn.classList.add('selected-wrong'); btns[ci].classList.add('selected-correct'); myAnswers.push(false); }
-                setTimeout(goToNext, 800);
+            window.selectOption=function(sel,ci,btn){
+                if(isAnswered)return;
+                isAnswered=true;clearInterval(timerInterval);
+                var btns=document.querySelectorAll('.option-btn');btns.forEach(function(b){b.classList.add('disabled');});
+                if(sel===ci){btn.classList.add('selected-correct');myScore+=5;myCorrectCount++;myAnswers.push(true);}
+                else{btn.classList.add('selected-wrong');btns[ci].classList.add('selected-correct');myAnswers.push(false);}
+                setTimeout(goToNext,800);
             };
 
-            window.useRemove50 = function() {
-                if (isAnswered || actionUsedThisQuestion) return;
-                if (userCoins < 50) { if (webApp) webApp.showAlert(getTranslation('not_enough')); return; }
-                userCoins -= 50;
-                actionUsedThisQuestion = true;
-                document.getElementById('coinsHeader').textContent = userCoins;
-                var q = currentQuestions[currentQuestionIndex];
-                var ct = q.options[q.correctOption - 1];
-                var wo = q.options.filter(function(o){return o!==ct;});
-                var th = shuffleArray(wo).slice(0,2);
-                document.querySelectorAll('.option-btn').forEach(function(b){ if(th.indexOf(b.getAttribute('data-text'))!==-1) b.classList.add('hidden-option'); });
-                disableActions();
-                fetchData('updateUser', { coins: userCoins });
+            window.useRemove50=function(){
+                if(isAnswered||actionUsedThisQuestion)return;
+                if(userCoins<50){if(webApp)webApp.showAlert(getTranslation('not_enough'));return;}
+                userCoins-=50;actionUsedThisQuestion=true;document.getElementById('coinsHeader').textContent=userCoins;
+                var q=currentQuestions[currentQuestionIndex];var ct=q.options[q.correctOption-1];
+                var wo=q.options.filter(function(o){return o!==ct;});var th=shuffleArray(wo).slice(0,2);
+                document.querySelectorAll('.option-btn').forEach(function(b){if(th.indexOf(b.getAttribute('data-text'))!==-1)b.classList.add('hidden-option');});
+                disableActions();fetchData('updateUser',{coins:userCoins});
             };
-
-            window.useSwapQuestion = function() {
-                if (isAnswered || actionUsedThisQuestion) return;
-                if (userCoins < 100) { if (webApp) webApp.showAlert(getTranslation('not_enough')); return; }
-                userCoins -= 100;
-                actionUsedThisQuestion = true;
-                document.getElementById('coinsHeader').textContent = userCoins;
-                var rem = questions.filter(function(q){return currentQuestions.indexOf(q)===-1;});
-                if (rem.length > 0) currentQuestions[currentQuestionIndex] = shuffleArray(rem)[0];
-                disableActions();
-                fetchData('updateUser', { coins: userCoins });
-                renderQuestionScreen();
+            window.useSwapQuestion=function(){
+                if(isAnswered||actionUsedThisQuestion)return;
+                if(userCoins<100){if(webApp)webApp.showAlert(getTranslation('not_enough'));return;}
+                userCoins-=100;actionUsedThisQuestion=true;document.getElementById('coinsHeader').textContent=userCoins;
+                var rem=questions.filter(function(q){return currentQuestions.indexOf(q)===-1;});
+                if(rem.length>0)currentQuestions[currentQuestionIndex]=shuffleArray(rem)[0];
+                disableActions();fetchData('updateUser',{coins:userCoins});renderQuestionScreen();
             };
-
-            window.useSkipQuestion = function() {
-                if (isAnswered || actionUsedThisQuestion) return;
-                if (userCoins < 150) { if (webApp) webApp.showAlert(getTranslation('not_enough')); return; }
-                userCoins -= 150;
-                actionUsedThisQuestion = true;
-                document.getElementById('coinsHeader').textContent = userCoins;
-                myScore += 5;
-                myCorrectCount++;
-                myAnswers.push(true);
-                disableActions();
-                fetchData('updateUser', { coins: userCoins });
-                clearInterval(timerInterval);
-                setTimeout(goToNext, 300);
+            window.useSkipQuestion=function(){
+                if(isAnswered||actionUsedThisQuestion)return;
+                if(userCoins<150){if(webApp)webApp.showAlert(getTranslation('not_enough'));return;}
+                userCoins-=150;actionUsedThisQuestion=true;document.getElementById('coinsHeader').textContent=userCoins;
+                myScore+=5;myCorrectCount++;myAnswers.push(true);
+                disableActions();fetchData('updateUser',{coins:userCoins});clearInterval(timerInterval);setTimeout(goToNext,300);
             };
+            function disableActions(){document.querySelectorAll('.action-btn').forEach(function(b){b.disabled=true;});}
 
-            function disableActions(){ document.querySelectorAll('.action-btn').forEach(function(b){b.disabled=true;}); }
-
-            function finishRound() {
-                isInGame = false;
-                roundResults.push({ myScore: myCorrectCount * 5, myCorrect: myCorrectCount, myAnswers: myAnswers });
-                var ansStr = myAnswers.map(function(a) { return a ? 'T' : 'F'; }).join(',');
-                var updateData = {};
-                updateData['round' + currentRound + '_p' + (isCreator ? '1' : '2')] = ansStr;
-                fetchData('updateGame', { gameId: currentGameId, updates: updateData });
-                myCorrectCount = 0;
-                myAnswers = [];
-                currentRound++;
-                currentQuestionIndex = 0;
-                currentTurn++;
-                
-                if (currentRound > TOTAL_ROUNDS) {
-                    endLeagueGame();
-                } else {
-                    checkTurn();
-                }
-            }
-
-            function endLeagueGame() {
-                isInGame = false;
-                clearInterval(checkInterval);
-                var result = '1';
-                if (myScore > 0) result = '3';
-                fetchData('updateLeagueResult', { leagueId: leagueCode, gameNum: currentGameIndex + 1, result: result });
-                fetchData('updateGame', { gameId: currentGameId, updates: { status: 'finished' } });
-                
-                var t = getTranslation;
-                var html = '<div class="result-banner">';
-                html += '<div class="result-icon"><i class="fa-solid fa-trophy" style="color:#f59e0b;"></i></div>';
-                html += '<div class="result-text">' + t('game_finished') + '</div>';
-                html += '<div class="result-score">' + t('your_score') + ': ' + myScore + '</div>';
-                html += '<button class="result-btn" onclick="backToLeague()">' + t('back_to_league') + '</button></div>';
-                document.getElementById('gameContent').innerHTML = html;
-                document.getElementById('bottomBtnContainer').style.display = 'none';
+            function showSubmittingScreen(){
+                var t=getTranslation;
+                var html='<div class="result-banner">';
+                html+='<div class="submitting-loader"></div>';
+                html+='<div class="result-text">'+t('submitting')+'</div>';
+                html+='<div class="result-score">'+t('submitting_wait')+'</div></div>';
+                document.getElementById('gameContent').innerHTML=html;
+                document.getElementById('bottomBtnContainer').style.display='none';
                 hideLoader();
             }
 
-            window.backToLeague = function() {
-                renderLeagueTable();
-                checkInterval = setInterval(async function() {
-                    var result = await fetchData('getLeague', { leagueId: leagueCode });
-                    if (result.ok && result.data && result.data.winner) {
-                        clearInterval(checkInterval);
-                        showLeagueResults();
-                    }
-                }, 5000);
-            };
-
-            function checkTurn() {
-                var myNum = isCreator ? 1 : 2;
-                var isMyTurnNow = false;
-                for (var i = 0; i < turnOrder.length; i++) {
-                    if (turnOrder[i][0] === currentRound && turnOrder[i][1] === myNum) {
-                        isMyTurnNow = (i === currentTurn);
-                        break;
-                    }
-                }
-                isMyTurn = isMyTurnNow;
-                if (isMyTurnNow) {
-                    loadRoundQuestions();
-                    renderQuestionScreen();
-                } else {
-                    renderWaitingTurnScreen();
-                }
-            }
-
-            function renderWaitingTurnScreen() {
-                var t = getTranslation;
-                isInGame = false;
-                var html = '<div class="result-banner">';
-                html += '<div class="result-text">' + t('waiting_opponent') + '</div>';
-                html += '<div class="result-score">' + t('game_time_limit') + '</div>';
-                html += '</div>';
-                document.getElementById('gameContent').innerHTML = html;
-                document.getElementById('bottomBtnContainer').style.display = 'none';
-                hideLoader();
-            }
-
-            function loadRoundQuestions() {
-                var allShuffled = shuffleArray(questions);
-                currentQuestions = allShuffled.slice(0, QUESTIONS_PER_ROUND);
-            }
-
-            window.handleMainBtn = function() {
-                if (isMyTurn) {
-                    loadRoundQuestions();
-                    renderQuestionScreen();
-                }
-            };
-
-            async function startLeagueGame(gameIndex) {
-                currentGameIndex = gameIndex;
-                currentGameId = leagueCode + '_game' + (gameIndex + 1);
-                currentRound = 1;
-                currentTurn = 0;
-                myScore = 0;
-                myCorrectCount = 0;
-                myAnswers = [];
-                roundResults = [];
-                
-                var match = leagueMatches[gameIndex];
-                var result = await fetchData('getLeague', { leagueId: leagueCode });
-                if (result.ok && result.data) {
-                    var p1Data = String(result.data['player' + match[0]]).split(',');
-                    var p2Data = String(result.data['player' + match[1]]).split(',');
-                    
-                    if (p1Data[0] === myUserId) { isCreator = true; currentOpponentId = p2Data[0]; }
-                    else if (p2Data[0] === myUserId) { isCreator = false; currentOpponentId = p1Data[0]; }
-                    else {
-                        renderLeagueTable();
-                        return;
-                    }
-                    
-                    await fetchData('saveGame', {
-                        gameData: {
-                            id: currentGameId,
-                            player1: p1Data[0],
-                            player2: p2Data[0],
-                            round1: '',
-                            round2: '',
-                            round3: '',
-                            round4: '',
-                            round5: '',
-                            status: 'in_progress',
-                            createdAt: new Date().toISOString()
-                        }
-                    });
-                    
-                    gameCreatedAt = new Date().toISOString();
-                    
-                    var qd = await fetchData('getQuestions', { limit: 50 });
-                    if (qd.ok && Array.isArray(qd.data) && qd.data.length >= QUESTIONS_PER_ROUND) {
-                        questions = qd.data;
-                        if (currentLang !== 'fa') {
-                            var translated = [];
-                            for (var i = 0; i < questions.length; i++) {
-                                translated.push(await translateQuestion(questions[i], currentLang));
+            function finishRound(){
+                isInGame=false;isSubmitting=true;
+                showSubmittingScreen();
+                var qIds=currentQuestions.map(function(q){return q.id;}).join(',');
+                var ansStr=myAnswers.map(function(a){return a?'T':'F';}).join(',');
+                var myNum=isCreator?1:2;
+                fetchData('getGame',{gameId:currentGameId}).then(function(gameResult){
+                    if(gameResult.ok&&gameResult.data){
+                        var currentRoundData=gameResult.data['round'+currentRound]||'';
+                        if(currentRoundData===''){
+                            if(myNum===1){currentRoundData='['+qIds+']['+ansStr+'][waiting]';}
+                            else{currentRoundData='['+qIds+'][waiting]['+ansStr+']';}
+                        }else{
+                            var parts=currentRoundData.split('][');
+                            if(myNum===1){
+                                var p2Ans=parts[2]?parts[2].replace(']','').replace('[',''):'waiting';
+                                currentRoundData='['+qIds+']['+ansStr+']['+p2Ans+']';
+                            }else{
+                                var p1Ans=parts[1]?parts[1].replace(']','').replace('[',''):'waiting';
+                                currentRoundData='['+qIds+']['+p1Ans+']['+ansStr+']';
                             }
-                            questions = translated;
                         }
-                        checkTurn();
-                        startTimeCheck();
+                        var updateData={};updateData['round'+currentRound]=currentRoundData;
+                        fetchData('updateGame',{gameId:currentGameId,updates:updateData}).then(function(result){
+                            isSubmitting=false;
+                            if(result.ok){myCorrectCount=0;myAnswers=[];renderRoundsScreen();}
+                            else{showSubmittingScreen();setTimeout(function(){finishRound();},2000);}
+                        });
                     }
-                }
-            }
-
-            function startTimeCheck() {
-                clearInterval(checkInterval);
-                checkInterval = setInterval(async function() {
-                    if (checkTimeExpired(gameCreatedAt)) {
-                        handleTimeExpired();
-                    }
-                }, 30000);
-            }
-
-            async function showLeagueResults() {
-                var t = getTranslation;
-                var result = await fetchData('getLeague', { leagueId: leagueCode });
-                if (result.ok && result.data) {
-                    var html = '<div class="result-banner">';
-                    html += '<div class="result-icon"><i class="fa-solid fa-trophy" style="color:#f59e0b;"></i></div>';
-                    html += '<div class="result-text">' + t('league_finished') + '</div>';
-                    html += '<button class="result-btn" onclick="backToDashboard()">' + t('back') + '</button></div>';
-                    document.getElementById('gameContent').innerHTML = html;
-                    document.getElementById('bottomBtnContainer').style.display = 'none';
-                    hideLoader();
-                }
-            }
-
-            window.backToDashboard = function() { window.location.href = '../../dashboard/'; };
-
-            function handleBackButton() {
-                if (isInGame) {
-                    webApp.showConfirm(getTranslation('exit_confirm'), function(confirmed) {
-                        if (confirmed) {
-                            clearInterval(timerInterval);
-                            var ansStr = 'F,F,F';
-                            var updateData = {};
-                            updateData['round' + currentRound + '_p' + (isCreator ? '1' : '2')] = ansStr;
-                            fetchData('updateGame', { gameId: currentGameId, updates: updateData });
-                            window.location.href = '../../dashboard/';
-                        }
-                    });
-                } else {
-                    window.location.href = '../../dashboard/';
-                }
-            }
-
-            async function init() {
-                applyTheme();
-                if (webApp) {
-                    webApp.ready();
-                    webApp.expand();
-                    webApp.BackButton.show();
-                    webApp.BackButton.onClick(handleBackButton);
-                }
-                
-                var ud = await fetchData('getUser', {});
-                if (ud.ok && ud.data) {
-                    userCoins = ud.data.coins || 0;
-                    document.getElementById('coinsHeader').textContent = userCoins;
-                }
-                
-                myUserId = getUserId();
-                var startParam = getStartParam();
-                var savedLeague = localStorage.getItem('leagueCode');
-                
-                if (startParam) {
-                    leagueCode = startParam;
-                    localStorage.removeItem('leagueCode');
-                    await initPlayer2();
-                } else if (savedLeague) {
-                    leagueCode = savedLeague;
-                    localStorage.removeItem('leagueCode');
-                    await initPlayer2();
-                } else {
-                    await initPlayer1();
-                }
-            }
-
-            async function initPlayer1() {
-                leagueCode = generateLeagueCode();
-                isCreator = true;
-                myUserId = getUserId();
-                await fetchData('saveLeague', {
-                    leagueId: leagueCode,
-                    creator: myUserId
                 });
-                renderWaitingScreen();
-                checkInterval = setInterval(async function() {
-                    var result = await fetchData('getLeague', { leagueId: leagueCode });
-                    if (result.ok && result.data) {
-                        var count = 0;
-                        for (var i = 1; i <= 5; i++) {
-                            if (result.data['player' + i]) count++;
-                        }
-                        if (count === 5) {
-                            clearInterval(checkInterval);
-                            await startNextGame();
-                        }
-                    }
-                }, 3000);
             }
 
-            async function initPlayer2() {
-                isCreator = false;
-                myUserId = getUserId();
-                var result = await fetchData('getLeague', { leagueId: leagueCode });
-                if (result.ok && result.data) {
-                    if (String(result.data.player1).split(',')[0] === myUserId) {
-                        isCreator = true;
-                        renderWaitingScreen();
-                        checkInterval = setInterval(async function() {
-                            var checkResult = await fetchData('getLeague', { leagueId: leagueCode });
-                            if (checkResult.ok && checkResult.data) {
-                                var count = 0;
-                                for (var i = 1; i <= 5; i++) {
-                                    if (checkResult.data['player' + i]) count++;
+            function renderRoundsScreen(){
+                var t=getTranslation;
+                var myNum=isCreator?1:2;
+                fetchData('getGame',{gameId:currentGameId}).then(function(gameResult){
+                    if(gameResult.ok&&gameResult.data){
+                        var data=gameResult.data;
+                        var allResults=getRoundResultsFromSheet(data);
+                        var html='';
+                        html+='<div class="players-row">';
+                        html+='<div class="player-card"><div class="player-avatar">'+getAvatarHtml(myAvatar)+'</div><div class="player-tag">'+myName+'</div><span class="player-score">'+myScore+'</span></div>';
+                        html+='<div class="player-card"><div class="player-avatar">'+getAvatarHtml(opponentAvatar)+'</div><div class="player-tag">'+opponentName+'</div><span class="player-score">?</span></div>';
+                        html+='</div>';
+                        if(allResults.length>0){
+                            html+='<div class="rounds-results"><div class="rounds-title">'+t('round')+'</div>';
+                            for(var i=0;i<allResults.length;i++){
+                                var r=allResults[i];
+                                html+='<div class="round-result-item">';
+                                html+='<div class="round-result-row"><span class="round-result-player">'+t('round')+' '+(i+1)+'</span></div>';
+                                html+='<div class="round-result-row"><span class="round-result-player">'+myName+'</span><div class="round-dots">';
+                                for(var j=0;j<QUESTIONS_PER_ROUND;j++)html+='<span class="result-dot'+(j<r.myCorrect?'':' wrong')+'">'+(j+1)+'</span>';
+                                html+='</div><span class="round-result-count">+'+r.myScore+'</span></div>';
+                                if(r.oppAns!=='waiting'&&r.oppAns!==''){
+                                    var oppCorrect=0;
+                                    for(var k=0;k<r.oppAns.length;k++){if(r.oppAns[k]==='T')oppCorrect++;}
+                                    html+='<div class="round-result-row"><span class="round-result-player">'+opponentName+'</span><div class="round-dots">';
+                                    for(var l=0;l<QUESTIONS_PER_ROUND;l++)html+='<span class="result-dot'+(l<oppCorrect?'':' wrong')+'">'+(l+1)+'</span>';
+                                    html+='</div><span class="round-result-count">+'+oppCorrect*5+'</span></div>';
+                                }else{
+                                    html+='<div class="round-result-row"><span class="round-result-player">'+opponentName+'</span><span class="round-result-count">...'+t('waiting_turn')+'</span></div>';
                                 }
-                                if (count === 5) {
-                                    clearInterval(checkInterval);
-                                    await startNextGame();
-                                }
+                                html+='</div>';
                             }
-                        }, 3000);
-                        return;
+                            html+='</div>';
+                        }
+                        document.getElementById('gameContent').innerHTML=html;
+                        var btn=document.getElementById('mainBtn');
+                        var roundData=data['round'+currentRound]||'';
+                        var sheetTurn=getTurnFromSheet(roundData);
+                        var myTurnIdx=-1;
+                        for(var i=0;i<turnOrder.length;i++){
+                            if(turnOrder[i][0]===currentRound&&turnOrder[i][1]===myNum){myTurnIdx=i;break;}
+                        }
+                        if(sheetTurn===2){
+                            currentRound++;
+                            if(currentRound>TOTAL_ROUNDS){endLeagueGame();return;}
+                            renderRoundsScreen();return;
+                        }
+                        if(myTurnIdx===sheetTurn){
+                            isMyTurn=true;
+                            btn.textContent=t('your_turn')+' - '+t('start_game')+' '+currentRound;
+                            btn.className='main-btn green';btn.disabled=false;
+                        }else{
+                            isMyTurn=false;
+                            btn.textContent=t('waiting_turn');
+                            btn.className='main-btn waiting';btn.disabled=true;
+                        }
+                        document.getElementById('bottomBtnContainer').style.display='block';
+                        hideLoader();
                     }
-                    
-                    var alreadyIn = false;
-                    for (var j = 1; j <= 5; j++) {
-                        if (result.data['player' + j] && String(result.data['player' + j]).split(',')[0] === myUserId) {
-                            alreadyIn = true;
-                            break;
+                });
+            }
+
+            function endLeagueGame(){
+                isInGame=false;clearInterval(checkInterval);
+                var result='1';if(myScore>0)result='3';
+                fetchData('updateLeagueResult',{leagueId:leagueCode,gameNum:currentGameIndex+1,result:result});
+                fetchData('updateGame',{gameId:currentGameId,updates:{status:'finished'}});
+                var t=getTranslation;
+                var html='<div class="result-banner">';
+                html+='<div class="result-icon"><i class="fa-solid fa-trophy" style="color:#f59e0b;"></i></div>';
+                html+='<div class="result-text">'+t('game_finished')+'</div>';
+                html+='<div class="result-score">'+t('your_score')+': '+myScore+'</div>';
+                html+='<button class="result-btn" onclick="backToLeague()">'+t('back_to_league')+'</button></div>';
+                document.getElementById('gameContent').innerHTML=html;
+                document.getElementById('bottomBtnContainer').style.display='none';hideLoader();
+            }
+
+            window.backToLeague=function(){
+                renderLeagueTable();
+                checkInterval=setInterval(async function(){
+                    var result=await fetchData('getLeague',{leagueId:leagueCode});
+                    if(result.ok&&result.data&&result.data.winner){clearInterval(checkInterval);showLeagueResults();}
+                },5000);
+            };
+
+            function renderWaitingTurnScreen(){
+                var t=getTranslation;isInGame=false;
+                var html='<div class="result-banner">';
+                html+='<div class="result-text">'+t('waiting_opponent')+'</div>';
+                html+='<div class="result-score">'+t('game_time_limit')+'</div></div>';
+                document.getElementById('gameContent').innerHTML=html;
+                document.getElementById('bottomBtnContainer').style.display='none';hideLoader();
+            }
+
+            function loadRoundQuestions(){var allShuffled=shuffleArray(questions);currentQuestions=allShuffled.slice(0,QUESTIONS_PER_ROUND);}
+
+            window.handleMainBtn=function(){
+                fetchData('getGame',{gameId:currentGameId}).then(function(gameResult){
+                    if(gameResult.ok&&gameResult.data){
+                        var roundData=gameResult.data['round'+currentRound]||'';
+                        var sheetTurn=getTurnFromSheet(roundData);
+                        var myNum=isCreator?1:2;
+                        var myTurnIdx=-1;
+                        for(var i=0;i<turnOrder.length;i++){
+                            if(turnOrder[i][0]===currentRound&&turnOrder[i][1]===myNum){myTurnIdx=i;break;}
+                        }
+                        if(myTurnIdx===sheetTurn){
+                            loadRoundQuestions();
+                            renderQuestionScreen();
                         }
                     }
-                    
-                    if (!alreadyIn) {
-                        var joined = false;
-                        for (var i = 2; i <= 5; i++) {
-                            if (!result.data['player' + i]) {
-                                await fetchData('joinLeague', { leagueId: leagueCode, userId: myUserId });
-                                joined = true;
-                                break;
-                            }
-                        }
-                        
-                        if (!joined) {
-                            var t = getTranslation;
-                            document.getElementById('gameContent').innerHTML = '<div class="result-banner"><div class="result-text">' + t('league_full') + '</div></div>';
-                            document.getElementById('bottomBtnContainer').style.display = 'none';
-                            hideLoader();
-                            return;
-                        }
+                });
+            };
+
+            async function startLeagueGame(gameIndex){
+                currentGameIndex=gameIndex;currentGameId=leagueCode+'_game'+(gameIndex+1);
+                currentRound=1;myScore=0;myCorrectCount=0;myAnswers=[];
+                var match=leagueMatches[gameIndex];
+                var result=await fetchData('getLeague',{leagueId:leagueCode});
+                if(result.ok&&result.data){
+                    var p1Data=String(result.data['player'+match[0]]).split(',');
+                    var p2Data=String(result.data['player'+match[1]]).split(',');
+                    if(p1Data[0]===myUserId){
+                        isCreator=true;currentOpponentId=p2Data[0];
+                        var myInfo=await getPlayerInfo(myUserId,getTranslation('you'));
+                        myName=myInfo.name;myAvatar=myInfo.avatar;
+                        var oppInfo=await getPlayerInfo(p2Data[0],getTranslation('opponent'));
+                        opponentName=oppInfo.name;opponentAvatar=oppInfo.avatar;
                     }
+                    else if(p2Data[0]===myUserId){
+                        isCreator=false;currentOpponentId=p1Data[0];
+                        var myInfo2=await getPlayerInfo(myUserId,getTranslation('you'));
+                        myName=myInfo2.name;myAvatar=myInfo2.avatar;
+                        var oppInfo2=await getPlayerInfo(p1Data[0],getTranslation('opponent'));
+                        opponentName=oppInfo2.name;opponentAvatar=oppInfo2.avatar;
+                    }
+                    else{renderLeagueTable();return;}
                     
-                    renderWaitingScreen();
-                    checkInterval = setInterval(async function() {
-                        var checkResult = await fetchData('getLeague', { leagueId: leagueCode });
-                        if (checkResult.ok && checkResult.data) {
-                            var count = 0;
-                            for (var i = 1; i <= 5; i++) {
-                                if (checkResult.data['player' + i]) count++;
-                            }
-                            if (count === 5) {
-                                clearInterval(checkInterval);
-                                await startNextGame();
-                            }
-                        }
-                    }, 3000);
+                    await fetchData('saveGame',{gameData:{id:currentGameId,player1:p1Data[0],player2:p2Data[0],round1:'',round2:'',round3:'',round4:'',round5:'',status:'in_progress',createdAt:new Date().toISOString()}});
+                    gameCreatedAt=new Date().toISOString();
+                    var qd=await fetchData('getQuestions',{limit:50});
+                    if(qd.ok&&Array.isArray(qd.data)&&qd.data.length>=QUESTIONS_PER_ROUND){
+                        questions=qd.data;
+                        if(currentLang!=='fa'){var translated=[];for(var i=0;i<questions.length;i++){translated.push(await translateQuestion(questions[i],currentLang));}questions=translated;}
+                        renderRoundsScreen();startTimeCheck();
+                    }
                 }
             }
 
-            async function startNextGame() {
-                var result = await fetchData('getLeague', { leagueId: leagueCode });
-                if (result.ok && result.data) {
-                    var results = String(result.data.results || '').split(',').filter(function(r) { return r !== ''; });
-                    var nextGame = results.length;
-                    
-                    if (nextGame < 10) {
-                        var match = leagueMatches[nextGame];
-                        var p1Data = String(result.data['player' + match[0]]).split(',');
-                        var p2Data = String(result.data['player' + match[1]]).split(',');
-                        
-                        if (p1Data[0] === myUserId || p2Data[0] === myUserId) {
-                            await startLeagueGame(nextGame);
-                        } else {
-                            renderLeagueTable();
-                            checkInterval = setInterval(async function() {
-                                var checkResult = await fetchData('getLeague', { leagueId: leagueCode });
-                                if (checkResult.ok && checkResult.data) {
-                                    var checkResults = String(checkResult.data.results || '').split(',').filter(function(r) { return r !== ''; });
-                                    if (checkResults.length > nextGame) {
-                                        clearInterval(checkInterval);
-                                        await startNextGame();
-                                    }
-                                }
-                            }, 5000);
+            function startTimeCheck(){clearInterval(checkInterval);checkInterval=setInterval(async function(){if(checkTimeExpired(gameCreatedAt)){handleTimeExpired();}},30000);}
+
+            async function showLeagueResults(){
+                var t=getTranslation;
+                var html='<div class="result-banner">';
+                html+='<div class="result-icon"><i class="fa-solid fa-trophy" style="color:#f59e0b;"></i></div>';
+                html+='<div class="result-text">'+t('league_finished')+'</div>';
+                html+='<button class="result-btn" onclick="backToDashboard()">'+t('back')+'</button></div>';
+                document.getElementById('gameContent').innerHTML=html;
+                document.getElementById('bottomBtnContainer').style.display='none';hideLoader();
+            }
+
+            window.backToDashboard=function(){window.location.href='../../dashboard/';};
+
+            function handleBackButton(){
+                if(isSubmitting){if(webApp)webApp.showAlert(getTranslation('submitting'));return;}
+                if(isInGame){
+                    webApp.showConfirm(getTranslation('exit_confirm'),function(confirmed){
+                        if(confirmed){
+                            clearInterval(timerInterval);
+                            var ansStr='F,F,F';
+                            var updateData={};
+                            updateData['round'+currentRound+'_p'+(isCreator?'1':'2')]=ansStr;
+                            fetchData('updateGame',{gameId:currentGameId,updates:updateData});
+                            window.location.href='../../dashboard/';
                         }
-                    } else {
+                    });
+                }else{window.location.href='../../dashboard/';}
+            }
+
+            async function init(){
+                applyTheme();
+                if(webApp){webApp.ready();webApp.expand();webApp.BackButton.show();webApp.BackButton.onClick(handleBackButton);}
+                var ud=await fetchData('getUser',{});
+                if(ud.ok&&ud.data){userCoins=ud.data.coins||0;document.getElementById('coinsHeader').textContent=userCoins;}
+                myUserId=getUserId();
+                var startParam=getStartParam();
+                var savedLeague=localStorage.getItem('leagueCode');
+                if(startParam){leagueCode=startParam;localStorage.removeItem('leagueCode');await initPlayer2();}
+                else if(savedLeague){leagueCode=savedLeague;localStorage.removeItem('leagueCode');await initPlayer2();}
+                else{await initPlayer1();}
+            }
+
+            async function initPlayer1(){
+                leagueCode=generateLeagueCode();isCreator=true;myUserId=getUserId();
+                await fetchData('saveLeague',{leagueId:leagueCode,creator:myUserId});
+                renderWaitingScreen();
+                checkInterval=setInterval(async function(){
+                    var result=await fetchData('getLeague',{leagueId:leagueCode});
+                    if(result.ok&&result.data){
+                        var count=0;
+                        for(var i=1;i<=5;i++){if(result.data['player'+i])count++;}
+                        if(count===5){clearInterval(checkInterval);await startNextGame();}
+                    }
+                },3000);
+            }
+
+            async function initPlayer2(){
+                isCreator=false;myUserId=getUserId();
+                var result=await fetchData('getLeague',{leagueId:leagueCode});
+                if(!result.ok||!result.data){return;}
+                var data=result.data;
+                var myPosition=-1;
+                for(var i=1;i<=5;i++){
+                    if(data['player'+i]&&String(data['player'+i]).split(',')[0]===String(myUserId)){myPosition=i;break;}
+                }
+                if(myPosition!==-1){
+                    if(myPosition===1)isCreator=true;else isCreator=false;
+                    var count=0;
+                    for(var j=1;j<=5;j++){if(data['player'+j])count++;}
+                    if(count===5){await startNextGame();}
+                    else{renderWaitingScreen();startWaitingPolling();}
+                    return;
+                }
+                var joined=false;
+                for(var k=2;k<=5;k++){
+                    if(!data['player'+k]){
+                        await fetchData('joinLeague',{leagueId:leagueCode,userId:myUserId});
+                        joined=true;break;
+                    }
+                }
+                if(!joined){
+                    var t=getTranslation;
+                    var html='<div class="result-banner">';
+                    html+='<div class="result-icon"><i class="fa-solid fa-user-clock" style="color:#f59e0b;"></i></div>';
+                    html+='<div class="result-text">'+t('league_full')+'</div>';
+                    html+='<button class="result-btn" onclick="createNewLeague()">'+t('create_new_league')+'</button></div>';
+                    document.getElementById('gameContent').innerHTML=html;
+                    document.getElementById('bottomBtnContainer').style.display='none';hideLoader();
+                    return;
+                }
+                renderWaitingScreen();
+                startWaitingPolling();
+            }
+
+            function startWaitingPolling(){
+                checkInterval=setInterval(async function(){
+                    var checkResult=await fetchData('getLeague',{leagueId:leagueCode});
+                    if(checkResult.ok&&checkResult.data){
+                        var count=0;
+                        for(var i=1;i<=5;i++){if(checkResult.data['player'+i])count++;}
+                        if(count===5){clearInterval(checkInterval);await startNextGame();}
+                    }
+                },3000);
+            }
+
+            window.createNewLeague=function(){initPlayer1();};
+
+            async function startNextGame(){
+                var result=await fetchData('getLeague',{leagueId:leagueCode});
+                if(result.ok&&result.data){
+                    var results=String(result.data.results||'').split(',').filter(function(r){return r!=='';});
+                    var nextGame=results.length;
+                    if(nextGame<10){
+                        var match=leagueMatches[nextGame];
+                        var p1Data=String(result.data['player'+match[0]]).split(',');
+                        var p2Data=String(result.data['player'+match[1]]).split(',');
+                        if(p1Data[0]===myUserId||p2Data[0]===myUserId){await startLeagueGame(nextGame);}
+                        else{
+                            renderLeagueTable();
+                            checkInterval=setInterval(async function(){
+                                var checkResult=await fetchData('getLeague',{leagueId:leagueCode});
+                                if(checkResult.ok&&checkResult.data){
+                                    var checkResults=String(checkResult.data.results||'').split(',').filter(function(r){return r!=='';});
+                                    if(checkResults.length>nextGame){clearInterval(checkInterval);await startNextGame();}
+                                }
+                            },5000);
+                        }
+                    }else{
                         renderLeagueTable();
-                        checkInterval = setInterval(async function() {
-                            var checkResult = await fetchData('getLeague', { leagueId: leagueCode });
-                            if (checkResult.ok && checkResult.data && checkResult.data.winner) {
-                                clearInterval(checkInterval);
-                                showLeagueResults();
-                            }
-                        }, 5000);
+                        checkInterval=setInterval(async function(){
+                            var checkResult=await fetchData('getLeague',{leagueId:leagueCode});
+                            if(checkResult.ok&&checkResult.data&&checkResult.data.winner){clearInterval(checkInterval);showLeagueResults();}
+                        },5000);
                     }
                 }
             }
