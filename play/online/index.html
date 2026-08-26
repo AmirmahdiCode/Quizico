@@ -51,13 +51,6 @@
         .players-search-box input{width:100%;padding:8px 35px 8px 10px;border:var(--border);border-radius:8px;background:var(--bg2);color:var(--text);font-family:inherit;font-size:9px;outline:none}
         .players-search-box i{position:absolute;top:50%;right:10px;transform:translateY(-50%);color:var(--text-light);font-size:11px}
         .players-invite-list{display:flex;flex-direction:column;gap:6px;max-height:300px;overflow-y:auto}
-        .invite-player-item{display:flex;align-items:center;gap:8px;padding:8px 10px;border:var(--border);border-radius:8px;background:var(--bg2)}
-        .invite-avatar{width:30px;height:30px;border-radius:50%;background:var(--bg2);border:var(--border);display:flex;align-items:center;justify-content:center;font-size:12px;color:var(--primary);overflow:hidden;flex-shrink:0}
-        .invite-avatar img{width:100%;height:100%;object-fit:cover}
-        .invite-info{flex:1;min-width:0}
-        .invite-name{font-size:10px;font-weight:700;color:var(--dark);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-        .invite-score{font-size:8px;color:var(--text-light)}
-        .invite-btn{padding:5px 12px;background:var(--primary);color:#fff;border:var(--border);border-radius:6px;font-family:'IRANSans',Tahoma,sans-serif;font-size:8px;font-weight:700;cursor:pointer;box-shadow:2px 2px 0 #000;flex-shrink:0}
         .players-row{display:flex;gap:8px}
         .player-card{flex:1;background:var(--card-bg);border:var(--border);border-radius:var(--radius);padding:10px;text-align:center;box-shadow:var(--shadow)}
         .player-card.active{border-color:var(--gold);border-width:2px}
@@ -157,13 +150,15 @@ var actionUsedThisQuestion=false;
 var isInGame=false;
 var isSubmitting=false;
 var gameCreatedAt='';
+var myName='';
+var opponentName='';
 var turnOrder=[[1,1],[1,2],[2,2],[2,1],[3,1],[3,2],[4,2],[4,1],[5,1],[5,2]];
 var currentTurn=0;
 
 var translations={
-fa:{online:'آنلاین',loading:'در حال دریافت...',start_game:'شروع بازی',you:'تو',opponent:'حریف',results:'نتایج راندها',round:'راند',finished:'بازی تمام شد!',score:'امتیاز',back:'بازگشت',no_questions:'سوال کافی نیست',room_full:'دیر اومدی! یکی دیگه زودتر وارد شده',create_new_room:'ساخت اتاق جدید',waiting_opponent:'هنوز حریفت وارد نشده...',invite_title:'دعوت از دوست',invite_desc:'لینک زیر رو کپی کن و برای دوستت بفرست!',copy:'کپی',link_copied:'لینک کپی شد!',invite_from_players:'انتخاب از لیست بازیکنا',search_players:'جستجوی بازیکن...',not_enough:'سکه کافی نداری!',waiting_turn:'منتظر حریف...',your_turn:'نوبت توست',coming_soon:'به زودی',room_not_found:'اتاق یافت نشد',time_expired:'وقت بازی تموم شد!',exit_confirm:'اگه خارج بشی این راند رو با ۰ تمام می‌کنی!',submitting:'در حال ثبت پاسخ‌ها...',submitting_wait:'لطفاً صبر کنید',already_joined:'تو قبلاً وارد این بازی شدی!'},
-en:{online:'Online',loading:'Loading...',start_game:'Start Game',you:'You',opponent:'Opponent',results:'Round Results',round:'Round',finished:'Game Over!',score:'Score',back:'Back',no_questions:'Not enough questions',room_full:'Too late! Someone else joined',create_new_room:'Create New Room',waiting_opponent:'Waiting for opponent...',invite_title:'Invite Friend',invite_desc:'Copy the link below and send it to your friend!',copy:'Copy',link_copied:'Link copied!',invite_from_players:'Invite from players',search_players:'Search players...',not_enough:'Not enough coins!',waiting_turn:'Waiting for opponent...',your_turn:'Your turn',coming_soon:'Coming Soon',room_not_found:'Room not found',time_expired:'Time expired!',exit_confirm:'If you leave, this round will be 0!',submitting:'Saving answers...',submitting_wait:'Please wait',already_joined:'You already joined this game!'},
-ar:{online:'عبر الإنترنت',loading:'جار التحميل...',start_game:'ابدأ اللعبة',you:'أنت',opponent:'الخصم',results:'نتائج الجولات',round:'جولة',finished:'انتهت اللعبة!',score:'النقاط',back:'رجوع',no_questions:'أسئلة غير كافية',room_full:'متأخر! شخص آخر انضم',create_new_room:'إنشاء غرفة جديدة',waiting_opponent:'بانتظار الخصم...',invite_title:'دعوة صديق',invite_desc:'انسخ الرابط أدناه وأرسله إلى صديقك!',copy:'نسخ',link_copied:'تم نسخ الرابط!',invite_from_players:'اختر من اللاعبين',search_players:'ابحث عن لاعب...',not_enough:'عملات غير كافية!',waiting_turn:'بانتظار الخصم...',your_turn:'دورك',coming_soon:'قريبًا',room_not_found:'الغرفة غير موجودة',time_expired:'انتهى الوقت!',exit_confirm:'إذا غادرت، ستكون هذه الجولة 0!',submitting:'جار حفظ الإجابات...',submitting_wait:'يرجى الانتظار',already_joined:'لقد انضممت بالفعل إلى هذه اللعبة!'}
+fa:{online:'آنلاین',loading:'در حال دریافت...',start_game:'شروع بازی',you:'تو',opponent:'حریف',results:'نتایج راندها',round:'راند',finished:'بازی تمام شد!',score:'امتیاز',back:'بازگشت',no_questions:'سوال کافی نیست',room_full:'دیر اومدی! یکی دیگه زودتر وارد شده',create_new_room:'ساخت اتاق جدید',waiting_opponent:'هنوز حریفت وارد نشده...',invite_title:'دعوت از دوست',invite_desc:'لینک زیر رو کپی کن و برای دوستت بفرست!',copy:'کپی',link_copied:'لینک کپی شد!',invite_from_players:'انتخاب از لیست بازیکنا',search_players:'جستجوی بازیکن...',not_enough:'سکه کافی نداری!',waiting_turn:'منتظر حریف...',your_turn:'نوبت توست',coming_soon:'به زودی',room_not_found:'اتاق یافت نشد',time_expired:'وقت بازی تموم شد!',exit_confirm:'اگه خارج بشی این راند رو با ۰ تمام می‌کنی!',submitting:'در حال ثبت پاسخ‌ها...',submitting_wait:'لطفاً صبر کنید'},
+en:{online:'Online',loading:'Loading...',start_game:'Start Game',you:'You',opponent:'Opponent',results:'Round Results',round:'Round',finished:'Game Over!',score:'Score',back:'Back',no_questions:'Not enough questions',room_full:'Too late! Someone else joined',create_new_room:'Create New Room',waiting_opponent:'Waiting for opponent...',invite_title:'Invite Friend',invite_desc:'Copy the link below and send it to your friend!',copy:'Copy',link_copied:'Link copied!',invite_from_players:'Invite from players',search_players:'Search players...',not_enough:'Not enough coins!',waiting_turn:'Waiting for opponent...',your_turn:'Your turn',coming_soon:'Coming Soon',room_not_found:'Room not found',time_expired:'Time expired!',exit_confirm:'If you leave, this round will be 0!',submitting:'Saving answers...',submitting_wait:'Please wait'},
+ar:{online:'عبر الإنترنت',loading:'جار التحميل...',start_game:'ابدأ اللعبة',you:'أنت',opponent:'الخصم',results:'نتائج الجولات',round:'جولة',finished:'انتهت اللعبة!',score:'النقاط',back:'رجوع',no_questions:'أسئلة غير كافية',room_full:'متأخر! شخص آخر انضم',create_new_room:'إنشاء غرفة جديدة',waiting_opponent:'بانتظار الخصم...',invite_title:'دعوة صديق',invite_desc:'انسخ الرابط أدناه وأرسله إلى صديقك!',copy:'نسخ',link_copied:'تم نسخ الرابط!',invite_from_players:'اختر من اللاعبين',search_players:'ابحث عن لاعب...',not_enough:'عملات غير كافية!',waiting_turn:'بانتظار الخصم...',your_turn:'دورك',coming_soon:'قريبًا',room_not_found:'الغرفة غير موجودة',time_expired:'انتهى الوقت!',exit_confirm:'إذا غادرت، ستكون هذه الجولة 0!',submitting:'جار حفظ الإجابات...',submitting_wait:'يرجى الانتظار'}
 };
 
 function getSettings(){try{var raw=localStorage.getItem('quizicoSettings');if(!raw)return{theme:'light',primaryColor:'#a855f7',animation:true,language:'fa'};var p=JSON.parse(raw);if(!p.theme)p.theme='light';if(!p.primaryColor)p.primaryColor='#a855f7';if(p.animation===undefined)p.animation=true;if(!p.language)p.language='fa';return p;}catch(e){return{theme:'light',primaryColor:'#a855f7',animation:true,language:'fa'}}}
@@ -252,8 +247,8 @@ function renderRoundsScreen(){
     var t=getTranslation;
     var html='';
     html+='<div class="players-row">';
-    html+='<div class="player-card"><div class="player-tag">'+t('you')+'</div><span class="player-score">'+myScore+'</span></div>';
-    html+='<div class="player-card"><div class="player-tag">'+t('opponent')+'</div><span class="player-score">?</span></div>';
+    html+='<div class="player-card"><div class="player-tag">'+myName+'</div><span class="player-score">'+myScore+'</span></div>';
+    html+='<div class="player-card"><div class="player-tag">'+opponentName+'</div><span class="player-score">?</span></div>';
     html+='</div>';
     if(roundResults.length>0){
         html+='<div class="rounds-results"><div class="rounds-title">'+t('results')+'</div>';
@@ -261,7 +256,7 @@ function renderRoundsScreen(){
             var r=roundResults[i];
             html+='<div class="round-result-item">';
             html+='<div class="round-result-row"><span class="round-result-player">'+t('round')+' '+(i+1)+'</span></div>';
-            html+='<div class="round-result-row"><span class="round-result-player">'+t('you')+'</span><div class="round-dots">';
+            html+='<div class="round-result-row"><span class="round-result-player">'+myName+'</span><div class="round-dots">';
             for(var j=0;j<QUESTIONS_PER_ROUND;j++)html+='<span class="result-dot'+(j<r.myCorrect?'':' wrong')+'">'+(j+1)+'</span>';
             html+='</div><span class="round-result-count">+'+r.myScore+'</span></div></div>';
         }
@@ -359,17 +354,47 @@ function finishRound(){
     isInGame=false;isSubmitting=true;
     showSubmittingScreen();
     
+    var qIds=roundQuestions.map(function(q){return q.id;}).join(',');
     var ansStr=myAnswers.map(function(a){return a?'T':'F';}).join(',');
-    var updateData={};
-    updateData['round'+currentRound+'_p'+(isPlayer1?'1':'2')]=ansStr;
+    var myNum=getMyPlayerNum();
     
-    fetchData('updateGame',{gameId:roomCode,updates:updateData}).then(function(result){
-        isSubmitting=false;
-        if(result.ok){
-            roundResults.push({myAnswers:myAnswers,myScore:myCorrectCount*5,myCorrect:myCorrectCount});
-            myCorrectCount=0;myAnswers=[];currentRound++;currentQuestionIndex=0;currentTurn++;
-            if(currentRound>TOTAL_ROUNDS){endGame();}else{renderRoundsScreen();}
+    fetchData('getGame',{gameId:roomCode}).then(function(gameResult){
+        if(gameResult.ok&&gameResult.data){
+            var currentRoundData=gameResult.data['round'+currentRound]||'';
+            
+            if(currentRoundData===''){
+                if(myNum===1){
+                    currentRoundData='['+qIds+']['+ansStr+'][waiting]';
+                }else{
+                    currentRoundData='['+qIds+'][waiting]['+ansStr+']';
+                }
+            }else{
+                var parts=currentRoundData.split('][');
+                if(myNum===1){
+                    var p2Ans=parts[2]?parts[2].replace(']','').replace('[',''):'waiting';
+                    currentRoundData='['+qIds+']['+ansStr+']['+p2Ans+']';
+                }else{
+                    var p1Ans=parts[1]?parts[1].replace(']','').replace('[',''):'waiting';
+                    currentRoundData='['+qIds+']['+p1Ans+']['+ansStr+']';
+                }
+            }
+            
+            var updateData={};
+            updateData['round'+currentRound]=currentRoundData;
+            
+            fetchData('updateGame',{gameId:roomCode,updates:updateData}).then(function(result){
+                isSubmitting=false;
+                if(result.ok){
+                    roundResults.push({myAnswers:myAnswers,myScore:myCorrectCount*5,myCorrect:myCorrectCount});
+                    myCorrectCount=0;myAnswers=[];currentRound++;currentQuestionIndex=0;currentTurn++;
+                    if(currentRound>TOTAL_ROUNDS){endGame();}else{renderRoundsScreen();}
+                }else{
+                    showSubmittingScreen();
+                    setTimeout(function(){finishRound();},2000);
+                }
+            });
         }else{
+            isSubmitting=false;
             showSubmittingScreen();
             setTimeout(function(){finishRound();},2000);
         }
@@ -400,8 +425,15 @@ window.handleMainBtn=function(){
     }
 };
 
+async function getPlayerName(userId,fallback){
+    var result=await fetchData('getUser',{username:userId});
+    if(result.ok&&result.data&&result.data.name)return result.data.name;
+    return fallback;
+}
+
 async function initPlayer1(){
     roomCode=generateRoomCode();isPlayer1=true;myUserId=getUserId();
+    myName=await getPlayerName(myUserId,getTranslation('you'));
     await fetchData('saveGame',{gameData:{id:roomCode,player1:myUserId,player2:'',round1:'',round2:'',round3:'',round4:'',round5:'',status:'waiting',createdAt:new Date().toISOString()}});
     gameCreatedAt=new Date().toISOString();
     renderWaitingScreen();
@@ -411,6 +443,7 @@ async function initPlayer1(){
             var data=gameResult.data;
             if(data.player2&&data.player2!==''&&String(data.player2)!==String(myUserId)){
                 clearInterval(checkInterval);
+                opponentName=await getPlayerName(data.player2,getTranslation('opponent'));
                 await fetchData('updateGame',{gameId:roomCode,updates:{status:'in_progress'}});
                 await startOnlineGame();
             }
@@ -421,6 +454,7 @@ async function initPlayer1(){
 
 async function initPlayer2(){
     isPlayer1=false;myUserId=getUserId();
+    myName=await getPlayerName(myUserId,getTranslation('you'));
     var gameResult=await fetchData('getGame',{gameId:roomCode});
     if(!gameResult.ok||!gameResult.data){
         var t=getTranslation;
@@ -432,12 +466,14 @@ async function initPlayer2(){
     
     if(String(data.player1)===String(myUserId)){
         isPlayer1=true;
+        if(data.player2)opponentName=await getPlayerName(data.player2,getTranslation('opponent'));
         await startOnlineGame();
         return;
     }
     
     if(data.player2&&String(data.player2)===String(myUserId)){
         isPlayer1=false;
+        opponentName=await getPlayerName(data.player1,getTranslation('opponent'));
         await startOnlineGame();
         return;
     }
@@ -445,6 +481,7 @@ async function initPlayer2(){
     if(!data.player2||data.player2===''){
         await fetchData('updateGame',{gameId:roomCode,updates:{player2:myUserId,status:'in_progress'}});
         isPlayer1=false;
+        opponentName=await getPlayerName(data.player1,getTranslation('opponent'));
         await startOnlineGame();
         return;
     }
@@ -453,6 +490,9 @@ async function initPlayer2(){
 }
 
 async function startOnlineGame(){
+    if(!opponentName)opponentName=getTranslation('opponent');
+    if(!myName)myName=getTranslation('you');
+    
     var ud=await fetchData('getUser',{});
     if(ud.ok&&ud.data){userCoins=ud.data.coins||0;document.getElementById('coinsHeader').textContent=userCoins;}
     var qd=await fetchData('getQuestions',{limit:50});
@@ -476,13 +516,10 @@ function startPolling(){
             var data=gameResult.data;
             if(data.status==='finished'){clearInterval(checkInterval);endGame();return;}
             
-            var myNum=getMyPlayerNum();
-            var opponentNum=myNum===1?2:1;
-            var opponentRoundKey='round'+currentRound+'_p'+opponentNum;
-            
-            if(data[opponentRoundKey]&&data[opponentRoundKey]!==''){
+            var currentRoundData=data['round'+currentRound]||'';
+            if(currentRoundData!==''&&!currentRoundData.includes('waiting')){
                 var btn=document.getElementById('mainBtn');
-                if(btn&&btn.disabled&&btn.textContent===getTranslation('waiting_turn')){
+                if(btn&&btn.disabled){
                     renderRoundsScreen();
                 }
             }
@@ -500,7 +537,10 @@ function handleBackButton(){
             if(confirmed){
                 clearInterval(timerInterval);
                 var ansStr='F,F,F';
-                var updateData={};updateData['round'+currentRound+'_p'+(isPlayer1?'1':'2')]=ansStr;
+                var qIds=roundQuestions.map(function(q){return q.id;}).join(',');
+                var myNum=getMyPlayerNum();
+                var updateData={};
+                updateData['round'+currentRound+'_p'+myNum]=ansStr;
                 fetchData('updateGame',{gameId:roomCode,updates:updateData});
                 window.location.href='../../dashboard/';
             }
