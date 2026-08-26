@@ -209,11 +209,23 @@
             border-bottom: 1px solid var(--bg3);
         }
         .setting-item:last-child { border-bottom: none; }
+        .setting-item.disabled { opacity: 0.4; pointer-events: none; }
 
         .setting-info { display: flex; align-items: center; gap: 10px; }
         .setting-info i { font-size: 16px; color: var(--primary); width: 22px; text-align: center; }
         .setting-label { font-size: 11px; font-weight: 700; color: var(--dark); }
         .setting-desc { font-size: 8px; color: var(--text-light); }
+
+        .coming-soon-badge {
+            font-size: 7px;
+            font-weight: 700;
+            padding: 2px 6px;
+            border-radius: 8px;
+            background: var(--bg3);
+            color: var(--text-light);
+            border: var(--border);
+            margin-right: 6px;
+        }
 
         .toggle-switch {
             width: 40px;
@@ -393,6 +405,19 @@
                 </div>
                 <div class="toggle-switch active" id="hapticToggle" onclick="toggleHaptic()"></div>
             </div>
+            <div class="setting-item disabled">
+                <div class="setting-info">
+                    <i class="fa-solid fa-envelope"></i>
+                    <div>
+                        <div class="setting-label">
+                            <span data-i18n="invite_messages">دریافت پیام دعوت</span>
+                            <span class="coming-soon-badge" data-i18n="coming_soon">به زودی</span>
+                        </div>
+                        <div class="setting-desc" data-i18n="invite_messages_desc">اطلاع از دعوت‌نامه‌های بازی</div>
+                    </div>
+                </div>
+                <div class="toggle-switch" id="inviteToggle"></div>
+            </div>
         </div>
 
     </main>
@@ -426,6 +451,8 @@
                     color_theme: 'تم رنگ', other: 'سایر',
                     animation: 'انیمیشن‌ها', animation_desc: 'افکت‌های حرکتی',
                     haptic: 'لرزش', haptic_desc: 'بازخورد لمسی',
+                    invite_messages: 'دریافت پیام دعوت', invite_messages_desc: 'اطلاع از دعوت‌نامه‌های بازی',
+                    coming_soon: 'به زودی',
                     home: 'خانه', ranking: 'رتبه', profile: 'پروفایل', settings_nav: 'تنظیمات',
                     support: 'از سازنده حمایت کنید'
                 },
@@ -436,6 +463,8 @@
                     color_theme: 'Color Theme', other: 'Other',
                     animation: 'Animations', animation_desc: 'Motion effects',
                     haptic: 'Haptic', haptic_desc: 'Tactile feedback',
+                    invite_messages: 'Receive Invite Messages', invite_messages_desc: 'Get notified about game invites',
+                    coming_soon: 'Coming Soon',
                     home: 'Home', ranking: 'Ranking', profile: 'Profile', settings_nav: 'Settings',
                     support: 'Support the developer'
                 },
@@ -446,6 +475,8 @@
                     color_theme: 'لون السمة', other: 'أخرى',
                     animation: 'الحركات', animation_desc: 'تأثيرات الحركة',
                     haptic: 'الاهتزاز', haptic_desc: 'ردود فعل لمسية',
+                    invite_messages: 'استقبال رسائل الدعوة', invite_messages_desc: 'تلقي إشعارات دعوات اللعب',
+                    coming_soon: 'قريبًا',
                     home: 'الرئيسية', ranking: 'الترتيب', profile: 'الملف', settings_nav: 'الإعدادات',
                     support: 'ادعم المطور'
                 }
