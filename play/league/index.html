@@ -509,6 +509,14 @@
             function shuffleArray(a){for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t;}return a;}
             function hideLoader(){document.getElementById('loaderWrapper').style.display='none';document.getElementById('gameContent').classList.add('show');}
 
+            async function getPlayerName(userId, fallback) {
+                var result = await fetchData('getUser', { username: userId });
+                if (result.ok && result.data && result.data.name) {
+                    return result.data.name;
+                }
+                return fallback;
+            }
+
             function checkTimeExpired(createdAt) {
                 if (!createdAt) return false;
                 var now = new Date();
@@ -580,17 +588,17 @@
             async function loadLeaguePlayers() {
                 var result = await fetchData('getLeague', { leagueId: leagueCode });
                 if (result.ok && result.data) {
-                    var players = [];
+                    var playersHtml = '';
                     for (var i = 1; i <= 5; i++) {
                         if (result.data['player' + i]) {
-                            players.push('بازیکن ' + i + ': وارد شده ✅');
+                            var pId = String(result.data['player' + i]).split(',')[0];
+                            var pName = await getPlayerName(pId, 'بازیکن ' + i);
+                            playersHtml += '<div class="league-table-row"><span class="name">' + pName + ' ✅</span></div>';
                         } else {
-                            players.push('بازیکن ' + i + ': خالی ⬜');
+                            playersHtml += '<div class="league-table-row"><span class="name">جای خالی ⬜</span></div>';
                         }
                     }
-                    document.getElementById('leaguePlayersList').innerHTML = players.map(function(p) {
-                        return '<div class="league-table-row"><span class="name">' + p + '</span></div>';
-                    }).join('');
+                    document.getElementById('leaguePlayersList').innerHTML = playersHtml;
                 }
             }
 
@@ -610,12 +618,14 @@
                     for (var i = 1; i <= 5; i++) {
                         if (result.data['player' + i]) {
                             var pData = String(result.data['player' + i]).split(',');
-                            players.push({ num: i, id: pData[0], pts: parseInt(pData[1]) || 0 });
+                            var pId = pData[0];
+                            var pName = await getPlayerName(pId, 'بازیکن ' + i);
+                            players.push({ num: i, name: pName, pts: parseInt(pData[1]) || 0 });
                         }
                     }
                     players.sort(function(a, b) { return b.pts - a.pts; });
                     document.getElementById('leagueTableBody').innerHTML = players.map(function(p, idx) {
-                        return '<div class="league-table-row"><span class="rank">#' + (idx+1) + '</span><span class="name">بازیکن ' + p.num + '</span><span class="pts">' + p.pts + ' امتیاز</span></div>';
+                        return '<div class="league-table-row"><span class="rank">#' + (idx+1) + '</span><span class="name">' + p.name + '</span><span class="pts">' + p.pts + ' امتیاز</span></div>';
                     }).join('');
 
                     var results = String(result.data.results || '').split(',').filter(function(r) { return r !== ''; });
@@ -625,7 +635,11 @@
                         var gameResult = results[j] || '';
                         var status = gameResult ? 'done' : 'waiting';
                         var statusText = gameResult ? 'انجام شد' : 'در انتظار';
-                        gamesHtml += '<div class="game-item"><span>بازی ' + (j+1) + ':</span><span class="vs">بازیکن ' + m[0] + ' vs بازیکن ' + m[1] + '</span><span class="status ' + status + '">' + statusText + '</span></div>';
+                        
+                        var p1Name = await getPlayerName(String(result.data['player' + m[0]]).split(',')[0], 'بازیکن ' + m[0]);
+                        var p2Name = await getPlayerName(String(result.data['player' + m[1]]).split(',')[0], 'بازیکن ' + m[1]);
+                        
+                        gamesHtml += '<div class="game-item"><span>بازی ' + (j+1) + ':</span><span class="vs">' + p1Name + ' vs ' + p2Name + '</span><span class="status ' + status + '">' + statusText + '</span></div>';
                     }
                     document.getElementById('leagueGamesList').innerHTML = gamesHtml;
                 }
@@ -1011,24 +1025,25 @@
                         return;
                     }
                     
-                    var joined = false;
-                    for (var i = 2; i <= 5; i++) {
-                        if (!result.data['player' + i]) {
-                            await fetchData('joinLeague', { leagueId: leagueCode, userId: myUserId });
-                            joined = true;
+                    var alreadyIn = false;
+                    for (var j = 1; j <= 5; j++) {
+                        if (result.data['player' + j] && String(result.data['player' + j]).split(',')[0] === myUserId) {
+                            alreadyIn = true;
                             break;
                         }
                     }
                     
-                    if (!joined) {
-                        var isAlreadyIn = false;
-                        for (var j = 1; j <= 5; j++) {
-                            if (result.data['player' + j] && String(result.data['player' + j]).split(',')[0] === myUserId) {
-                                isAlreadyIn = true;
+                    if (!alreadyIn) {
+                        var joined = false;
+                        for (var i = 2; i <= 5; i++) {
+                            if (!result.data['player' + i]) {
+                                await fetchData('joinLeague', { leagueId: leagueCode, userId: myUserId });
+                                joined = true;
                                 break;
                             }
                         }
-                        if (!isAlreadyIn) {
+                        
+                        if (!joined) {
                             document.getElementById('gameContent').innerHTML = '<div class="result-banner"><div class="result-text">لیگ پره!</div></div>';
                             document.getElementById('bottomBtnContainer').style.display = 'none';
                             hideLoader();
