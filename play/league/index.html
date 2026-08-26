@@ -195,6 +195,56 @@
         .waiting-text { font-size: 12px; font-weight: 700; color: var(--text); margin-bottom: 10px; }
         .room-code-display { font-size: 18px; font-weight: 900; color: var(--primary); letter-spacing: 2px; margin-bottom: 10px; }
 
+        .invite-box {
+            background: #fff7ed;
+            border: 2px solid #f97316;
+            border-radius: 10px;
+            padding: 12px;
+            margin-top: 10px;
+            text-align: center;
+        }
+        .invite-box-title { font-size: 10px; font-weight: 800; color: #f97316; margin-bottom: 6px; }
+        .invite-box-desc { font-size: 8px; color: #9a3412; margin-bottom: 8px; line-height: 1.6; }
+        .invite-link-box { display: flex; align-items: center; gap: 6px; background: #fff; border: 1px solid #f97316; border-radius: 6px; padding: 6px 8px; }
+        .invite-link { flex: 1; font-size: 8px; font-weight: 600; color: #9a3412; direction: ltr; text-align: center; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .copy-btn { background: #f97316; color: #fff; border: 1px solid #000; border-radius: 6px; padding: 6px 10px; cursor: pointer; font-family: 'IRANSans', Tahoma, sans-serif; font-size: 8px; font-weight: 700; box-shadow: 2px 2px 0 #000; flex-shrink: 0; }
+        .copy-btn:active { transform: translate(1px, 1px); box-shadow: 1px 1px 0 #000; }
+
+        .players-invite-section {
+            margin-top: 12px;
+            text-align: right;
+            opacity: 0.5;
+            pointer-events: none;
+            position: relative;
+        }
+        .players-invite-section .coming-soon-overlay {
+            position: absolute;
+            top: 50%;
+            right: 50%;
+            transform: translate(50%, -50%);
+            background: #a855f7;
+            color: #fff;
+            font-size: 9px;
+            font-weight: 800;
+            padding: 4px 16px;
+            border-radius: 20px;
+            border: 1px solid #000;
+            box-shadow: 2px 2px 0 #000;
+            z-index: 10;
+        }
+        .players-invite-title { font-size: 10px; font-weight: 800; color: var(--dark); margin-bottom: 8px; text-align: center; }
+        .players-search-box { position: relative; margin-bottom: 8px; }
+        .players-search-box input { width: 100%; padding: 8px 35px 8px 10px; border: var(--border); border-radius: 8px; background: var(--bg2); color: var(--text); font-family: inherit; font-size: 9px; outline: none; }
+        .players-search-box i { position: absolute; top: 50%; right: 10px; transform: translateY(-50%); color: var(--text-light); font-size: 11px; }
+        .players-invite-list { display: flex; flex-direction: column; gap: 6px; max-height: 300px; overflow-y: auto; }
+        .invite-player-item { display: flex; align-items: center; gap: 8px; padding: 8px 10px; border: var(--border); border-radius: 8px; background: var(--bg2); }
+        .invite-avatar { width: 30px; height: 30px; border-radius: 50%; background: var(--bg2); border: var(--border); display: flex; align-items: center; justify-content: center; font-size: 12px; color: var(--primary); overflow: hidden; flex-shrink: 0; }
+        .invite-avatar img { width: 100%; height: 100%; object-fit: cover; }
+        .invite-info { flex: 1; min-width: 0; }
+        .invite-name { font-size: 10px; font-weight: 700; color: var(--dark); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .invite-score { font-size: 8px; color: var(--text-light); }
+        .invite-btn { padding: 5px 12px; background: var(--primary); color: #fff; border: var(--border); border-radius: 6px; font-family: 'IRANSans', Tahoma, sans-serif; font-size: 8px; font-weight: 700; cursor: pointer; box-shadow: 2px 2px 0 #000; flex-shrink: 0; }
+
         .players-row { display: flex; gap: 8px; }
         .player-card {
             flex: 1;
@@ -404,13 +454,13 @@
         (function() {
             var webApp = window.Eitaa?.WebApp;
             var API_URL = 'https://script.google.com/macros/s/AKfycbwV2X5hZB6WSJSezWWsYXq-94gIRu6z6kuzTIupTnHx2VqDKpzlZLcBohnZO2Lk1KHmxA/exec';
+            var SAD_IMAGE = 'https://cdn.imgurl.ir/uploads/g58935_InShot_20260822_140943752.png';
 
             var TOTAL_ROUNDS = 5;
             var QUESTIONS_PER_ROUND = 3;
             var QUESTION_TIME = 60;
             var leagueCode = null;
             var isCreator = false;
-            var currentGameIndex = 0;
             var currentRound = 1;
             var currentQuestionIndex = 0;
             var questions = [];
@@ -426,7 +476,6 @@
             var timeLeft = QUESTION_TIME;
             var userCoins = 0;
             var currentGameId = '';
-            var currentOpponent = '';
             var isMyTurn = false;
 
             var leagueMatches = [
@@ -455,10 +504,25 @@
             function hideLoader(){document.getElementById('loaderWrapper').style.display='none';document.getElementById('gameContent').classList.add('show');}
 
             function renderWaitingScreen() {
+                var inviteLink = 'https://eitaa.com/gameland_app/Quizico?startapp=' + leagueCode + '&btn=بزن.بریم.🚀';
                 var html = '<div class="waiting-card">';
-                html += '<img class="waiting-image" src="https://cdn.imgurl.ir/uploads/g58935_InShot_20260822_140943752.png" alt="" draggable="false" oncontextmenu="return false;" ondragstart="return false;">';
+                html += '<img class="waiting-image" src="' + SAD_IMAGE + '" alt="" draggable="false" oncontextmenu="return false;" ondragstart="return false;">';
                 html += '<div class="waiting-text">منتظر ورود بازیکن‌ها...</div>';
                 html += '<div class="room-code-display">' + leagueCode + '</div>';
+                html += '<div class="invite-box">';
+                html += '<div class="invite-box-title">دعوت از دوستان</div>';
+                html += '<div class="invite-box-desc">لینک زیر رو کپی کن و برای دوستات بفرست تا وارد لیگ بشن!</div>';
+                html += '<div class="invite-link-box">';
+                html += '<span class="invite-link" id="inviteLink">' + inviteLink + '</span>';
+                html += '<button class="copy-btn" onclick="copyInviteLink()">کپی</button>';
+                html += '</div>';
+                html += '</div>';
+                html += '<div class="players-invite-section">';
+                html += '<div class="coming-soon-overlay">به زودی</div>';
+                html += '<div class="players-invite-title">انتخاب از لیست بازیکنا</div>';
+                html += '<div class="players-search-box"><i class="fa-solid fa-search"></i><input type="text" placeholder="جستجوی بازیکن..."></div>';
+                html += '<div class="players-invite-list"></div>';
+                html += '</div>';
                 html += '<div class="league-table"><div class="league-table-title">بازیکن‌های وارد شده</div><div id="leaguePlayersList"></div></div>';
                 html += '</div>';
                 document.getElementById('gameContent').innerHTML = html;
@@ -467,15 +531,25 @@
                 loadLeaguePlayers();
             }
 
+            window.copyInviteLink = function() {
+                var link = document.getElementById('inviteLink').textContent;
+                if (navigator.clipboard) {
+                    navigator.clipboard.writeText(link).then(function() {
+                        if (webApp) webApp.showAlert('لینک کپی شد!');
+                    });
+                }
+                if (webApp) webApp.HapticFeedback?.impactOccurred('light');
+            };
+
             async function loadLeaguePlayers() {
                 var result = await fetchData('getLeague', { leagueId: leagueCode });
                 if (result.ok && result.data) {
                     var players = [];
                     for (var i = 1; i <= 5; i++) {
-                        if (result.data['player'+i]) {
-                            players.push('بازیکن ' + i + ': وارد شده');
+                        if (result.data['player' + i]) {
+                            players.push('بازیکن ' + i + ': وارد شده ✅');
                         } else {
-                            players.push('بازیکن ' + i + ': خالی');
+                            players.push('بازیکن ' + i + ': خالی ⬜');
                         }
                     }
                     document.getElementById('leaguePlayersList').innerHTML = players.map(function(p) {
@@ -498,8 +572,8 @@
                 if (result.ok && result.data) {
                     var players = [];
                     for (var i = 1; i <= 5; i++) {
-                        if (result.data['player'+i]) {
-                            players.push({ num: i, name: 'بازیکن ' + i, pts: result.data['pts'+i] || 0 });
+                        if (result.data['player' + i]) {
+                            players.push({ num: i, name: 'بازیکن ' + i, pts: result.data['pts' + i] || 0 });
                         }
                     }
                     players.sort(function(a, b) { return b.pts - a.pts; });
@@ -593,7 +667,7 @@
                 roundResults.push({ myScore: myCorrectCount * 5, myCorrect: myCorrectCount, myAnswers: myAnswers });
                 var ansStr = myAnswers.map(function(a) { return a ? 'T' : 'F'; }).join(',');
                 var updateData = {};
-                updateData['round' + currentRound + '_p' + (isCreator ? '1' : '2')] = ansStr;
+                updateData['round' + currentRound] = ansStr;
                 fetchData('updateGame', { gameId: currentGameId, updates: updateData });
                 myCorrectCount = 0;
                 myAnswers = [];
@@ -701,6 +775,7 @@
                     }
                     if (!joined) {
                         document.getElementById('gameContent').innerHTML = '<div class="result-banner"><div class="result-text">لیگ پره!</div></div>';
+                        document.getElementById('bottomBtnContainer').style.display = 'none';
                         hideLoader();
                         return;
                     }
@@ -729,7 +804,7 @@
                         clearInterval(checkInterval);
                         showLeagueResults();
                     } else {
-                        renderLeagueTable();
+                        loadLeagueData();
                     }
                 }, 5000);
             }
