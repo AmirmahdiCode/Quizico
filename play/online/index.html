@@ -37,13 +37,13 @@
         .waiting-image{width:100px;height:100px;object-fit:contain;margin:0 auto 10px;display:block}
         .waiting-text{font-size:12px;font-weight:700;color:var(--text);margin-bottom:10px}
         .room-code-display{font-size:18px;font-weight:900;color:var(--primary);letter-spacing:2px;margin-bottom:10px}
-        .invite-box{background:#fff7ed;border:2px solid #f97316;border-radius:10px;padding:12px;margin-top:10px;text-align:center;opacity:0.5;pointer-events:none;position:relative}
-        .invite-box .coming-soon-overlay{position:absolute;top:50%;right:50%;transform:translate(50%,-50%);background:#f97316;color:#fff;font-size:9px;font-weight:800;padding:4px 16px;border-radius:20px;border:1px solid #000;box-shadow:2px 2px 0 #000}
+        .invite-box{background:#fff7ed;border:2px solid #f97316;border-radius:10px;padding:12px;margin-top:10px;text-align:center}
         .invite-box-title{font-size:10px;font-weight:800;color:#f97316;margin-bottom:6px}
         .invite-box-desc{font-size:8px;color:#9a3412;margin-bottom:8px;line-height:1.6}
         .invite-link-box{display:flex;align-items:center;gap:6px;background:#fff;border:1px solid #f97316;border-radius:6px;padding:6px 8px}
         .invite-link{flex:1;font-size:8px;font-weight:600;color:#9a3412;direction:ltr;text-align:center;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
         .copy-btn{background:#f97316;color:#fff;border:1px solid #000;border-radius:6px;padding:6px 10px;cursor:pointer;font-family:'IRANSans',Tahoma,sans-serif;font-size:8px;font-weight:700;box-shadow:2px 2px 0 #000;flex-shrink:0}
+        .copy-btn:active{transform:translate(1px,1px);box-shadow:1px 1px 0 #000}
         .players-invite-section{margin-top:12px;text-align:right;opacity:0.5;pointer-events:none;position:relative}
         .players-invite-section .coming-soon-overlay{position:absolute;top:50%;right:50%;transform:translate(50%,-50%);background:#a855f7;color:#fff;font-size:9px;font-weight:800;padding:4px 16px;border-radius:20px;border:1px solid #000;box-shadow:2px 2px 0 #000;z-index:10}
         .players-invite-title{font-size:10px;font-weight:800;color:var(--dark);margin-bottom:8px;text-align:center}
@@ -167,9 +167,9 @@ document.addEventListener('copy',function(e){if(e.target.tagName!=='INPUT'&&e.ta
 document.addEventListener('cut',function(e){if(e.target.tagName!=='INPUT'&&e.target.tagName!=='TEXTAREA')e.preventDefault();});
 
 var translations={
-fa:{online:'آنلاین',loading:'در حال دریافت...',start_game:'شروع بازی',start_round:'شروع راند',you:'تو',opponent:'حریف',results:'نتایج راندها',round:'راند',finished:'بازی تمام شد!',score:'امتیاز',back:'بازگشت',no_questions:'سوال کافی نیست',room_full:'دیر اومدی! یکی دیگه زودتر وارد شده',create_new_room:'ساخت اتاق جدید',waiting_opponent:'هنوز حریفت وارد نشده',invite_title:'دعوت از دوست',invite_desc:'لینک زیر رو کپی کن یا از لیست بازیکنا یکی رو انتخاب کن!',copy:'کپی',invite_from_players:'انتخاب از لیست بازیکنا',search_players:'جستجوی بازیکن...',invite:'دعوت',invite_sent:'دعوت ارسال شد!',invite_error:'خطا در ارسال دعوت',no_players:'بازیکنی یافت نشد',remove:'۵۰',swap:'۱۰۰',skip:'۱۵۰',not_enough:'سکه کافی نداری!',waiting_turn:'منتظر حریف...',your_turn:'نوبت توست',coming_soon:'به زودی'},
-en:{online:'Online',loading:'Loading...',start_game:'Start Game',start_round:'Start Round',you:'You',opponent:'Opponent',results:'Round Results',round:'Round',finished:'Game Over!',score:'Score',back:'Back',no_questions:'Not enough questions',room_full:'Too late! Someone else joined',create_new_room:'Create New Room',waiting_opponent:'Waiting for opponent...',invite_title:'Invite Friend',invite_desc:'Copy the link or choose from players list!',copy:'Copy',invite_from_players:'Invite from players',search_players:'Search players...',invite:'Invite',invite_sent:'Invite sent!',invite_error:'Error sending invite',no_players:'No players found',remove:'50',swap:'100',skip:'150',not_enough:'Not enough coins!',waiting_turn:'Waiting for opponent...',your_turn:'Your turn',coming_soon:'Coming Soon'},
-ar:{online:'عبر الإنترنت',loading:'جار التحميل...',start_game:'ابدأ اللعبة',start_round:'ابدأ الجولة',you:'أنت',opponent:'الخصم',results:'نتائج الجولات',round:'جولة',finished:'انتهت اللعبة!',score:'النقاط',back:'رجوع',no_questions:'أسئلة غير كافية',room_full:'متأخر! شخص آخر انضم',create_new_room:'إنشاء غرفة جديدة',waiting_opponent:'بانتظار الخصم...',invite_title:'دعوة صديق',invite_desc:'انسخ الرابط أو اختر من قائمة اللاعبين!',copy:'نسخ',invite_from_players:'اختر من اللاعبين',search_players:'ابحث عن لاعب...',invite:'دعوة',invite_sent:'تم إرسال الدعوة!',invite_error:'خطأ في إرسال الدعوة',no_players:'لا يوجد لاعبين',remove:'50',swap:'100',skip:'150',not_enough:'عملات غير كافية!',waiting_turn:'بانتظار الخصم...',your_turn:'دورك',coming_soon:'قريبًا'}
+fa:{online:'آنلاین',loading:'در حال دریافت...',start_game:'شروع بازی',start_round:'شروع راند',you:'تو',opponent:'حریف',results:'نتایج راندها',round:'راند',finished:'بازی تمام شد!',score:'امتیاز',back:'بازگشت',no_questions:'سوال کافی نیست',room_full:'دیر اومدی! یکی دیگه زودتر وارد شده',create_new_room:'ساخت اتاق جدید',waiting_opponent:'هنوز حریفت وارد نشده',invite_title:'دعوت از دوست',invite_desc:'لینک زیر رو کپی کن و برای دوستت بفرست!',copy:'کپی',invite_from_players:'انتخاب از لیست بازیکنا',search_players:'جستجوی بازیکن...',invite:'دعوت',invite_sent:'دعوت ارسال شد!',invite_error:'خطا در ارسال دعوت',no_players:'بازیکنی یافت نشد',remove:'۵۰',swap:'۱۰۰',skip:'۱۵۰',not_enough:'سکه کافی نداری!',waiting_turn:'منتظر حریف...',your_turn:'نوبت توست',coming_soon:'به زودی',room_not_found:'اتاق یافت نشد'},
+en:{online:'Online',loading:'Loading...',start_game:'Start Game',start_round:'Start Round',you:'You',opponent:'Opponent',results:'Round Results',round:'Round',finished:'Game Over!',score:'Score',back:'Back',no_questions:'Not enough questions',room_full:'Too late! Someone else joined',create_new_room:'Create New Room',waiting_opponent:'Waiting for opponent...',invite_title:'Invite Friend',invite_desc:'Copy the link below and send it to your friend!',copy:'Copy',invite_from_players:'Invite from players',search_players:'Search players...',invite:'Invite',invite_sent:'Invite sent!',invite_error:'Error sending invite',no_players:'No players found',remove:'50',swap:'100',skip:'150',not_enough:'Not enough coins!',waiting_turn:'Waiting for opponent...',your_turn:'Your turn',coming_soon:'Coming Soon',room_not_found:'Room not found'},
+ar:{online:'عبر الإنترنت',loading:'جار التحميل...',start_game:'ابدأ اللعبة',start_round:'ابدأ الجولة',you:'أنت',opponent:'الخصم',results:'نتائج الجولات',round:'جولة',finished:'انتهت اللعبة!',score:'النقاط',back:'رجوع',no_questions:'أسئلة غير كافية',room_full:'متأخر! شخص آخر انضم',create_new_room:'إنشاء غرفة جديدة',waiting_opponent:'بانتظار الخصم...',invite_title:'دعوة صديق',invite_desc:'انسخ الرابط أدناه وأرسله إلى صديقك!',copy:'نسخ',invite_from_players:'اختر من اللاعبين',search_players:'ابحث عن لاعب...',invite:'دعوة',invite_sent:'تم إرسال الدعوة!',invite_error:'خطأ في إرسال الدعوة',no_players:'لا يوجد لاعبين',remove:'50',swap:'100',skip:'150',not_enough:'عملات غير كافية!',waiting_turn:'بانتظار الخصم...',your_turn:'دورك',coming_soon:'قريبًا',room_not_found:'الغرفة غير موجودة'}
 };
 
 function getSettings(){try{var raw=localStorage.getItem('quizicoSettings');if(!raw)return{theme:'light',primaryColor:'#a855f7',animation:true,language:'fa'};var p=JSON.parse(raw);if(!p.theme)p.theme='light';if(!p.primaryColor)p.primaryColor='#a855f7';if(p.animation===undefined)p.animation=true;if(!p.language)p.language='fa';return p;}catch(e){return{theme:'light',primaryColor:'#a855f7',animation:true,language:'fa'}}}
@@ -188,16 +188,16 @@ function getMyPlayerNum(){return isPlayer1?1:2}
 
 function renderWaitingScreen(){
     var t=getTranslation;
+    var inviteLink='https://eitaa.com/gameland_app/Quizico?startapp='+roomCode+'&btn=بزن.بریم.🚀';
     var html='<div class="waiting-card">';
     html+='<img class="waiting-image" src="'+SAD_IMAGE+'" alt="" draggable="false" oncontextmenu="return false;" ondragstart="return false;">';
     html+='<div class="waiting-text">'+t('waiting_opponent')+'</div>';
     html+='<div class="room-code-display">'+roomCode+'</div>';
     html+='<div class="invite-box">';
-    html+='<div class="coming-soon-overlay">'+t('coming_soon')+'</div>';
     html+='<div class="invite-box-title">'+t('invite_title')+'</div>';
     html+='<div class="invite-box-desc">'+t('invite_desc')+'</div>';
     html+='<div class="invite-link-box">';
-    html+='<span class="invite-link" id="inviteLink">https://eitaa.com/gameland_app/Quizico?startapp='+roomCode+'</span>';
+    html+='<span class="invite-link" id="inviteLink">'+inviteLink+'</span>';
     html+='<button class="copy-btn" onclick="copyInviteLink()">'+t('copy')+'</button>';
     html+='</div>';
     html+='</div>';
@@ -213,7 +213,17 @@ function renderWaitingScreen(){
     hideLoader();
 }
 
-window.copyInviteLink=function(){var link=document.getElementById('inviteLink').textContent;if(navigator.clipboard){navigator.clipboard.writeText(link).then(function(){});}if(webApp)webApp.HapticFeedback?.impactOccurred('light');};
+window.copyInviteLink=function(){
+    var link=document.getElementById('inviteLink').textContent;
+    if(navigator.clipboard){
+        navigator.clipboard.writeText(link).then(function(){
+            if(webApp)webApp.showAlert(getTranslation('invite_sent'));
+        }).catch(function(){
+            if(webApp)webApp.showAlert(getTranslation('invite_error'));
+        });
+    }
+    if(webApp)webApp.HapticFeedback?.impactOccurred('light');
+};
 
 function renderRoomFullScreen(){
     var t=getTranslation;
@@ -457,7 +467,9 @@ async function initPlayer2(){
     
     var gameResult=await fetchData('getGame',{gameId:roomCode});
     if(!gameResult.ok||!gameResult.data){
-        document.getElementById('gameContent').innerHTML='<div class="result-banner"><div class="result-text">اتاق یافت نشد</div></div>';
+        var t=getTranslation;
+        document.getElementById('gameContent').innerHTML='<div class="result-banner"><div class="result-text">'+t('room_not_found')+'</div></div>';
+        document.getElementById('bottomBtnContainer').style.display='none';
         hideLoader();
         return;
     }
@@ -509,6 +521,7 @@ async function startOnlineGame(){
         startPolling();
     }else{
         document.getElementById('gameContent').innerHTML='<div class="result-banner"><div class="result-text">'+getTranslation('no_questions')+'</div></div>';
+        document.getElementById('bottomBtnContainer').style.display='none';
         hideLoader();
     }
 }
