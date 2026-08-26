@@ -594,10 +594,18 @@
 
             <div class="games-section">
                 <div class="games-section-header">
-                    <span class="games-section-title" data-i18n="in_progress_games"><i class="fa-solid fa-hourglass-half"></i> بازی‌های در حال برگزاری</span>
-                    <span class="games-section-badge" id="inProgressCount">0</span>
+                    <span class="games-section-title" data-i18n="online_games"><i class="fa-solid fa-globe"></i> بازی‌های آنلاین نیمه‌تمام</span>
+                    <span class="games-section-badge" id="onlineCount">0</span>
                 </div>
-                <div class="games-list" id="inProgressList"></div>
+                <div class="games-list" id="onlineList"></div>
+            </div>
+
+            <div class="games-section">
+                <div class="games-section-header">
+                    <span class="games-section-title" data-i18n="league_games"><i class="fa-solid fa-trophy"></i> لیگ‌های نیمه‌تمام</span>
+                    <span class="games-section-badge" id="leagueCount">0</span>
+                </div>
+                <div class="games-list" id="leagueList"></div>
             </div>
 
             <div class="games-section">
@@ -653,13 +661,72 @@
     <script>
         (function() {
             var webApp = window.Eitaa?.WebApp;
-            var API_URL = 'https://script.google.com/macros/s/AKfycbwV2X5hZB6WSJSezWWsYXq-94gIRu6z6kuzTIupTnHx2VqDKpzlZLcBohnZO2Lk1KHmxA/exec';
+            var API_URL = 'https://script.google.com/macros/s/AKfycbyHQXQ0TffhGyW1MdtI-_sWlZMhLSPDCR3Az5dDkuwv9TJt1o6-f_aCOg_aHJnty_8P/exec';
             var SAD_IMAGE = 'https://cdn.imgurl.ir/uploads/g58935_InShot_20260822_140943752.png';
 
             var userCoins = 0, userDiamonds = 0;
             var currentRotation = 0, isSpinning = false;
             var SPIN_COST = 50;
             var currentLang = 'fa';
+            var refreshTimer = null;
+            var loadTimeout = null;
+
+            document.addEventListener('contextmenu', function(e) { e.preventDefault(); });
+            document.addEventListener('dragstart', function(e) { e.preventDefault(); });
+            document.addEventListener('copy', function(e) { if (e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA') e.preventDefault(); });
+            document.addEventListener('cut', function(e) { if (e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA') e.preventDefault(); });
+
+            var translations = {
+                fa: {
+                    tagline: 'اطلاعات خودت رو محک بزن', loading: 'در حال دریافت...',
+                    daily_challenge: '<i class="fa-solid fa-trophy"></i> مسابقه روزانه',
+                    wheel: 'گردونه', start_game: 'شروع مسابقه',
+                    single: 'تک‌نفره', offline: 'دوستانه', online: 'آنلاین', league: 'لیگ',
+                    online_games: 'بازی‌های آنلاین نیمه‌تمام', league_games: 'لیگ‌های نیمه‌تمام',
+                    past_games: '۵ بازی گذشته',
+                    home: 'خانه', ranking: 'رتبه', profile: 'پروفایل', settings: 'تنظیمات',
+                    spin: 'چرخش', cost: 'هزینه', coins_50: '۵۰ سکه',
+                    no_online_games: 'بازی آنلاینی در جریان نیست', no_league_games: 'لیگی در جریان نیست',
+                    no_past_games: 'بازی گذشته‌ای نیست',
+                    waiting: 'منتظر حریف', live: 'در جریان', finished: 'پایان',
+                    you_p1: 'تو سازنده بازی هستی', you_p2: 'تو مهمون بازی هستی',
+                    not_enough_coins: 'سکه کافی نداری!', empty: 'پوچ!',
+                    support: 'از سازنده حمایت کنید', exit_confirm: 'مطمئن هستید که خارج می‌شوید؟'
+                },
+                en: {
+                    tagline: 'Test your knowledge', loading: 'Loading...',
+                    daily_challenge: '<i class="fa-solid fa-trophy"></i> Daily Challenge',
+                    wheel: 'Wheel', start_game: 'Start Game',
+                    single: 'Single', offline: 'Friendly', online: 'Online', league: 'League',
+                    online_games: 'Online Games in Progress', league_games: 'Leagues in Progress',
+                    past_games: 'Last 5 Games',
+                    home: 'Home', ranking: 'Ranking', profile: 'Profile', settings: 'Settings',
+                    spin: 'Spin', cost: 'Cost', coins_50: '50 Coins',
+                    no_online_games: 'No active online games', no_league_games: 'No active leagues',
+                    no_past_games: 'No past games',
+                    waiting: 'Waiting', live: 'Live', finished: 'Finished',
+                    you_p1: 'You are Player 1', you_p2: 'You are Player 2',
+                    not_enough_coins: 'Not enough coins!', empty: 'Empty!',
+                    support: 'Support the developer', exit_confirm: 'Are you sure you want to exit?'
+                },
+                ar: {
+                    tagline: 'اختبر معلوماتك', loading: 'جار التحميل...',
+                    daily_challenge: '<i class="fa-solid fa-trophy"></i> التحدي اليومي',
+                    wheel: 'العجلة', start_game: 'ابدأ اللعبة',
+                    single: 'فردي', offline: 'ودي', online: 'عبر الإنترنت', league: 'الدوري',
+                    online_games: 'الألعاب الجارية عبر الإنترنت', league_games: 'الدوريات الجارية',
+                    past_games: 'آخر 5 ألعاب',
+                    home: 'الرئيسية', ranking: 'الترتيب', profile: 'الملف', settings: 'الإعدادات',
+                    spin: 'تدوير', cost: 'التكلفة', coins_50: '50 عملة',
+                    no_online_games: 'لا توجد ألعاب جارية', no_league_games: 'لا توجد دوريات جارية',
+                    no_past_games: 'لا توجد ألعاب سابقة',
+                    waiting: 'بانتظار الخصم', live: 'جارية', finished: 'انتهت',
+                    you_p1: 'أنت اللاعب 1', you_p2: 'أنت اللاعب 2',
+                    not_enough_coins: 'عملات غير كافية!', empty: 'فارغ!',
+                    support: 'ادعم المطور', exit_confirm: 'هل أنت متأكد من الخروج؟'
+                }
+            };
+
             var wheelPrizes = [
                 { label: 'پوچ', type: 'empty', value: 0 },
                 { label: '۲۰ سکه', type: 'coins', value: 20 },
@@ -671,128 +738,6 @@
                 { label: '۱۰ الماس', type: 'diamonds', value: 10 }
             ];
             var wheelColors = ['#ef4444','#f59e0b','#10b981','#06b6d4','#8b5cf6','#ec4899','#84cc16','#f97316'];
-
-            document.addEventListener('contextmenu', function(e) {
-                e.preventDefault();
-            });
-
-            document.addEventListener('dragstart', function(e) {
-                e.preventDefault();
-            });
-
-            document.addEventListener('copy', function(e) {
-                if (e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA') {
-                    e.preventDefault();
-                }
-            });
-
-            document.addEventListener('cut', function(e) {
-                if (e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA') {
-                    e.preventDefault();
-                }
-            });
-
-            var translations = {
-                fa: {
-                    tagline: 'اطلاعات خودت رو محک بزن',
-                    loading: 'در حال دریافت...',
-                    daily_challenge: '<i class="fa-solid fa-trophy"></i> مسابقه روزانه',
-                    wheel: 'گردونه',
-                    start_game: 'شروع مسابقه',
-                    single: 'تک‌نفره',
-                    offline: 'دوستانه',
-                    online: 'آنلاین',
-                    league: 'لیگ',
-                    in_progress_games: 'بازی‌های در حال برگزاری',
-                    past_games: '۵ بازی گذشته',
-                    home: 'خانه',
-                    ranking: 'رتبه',
-                    profile: 'پروفایل',
-                    settings: 'تنظیمات',
-                    spin: 'چرخش',
-                    cost: 'هزینه',
-                    coins_50: '۵۰ سکه',
-                    no_active_games: 'بازی در جریانی نیست',
-                    no_past_games: 'بازی گذشته‌ای نیست',
-                    waiting: 'منتظر حریف',
-                    live: 'در جریان',
-                    finished: 'پایان',
-                    you_p1: 'تو سازنده بازی هستی',
-                    you_p2: 'تو مهمون بازی هستی',
-                    you_were_p1: 'تو بازیکن ۱ بودی',
-                    you_were_p2: 'تو بازیکن ۲ بودی',
-                    not_enough_coins: 'سکه کافی نداری!',
-                    empty: 'پوچ!',
-                    support: 'از سازنده حمایت کنید',
-                    exit_confirm: 'مطمئن هستید که خارج می‌شوید؟'
-                },
-                en: {
-                    tagline: 'Test your knowledge',
-                    loading: 'Loading...',
-                    daily_challenge: '<i class="fa-solid fa-trophy"></i> Daily Challenge',
-                    wheel: 'Wheel',
-                    start_game: 'Start Game',
-                    single: 'Single',
-                    offline: 'Friendly',
-                    online: 'Online',
-                    league: 'League',
-                    in_progress_games: 'Games in Progress',
-                    past_games: 'Last 5 Games',
-                    home: 'Home',
-                    ranking: 'Ranking',
-                    profile: 'Profile',
-                    settings: 'Settings',
-                    spin: 'Spin',
-                    cost: 'Cost',
-                    coins_50: '50 Coins',
-                    no_active_games: 'No active games',
-                    no_past_games: 'No past games',
-                    waiting: 'Waiting',
-                    live: 'Live',
-                    finished: 'Finished',
-                    you_p1: 'You are Player 1',
-                    you_p2: 'You are Player 2',
-                    you_were_p1: 'You were Player 1',
-                    you_were_p2: 'You were Player 2',
-                    not_enough_coins: 'Not enough coins!',
-                    empty: 'Empty!',
-                    support: 'Support the developer',
-                    exit_confirm: 'Are you sure you want to exit?'
-                },
-                ar: {
-                    tagline: 'اختبر معلوماتك',
-                    loading: 'جار التحميل...',
-                    daily_challenge: '<i class="fa-solid fa-trophy"></i> التحدي اليومي',
-                    wheel: 'العجلة',
-                    start_game: 'ابدأ اللعبة',
-                    single: 'فردي',
-                    offline: 'ودي',
-                    online: 'عبر الإنترنت',
-                    league: 'الدوري',
-                    in_progress_games: 'الألعاب الجارية',
-                    past_games: 'آخر 5 ألعاب',
-                    home: 'الرئيسية',
-                    ranking: 'الترتيب',
-                    profile: 'الملف',
-                    settings: 'الإعدادات',
-                    spin: 'تدوير',
-                    cost: 'التكلفة',
-                    coins_50: '50 عملة',
-                    no_active_games: 'لا توجد ألعاب جارية',
-                    no_past_games: 'لا توجد ألعاب سابقة',
-                    waiting: 'بانتظار الخصم',
-                    live: 'جارية',
-                    finished: 'انتهت',
-                    you_p1: 'أنت اللاعب 1',
-                    you_p2: 'أنت اللاعب 2',
-                    you_were_p1: 'كنت اللاعب 1',
-                    you_were_p2: 'كنت اللاعب 2',
-                    not_enough_coins: 'عملات غير كافية!',
-                    empty: 'فارغ!',
-                    support: 'ادعم المطور',
-                    exit_confirm: 'هل أنت متأكد من الخروج؟'
-                }
-            };
 
             function getSettings() {
                 try {
@@ -830,16 +775,32 @@
 
             function getEitaaUser(){return webApp&&webApp.initDataUnsafe&&webApp.initDataUnsafe.user?webApp.initDataUnsafe.user:null;}
             function getUserId(){var u=getEitaaUser();return u?(typeof u.id==='number'?u.id.toString():String(u.id||'')):'';}
-            function fetchData(action,params){
-                var payload={action:action,username:getUserId()};
-                if(params){for(var k in params){if(params.hasOwnProperty(k))payload[k]=params[k];}}
-                return fetch(API_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(payload)}).then(function(r){return r.json();}).catch(function(){return{ok:false};});
+            function fetchData(action, params) {
+                var payload = { action: action, username: getUserId() };
+                if (params) { for (var k in params) { if (params.hasOwnProperty(k)) payload[k] = params[k]; } }
+                
+                return Promise.race([
+                    fetch(API_URL, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                        body: JSON.stringify(payload)
+                    }).then(function(r) { return r.json(); }),
+                    new Promise(function(_, reject) {
+                        setTimeout(function() { reject(new Error('timeout')); }, 45000);
+                    })
+                ]).catch(function(e) {
+                    if (e.message === 'timeout') {
+                        window.location.reload();
+                    }
+                    return { ok: false, error: e.message };
+                });
             }
 
             function shuffleArray(a){for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t;}return a;}
 
             function goToPlay(mode){localStorage.setItem('gameMode',mode);window.location.href='../play/'+mode+'/';}
             function continueGame(id){localStorage.setItem('onlineRoomCode',id);window.location.href='../play/online/';}
+            function continueLeague(id){localStorage.setItem('leagueCode',id);window.location.href='../play/league/';}
             function goToResult(id){window.location.href='../result/?id='+id;}
             function openSupportLink(){
                 if (webApp && webApp.openEitaaLink) {
@@ -848,7 +809,7 @@
                     window.open('https://eitaa.com/Amirmahdi_code', '_blank');
                 }
             }
-            window.goToPlay=goToPlay;window.continueGame=continueGame;window.goToResult=goToResult;window.openSupportLink=openSupportLink;
+            window.goToPlay=goToPlay;window.continueGame=continueGame;window.continueLeague=continueLeague;window.goToResult=goToResult;window.openSupportLink=openSupportLink;
 
             function animateCount(el,target,dur){
                 var st=0,stt=null;
@@ -864,7 +825,7 @@
                 var statusText = getTranslation(g.status === 'waiting' ? 'waiting' : g.status === 'in_progress' ? 'live' : 'finished');
                 var subtitle;
                 if (type === 'past') {
-                    subtitle = getTranslation(isP1 ? 'you_were_p1' : 'you_were_p2');
+                    subtitle = getTranslation(isP1 ? 'you_p1' : 'you_p2');
                     statusClass = 'finished';
                     statusText = getTranslation('finished');
                 } else {
@@ -877,6 +838,16 @@
                     '<div class="game-info"><div class="game-title">' + g.id + '</div>' +
                     '<div class="game-subtitle">' + subtitle + '</div></div>' +
                     '<span class="game-status-badge ' + statusClass + '">' + statusText + '</span></div>';
+            }
+
+            function renderLeagueCard(lg, myId) {
+                var statusText = getTranslation('live');
+                var onclick = ' onclick="continueLeague(\'' + lg.leagueId + '\')"';
+                return '<div class="game-card"' + onclick + '>' +
+                    '<div class="game-icon"><i class="fa-solid fa-trophy"></i></div>' +
+                    '<div class="game-info"><div class="game-title">' + lg.leagueId + '</div>' +
+                    '<div class="game-subtitle">' + getTranslation('league_games') + '</div></div>' +
+                    '<span class="game-status-badge live">' + statusText + '</span></div>';
             }
 
             async function loadDashboard() {
@@ -901,20 +872,34 @@
                     var gamesData = await fetchData('getGamesByPlayer', {});
                     if (gamesData.ok && Array.isArray(gamesData.data)) {
                         var allGames = gamesData.data;
-                        var inProgress = allGames.filter(function(g) {
-                            return g.status === 'waiting' || g.status === 'in_progress';
+                        
+                        var onlineInProgress = allGames.filter(function(g) {
+                            return !String(g.id).startsWith('LG_') && (g.status === 'waiting' || g.status === 'in_progress');
                         });
+                        
+                        var leagueGames = allGames.filter(function(g) {
+                            return String(g.id).startsWith('LG_') && (g.status === 'waiting' || g.status === 'in_progress');
+                        });
+                        
                         var past = allGames.filter(function(g) {
                             return g.status === 'finished';
                         }).slice(0, 5);
 
-                        document.getElementById('inProgressCount').textContent = inProgress.length;
+                        document.getElementById('onlineCount').textContent = onlineInProgress.length;
+                        document.getElementById('leagueCount').textContent = leagueGames.length;
                         document.getElementById('pastCount').textContent = past.length;
 
-                        var ipList = document.getElementById('inProgressList');
-                        ipList.innerHTML = inProgress.length === 0 
-                            ? renderEmpty(getTranslation('no_active_games'))
-                            : inProgress.map(function(g) { return renderGameCard(g, myId, 'active'); }).join('');
+                        var onlineList = document.getElementById('onlineList');
+                        onlineList.innerHTML = onlineInProgress.length === 0 
+                            ? renderEmpty(getTranslation('no_online_games'))
+                            : onlineInProgress.map(function(g) { return renderGameCard(g, myId, 'active'); }).join('');
+
+                        var leagueList = document.getElementById('leagueList');
+                        leagueList.innerHTML = leagueGames.length === 0 
+                            ? renderEmpty(getTranslation('no_league_games'))
+                            : leagueGames.map(function(g) { 
+                                return renderLeagueCard({ leagueId: String(g.id).split('_game')[0] }, myId); 
+                            }).join('');
 
                         var pastList = document.getElementById('pastList');
                         pastList.innerHTML = past.length === 0 
