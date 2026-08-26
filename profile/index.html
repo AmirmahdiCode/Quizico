@@ -192,6 +192,7 @@
             overflow: hidden;
             flex-shrink: 0;
             transition: all 0.2s ease;
+            cursor: pointer;
         }
         .profile-avatar:active { transform: scale(0.95); }
         .profile-avatar img { width: 100%; height: 100%; object-fit: cover; }
@@ -614,10 +615,10 @@
     </div>
 
     <nav class="bottom-nav">
-        <a href="../dashboard/" class="nav-item"><i class="fa-solid fa-house"></i><span data-i18n="home">خانه</span></a>
-        <a href="../ranking/" class="nav-item"><i class="fa-solid fa-trophy"></i><span data-i18n="ranking">رتبه</span></a>
-        <a href="../profile/" class="nav-item active"><i class="fa-solid fa-user"></i><span data-i18n="profile_nav">پروفایل</span></a>
-        <a href="../setting/" class="nav-item"><i class="fa-solid fa-gear"></i><span data-i18n="settings">تنظیمات</span></a>
+        <div class="nav-item" onclick="window.location.href='../dashboard/'"><i class="fa-solid fa-house"></i><span data-i18n="home">خانه</span></div>
+        <div class="nav-item" onclick="window.location.href='../ranking/'"><i class="fa-solid fa-trophy"></i><span data-i18n="ranking">رتبه</span></div>
+        <div class="nav-item active" onclick="window.location.href='../profile/'"><i class="fa-solid fa-user"></i><span data-i18n="profile_nav">پروفایل</span></div>
+        <div class="nav-item" onclick="window.location.href='../setting/'"><i class="fa-solid fa-gear"></i><span data-i18n="settings">تنظیمات</span></div>
     </nav>
 
     <script>
@@ -651,46 +652,100 @@
 
             var translations = {
                 fa: {
-                    profile: 'پروفایل', loading: 'در حال دریافت...', coins: 'سکه', diamonds: 'الماس',
-                    total_score: 'امتیاز کل', total_games: 'تعداد بازی', win_rate: 'درصد برد',
-                    next_rank: 'پیشرفت به رتبه بعدی', league_stats: 'آمار لیگ',
-                    wins: 'برد', draws: 'مساوی', losses: 'باخت',
-                    achievements: 'افتخارات', history: 'تاریخچه بازی‌ها',
-                    home: 'خانه', ranking: 'رتبه', profile_nav: 'پروفایل', settings: 'تنظیمات',
-                    no_games: 'مسابقه‌ای یافت نشد', choose_avatar: 'انتخاب آواتار',
+                    profile: 'پروفایل',
+                    loading: 'در حال دریافت...',
+                    coins: 'سکه',
+                    diamonds: 'الماس',
+                    total_score: 'امتیاز کل',
+                    total_games: 'تعداد بازی',
+                    win_rate: 'درصد برد',
+                    next_rank: 'پیشرفت به رتبه بعدی',
+                    league_stats: 'آمار لیگ',
+                    wins: 'برد',
+                    draws: 'مساوی',
+                    losses: 'باخت',
+                    achievements: 'افتخارات',
+                    history: 'تاریخچه بازی‌ها',
+                    home: 'خانه',
+                    ranking: 'رتبه',
+                    profile_nav: 'پروفایل',
+                    settings: 'تنظیمات',
+                    no_games: 'مسابقه‌ای یافت نشد',
+                    choose_avatar: 'انتخاب آواتار',
                     change_avatar: 'تغییر آواتار',
-                    icons: 'آیکون‌ها', boys: 'پسر بچه', girls: 'دختر بچه',
-                    free: 'رایگان', diamonds_short: 'الماس',
-                    not_enough_diamonds: 'الماس کافی نداری!', avatar_purchased: 'آواتار خریداری شد!',
-                    owned: 'خریداری شده', support: 'از سازنده حمایت کنید'
+                    icons: 'آیکون‌ها',
+                    boys: 'پسر بچه',
+                    girls: 'دختر بچه',
+                    free: 'رایگان',
+                    diamonds_short: 'الماس',
+                    not_enough_diamonds: 'الماس کافی نداری!',
+                    avatar_purchased: 'آواتار خریداری شد!',
+                    owned: 'خریداری شده',
+                    support: 'از سازنده حمایت کنید'
                 },
                 en: {
-                    profile: 'Profile', loading: 'Loading...', coins: 'Coins', diamonds: 'Diamonds',
-                    total_score: 'Total Score', total_games: 'Total Games', win_rate: 'Win Rate',
-                    next_rank: 'Progress to Next Rank', league_stats: 'League Stats',
-                    wins: 'Wins', draws: 'Draws', losses: 'Losses',
-                    achievements: 'Achievements', history: 'Game History',
-                    home: 'Home', ranking: 'Ranking', profile_nav: 'Profile', settings: 'Settings',
-                    no_games: 'No games found', choose_avatar: 'Choose Avatar',
+                    profile: 'Profile',
+                    loading: 'Loading...',
+                    coins: 'Coins',
+                    diamonds: 'Diamonds',
+                    total_score: 'Total Score',
+                    total_games: 'Total Games',
+                    win_rate: 'Win Rate',
+                    next_rank: 'Progress to Next Rank',
+                    league_stats: 'League Stats',
+                    wins: 'Wins',
+                    draws: 'Draws',
+                    losses: 'Losses',
+                    achievements: 'Achievements',
+                    history: 'Game History',
+                    home: 'Home',
+                    ranking: 'Ranking',
+                    profile_nav: 'Profile',
+                    settings: 'Settings',
+                    no_games: 'No games found',
+                    choose_avatar: 'Choose Avatar',
                     change_avatar: 'Change Avatar',
-                    icons: 'Icons', boys: 'Boys', girls: 'Girls',
-                    free: 'Free', diamonds_short: 'Diamonds',
-                    not_enough_diamonds: 'Not enough diamonds!', avatar_purchased: 'Avatar purchased!',
-                    owned: 'Owned', support: 'Support the developer'
+                    icons: 'Icons',
+                    boys: 'Boys',
+                    girls: 'Girls',
+                    free: 'Free',
+                    diamonds_short: 'Diamonds',
+                    not_enough_diamonds: 'Not enough diamonds!',
+                    avatar_purchased: 'Avatar purchased!',
+                    owned: 'Owned',
+                    support: 'Support the developer'
                 },
                 ar: {
-                    profile: 'الملف', loading: 'جار التحميل...', coins: 'عملات', diamonds: 'ألماس',
-                    total_score: 'مجموع النقاط', total_games: 'عدد الألعاب', win_rate: 'نسبة الفوز',
-                    next_rank: 'التقدم للرتبة التالية', league_stats: 'إحصائيات الدوري',
-                    wins: 'فوز', draws: 'تعادل', losses: 'خسارة',
-                    achievements: 'الإنجازات', history: 'سجل الألعاب',
-                    home: 'الرئيسية', ranking: 'الترتيب', profile_nav: 'الملف', settings: 'الإعدادات',
-                    no_games: 'لا توجد ألعاب', choose_avatar: 'اختر الصورة الرمزية',
+                    profile: 'الملف',
+                    loading: 'جار التحميل...',
+                    coins: 'عملات',
+                    diamonds: 'ألماس',
+                    total_score: 'مجموع النقاط',
+                    total_games: 'عدد الألعاب',
+                    win_rate: 'نسبة الفوز',
+                    next_rank: 'التقدم للرتبة التالية',
+                    league_stats: 'إحصائيات الدوري',
+                    wins: 'فوز',
+                    draws: 'تعادل',
+                    losses: 'خسارة',
+                    achievements: 'الإنجازات',
+                    history: 'سجل الألعاب',
+                    home: 'الرئيسية',
+                    ranking: 'الترتيب',
+                    profile_nav: 'الملف',
+                    settings: 'الإعدادات',
+                    no_games: 'لا توجد ألعاب',
+                    choose_avatar: 'اختر الصورة الرمزية',
                     change_avatar: 'تغيير الصورة الرمزية',
-                    icons: 'أيقونات', boys: 'أولاد', girls: 'بنات',
-                    free: 'مجاني', diamonds_short: 'ألماس',
-                    not_enough_diamonds: 'ألماس غير كافي!', avatar_purchased: 'تم شراء الصورة الرمزية!',
-                    owned: 'مملوك', support: 'ادعم المطور'
+                    icons: 'أيقونات',
+                    boys: 'أولاد',
+                    girls: 'بنات',
+                    free: 'مجاني',
+                    diamonds_short: 'ألماس',
+                    not_enough_diamonds: 'ألماس غير كافي!',
+                    avatar_purchased: 'تم شراء الصورة الرمزية!',
+                    owned: 'مملوك',
+                    support: 'ادعم المطور'
                 }
             };
 
@@ -965,7 +1020,7 @@
                     var username = getUserId();
                     if (user) {
                         var fullName = (user.first_name||'')+' '+(user.last_name||'');
-                        document.getElementById('profileName').textContent = fullName.trim() || 'کاربر';
+                        document.getElementById('profileName').textContent = fullName.trim() || getTranslation('unknown');
                         document.getElementById('profileUsername').textContent = 'ID: '+username;
                     }
                     var userData = await fetchData('getUser', {});
