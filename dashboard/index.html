@@ -51,7 +51,31 @@
             transition: none !important;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        * { 
+            margin: 0; 
+            padding: 0; 
+            box-sizing: border-box;
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            user-select: none;
+            -webkit-user-drag: none;
+            user-drag: none;
+        }
+
+        img {
+            pointer-events: none;
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            user-select: none;
+            -webkit-user-drag: none;
+            user-drag: none;
+        }
+
+        input, textarea {
+            -webkit-user-select: text !important;
+            user-select: text !important;
+            -webkit-touch-callout: default !important;
+        }
 
         body {
             font-family: 'IRANSans', Tahoma, sans-serif;
@@ -526,7 +550,7 @@
     <header class="header">
         <div class="header-inner">
             <div class="header-right">
-                <div class="header-logo"><img src="https://cdn.imgurl.ir/uploads/f30974_InShot_20260821_174101103.png" alt="Quizico"></div>
+                <div class="header-logo"><img src="https://cdn.imgurl.ir/uploads/f30974_InShot_20260821_174101103.png" alt="Quizico" draggable="false" oncontextmenu="return false;" ondragstart="return false;"></div>
                 <div>
                     <div class="header-title">Quiz<span class="t-accent">ico</span></div>
                     <div class="header-subtitle" data-i18n="tagline">اطلاعات خودت رو محک بزن</div>
@@ -549,11 +573,11 @@
 
             <div class="banner-row">
                 <div class="banner-card" onclick="goToPlay('challenge')">
-                    <div class="banner-image"><img src="https://cdn.imgurl.ir/uploads/h142945_InShot_20260821_184807337.png" alt=""></div>
+                    <div class="banner-image"><img src="https://cdn.imgurl.ir/uploads/h142945_InShot_20260821_184807337.png" alt="" draggable="false" oncontextmenu="return false;" ondragstart="return false;"></div>
                     <div class="banner-label" data-i18n="daily_challenge"><i class="fa-solid fa-trophy"></i> مسابقه روزانه</div>
                 </div>
                 <div class="wheel-card" onclick="openWheelModal()">
-                    <img src="https://cdn.imgurl.ir/uploads/m526299_InShot_20260821_182752507.png" alt="">
+                    <img src="https://cdn.imgurl.ir/uploads/m526299_InShot_20260821_182752507.png" alt="" draggable="false" oncontextmenu="return false;" ondragstart="return false;">
                     <div class="wheel-label" data-i18n="wheel"><i class="fa-solid fa-wand-magic-sparkles"></i> گردونه</div>
                 </div>
             </div>
@@ -561,10 +585,10 @@
             <div class="game-modes-wrapper">
                 <div class="game-modes-header" data-i18n="start_game"><i class="fa-solid fa-gamepad"></i> شروع مسابقه</div>
                 <div class="game-modes-grid">
-                    <div class="game-mode-card" onclick="goToPlay('single')"><img src="https://cdn.imgurl.ir/uploads/f711120_InShot_20260821_200930706.jpg" alt=""><div class="game-mode-label" data-i18n="single">تک‌نفره</div></div>
-                    <div class="game-mode-card" onclick="goToPlay('offline')"><img src="https://cdn.imgurl.ir/uploads/k5971_InShot_20260821_201008883.jpg" alt=""><div class="game-mode-label" data-i18n="offline">دوستانه</div></div>
-                    <div class="game-mode-card" onclick="goToPlay('online')"><img src="https://cdn.imgurl.ir/uploads/h2464_InShot_20260821_201207943.jpg" alt=""><div class="game-mode-label" data-i18n="online">آنلاین</div></div>
-                    <div class="game-mode-card" onclick="goToPlay('league')"><img src="https://cdn.imgurl.ir/uploads/e135154_InShot_20260821_201323323.jpg" alt=""><div class="game-mode-label" data-i18n="league">لیگ</div></div>
+                    <div class="game-mode-card" onclick="goToPlay('single')"><img src="https://cdn.imgurl.ir/uploads/f711120_InShot_20260821_200930706.jpg" alt="" draggable="false" oncontextmenu="return false;" ondragstart="return false;"><div class="game-mode-label" data-i18n="single">تک‌نفره</div></div>
+                    <div class="game-mode-card" onclick="goToPlay('offline')"><img src="https://cdn.imgurl.ir/uploads/k5971_InShot_20260821_201008883.jpg" alt="" draggable="false" oncontextmenu="return false;" ondragstart="return false;"><div class="game-mode-label" data-i18n="offline">دوستانه</div></div>
+                    <div class="game-mode-card" onclick="goToPlay('online')"><img src="https://cdn.imgurl.ir/uploads/h2464_InShot_20260821_201207943.jpg" alt="" draggable="false" oncontextmenu="return false;" ondragstart="return false;"><div class="game-mode-label" data-i18n="online">آنلاین</div></div>
+                    <div class="game-mode-card" onclick="goToPlay('league')"><img src="https://cdn.imgurl.ir/uploads/e135154_InShot_20260821_201323323.jpg" alt="" draggable="false" oncontextmenu="return false;" ondragstart="return false;"><div class="game-mode-label" data-i18n="league">لیگ</div></div>
                 </div>
             </div>
 
@@ -585,7 +609,7 @@
             </div>
 
             <div class="support-card" onclick="openSupportLink()">
-                <img src="https://cdn.imgurl.ir/uploads/v68396_InShot_20260817_190450653.jpg" alt="سازنده">
+                <img src="https://cdn.imgurl.ir/uploads/v68396_InShot_20260817_190450653.jpg" alt="سازنده" draggable="false" oncontextmenu="return false;" ondragstart="return false;">
                 <div class="support-info">
                     <div class="support-name">امیرمهدی | Amirmahdi</div>
                     <div class="support-desc" data-i18n="support">از سازنده حمایت کنید</div>
@@ -597,7 +621,7 @@
     </main>
 
     <div class="support-notification" id="supportNotification" onclick="openSupportLink()">
-        <img src="https://cdn.imgurl.ir/uploads/v68396_InShot_20260817_190450653.jpg" alt="سازنده">
+        <img src="https://cdn.imgurl.ir/uploads/v68396_InShot_20260817_190450653.jpg" alt="سازنده" draggable="false" oncontextmenu="return false;" ondragstart="return false;">
         <div class="notif-info">
             <div class="notif-name">امیرمهدی | Amirmahdi</div>
             <div class="notif-desc" data-i18n="support">از سازنده حمایت کنید</div>
@@ -606,10 +630,10 @@
     </div>
 
     <nav class="bottom-nav">
-        <a href="../dashboard/" class="nav-item active"><i class="fa-solid fa-house"></i><span data-i18n="home">خانه</span></a>
-        <a href="../ranking/" class="nav-item"><i class="fa-solid fa-trophy"></i><span data-i18n="ranking">رتبه</span></a>
-        <a href="../profile/" class="nav-item"><i class="fa-solid fa-user"></i><span data-i18n="profile">پروفایل</span></a>
-        <a href="../setting/" class="nav-item"><i class="fa-solid fa-gear"></i><span data-i18n="settings">تنظیمات</span></a>
+        <div class="nav-item active" onclick="window.location.href='../dashboard/'"><i class="fa-solid fa-house"></i><span data-i18n="home">خانه</span></div>
+        <div class="nav-item" onclick="window.location.href='../ranking/'"><i class="fa-solid fa-trophy"></i><span data-i18n="ranking">رتبه</span></div>
+        <div class="nav-item" onclick="window.location.href='../profile/'"><i class="fa-solid fa-user"></i><span data-i18n="profile">پروفایل</span></div>
+        <div class="nav-item" onclick="window.location.href='../setting/'"><i class="fa-solid fa-gear"></i><span data-i18n="settings">تنظیمات</span></div>
     </nav>
 
     <div class="wheel-modal-overlay" id="wheelModalOverlay">
@@ -629,7 +653,7 @@
     <script>
         (function() {
             var webApp = window.Eitaa?.WebApp;
-            var API_URL = 'https://script.google.com/macros/s/AKfycbzsGrBIFVNkZYfNsx448awdMpPy42boOUvkSMpqnDWf9-wzbPctRQTIUa_ZpTpuGiVqIw/exec';
+            var API_URL = 'https://script.google.com/macros/s/AKfycbwV2X5hZB6WSJSezWWsYXq-94gIRu6z6kuzTIupTnHx2VqDKpzlZLcBohnZO2Lk1KHmxA/exec';
             var SAD_IMAGE = 'https://cdn.imgurl.ir/uploads/g58935_InShot_20260822_140943752.png';
 
             var userCoins = 0, userDiamonds = 0;
@@ -648,51 +672,125 @@
             ];
             var wheelColors = ['#ef4444','#f59e0b','#10b981','#06b6d4','#8b5cf6','#ec4899','#84cc16','#f97316'];
 
+            document.addEventListener('contextmenu', function(e) {
+                e.preventDefault();
+            });
+
+            document.addEventListener('dragstart', function(e) {
+                e.preventDefault();
+            });
+
+            document.addEventListener('copy', function(e) {
+                if (e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA') {
+                    e.preventDefault();
+                }
+            });
+
+            document.addEventListener('cut', function(e) {
+                if (e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA') {
+                    e.preventDefault();
+                }
+            });
+
             var translations = {
                 fa: {
-                    tagline: 'اطلاعات خودت رو محک بزن', loading: 'در حال دریافت...',
+                    tagline: 'اطلاعات خودت رو محک بزن',
+                    loading: 'در حال دریافت...',
                     daily_challenge: '<i class="fa-solid fa-trophy"></i> مسابقه روزانه',
-                    wheel: 'گردونه', start_game: 'شروع مسابقه',
-                    single: 'تک‌نفره', offline: 'دوستانه', online: 'آنلاین', league: 'لیگ',
-                    in_progress_games: 'بازی‌های در حال برگزاری', past_games: '۵ بازی گذشته',
-                    home: 'خانه', ranking: 'رتبه', profile: 'پروفایل', settings: 'تنظیمات',
-                    spin: 'چرخش', cost: 'هزینه', coins_50: '۵۰ سکه',
-                    no_active_games: 'بازی در جریانی نیست', no_past_games: 'بازی گذشته‌ای نیست',
-                    waiting: 'منتظر حریف', live: 'در جریان', finished: 'پایان',
-                    you_p1: 'تو سازنده بازی هستی', you_p2: 'تو مهمون بازی هستی',
-                    you_were_p1: 'تو بازیکن ۱ بودی', you_were_p2: 'تو بازیکن ۲ بودی',
-                    not_enough_coins: 'سکه کافی نداری!', empty: 'پوچ!',
-                    support: 'از سازنده حمایت کنید', exit_confirm: 'مطمئن هستید که خارج می‌شوید؟'
+                    wheel: 'گردونه',
+                    start_game: 'شروع مسابقه',
+                    single: 'تک‌نفره',
+                    offline: 'دوستانه',
+                    online: 'آنلاین',
+                    league: 'لیگ',
+                    in_progress_games: 'بازی‌های در حال برگزاری',
+                    past_games: '۵ بازی گذشته',
+                    home: 'خانه',
+                    ranking: 'رتبه',
+                    profile: 'پروفایل',
+                    settings: 'تنظیمات',
+                    spin: 'چرخش',
+                    cost: 'هزینه',
+                    coins_50: '۵۰ سکه',
+                    no_active_games: 'بازی در جریانی نیست',
+                    no_past_games: 'بازی گذشته‌ای نیست',
+                    waiting: 'منتظر حریف',
+                    live: 'در جریان',
+                    finished: 'پایان',
+                    you_p1: 'تو سازنده بازی هستی',
+                    you_p2: 'تو مهمون بازی هستی',
+                    you_were_p1: 'تو بازیکن ۱ بودی',
+                    you_were_p2: 'تو بازیکن ۲ بودی',
+                    not_enough_coins: 'سکه کافی نداری!',
+                    empty: 'پوچ!',
+                    support: 'از سازنده حمایت کنید',
+                    exit_confirm: 'مطمئن هستید که خارج می‌شوید؟'
                 },
                 en: {
-                    tagline: 'Test your knowledge', loading: 'Loading...',
+                    tagline: 'Test your knowledge',
+                    loading: 'Loading...',
                     daily_challenge: '<i class="fa-solid fa-trophy"></i> Daily Challenge',
-                    wheel: 'Wheel', start_game: 'Start Game',
-                    single: 'Single', offline: 'Friendly', online: 'Online', league: 'League',
-                    in_progress_games: 'Games in Progress', past_games: 'Last 5 Games',
-                    home: 'Home', ranking: 'Ranking', profile: 'Profile', settings: 'Settings',
-                    spin: 'Spin', cost: 'Cost', coins_50: '50 Coins',
-                    no_active_games: 'No active games', no_past_games: 'No past games',
-                    waiting: 'Waiting', live: 'Live', finished: 'Finished',
-                    you_p1: 'You are Player 1', you_p2: 'You are Player 2',
-                    you_were_p1: 'You were Player 1', you_were_p2: 'You were Player 2',
-                    not_enough_coins: 'Not enough coins!', empty: 'Empty!',
-                    support: 'Support the developer', exit_confirm: 'Are you sure you want to exit?'
+                    wheel: 'Wheel',
+                    start_game: 'Start Game',
+                    single: 'Single',
+                    offline: 'Friendly',
+                    online: 'Online',
+                    league: 'League',
+                    in_progress_games: 'Games in Progress',
+                    past_games: 'Last 5 Games',
+                    home: 'Home',
+                    ranking: 'Ranking',
+                    profile: 'Profile',
+                    settings: 'Settings',
+                    spin: 'Spin',
+                    cost: 'Cost',
+                    coins_50: '50 Coins',
+                    no_active_games: 'No active games',
+                    no_past_games: 'No past games',
+                    waiting: 'Waiting',
+                    live: 'Live',
+                    finished: 'Finished',
+                    you_p1: 'You are Player 1',
+                    you_p2: 'You are Player 2',
+                    you_were_p1: 'You were Player 1',
+                    you_were_p2: 'You were Player 2',
+                    not_enough_coins: 'Not enough coins!',
+                    empty: 'Empty!',
+                    support: 'Support the developer',
+                    exit_confirm: 'Are you sure you want to exit?'
                 },
                 ar: {
-                    tagline: 'اختبر معلوماتك', loading: 'جار التحميل...',
+                    tagline: 'اختبر معلوماتك',
+                    loading: 'جار التحميل...',
                     daily_challenge: '<i class="fa-solid fa-trophy"></i> التحدي اليومي',
-                    wheel: 'العجلة', start_game: 'ابدأ اللعبة',
-                    single: 'فردي', offline: 'ودي', online: 'عبر الإنترنت', league: 'الدوري',
-                    in_progress_games: 'الألعاب الجارية', past_games: 'آخر 5 ألعاب',
-                    home: 'الرئيسية', ranking: 'الترتيب', profile: 'الملف', settings: 'الإعدادات',
-                    spin: 'تدوير', cost: 'التكلفة', coins_50: '50 عملة',
-                    no_active_games: 'لا توجد ألعاب جارية', no_past_games: 'لا توجد ألعاب سابقة',
-                    waiting: 'بانتظار الخصم', live: 'جارية', finished: 'انتهت',
-                    you_p1: 'أنت اللاعب 1', you_p2: 'أنت اللاعب 2',
-                    you_were_p1: 'كنت اللاعب 1', you_were_p2: 'كنت اللاعب 2',
-                    not_enough_coins: 'عملات غير كافية!', empty: 'فارغ!',
-                    support: 'ادعم المطور', exit_confirm: 'هل أنت متأكد من الخروج؟'
+                    wheel: 'العجلة',
+                    start_game: 'ابدأ اللعبة',
+                    single: 'فردي',
+                    offline: 'ودي',
+                    online: 'عبر الإنترنت',
+                    league: 'الدوري',
+                    in_progress_games: 'الألعاب الجارية',
+                    past_games: 'آخر 5 ألعاب',
+                    home: 'الرئيسية',
+                    ranking: 'الترتيب',
+                    profile: 'الملف',
+                    settings: 'الإعدادات',
+                    spin: 'تدوير',
+                    cost: 'التكلفة',
+                    coins_50: '50 عملة',
+                    no_active_games: 'لا توجد ألعاب جارية',
+                    no_past_games: 'لا توجد ألعاب سابقة',
+                    waiting: 'بانتظار الخصم',
+                    live: 'جارية',
+                    finished: 'انتهت',
+                    you_p1: 'أنت اللاعب 1',
+                    you_p2: 'أنت اللاعب 2',
+                    you_were_p1: 'كنت اللاعب 1',
+                    you_were_p2: 'كنت اللاعب 2',
+                    not_enough_coins: 'عملات غير كافية!',
+                    empty: 'فارغ!',
+                    support: 'ادعم المطور',
+                    exit_confirm: 'هل أنت متأكد من الخروج؟'
                 }
             };
 
@@ -758,7 +856,7 @@
                 requestAnimationFrame(step);
             }
 
-            function renderEmpty(text){ return '<div class="empty-state"><img src="'+SAD_IMAGE+'" alt=""><p>'+text+'</p></div>'; }
+            function renderEmpty(text){ return '<div class="empty-state"><img src="'+SAD_IMAGE+'" alt="" draggable="false" oncontextmenu="return false;" ondragstart="return false;"><p>'+text+'</p></div>'; }
 
             function renderGameCard(g, myId, type) {
                 var isP1 = String(g.player1) === String(myId);
