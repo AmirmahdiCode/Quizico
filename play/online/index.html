@@ -100,6 +100,7 @@
         .result-text{font-size:14px;font-weight:800;color:var(--dark);margin-bottom:6px}
         .result-score{font-size:10px;color:var(--text-light);margin-bottom:10px}
         .result-btn{display:inline-block;padding:8px 20px;background:var(--primary);color:#fff;border:var(--border);border-radius:8px;font-family:'IRANSans',Tahoma,sans-serif;font-size:10px;font-weight:700;cursor:pointer;box-shadow:2px 2px 0 #000;margin:4px}
+        .submitting-loader{width:50px;height:50px;border:5px solid var(--bg3);border-top-color:var(--primary);border-radius:50%;animation:spin .8s linear infinite;margin:20px auto}
     </style>
 </head>
 <body>
@@ -154,14 +155,15 @@ var currentLang='fa';
 var userCoins=0;
 var actionUsedThisQuestion=false;
 var isInGame=false;
+var isSubmitting=false;
 var gameCreatedAt='';
 var turnOrder=[[1,1],[1,2],[2,2],[2,1],[3,1],[3,2],[4,2],[4,1],[5,1],[5,2]];
 var currentTurn=0;
 
 var translations={
-fa:{online:'آنلاین',loading:'در حال دریافت...',start_game:'شروع بازی',you:'تو',opponent:'حریف',results:'نتایج راندها',round:'راند',finished:'بازی تمام شد!',score:'امتیاز',back:'بازگشت',no_questions:'سوال کافی نیست',room_full:'دیر اومدی! یکی دیگه زودتر وارد شده',create_new_room:'ساخت اتاق جدید',waiting_opponent:'هنوز حریفت وارد نشده...',invite_title:'دعوت از دوست',invite_desc:'لینک زیر رو کپی کن و برای دوستت بفرست!',copy:'کپی',link_copied:'لینک کپی شد!',invite_from_players:'انتخاب از لیست بازیکنا',search_players:'جستجوی بازیکن...',not_enough:'سکه کافی نداری!',waiting_turn:'منتظر حریف...',your_turn:'نوبت توست',coming_soon:'به زودی',room_not_found:'اتاق یافت نشد',time_expired:'وقت بازی تموم شد!',exit_confirm:'اگه خارج بشی این راند رو با ۰ تمام می‌کنی!'},
-en:{online:'Online',loading:'Loading...',start_game:'Start Game',you:'You',opponent:'Opponent',results:'Round Results',round:'Round',finished:'Game Over!',score:'Score',back:'Back',no_questions:'Not enough questions',room_full:'Too late! Someone else joined',create_new_room:'Create New Room',waiting_opponent:'Waiting for opponent...',invite_title:'Invite Friend',invite_desc:'Copy the link below and send it to your friend!',copy:'Copy',link_copied:'Link copied!',invite_from_players:'Invite from players',search_players:'Search players...',not_enough:'Not enough coins!',waiting_turn:'Waiting for opponent...',your_turn:'Your turn',coming_soon:'Coming Soon',room_not_found:'Room not found',time_expired:'Time expired!',exit_confirm:'If you leave, this round will be 0!'},
-ar:{online:'عبر الإنترنت',loading:'جار التحميل...',start_game:'ابدأ اللعبة',you:'أنت',opponent:'الخصم',results:'نتائج الجولات',round:'جولة',finished:'انتهت اللعبة!',score:'النقاط',back:'رجوع',no_questions:'أسئلة غير كافية',room_full:'متأخر! شخص آخر انضم',create_new_room:'إنشاء غرفة جديدة',waiting_opponent:'بانتظار الخصم...',invite_title:'دعوة صديق',invite_desc:'انسخ الرابط أدناه وأرسله إلى صديقك!',copy:'نسخ',link_copied:'تم نسخ الرابط!',invite_from_players:'اختر من اللاعبين',search_players:'ابحث عن لاعب...',not_enough:'عملات غير كافية!',waiting_turn:'بانتظار الخصم...',your_turn:'دورك',coming_soon:'قريبًا',room_not_found:'الغرفة غير موجودة',time_expired:'انتهى الوقت!',exit_confirm:'إذا غادرت، ستكون هذه الجولة 0!'}
+fa:{online:'آنلاین',loading:'در حال دریافت...',start_game:'شروع بازی',you:'تو',opponent:'حریف',results:'نتایج راندها',round:'راند',finished:'بازی تمام شد!',score:'امتیاز',back:'بازگشت',no_questions:'سوال کافی نیست',room_full:'دیر اومدی! یکی دیگه زودتر وارد شده',create_new_room:'ساخت اتاق جدید',waiting_opponent:'هنوز حریفت وارد نشده...',invite_title:'دعوت از دوست',invite_desc:'لینک زیر رو کپی کن و برای دوستت بفرست!',copy:'کپی',link_copied:'لینک کپی شد!',invite_from_players:'انتخاب از لیست بازیکنا',search_players:'جستجوی بازیکن...',not_enough:'سکه کافی نداری!',waiting_turn:'منتظر حریف...',your_turn:'نوبت توست',coming_soon:'به زودی',room_not_found:'اتاق یافت نشد',time_expired:'وقت بازی تموم شد!',exit_confirm:'اگه خارج بشی این راند رو با ۰ تمام می‌کنی!',submitting:'در حال ثبت پاسخ‌ها...',submitting_wait:'لطفاً صبر کنید',already_joined:'تو قبلاً وارد این بازی شدی!'},
+en:{online:'Online',loading:'Loading...',start_game:'Start Game',you:'You',opponent:'Opponent',results:'Round Results',round:'Round',finished:'Game Over!',score:'Score',back:'Back',no_questions:'Not enough questions',room_full:'Too late! Someone else joined',create_new_room:'Create New Room',waiting_opponent:'Waiting for opponent...',invite_title:'Invite Friend',invite_desc:'Copy the link below and send it to your friend!',copy:'Copy',link_copied:'Link copied!',invite_from_players:'Invite from players',search_players:'Search players...',not_enough:'Not enough coins!',waiting_turn:'Waiting for opponent...',your_turn:'Your turn',coming_soon:'Coming Soon',room_not_found:'Room not found',time_expired:'Time expired!',exit_confirm:'If you leave, this round will be 0!',submitting:'Saving answers...',submitting_wait:'Please wait',already_joined:'You already joined this game!'},
+ar:{online:'عبر الإنترنت',loading:'جار التحميل...',start_game:'ابدأ اللعبة',you:'أنت',opponent:'الخصم',results:'نتائج الجولات',round:'جولة',finished:'انتهت اللعبة!',score:'النقاط',back:'رجوع',no_questions:'أسئلة غير كافية',room_full:'متأخر! شخص آخر انضم',create_new_room:'إنشاء غرفة جديدة',waiting_opponent:'بانتظار الخصم...',invite_title:'دعوة صديق',invite_desc:'انسخ الرابط أدناه وأرسله إلى صديقك!',copy:'نسخ',link_copied:'تم نسخ الرابط!',invite_from_players:'اختر من اللاعبين',search_players:'ابحث عن لاعب...',not_enough:'عملات غير كافية!',waiting_turn:'بانتظار الخصم...',your_turn:'دورك',coming_soon:'قريبًا',room_not_found:'الغرفة غير موجودة',time_expired:'انتهى الوقت!',exit_confirm:'إذا غادرت، ستكون هذه الجولة 0!',submitting:'جار حفظ الإجابات...',submitting_wait:'يرجى الانتظار',already_joined:'لقد انضممت بالفعل إلى هذه اللعبة!'}
 };
 
 function getSettings(){try{var raw=localStorage.getItem('quizicoSettings');if(!raw)return{theme:'light',primaryColor:'#a855f7',animation:true,language:'fa'};var p=JSON.parse(raw);if(!p.theme)p.theme='light';if(!p.primaryColor)p.primaryColor='#a855f7';if(p.animation===undefined)p.animation=true;if(!p.language)p.language='fa';return p;}catch(e){return{theme:'light',primaryColor:'#a855f7',animation:true,language:'fa'}}}
@@ -190,10 +192,10 @@ function shuffleArray(a){for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.ran
 function hideLoader(){document.getElementById('loaderWrapper').style.display='none';document.getElementById('gameContent').classList.add('show');}
 function getMyPlayerNum(){return isPlayer1?1:2}
 
-function checkTimeExpired(createdAt){if(!createdAt)return false;var now=new Date();var created=new Date(createdAt);var diffMinutes=(now-created)/(1000*60);return diffMinutes>=GAME_TIME_LIMIT;}
+function checkTimeExpired(createdAt){if(!createdAt)return false;var now=new Date();var created=new Date(createdAt);return (now-created)/(1000*60)>=GAME_TIME_LIMIT;}
 
 function handleTimeExpired(){
-    clearInterval(timerInterval);clearInterval(checkInterval);isInGame=false;
+    clearInterval(timerInterval);clearInterval(checkInterval);isInGame=false;isSubmitting=false;
     fetchData('updateGame',{gameId:roomCode,updates:{status:'finished'}});
     var t=getTranslation;
     var html='<div class="result-banner">';
@@ -217,8 +219,7 @@ function renderWaitingScreen(){
     html+='<div class="invite-box-desc">'+t('invite_desc')+'</div>';
     html+='<div class="invite-link-box">';
     html+='<span class="invite-link" id="inviteLink">'+inviteLink+'</span>';
-    html+='<button class="copy-btn" onclick="copyInviteLink()">'+t('copy')+'</button>';
-    html+='</div></div>';
+    html+='<button class="copy-btn" onclick="copyInviteLink()">'+t('copy')+'</button></div></div>';
     html+='<div class="players-invite-section">';
     html+='<div class="coming-soon-overlay">'+t('coming_soon')+'</div>';
     html+='<div class="players-invite-title">'+t('invite_from_players')+'</div>';
@@ -240,8 +241,7 @@ function renderRoomFullScreen(){
     var html='<div class="result-banner">';
     html+='<div class="result-icon"><i class="fa-solid fa-user-clock" style="color:#f59e0b;"></i></div>';
     html+='<div class="result-text">'+t('room_full')+'</div>';
-    html+='<button class="result-btn" onclick="createNewRoom()">'+t('create_new_room')+'</button>';
-    html+='</div>';
+    html+='<button class="result-btn" onclick="createNewRoom()">'+t('create_new_room')+'</button></div>';
     document.getElementById('gameContent').innerHTML=html;
     document.getElementById('bottomBtnContainer').style.display='none';
     hideLoader();
@@ -271,9 +271,7 @@ function renderRoundsScreen(){
     var btn=document.getElementById('mainBtn');
     var myNum=getMyPlayerNum();
     var isMyTurnNow=false;
-    for(var i=0;i<turnOrder.length;i++){
-        if(turnOrder[i][0]===currentRound&&turnOrder[i][1]===myNum){isMyTurnNow=(i===currentTurn);break;}
-    }
+    for(var i=0;i<turnOrder.length;i++){if(turnOrder[i][0]===currentRound&&turnOrder[i][1]===myNum){isMyTurnNow=(i===currentTurn);break;}}
     if(isMyTurnNow){btn.textContent=t('your_turn')+' - '+t('start_game')+' '+currentRound;btn.className='main-btn green';btn.disabled=false;}
     else{btn.textContent=t('waiting_turn');btn.className='main-btn waiting';btn.disabled=true;}
     document.getElementById('bottomBtnContainer').style.display='block';
@@ -314,8 +312,7 @@ function goToNext(){currentQuestionIndex++;if(currentQuestionIndex>=QUESTIONS_PE
 window.selectOption=function(sel,ci,btn){
     if(isAnswered)return;
     isAnswered=true;clearInterval(timerInterval);
-    var btns=document.querySelectorAll('.option-btn');
-    btns.forEach(function(b){b.classList.add('disabled');});
+    var btns=document.querySelectorAll('.option-btn');btns.forEach(function(b){b.classList.add('disabled');});
     if(sel===ci){btn.classList.add('selected-correct');myScore+=5;myCorrectCount++;myAnswers.push(true);}
     else{btn.classList.add('selected-wrong');btns[ci].classList.add('selected-correct');myAnswers.push(false);}
     setTimeout(goToNext,800);
@@ -324,8 +321,7 @@ window.selectOption=function(sel,ci,btn){
 window.useRemove50=function(){
     if(isAnswered||actionUsedThisQuestion)return;
     if(userCoins<50){if(webApp)webApp.showAlert(getTranslation('not_enough'));return;}
-    userCoins-=50;actionUsedThisQuestion=true;
-    document.getElementById('coinsHeader').textContent=userCoins;
+    userCoins-=50;actionUsedThisQuestion=true;document.getElementById('coinsHeader').textContent=userCoins;
     var q=roundQuestions[currentQuestionIndex];var ct=q.options[q.correctOption-1];
     var wo=q.options.filter(function(o){return o!==ct;});var th=shuffleArray(wo).slice(0,2);
     document.querySelectorAll('.option-btn').forEach(function(b){if(th.indexOf(b.getAttribute('data-text'))!==-1)b.classList.add('hidden-option');});
@@ -334,8 +330,7 @@ window.useRemove50=function(){
 window.useSwapQuestion=function(){
     if(isAnswered||actionUsedThisQuestion)return;
     if(userCoins<100){if(webApp)webApp.showAlert(getTranslation('not_enough'));return;}
-    userCoins-=100;actionUsedThisQuestion=true;
-    document.getElementById('coinsHeader').textContent=userCoins;
+    userCoins-=100;actionUsedThisQuestion=true;document.getElementById('coinsHeader').textContent=userCoins;
     var rem=questions.filter(function(q){return roundQuestions.indexOf(q)===-1;});
     if(rem.length>0)roundQuestions[currentQuestionIndex]=shuffleArray(rem)[0];
     disableActions();fetchData('updateUser',{coins:userCoins});renderQuestionScreen();
@@ -343,22 +338,42 @@ window.useSwapQuestion=function(){
 window.useSkipQuestion=function(){
     if(isAnswered||actionUsedThisQuestion)return;
     if(userCoins<150){if(webApp)webApp.showAlert(getTranslation('not_enough'));return;}
-    userCoins-=150;actionUsedThisQuestion=true;
-    document.getElementById('coinsHeader').textContent=userCoins;
+    userCoins-=150;actionUsedThisQuestion=true;document.getElementById('coinsHeader').textContent=userCoins;
     myScore+=5;myCorrectCount++;myAnswers.push(true);
-    disableActions();fetchData('updateUser',{coins:userCoins});
-    clearInterval(timerInterval);setTimeout(goToNext,300);
+    disableActions();fetchData('updateUser',{coins:userCoins});clearInterval(timerInterval);setTimeout(goToNext,300);
 };
 function disableActions(){document.querySelectorAll('.action-btn').forEach(function(b){b.disabled=true;});}
 
+function showSubmittingScreen(){
+    var t=getTranslation;
+    var html='<div class="result-banner">';
+    html+='<div class="submitting-loader"></div>';
+    html+='<div class="result-text">'+t('submitting')+'</div>';
+    html+='<div class="result-score">'+t('submitting_wait')+'</div></div>';
+    document.getElementById('gameContent').innerHTML=html;
+    document.getElementById('bottomBtnContainer').style.display='none';
+    hideLoader();
+}
+
 function finishRound(){
-    isInGame=false;
-    roundResults.push({myAnswers:myAnswers,myScore:myCorrectCount*5,myCorrect:myCorrectCount});
+    isInGame=false;isSubmitting=true;
+    showSubmittingScreen();
+    
     var ansStr=myAnswers.map(function(a){return a?'T':'F';}).join(',');
-    var updateData={};updateData['round'+currentRound+'_p'+(isPlayer1?'1':'2')]=ansStr;
-    fetchData('updateGame',{gameId:roomCode,updates:updateData});
-    myCorrectCount=0;myAnswers=[];currentRound++;currentQuestionIndex=0;currentTurn++;
-    if(currentRound>TOTAL_ROUNDS){endGame();}else{renderRoundsScreen();}
+    var updateData={};
+    updateData['round'+currentRound+'_p'+(isPlayer1?'1':'2')]=ansStr;
+    
+    fetchData('updateGame',{gameId:roomCode,updates:updateData}).then(function(result){
+        isSubmitting=false;
+        if(result.ok){
+            roundResults.push({myAnswers:myAnswers,myScore:myCorrectCount*5,myCorrect:myCorrectCount});
+            myCorrectCount=0;myAnswers=[];currentRound++;currentQuestionIndex=0;currentTurn++;
+            if(currentRound>TOTAL_ROUNDS){endGame();}else{renderRoundsScreen();}
+        }else{
+            showSubmittingScreen();
+            setTimeout(function(){finishRound();},2000);
+        }
+    });
 }
 
 function endGame(){
@@ -397,7 +412,7 @@ async function initPlayer1(){
             if(data.player2&&data.player2!==''&&String(data.player2)!==String(myUserId)){
                 clearInterval(checkInterval);
                 await fetchData('updateGame',{gameId:roomCode,updates:{status:'in_progress'}});
-                startOnlineGame();
+                await startOnlineGame();
             }
         }
         if(checkTimeExpired(gameCreatedAt)){clearInterval(checkInterval);fetchData('updateGame',{gameId:roomCode,updates:{status:'finished'}});}
@@ -417,20 +432,20 @@ async function initPlayer2(){
     
     if(String(data.player1)===String(myUserId)){
         isPlayer1=true;
-        startOnlineGame();
+        await startOnlineGame();
         return;
     }
     
     if(data.player2&&String(data.player2)===String(myUserId)){
         isPlayer1=false;
-        startOnlineGame();
+        await startOnlineGame();
         return;
     }
     
     if(!data.player2||data.player2===''){
         await fetchData('updateGame',{gameId:roomCode,updates:{player2:myUserId,status:'in_progress'}});
         isPlayer1=false;
-        startOnlineGame();
+        await startOnlineGame();
         return;
     }
     
@@ -443,11 +458,7 @@ async function startOnlineGame(){
     var qd=await fetchData('getQuestions',{limit:50});
     if(qd.ok&&Array.isArray(qd.data)&&qd.data.length>=QUESTIONS_PER_ROUND){
         questions=qd.data;
-        if(currentLang!=='fa'){
-            var translated=[];
-            for(var i=0;i<questions.length;i++){translated.push(await translateQuestion(questions[i],currentLang));}
-            questions=translated;
-        }
+        if(currentLang!=='fa'){var translated=[];for(var i=0;i<questions.length;i++){translated.push(await translateQuestion(questions[i],currentLang));}questions=translated;}
         renderRoundsScreen();startPolling();
     }else{
         var t=getTranslation;
@@ -461,13 +472,29 @@ function startPolling(){
     checkInterval=setInterval(async function(){
         if(checkTimeExpired(gameCreatedAt)){handleTimeExpired();return;}
         var gameResult=await fetchData('getGame',{gameId:roomCode});
-        if(gameResult.ok&&gameResult.data&&gameResult.data.status==='finished'){
-            clearInterval(checkInterval);endGame();
+        if(gameResult.ok&&gameResult.data){
+            var data=gameResult.data;
+            if(data.status==='finished'){clearInterval(checkInterval);endGame();return;}
+            
+            var myNum=getMyPlayerNum();
+            var opponentNum=myNum===1?2:1;
+            var opponentRoundKey='round'+currentRound+'_p'+opponentNum;
+            
+            if(data[opponentRoundKey]&&data[opponentRoundKey]!==''){
+                var btn=document.getElementById('mainBtn');
+                if(btn&&btn.disabled&&btn.textContent===getTranslation('waiting_turn')){
+                    renderRoundsScreen();
+                }
+            }
         }
-    },5000);
+    },3000);
 }
 
 function handleBackButton(){
+    if(isSubmitting){
+        if(webApp)webApp.showAlert(getTranslation('submitting'));
+        return;
+    }
     if(isInGame){
         webApp.showConfirm(getTranslation('exit_confirm'),function(confirmed){
             if(confirmed){
