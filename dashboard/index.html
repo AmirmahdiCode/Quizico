@@ -3,1054 +3,526 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quizico</title>
+    <title>آنلاین | Quizico</title>
     <script src="https://developer.eitaa.com/eitaa-web-app.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/gh/rastikerdar/iran-sans-font@v1.0.0/dist/font-face.css" rel="stylesheet">
     <style>
-        :root {
-            --bg: #faf5ff;
-            --bg2: #f3e8ff;
-            --bg3: #e9d5ff;
-            --primary: #a855f7;
-            --primary-dark: #9333ea;
-            --primary-light: #c084fc;
-            --primary-rgb: 168, 85, 247;
-            --dark: #1e1b2e;
-            --text: #4a4458;
-            --text-light: #6b7280;
-            --white: #ffffff;
-            --card-bg: #ffffff;
-            --header-bg: #ffffff;
-            --shadow: 3px 3px 0 #000000;
-            --radius: 12px;
-            --border: 1px solid #000000;
-            --gold: #f59e0b;
-        }
-
-        [data-theme="dark"] {
-            --bg: #1e1b2e;
-            --bg2: #2d2a3e;
-            --bg3: #3d3a4e;
-            --primary: #c084fc;
-            --primary-dark: #a855f7;
-            --primary-light: #d8b4fe;
-            --primary-rgb: 192, 132, 252;
-            --dark: #f1f5f9;
-            --text: #e2e8f0;
-            --text-light: #94a3b8;
-            --white: #2d2a3e;
-            --card-bg: #2d2a3e;
-            --header-bg: #2d2a3e;
-            --shadow: 3px 3px 0 #000000;
-            --border: 1px solid #475569;
-        }
-
-        [data-animation="off"] * {
-            animation: none !important;
-            transition: none !important;
-        }
-
-        * { 
-            margin: 0; 
-            padding: 0; 
-            box-sizing: border-box;
-            -webkit-touch-callout: none;
-            -webkit-user-select: none;
-            user-select: none;
-            -webkit-user-drag: none;
-            user-drag: none;
-        }
-
-        img {
-            pointer-events: none;
-            -webkit-touch-callout: none;
-            -webkit-user-select: none;
-            user-select: none;
-            -webkit-user-drag: none;
-            user-drag: none;
-        }
-
-        input, textarea {
-            -webkit-user-select: text !important;
-            user-select: text !important;
-            -webkit-touch-callout: default !important;
-        }
-
-        body {
-            font-family: 'IRANSans', Tahoma, sans-serif;
-            background: var(--bg);
-            color: var(--text);
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            transition: font-family 0.3s ease;
-        }
-
-        .bg-animation {
-            position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            z-index: 0;
-            background: linear-gradient(135deg, var(--bg) 0%, var(--bg2) 40%, var(--bg3) 80%);
-        }
-
-        .header {
-            position: relative;
-            z-index: 10;
-            background: var(--header-bg);
-            border-bottom: var(--border);
-            padding: 12px 20px;
-            position: sticky;
-            top: 0;
-            box-shadow: var(--shadow);
-        }
-
-        .header-inner {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            max-width: 600px;
-            margin: 0 auto;
-        }
-
-        .header-right { display: flex; align-items: center; gap: 10px; }
-
-        .header-logo {
-            width: 44px;
-            height: 44px;
-            border-radius: var(--radius);
-            background: var(--primary);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: var(--shadow);
-            overflow: hidden;
-            padding: 2px;
-            border: var(--border);
-        }
-
-        .header-logo img { width: 95%; height: 95%; object-fit: contain; transform: scale(1.1); }
-        .header-title { font-size: 16px; font-weight: 800; color: var(--dark); }
-        .header-title .t-accent { color: var(--primary); }
-        .header-subtitle { font-size: 8px; color: var(--text-light); }
-
-        .header-currency { display: flex; align-items: center; gap: 6px; }
-        .currency-badge {
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            background: var(--bg2);
-            border: var(--border);
-            border-radius: 8px;
-            padding: 4px 10px;
-            font-size: 10px;
-            font-weight: 700;
-            color: var(--dark);
-            box-shadow: var(--shadow);
-        }
-        .currency-badge.coins i { color: #f59e0b; }
-        .currency-badge.diamonds i { color: #06b6d4; }
-
-        .main-container {
-            position: relative;
-            z-index: 5;
-            max-width: 600px;
-            width: 100%;
-            margin: 16px auto;
-            padding: 0 12px 80px;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-
-        .loader-wrapper {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 60vh;
-            gap: 12px;
-        }
-        .loader {
-            width: 50px;
-            height: 50px;
-            border: 5px solid var(--bg3);
-            border-top-color: var(--primary);
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
-        }
-        .loader-text { font-size: 12px; font-weight: 700; color: var(--text); }
-        @keyframes spin { to { transform: rotate(360deg); } }
-
-        .dashboard-content { display: none; }
-        .dashboard-content.show { display: flex; flex-direction: column; gap: 12px; }
-
-        .banner-row { display: flex; gap: 12px; }
-
-        .banner-card {
-            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-            border: var(--border);
-            border-radius: var(--radius);
-            box-shadow: var(--shadow);
-            cursor: pointer;
-            overflow: hidden;
-            position: relative;
-            min-height: 140px;
-            flex: 6;
-        }
-        .banner-card .banner-image {
-            position: absolute;
-            left: 0;
-            bottom: 0;
-            width: 90%;
-            height: 120%;
-            pointer-events: none;
-        }
-        .banner-card .banner-image img {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-            object-position: left bottom;
-        }
-        .banner-card .banner-label {
-            position: absolute;
-            bottom: 8px;
-            right: 8px;
-            background: rgba(255,255,255,0.2);
-            color: #fff;
-            font-size: 9px;
-            font-weight: 700;
-            padding: 4px 12px;
-            border-radius: 20px;
-        }
-
-        .wheel-card {
-            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-            border: var(--border);
-            border-radius: var(--radius);
-            box-shadow: var(--shadow);
-            cursor: pointer;
-            overflow: hidden;
-            position: relative;
-            min-height: 140px;
-            flex: 4;
-        }
-        .wheel-card img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            position: absolute;
-            top: 0;
-            left: 0;
-        }
-        .wheel-card .wheel-label {
-            position: absolute;
-            bottom: 8px;
-            right: 8px;
-            left: 8px;
-            background: rgba(255,255,255,0.2);
-            color: #fff;
-            font-size: 9px;
-            font-weight: 700;
-            padding: 4px 8px;
-            border-radius: 20px;
-            text-align: center;
-        }
-
-        .game-modes-wrapper {
-            background: var(--card-bg);
-            border: var(--border);
-            border-radius: var(--radius);
-            padding: 12px;
-            box-shadow: var(--shadow);
-        }
-
-        .game-modes-header {
-            font-size: 12px;
-            font-weight: 800;
-            color: var(--dark);
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin-bottom: 10px;
-        }
-        .game-modes-header i { color: var(--primary); }
-
-        .game-modes-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
-
-        .game-mode-card {
-            background: var(--bg2);
-            border: var(--border);
-            border-radius: var(--radius);
-            overflow: hidden;
-            cursor: pointer;
-            box-shadow: 2px 2px 0 #000;
-            position: relative;
-            transition: all 0.2s ease;
-        }
-        .game-mode-card:active { transform: translate(1px, 1px); box-shadow: 1px 1px 0 #000; }
-        .game-mode-card img {
-            width: 100%;
-            aspect-ratio: 1 / 1;
-            object-fit: cover;
-        }
-        .game-mode-card .game-mode-label {
-            position: absolute;
-            bottom: 0;
-            right: 0;
-            left: 0;
-            background: rgba(0,0,0,0.6);
-            color: #fff;
-            font-size: 9px;
-            font-weight: 700;
-            padding: 4px;
-            text-align: center;
-        }
-
-        .games-section {
-            background: var(--card-bg);
-            border: var(--border);
-            border-radius: var(--radius);
-            padding: 14px;
-            box-shadow: var(--shadow);
-        }
-        .games-section-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 10px;
-        }
-        .games-section-title {
-            font-size: 11px;
-            font-weight: 800;
-            color: var(--dark);
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-        .games-section-title i { color: var(--primary); }
-        .games-section-badge {
-            font-size: 8px;
-            font-weight: 700;
-            padding: 2px 8px;
-            border-radius: 10px;
-            background: var(--bg2);
-            border: var(--border);
-            color: var(--dark);
-        }
-
-        .games-list { display: flex; flex-direction: column; gap: 6px; }
-
-        .game-card {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 10px 12px;
-            border: var(--border);
-            border-radius: 8px;
-            background: var(--bg2);
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-        .game-card:active { transform: translateX(-3px); }
-
-        .game-icon {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            background: var(--primary);
-            color: #fff;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 12px;
-            flex-shrink: 0;
-            border: var(--border);
-        }
-        .game-info { flex: 1; min-width: 0; }
-        .game-title {
-            font-size: 10px;
-            font-weight: 700;
-            color: var(--dark);
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-        .game-subtitle { font-size: 8px; color: var(--text-light); }
-
-        .game-status-badge {
-            font-size: 8px;
-            font-weight: 700;
-            padding: 3px 10px;
-            border-radius: 10px;
-            border: var(--border);
-            flex-shrink: 0;
-        }
-        .game-status-badge.waiting { background: #fef3c7; color: #d97706; }
-        .game-status-badge.live { background: #dbeafe; color: #2563eb; }
-        .game-status-badge.finished { background: #d1fae5; color: #059669; }
-
-        .empty-state {
-            text-align: center;
-            padding: 16px;
-            color: var(--text-light);
-            font-size: 10px;
-        }
-        .empty-state img {
-            width: 60px;
-            height: 60px;
-            object-fit: contain;
-            margin: 0 auto 6px;
-            display: block;
-        }
-
-        .support-card {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 12px;
-            background: var(--card-bg);
-            border: var(--border);
-            border-radius: var(--radius);
-            box-shadow: var(--shadow);
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-        .support-card:active { transform: translateX(-3px); }
-        .support-card img {
-            width: 45px;
-            height: 45px;
-            border-radius: 50%;
-            border: var(--border);
-            object-fit: cover;
-        }
-        .support-info { flex: 1; }
-        .support-name { font-size: 11px; font-weight: 800; color: var(--dark); }
-        .support-desc { font-size: 8px; color: var(--text-light); }
-        .support-card i { color: var(--text-light); font-size: 12px; }
-
-        .support-notification {
-            position: fixed;
-            top: 75px;
-            right: 10px;
-            left: 10px;
-            max-width: 400px;
-            margin: 0 auto;
-            background: var(--card-bg);
-            border: var(--border);
-            border-radius: var(--radius);
-            box-shadow: 5px 5px 0 #000;
-            padding: 10px 14px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            z-index: 2000;
-            animation: slideDownNotif 0.5s ease forwards, slideUpNotif 0.5s ease 4.5s forwards;
-            cursor: pointer;
-        }
-        .support-notification img {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            border: var(--border);
-            object-fit: cover;
-        }
-        .support-notification .notif-info { flex: 1; }
-        .support-notification .notif-name { font-size: 10px; font-weight: 800; color: var(--dark); }
-        .support-notification .notif-desc { font-size: 8px; color: var(--text-light); }
-        .support-notification i { color: var(--text-light); font-size: 10px; }
-
-        @keyframes slideDownNotif {
-            from { opacity: 0; transform: translateY(-20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        @keyframes slideUpNotif {
-            from { opacity: 1; transform: translateY(0); }
-            to { opacity: 0; transform: translateY(-20px); }
-        }
-
-        .bottom-nav {
-            position: fixed;
-            bottom: 0; right: 0; left: 0;
-            background: var(--header-bg);
-            border-top: var(--border);
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-            padding: 6px 0;
-            z-index: 999;
-        }
-        .nav-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 2px;
-            cursor: pointer;
-            text-decoration: none;
-            color: var(--text-light);
-            padding: 4px 12px;
-            font-family: inherit;
-            background: none;
-            border: none;
-            font-size: 12px;
-        }
-        .nav-item i { font-size: 18px; }
-        .nav-item span { font-size: 8px; font-weight: 600; }
-        .nav-item.active { color: var(--primary); }
-
-        .wheel-modal-overlay {
-            position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0,0,0,0.7);
-            z-index: 1000;
-            display: none;
-            align-items: center;
-            justify-content: center;
-        }
-        .wheel-modal-overlay.show { display: flex; }
-        .wheel-modal {
-            background: var(--card-bg);
-            border: var(--border);
-            border-radius: var(--radius);
-            padding: 20px;
-            box-shadow: 5px 5px 0 #000;
-            max-width: 380px;
-            width: 90%;
-            position: relative;
-        }
-        .wheel-modal-close {
-            position: absolute; top: 10px; left: 10px;
-            width: 28px; height: 28px;
-            border: var(--border); border-radius: 50%;
-            background: var(--bg2); cursor: pointer;
-            display: flex; align-items: center; justify-content: center;
-        }
-        .wheel-modal-title { text-align: center; font-size: 15px; font-weight: 800; margin-bottom: 14px; color: var(--dark); }
-        .wheel-container { position: relative; width: 260px; height: 260px; margin: 0 auto 14px; }
-        .wheel-canvas { width: 100%; height: 100%; border-radius: 50%; border: 4px solid #000; transition: transform 4s cubic-bezier(0.17,0.67,0.12,0.99); }
-        .wheel-pointer { position: absolute; top: -8px; left: 50%; transform: translateX(-50%); font-size: 30px; color: #f59e0b; z-index: 5; }
-        .wheel-center-btn {
-            position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
-            width: 55px; height: 55px; border-radius: 50%;
-            background: var(--primary); border: 3px solid #000;
-            color: #fff; font-size: 11px; font-weight: 800; cursor: pointer; z-index: 5;
-        }
-        .wheel-cost-info { text-align: center; font-size: 10px; font-weight: 700; color: var(--text); }
-        .wheel-result { text-align: center; font-size: 13px; font-weight: 800; color: var(--primary); min-height: 25px; margin-top: 8px; }
-
-        @media (max-width: 480px) {
-            .game-modes-grid { grid-template-columns: repeat(2, 1fr); }
-        }
+        :root{--bg:#faf5ff;--bg2:#f3e8ff;--bg3:#e9d5ff;--primary:#a855f7;--primary-dark:#9333ea;--primary-light:#c084fc;--primary-rgb:168,85,247;--dark:#1e1b2e;--text:#4a4458;--text-light:#6b7280;--white:#fff;--card-bg:#fff;--header-bg:#fff;--shadow:3px 3px 0 #000;--radius:12px;--border:1px solid #000;--gold:#f59e0b}
+        [data-theme="dark"]{--bg:#1e1b2e;--bg2:#2d2a3e;--bg3:#3d3a4e;--primary:#c084fc;--primary-dark:#a855f7;--primary-light:#d8b4fe;--primary-rgb:192,132,252;--dark:#f1f5f9;--text:#e2e8f0;--text-light:#94a3b8;--white:#2d2a3e;--card-bg:#2d2a3e;--header-bg:#2d2a3e;--shadow:3px 3px 0 #000;--border:1px solid #475569}
+        [data-animation="off"] *{animation:none!important;transition:none!important}
+        *{margin:0;padding:0;box-sizing:border-box;-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;-webkit-user-drag:none;user-drag:none}
+        img{pointer-events:none;-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;-webkit-user-drag:none;user-drag:none}
+        input,textarea{-webkit-user-select:text!important;user-select:text!important;-webkit-touch-callout:default!important}
+        body{font-family:'IRANSans',Tahoma,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column;transition:font-family .3s ease}
+        .bg-animation{position:fixed;top:0;left:0;right:0;bottom:0;z-index:0;background:linear-gradient(135deg,var(--bg) 0%,var(--bg2) 40%,var(--bg3) 80%)}
+        .header{position:relative;z-index:10;background:var(--header-bg);border-bottom:var(--border);padding:10px 16px;position:sticky;top:0;box-shadow:var(--shadow)}
+        .header-inner{display:flex;align-items:center;justify-content:space-between;max-width:500px;margin:0 auto}
+        .header-right{display:flex;align-items:center;gap:8px}
+        .header-logo{width:38px;height:38px;border-radius:var(--radius);background:var(--primary);display:flex;align-items:center;justify-content:center;box-shadow:var(--shadow);overflow:hidden;padding:2px;border:var(--border)}
+        .header-logo img{width:95%;height:95%;object-fit:contain;transform:scale(1.1)}
+        .header-title{font-size:14px;font-weight:800;color:var(--dark)}
+        .header-title .t-accent{color:var(--primary)}
+        .header-subtitle{font-size:8px;color:var(--text-light)}
+        .currency-badge{display:flex;align-items:center;gap:4px;background:var(--bg2);border:var(--border);border-radius:8px;padding:4px 10px;font-size:10px;font-weight:700;color:var(--dark);box-shadow:var(--shadow)}
+        .currency-badge.coins i{color:#f59e0b}
+        .main-container{position:relative;z-index:5;max-width:500px;width:100%;margin:12px auto;padding:0 10px 100px;display:flex;flex-direction:column;gap:10px}
+        .loader-wrapper{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:50vh;gap:10px}
+        .loader{width:45px;height:45px;border:5px solid var(--bg3);border-top-color:var(--primary);border-radius:50%;animation:spin .8s linear infinite}
+        .loader-text{font-size:11px;font-weight:700;color:var(--text)}
+        @keyframes spin{to{transform:rotate(360deg)}}
+        .game-content{display:none}
+        .game-content.show{display:flex;flex-direction:column;gap:10px}
+        .waiting-card{background:var(--card-bg);border:var(--border);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow);text-align:center}
+        .waiting-image{width:100px;height:100px;object-fit:contain;margin:0 auto 10px;display:block}
+        .waiting-text{font-size:12px;font-weight:700;color:var(--text);margin-bottom:10px}
+        .room-code-display{font-size:18px;font-weight:900;color:var(--primary);letter-spacing:2px;margin-bottom:10px}
+        .invite-box{background:#fff7ed;border:2px solid #f97316;border-radius:10px;padding:12px;margin-top:10px;text-align:center}
+        .invite-box-title{font-size:10px;font-weight:800;color:#f97316;margin-bottom:6px}
+        .invite-box-desc{font-size:8px;color:#9a3412;margin-bottom:8px;line-height:1.6}
+        .invite-link-box{display:flex;align-items:center;gap:6px;background:#fff;border:1px solid #f97316;border-radius:6px;padding:6px 8px}
+        .invite-link{flex:1;font-size:8px;font-weight:600;color:#9a3412;direction:ltr;text-align:center;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+        .copy-btn{background:#f97316;color:#fff;border:1px solid #000;border-radius:6px;padding:6px 10px;cursor:pointer;font-family:'IRANSans',Tahoma,sans-serif;font-size:8px;font-weight:700;box-shadow:2px 2px 0 #000;flex-shrink:0}
+        .copy-btn:active{transform:translate(1px,1px);box-shadow:1px 1px 0 #000}
+        .players-invite-section{margin-top:12px;text-align:right;opacity:0.5;pointer-events:none;position:relative}
+        .players-invite-section .coming-soon-overlay{position:absolute;top:50%;right:50%;transform:translate(50%,-50%);background:#a855f7;color:#fff;font-size:9px;font-weight:800;padding:4px 16px;border-radius:20px;border:1px solid #000;box-shadow:2px 2px 0 #000;z-index:10}
+        .players-invite-title{font-size:10px;font-weight:800;color:var(--dark);margin-bottom:8px;text-align:center}
+        .players-search-box{position:relative;margin-bottom:8px}
+        .players-search-box input{width:100%;padding:8px 35px 8px 10px;border:var(--border);border-radius:8px;background:var(--bg2);color:var(--text);font-family:inherit;font-size:9px;outline:none}
+        .players-search-box i{position:absolute;top:50%;right:10px;transform:translateY(-50%);color:var(--text-light);font-size:11px}
+        .players-invite-list{display:flex;flex-direction:column;gap:6px;max-height:300px;overflow-y:auto}
+        .invite-player-item{display:flex;align-items:center;gap:8px;padding:8px 10px;border:var(--border);border-radius:8px;background:var(--bg2)}
+        .invite-avatar{width:30px;height:30px;border-radius:50%;background:var(--bg2);border:var(--border);display:flex;align-items:center;justify-content:center;font-size:12px;color:var(--primary);overflow:hidden;flex-shrink:0}
+        .invite-avatar img{width:100%;height:100%;object-fit:cover}
+        .invite-info{flex:1;min-width:0}
+        .invite-name{font-size:10px;font-weight:700;color:var(--dark);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+        .invite-score{font-size:8px;color:var(--text-light)}
+        .invite-btn{padding:5px 12px;background:var(--primary);color:#fff;border:var(--border);border-radius:6px;font-family:'IRANSans',Tahoma,sans-serif;font-size:8px;font-weight:700;cursor:pointer;box-shadow:2px 2px 0 #000;flex-shrink:0}
+        .players-row{display:flex;gap:8px}
+        .player-card{flex:1;background:var(--card-bg);border:var(--border);border-radius:var(--radius);padding:10px;text-align:center;box-shadow:var(--shadow)}
+        .player-card.active{border-color:var(--gold);border-width:2px}
+        .player-tag{font-size:9px;font-weight:800;color:var(--dark);margin-bottom:4px}
+        .player-score{font-size:13px;font-weight:800;color:var(--gold)}
+        .rounds-results{background:var(--card-bg);border:var(--border);border-radius:var(--radius);padding:12px;box-shadow:var(--shadow)}
+        .rounds-title{font-size:10px;font-weight:800;color:var(--dark);margin-bottom:8px;text-align:center}
+        .round-result-item{background:rgba(245,158,11,.1);border:1px solid var(--gold);border-radius:8px;padding:8px;margin-bottom:6px}
+        .round-result-row{display:flex;align-items:center;justify-content:space-between;font-size:8px;padding:2px 0}
+        .round-result-player{font-weight:700;color:var(--dark);min-width:25px}
+        .round-dots{display:flex;gap:3px;flex:1;justify-content:center}
+        .result-dot{width:14px;height:14px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:6px;font-weight:800;border:var(--border);background:#10b981;color:#fff}
+        .result-dot.wrong{background:#ef4444}
+        .round-result-count{font-weight:800;font-size:8px;color:var(--dark)}
+        .question-card{background:var(--card-bg);border:var(--border);border-radius:var(--radius);padding:12px;box-shadow:var(--shadow)}
+        .question-text{font-size:11px;font-weight:700;color:var(--dark);line-height:1.7;text-align:center;margin-bottom:8px}
+        .timer-bar-container{background:var(--bg3);border:var(--border);border-radius:8px;height:6px;overflow:hidden;margin-bottom:4px}
+        .timer-bar-fill{height:100%;background:#10b981;transition:width 1s linear}
+        .timer-bar-fill.warning{background:#f59e0b}
+        .timer-bar-fill.danger{background:#ef4444}
+        .timer-text{font-size:7px;font-weight:700;color:var(--text-light);text-align:center;margin-bottom:8px}
+        .options-grid{display:flex;flex-direction:column;gap:6px}
+        .option-btn{display:flex;align-items:center;gap:8px;padding:10px 12px;border:var(--border);border-radius:8px;background:var(--bg2);cursor:pointer;transition:all .2s ease;box-shadow:2px 2px 0 #000;font-family:'IRANSans',Tahoma,sans-serif;font-size:10px;font-weight:600;color:var(--dark);text-align:right}
+        .option-btn:active{transform:translate(1px,1px);box-shadow:1px 1px 0 #000}
+        .option-btn.selected-correct{background:#10b981;color:#fff}
+        .option-btn.selected-wrong{background:#ef4444;color:#fff}
+        .option-btn.disabled{pointer-events:none;opacity:.6}
+        .option-btn.hidden-option{opacity:.2;pointer-events:none;text-decoration:line-through}
+        .option-letter{width:22px;height:22px;border-radius:50%;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:800;flex-shrink:0;border:var(--border)}
+        .actions-row{display:flex;gap:6px;margin-bottom:8px}
+        .action-btn{flex:1;display:flex;align-items:center;justify-content:center;gap:3px;padding:7px;border:var(--border);border-radius:8px;background:var(--card-bg);cursor:pointer;box-shadow:2px 2px 0 #000;font-family:'IRANSans',Tahoma,sans-serif;font-size:8px;font-weight:700;color:var(--dark)}
+        .action-btn:disabled{opacity:.3;cursor:not-allowed}
+        .bottom-btn-container{position:fixed;bottom:0;right:0;left:0;padding:8px 16px;background:var(--header-bg);border-top:var(--border);z-index:100}
+        .main-btn{width:100%;max-width:500px;margin:0 auto;display:block;padding:10px;background:var(--gold);color:#fff;border:var(--border);border-radius:8px;font-family:'IRANSans',Tahoma,sans-serif;font-size:11px;font-weight:800;cursor:pointer;box-shadow:3px 3px 0 #000}
+        .main-btn:disabled{opacity:.5;cursor:not-allowed}
+        .main-btn.green{background:#10b981}
+        .main-btn.waiting{background:var(--text-light)}
+        .result-banner{text-align:center;padding:20px;background:var(--card-bg);border:var(--border);border-radius:var(--radius);box-shadow:var(--shadow)}
+        .result-icon{font-size:40px;margin-bottom:8px}
+        .result-text{font-size:14px;font-weight:800;color:var(--dark);margin-bottom:6px}
+        .result-score{font-size:10px;color:var(--text-light);margin-bottom:10px}
+        .result-btn{display:inline-block;padding:8px 20px;background:var(--primary);color:#fff;border:var(--border);border-radius:8px;font-family:'IRANSans',Tahoma,sans-serif;font-size:10px;font-weight:700;cursor:pointer;box-shadow:2px 2px 0 #000;margin:4px}
+        .submitting-loader{width:50px;height:50px;border:5px solid var(--bg3);border-top-color:var(--primary);border-radius:50%;animation:spin .8s linear infinite;margin:20px auto}
     </style>
 </head>
 <body>
-
-    <div class="bg-animation"></div>
-
-    <header class="header">
-        <div class="header-inner">
-            <div class="header-right">
-                <div class="header-logo"><img src="https://cdn.imgurl.ir/uploads/f30974_InShot_20260821_174101103.png" alt="Quizico" draggable="false" oncontextmenu="return false;" ondragstart="return false;"></div>
-                <div>
-                    <div class="header-title">Quiz<span class="t-accent">ico</span></div>
-                    <div class="header-subtitle" data-i18n="tagline">اطلاعات خودت رو محک بزن</div>
-                </div>
-            </div>
-            <div class="header-currency">
-                <span class="currency-badge coins"><i class="fa-solid fa-coins"></i> <span id="coinsHeader">0</span></span>
-                <span class="currency-badge diamonds"><i class="fa-solid fa-gem"></i> <span id="diamondsHeader">0</span></span>
+<div class="bg-animation"></div>
+<header class="header">
+    <div class="header-inner">
+        <div class="header-right">
+            <div class="header-logo"><img src="https://cdn.imgurl.ir/uploads/f30974_InShot_20260821_174101103.png" alt="Quizico" draggable="false" oncontextmenu="return false;" ondragstart="return false;"></div>
+            <div>
+                <div class="header-title">Quiz<span class="t-accent">ico</span></div>
+                <div class="header-subtitle" data-i18n="online">آنلاین</div>
             </div>
         </div>
-    </header>
-
-    <main class="main-container">
-        <div class="loader-wrapper" id="loaderWrapper">
-            <div class="loader"></div>
-            <div class="loader-text" data-i18n="loading">در حال دریافت...</div>
-        </div>
-
-        <div class="dashboard-content" id="dashboardContent">
-
-            <div class="banner-row">
-                <div class="banner-card" onclick="goToPlay('challenge')">
-                    <div class="banner-image"><img src="https://cdn.imgurl.ir/uploads/h142945_InShot_20260821_184807337.png" alt="" draggable="false" oncontextmenu="return false;" ondragstart="return false;"></div>
-                    <div class="banner-label" data-i18n="daily_challenge"><i class="fa-solid fa-trophy"></i> مسابقه روزانه</div>
-                </div>
-                <div class="wheel-card" onclick="openWheelModal()">
-                    <img src="https://cdn.imgurl.ir/uploads/m526299_InShot_20260821_182752507.png" alt="" draggable="false" oncontextmenu="return false;" ondragstart="return false;">
-                    <div class="wheel-label" data-i18n="wheel"><i class="fa-solid fa-wand-magic-sparkles"></i> گردونه</div>
-                </div>
-            </div>
-
-            <div class="game-modes-wrapper">
-                <div class="game-modes-header" data-i18n="start_game"><i class="fa-solid fa-gamepad"></i> شروع مسابقه</div>
-                <div class="game-modes-grid">
-                    <div class="game-mode-card" onclick="goToPlay('single')"><img src="https://cdn.imgurl.ir/uploads/f711120_InShot_20260821_200930706.jpg" alt="" draggable="false" oncontextmenu="return false;" ondragstart="return false;"><div class="game-mode-label" data-i18n="single">تک‌نفره</div></div>
-                    <div class="game-mode-card" onclick="goToPlay('offline')"><img src="https://cdn.imgurl.ir/uploads/k5971_InShot_20260821_201008883.jpg" alt="" draggable="false" oncontextmenu="return false;" ondragstart="return false;"><div class="game-mode-label" data-i18n="offline">دوستانه</div></div>
-                    <div class="game-mode-card" onclick="goToPlay('online')"><img src="https://cdn.imgurl.ir/uploads/h2464_InShot_20260821_201207943.jpg" alt="" draggable="false" oncontextmenu="return false;" ondragstart="return false;"><div class="game-mode-label" data-i18n="online">آنلاین</div></div>
-                    <div class="game-mode-card" onclick="goToPlay('league')"><img src="https://cdn.imgurl.ir/uploads/e135154_InShot_20260821_201323323.jpg" alt="" draggable="false" oncontextmenu="return false;" ondragstart="return false;"><div class="game-mode-label" data-i18n="league">لیگ</div></div>
-                </div>
-            </div>
-
-            <div class="games-section">
-                <div class="games-section-header">
-                    <span class="games-section-title" data-i18n="online_games"><i class="fa-solid fa-globe"></i> بازی‌های آنلاین نیمه‌تمام</span>
-                    <span class="games-section-badge" id="onlineCount">0</span>
-                </div>
-                <div class="games-list" id="onlineList"></div>
-            </div>
-
-            <div class="games-section">
-                <div class="games-section-header">
-                    <span class="games-section-title" data-i18n="league_games"><i class="fa-solid fa-trophy"></i> لیگ‌های نیمه‌تمام</span>
-                    <span class="games-section-badge" id="leagueCount">0</span>
-                </div>
-                <div class="games-list" id="leagueList"></div>
-            </div>
-
-            <div class="games-section">
-                <div class="games-section-header">
-                    <span class="games-section-title" data-i18n="past_games"><i class="fa-solid fa-clock-rotate-left"></i> ۵ بازی گذشته</span>
-                    <span class="games-section-badge" id="pastCount">0</span>
-                </div>
-                <div class="games-list" id="pastList"></div>
-            </div>
-
-            <div class="support-card" onclick="openSupportLink()">
-                <img src="https://cdn.imgurl.ir/uploads/v68396_InShot_20260817_190450653.jpg" alt="سازنده" draggable="false" oncontextmenu="return false;" ondragstart="return false;">
-                <div class="support-info">
-                    <div class="support-name">امیرمهدی | Amirmahdi</div>
-                    <div class="support-desc" data-i18n="support">از سازنده حمایت کنید</div>
-                </div>
-                <i class="fa-solid fa-chevron-left"></i>
-            </div>
-
-        </div>
-    </main>
-
-    <div class="support-notification" id="supportNotification" onclick="openSupportLink()">
-        <img src="https://cdn.imgurl.ir/uploads/v68396_InShot_20260817_190450653.jpg" alt="سازنده" draggable="false" oncontextmenu="return false;" ondragstart="return false;">
-        <div class="notif-info">
-            <div class="notif-name">امیرمهدی | Amirmahdi</div>
-            <div class="notif-desc" data-i18n="support">از سازنده حمایت کنید</div>
-        </div>
-        <i class="fa-solid fa-chevron-left"></i>
+        <span class="currency-badge coins"><i class="fa-solid fa-coins"></i> <span id="coinsHeader">0</span></span>
     </div>
-
-    <nav class="bottom-nav">
-        <div class="nav-item active" onclick="window.location.href='../dashboard/'"><i class="fa-solid fa-house"></i><span data-i18n="home">خانه</span></div>
-        <div class="nav-item" onclick="window.location.href='../ranking/'"><i class="fa-solid fa-trophy"></i><span data-i18n="ranking">رتبه</span></div>
-        <div class="nav-item" onclick="window.location.href='../profile/'"><i class="fa-solid fa-user"></i><span data-i18n="profile">پروفایل</span></div>
-        <div class="nav-item" onclick="window.location.href='../setting/'"><i class="fa-solid fa-gear"></i><span data-i18n="settings">تنظیمات</span></div>
-    </nav>
-
-    <div class="wheel-modal-overlay" id="wheelModalOverlay">
-        <div class="wheel-modal">
-            <div class="wheel-modal-close" onclick="closeWheelModal()"><i class="fa-solid fa-xmark"></i></div>
-            <div class="wheel-modal-title"><i class="fa-solid fa-wand-magic-sparkles"></i> <span data-i18n="wheel">گردونه</span></div>
-            <div class="wheel-container">
-                <div class="wheel-pointer"><i class="fa-solid fa-location-dot"></i></div>
-                <canvas class="wheel-canvas" id="wheelCanvas" width="260" height="260"></canvas>
-                <button class="wheel-center-btn" onclick="spinWheel()" data-i18n="spin">چرخش</button>
-            </div>
-            <div class="wheel-cost-info"><i class="fa-solid fa-coins"></i> <span data-i18n="cost">هزینه</span>: <span data-i18n="coins_50">۵۰ سکه</span></div>
-            <div class="wheel-result" id="wheelResult"></div>
-        </div>
+</header>
+<main class="main-container">
+    <div class="loader-wrapper" id="loaderWrapper">
+        <div class="loader"></div>
+        <div class="loader-text" data-i18n="loading">در حال دریافت...</div>
     </div>
+    <div class="game-content" id="gameContent"></div>
+</main>
+<div class="bottom-btn-container" id="bottomBtnContainer" style="display:none;">
+    <button class="main-btn" id="mainBtn" onclick="handleMainBtn()" data-i18n="start_game">شروع بازی</button>
+</div>
+<script>
+(function(){
+var webApp=window.Eitaa?.WebApp;
+var API_URL='https://script.google.com/macros/s/AKfycbyHQXQ0TffhGyW1MdtI-_sWlZMhLSPDCR3Az5dDkuwv9TJt1o6-f_aCOg_aHJnty_8P/exec';
+var SAD_IMAGE='https://cdn.imgurl.ir/uploads/g58935_InShot_20260822_140943752.png';
+var TOTAL_ROUNDS=5;
+var QUESTIONS_PER_ROUND=3;
+var QUESTION_TIME=60;
+var GAME_TIME_LIMIT=60;
+var currentRound=1;
+var currentQuestionIndex=0;
+var myScore=0;
+var myCorrectCount=0;
+var questions=[];
+var roundQuestions=[];
+var roundResults=[];
+var timerInterval=null;
+var timeLeft=QUESTION_TIME;
+var roomCode=null;
+var isPlayer1=false;
+var checkInterval=null;
+var myUserId='';
+var myAnswers=[];
+var isAnswered=false;
+var currentLang='fa';
+var userCoins=0;
+var actionUsedThisQuestion=false;
+var isInGame=false;
+var isSubmitting=false;
+var gameCreatedAt='';
+var turnOrder=[[1,1],[1,2],[2,2],[2,1],[3,1],[3,2],[4,2],[4,1],[5,1],[5,2]];
+var currentTurn=0;
 
-    <script>
-        (function() {
-            var webApp = window.Eitaa?.WebApp;
-            var API_URL = 'https://script.google.com/macros/s/AKfycbyHQXQ0TffhGyW1MdtI-_sWlZMhLSPDCR3Az5dDkuwv9TJt1o6-f_aCOg_aHJnty_8P/exec';
-            var SAD_IMAGE = 'https://cdn.imgurl.ir/uploads/g58935_InShot_20260822_140943752.png';
+var translations={
+fa:{online:'آنلاین',loading:'در حال دریافت...',start_game:'شروع بازی',you:'تو',opponent:'حریف',results:'نتایج راندها',round:'راند',finished:'بازی تمام شد!',score:'امتیاز',back:'بازگشت',no_questions:'سوال کافی نیست',room_full:'دیر اومدی! یکی دیگه زودتر وارد شده',create_new_room:'ساخت اتاق جدید',waiting_opponent:'هنوز حریفت وارد نشده...',invite_title:'دعوت از دوست',invite_desc:'لینک زیر رو کپی کن و برای دوستت بفرست!',copy:'کپی',link_copied:'لینک کپی شد!',invite_from_players:'انتخاب از لیست بازیکنا',search_players:'جستجوی بازیکن...',not_enough:'سکه کافی نداری!',waiting_turn:'منتظر حریف...',your_turn:'نوبت توست',coming_soon:'به زودی',room_not_found:'اتاق یافت نشد',time_expired:'وقت بازی تموم شد!',exit_confirm:'اگه خارج بشی این راند رو با ۰ تمام می‌کنی!',submitting:'در حال ثبت پاسخ‌ها...',submitting_wait:'لطفاً صبر کنید',already_joined:'تو قبلاً وارد این بازی شدی!'},
+en:{online:'Online',loading:'Loading...',start_game:'Start Game',you:'You',opponent:'Opponent',results:'Round Results',round:'Round',finished:'Game Over!',score:'Score',back:'Back',no_questions:'Not enough questions',room_full:'Too late! Someone else joined',create_new_room:'Create New Room',waiting_opponent:'Waiting for opponent...',invite_title:'Invite Friend',invite_desc:'Copy the link below and send it to your friend!',copy:'Copy',link_copied:'Link copied!',invite_from_players:'Invite from players',search_players:'Search players...',not_enough:'Not enough coins!',waiting_turn:'Waiting for opponent...',your_turn:'Your turn',coming_soon:'Coming Soon',room_not_found:'Room not found',time_expired:'Time expired!',exit_confirm:'If you leave, this round will be 0!',submitting:'Saving answers...',submitting_wait:'Please wait',already_joined:'You already joined this game!'},
+ar:{online:'عبر الإنترنت',loading:'جار التحميل...',start_game:'ابدأ اللعبة',you:'أنت',opponent:'الخصم',results:'نتائج الجولات',round:'جولة',finished:'انتهت اللعبة!',score:'النقاط',back:'رجوع',no_questions:'أسئلة غير كافية',room_full:'متأخر! شخص آخر انضم',create_new_room:'إنشاء غرفة جديدة',waiting_opponent:'بانتظار الخصم...',invite_title:'دعوة صديق',invite_desc:'انسخ الرابط أدناه وأرسله إلى صديقك!',copy:'نسخ',link_copied:'تم نسخ الرابط!',invite_from_players:'اختر من اللاعبين',search_players:'ابحث عن لاعب...',not_enough:'عملات غير كافية!',waiting_turn:'بانتظار الخصم...',your_turn:'دورك',coming_soon:'قريبًا',room_not_found:'الغرفة غير موجودة',time_expired:'انتهى الوقت!',exit_confirm:'إذا غادرت، ستكون هذه الجولة 0!',submitting:'جار حفظ الإجابات...',submitting_wait:'يرجى الانتظار',already_joined:'لقد انضممت بالفعل إلى هذه اللعبة!'}
+};
 
-            var userCoins = 0, userDiamonds = 0;
-            var currentRotation = 0, isSpinning = false;
-            var SPIN_COST = 50;
-            var currentLang = 'fa';
+function getSettings(){try{var raw=localStorage.getItem('quizicoSettings');if(!raw)return{theme:'light',primaryColor:'#a855f7',animation:true,language:'fa'};var p=JSON.parse(raw);if(!p.theme)p.theme='light';if(!p.primaryColor)p.primaryColor='#a855f7';if(p.animation===undefined)p.animation=true;if(!p.language)p.language='fa';return p;}catch(e){return{theme:'light',primaryColor:'#a855f7',animation:true,language:'fa'}}}
+function getTranslation(k){var t=translations[currentLang]||translations.fa;return t[k]||translations.fa[k]||k}
+function hexToRgb(h){var r=/^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(h);return r?{r:parseInt(r[1],16),g:parseInt(r[2],16),b:parseInt(r[3],16)}:{r:168,g:85,b:247}}
+function shadeColor(c,p){var r=hexToRgb(c);var rr=Math.max(0,Math.min(255,r.r+p));var gg=Math.max(0,Math.min(255,r.g+p));var bb=Math.max(0,Math.min(255,r.b+p));return '#'+((1<<24)+(rr<<16)+(gg<<8)+bb).toString(16).slice(1)}
+function applyTheme(){var s=getSettings();currentLang=s.language||'fa';var t=s.theme||'light';var p=s.primaryColor||'#a855f7';document.documentElement.setAttribute('data-theme',t);if(t==='dark'){document.documentElement.style.setProperty('--primary',shadeColor(p,40));}else{document.documentElement.style.setProperty('--primary',p);}if(s.animation===false){document.documentElement.setAttribute('data-animation','off');}else{document.documentElement.removeAttribute('data-animation');}if(currentLang==='en'){document.documentElement.setAttribute('dir','ltr');document.body.style.fontFamily='Arial, sans-serif';}else if(currentLang==='ar'){document.documentElement.setAttribute('dir','rtl');document.body.style.fontFamily='Tahoma, sans-serif';}else{document.documentElement.setAttribute('dir','rtl');document.body.style.fontFamily="'IRANSans', Tahoma, sans-serif";}document.querySelectorAll('[data-i18n]').forEach(function(el){var k=el.getAttribute('data-i18n');var t2=translations[currentLang]||translations.fa;if(t2[k])el.textContent=t2[k];});}
 
-            var leagueMatches = [
-                [1, 2], [2, 3], [1, 5], [3, 4], [1, 4],
-                [2, 5], [1, 3], [4, 5], [3, 5], [2, 4]
-            ];
+function sleep(ms){return new Promise(function(r){setTimeout(r,ms);});}
+function translateGoogle(text,tl){var url='https://translate.googleapis.com/translate_a/single?client=gtx&sl=fa&tl='+tl+'&dt=t&q='+encodeURIComponent(text);return fetch(url).then(function(r){return r.json();}).then(function(d){return d&&d[0]&&d[0][0]?d[0][0][0]:null;}).catch(function(){return null;});}
+function translateMyMemory(text,tl){var url='https://api.mymemory.translated.net/get?q='+encodeURIComponent(text)+'&langpair=fa|'+tl;return fetch(url).then(function(r){return r.json();}).then(function(d){return d&&d.responseData&&d.responseData.translatedText?d.responseData.translatedText:null;}).catch(function(){return null;});}
+async function translateText(text,tl){if(tl==='fa')return text;var r=await translateGoogle(text,tl);if(r)return r;await sleep(100);r=await translateMyMemory(text,tl);if(r)return r;return text;}
+async function translateQuestion(q,lang){if(lang==='fa')return q;var tl=lang==='en'?'en':'ar';var tq=await translateText(q.question,tl);await sleep(80);var topts=[];for(var i=0;i<q.options.length;i++){topts.push(await translateText(q.options[i],tl));await sleep(80);}return{id:q.id,question:tq,options:topts,correctOption:q.correctOption};}
 
-            document.addEventListener('contextmenu', function(e) { e.preventDefault(); });
-            document.addEventListener('dragstart', function(e) { e.preventDefault(); });
-            document.addEventListener('copy', function(e) { if (e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA') e.preventDefault(); });
-            document.addEventListener('cut', function(e) { if (e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA') e.preventDefault(); });
+document.addEventListener('contextmenu',function(e){e.preventDefault();});
+document.addEventListener('dragstart',function(e){e.preventDefault();});
+document.addEventListener('copy',function(e){if(e.target.tagName!=='INPUT'&&e.target.tagName!=='TEXTAREA')e.preventDefault();});
+document.addEventListener('cut',function(e){if(e.target.tagName!=='INPUT'&&e.target.tagName!=='TEXTAREA')e.preventDefault();});
 
-            var translations = {
-                fa: {
-                    tagline: 'اطلاعات خودت رو محک بزن', loading: 'در حال دریافت...',
-                    daily_challenge: '<i class="fa-solid fa-trophy"></i> مسابقه روزانه',
-                    wheel: 'گردونه', start_game: 'شروع مسابقه',
-                    single: 'تک‌نفره', offline: 'دوستانه', online: 'آنلاین', league: 'لیگ',
-                    online_games: 'بازی‌های آنلاین نیمه‌تمام', league_games: 'لیگ‌های نیمه‌تمام',
-                    past_games: '۵ بازی گذشته',
-                    home: 'خانه', ranking: 'رتبه', profile: 'پروفایل', settings: 'تنظیمات',
-                    spin: 'چرخش', cost: 'هزینه', coins_50: '۵۰ سکه',
-                    no_online_games: 'بازی آنلاینی در جریان نیست', no_league_games: 'لیگی در جریان نیست',
-                    no_past_games: 'بازی گذشته‌ای نیست',
-                    waiting: 'منتظر حریف', live: 'در جریان', finished: 'پایان',
-                    you_p1: 'تو سازنده بازی هستی', you_p2: 'تو مهمون بازی هستی',
-                    not_enough_coins: 'سکه کافی نداری!', empty: 'پوچ!',
-                    support: 'از سازنده حمایت کنید', exit_confirm: 'مطمئن هستید که خارج می‌شوید؟',
-                    your_turn: 'نوبت توئه!', waiting_turn: 'منتظر نوبت',
-                    stage: 'مرحله'
-                },
-                en: {
-                    tagline: 'Test your knowledge', loading: 'Loading...',
-                    daily_challenge: '<i class="fa-solid fa-trophy"></i> Daily Challenge',
-                    wheel: 'Wheel', start_game: 'Start Game',
-                    single: 'Single', offline: 'Friendly', online: 'Online', league: 'League',
-                    online_games: 'Online Games in Progress', league_games: 'Leagues in Progress',
-                    past_games: 'Last 5 Games',
-                    home: 'Home', ranking: 'Ranking', profile: 'Profile', settings: 'Settings',
-                    spin: 'Spin', cost: 'Cost', coins_50: '50 Coins',
-                    no_online_games: 'No active online games', no_league_games: 'No active leagues',
-                    no_past_games: 'No past games',
-                    waiting: 'Waiting', live: 'Live', finished: 'Finished',
-                    you_p1: 'You are Player 1', you_p2: 'You are Player 2',
-                    not_enough_coins: 'Not enough coins!', empty: 'Empty!',
-                    support: 'Support the developer', exit_confirm: 'Are you sure you want to exit?',
-                    your_turn: 'Your turn!', waiting_turn: 'Waiting for turn',
-                    stage: 'Stage'
-                },
-                ar: {
-                    tagline: 'اختبر معلوماتك', loading: 'جار التحميل...',
-                    daily_challenge: '<i class="fa-solid fa-trophy"></i> التحدي اليومي',
-                    wheel: 'العجلة', start_game: 'ابدأ اللعبة',
-                    single: 'فردي', offline: 'ودي', online: 'عبر الإنترنت', league: 'الدوري',
-                    online_games: 'الألعاب الجارية عبر الإنترنت', league_games: 'الدوريات الجارية',
-                    past_games: 'آخر 5 ألعاب',
-                    home: 'الرئيسية', ranking: 'الترتيب', profile: 'الملف', settings: 'الإعدادات',
-                    spin: 'تدوير', cost: 'التكلفة', coins_50: '50 عملة',
-                    no_online_games: 'لا توجد ألعاب جارية', no_league_games: 'لا توجد دوريات جارية',
-                    no_past_games: 'لا توجد ألعاب سابقة',
-                    waiting: 'بانتظار الخصم', live: 'جارية', finished: 'انتهت',
-                    you_p1: 'أنت اللاعب 1', you_p2: 'أنت اللاعب 2',
-                    not_enough_coins: 'عملات غير كافية!', empty: 'فارغ!',
-                    support: 'ادعم المطور', exit_confirm: 'هل أنت متأكد من الخروج؟',
-                    your_turn: 'دورك!', waiting_turn: 'بانتظار الدور',
-                    stage: 'مرحلة'
-                }
-            };
+function getEitaaUser(){return webApp&&webApp.initDataUnsafe&&webApp.initDataUnsafe.user?webApp.initDataUnsafe.user:null}
+function getUserId(){var u=getEitaaUser();return u?(typeof u.id==='number'?u.id.toString():String(u.id||'')):''}
+function getStartParam(){if(webApp&&webApp.initDataUnsafe&&webApp.initDataUnsafe.start_param)return webApp.initDataUnsafe.start_param;return ''}
+function generateRoomCode(){var c='G';for(var i=0;i<5;i++){c+=Math.floor(Math.random()*10);}return c}
+function fetchData(action,params){var payload={action:action,username:getUserId()};if(params){for(var k in params){if(params.hasOwnProperty(k))payload[k]=params[k];}}return fetch(API_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(payload)}).then(function(r){return r.json();}).catch(function(){return{ok:false};})}
+function shuffleArray(a){for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t;}return a}
+function hideLoader(){document.getElementById('loaderWrapper').style.display='none';document.getElementById('gameContent').classList.add('show');}
+function getMyPlayerNum(){return isPlayer1?1:2}
 
-            var wheelPrizes = [
-                { label: 'پوچ', type: 'empty', value: 0 },
-                { label: '۲۰ سکه', type: 'coins', value: 20 },
-                { label: 'پوچ', type: 'empty', value: 0 },
-                { label: '۱۰۰ سکه', type: 'coins', value: 100 },
-                { label: '۱ الماس', type: 'diamonds', value: 1 },
-                { label: '۲۰۰ سکه', type: 'coins', value: 200 },
-                { label: '۵ الماس', type: 'diamonds', value: 5 },
-                { label: '۱۰ الماس', type: 'diamonds', value: 10 }
-            ];
-            var wheelColors = ['#ef4444','#f59e0b','#10b981','#06b6d4','#8b5cf6','#ec4899','#84cc16','#f97316'];
+function checkTimeExpired(createdAt){if(!createdAt)return false;var now=new Date();var created=new Date(createdAt);return (now-created)/(1000*60)>=GAME_TIME_LIMIT;}
 
-            function getSettings() {
-                try {
-                    var raw = localStorage.getItem('quizicoSettings');
-                    if (!raw) return { theme: 'light', primaryColor: '#a855f7', animation: true, language: 'fa' };
-                    var p = JSON.parse(raw);
-                    if (!p.theme) p.theme = 'light';
-                    if (!p.primaryColor) p.primaryColor = '#a855f7';
-                    if (p.animation === undefined) p.animation = true;
-                    if (!p.language) p.language = 'fa';
-                    return p;
-                } catch(e) { return { theme: 'light', primaryColor: '#a855f7', animation: true, language: 'fa' }; }
+function handleTimeExpired(){
+    clearInterval(timerInterval);clearInterval(checkInterval);isInGame=false;isSubmitting=false;
+    fetchData('updateGame',{gameId:roomCode,updates:{status:'finished'}});
+    var t=getTranslation;
+    var html='<div class="result-banner">';
+    html+='<div class="result-icon"><i class="fa-solid fa-clock" style="color:#ef4444;"></i></div>';
+    html+='<div class="result-text">'+t('time_expired')+'</div>';
+    html+='<button class="result-btn" onclick="backToDashboard()">'+t('back')+'</button></div>';
+    document.getElementById('gameContent').innerHTML=html;
+    document.getElementById('bottomBtnContainer').style.display='none';
+    hideLoader();
+}
+
+function renderWaitingScreen(){
+    var t=getTranslation;
+    var inviteLink='https://eitaa.com/gameland_app/Quizico?startapp='+roomCode+'&btn=بزن.بریم.🚀';
+    var html='<div class="waiting-card">';
+    html+='<img class="waiting-image" src="'+SAD_IMAGE+'" alt="" draggable="false" oncontextmenu="return false;" ondragstart="return false;">';
+    html+='<div class="waiting-text">'+t('waiting_opponent')+'</div>';
+    html+='<div class="room-code-display">'+roomCode+'</div>';
+    html+='<div class="invite-box">';
+    html+='<div class="invite-box-title">'+t('invite_title')+'</div>';
+    html+='<div class="invite-box-desc">'+t('invite_desc')+'</div>';
+    html+='<div class="invite-link-box">';
+    html+='<span class="invite-link" id="inviteLink">'+inviteLink+'</span>';
+    html+='<button class="copy-btn" onclick="copyInviteLink()">'+t('copy')+'</button></div></div>';
+    html+='<div class="players-invite-section">';
+    html+='<div class="coming-soon-overlay">'+t('coming_soon')+'</div>';
+    html+='<div class="players-invite-title">'+t('invite_from_players')+'</div>';
+    html+='<div class="players-search-box"><i class="fa-solid fa-search"></i><input type="text" placeholder="'+t('search_players')+'"></div>';
+    html+='<div class="players-invite-list"></div></div></div>';
+    document.getElementById('gameContent').innerHTML=html;
+    document.getElementById('bottomBtnContainer').style.display='none';
+    hideLoader();
+}
+
+window.copyInviteLink=function(){
+    var link=document.getElementById('inviteLink').textContent;
+    if(navigator.clipboard){navigator.clipboard.writeText(link).then(function(){if(webApp)webApp.showAlert(getTranslation('link_copied'));});}
+    if(webApp)webApp.HapticFeedback?.impactOccurred('light');
+};
+
+function renderRoomFullScreen(){
+    var t=getTranslation;
+    var html='<div class="result-banner">';
+    html+='<div class="result-icon"><i class="fa-solid fa-user-clock" style="color:#f59e0b;"></i></div>';
+    html+='<div class="result-text">'+t('room_full')+'</div>';
+    html+='<button class="result-btn" onclick="createNewRoom()">'+t('create_new_room')+'</button></div>';
+    document.getElementById('gameContent').innerHTML=html;
+    document.getElementById('bottomBtnContainer').style.display='none';
+    hideLoader();
+}
+window.createNewRoom=function(){initPlayer1();};
+
+function renderRoundsScreen(){
+    var t=getTranslation;
+    var html='';
+    html+='<div class="players-row">';
+    html+='<div class="player-card"><div class="player-tag">'+t('you')+'</div><span class="player-score">'+myScore+'</span></div>';
+    html+='<div class="player-card"><div class="player-tag">'+t('opponent')+'</div><span class="player-score">?</span></div>';
+    html+='</div>';
+    if(roundResults.length>0){
+        html+='<div class="rounds-results"><div class="rounds-title">'+t('results')+'</div>';
+        for(var i=0;i<roundResults.length;i++){
+            var r=roundResults[i];
+            html+='<div class="round-result-item">';
+            html+='<div class="round-result-row"><span class="round-result-player">'+t('round')+' '+(i+1)+'</span></div>';
+            html+='<div class="round-result-row"><span class="round-result-player">'+t('you')+'</span><div class="round-dots">';
+            for(var j=0;j<QUESTIONS_PER_ROUND;j++)html+='<span class="result-dot'+(j<r.myCorrect?'':' wrong')+'">'+(j+1)+'</span>';
+            html+='</div><span class="round-result-count">+'+r.myScore+'</span></div></div>';
+        }
+        html+='</div>';
+    }
+    document.getElementById('gameContent').innerHTML=html;
+    var btn=document.getElementById('mainBtn');
+    var myNum=getMyPlayerNum();
+    var isMyTurnNow=false;
+    for(var i=0;i<turnOrder.length;i++){if(turnOrder[i][0]===currentRound&&turnOrder[i][1]===myNum){isMyTurnNow=(i===currentTurn);break;}}
+    if(isMyTurnNow){btn.textContent=t('your_turn')+' - '+t('start_game')+' '+currentRound;btn.className='main-btn green';btn.disabled=false;}
+    else{btn.textContent=t('waiting_turn');btn.className='main-btn waiting';btn.disabled=true;}
+    document.getElementById('bottomBtnContainer').style.display='block';
+    hideLoader();
+}
+
+function renderQuestionScreen(){
+    var t=getTranslation;
+    isAnswered=false;isInGame=true;actionUsedThisQuestion=false;
+    var q=roundQuestions[currentQuestionIndex];
+    var opts=shuffleArray(q.options.slice());
+    var ci=opts.indexOf(q.options[q.correctOption-1]);
+    var html='<div class="actions-row">';
+    html+='<button class="action-btn" onclick="useRemove50()"><i class="fa-solid fa-trash" style="color:#ef4444;"></i> ۵۰</button>';
+    html+='<button class="action-btn" onclick="useSwapQuestion()"><i class="fa-solid fa-arrows-rotate" style="color:#06b6d4;"></i> ۱۰۰</button>';
+    html+='<button class="action-btn" onclick="useSkipQuestion()"><i class="fa-solid fa-forward" style="color:#f59e0b;"></i> ۱۵۰</button></div>';
+    html+='<div class="question-card">';
+    html+='<div class="question-text">'+q.question+'</div>';
+    html+='<div class="timer-bar-container"><div class="timer-bar-fill" id="timerFill" style="width:100%;"></div></div>';
+    html+='<div class="timer-text" id="timerText">60s</div>';
+    html+='<div class="options-grid">';
+    for(var i=0;i<opts.length;i++){
+        html+='<button class="option-btn" data-text="'+opts[i]+'" onclick="selectOption('+i+','+ci+',this)">';
+        html+='<span class="option-letter">'+(i+1)+'</span><span>'+opts[i]+'</span></button>';
+    }
+    html+='</div></div>';
+    document.getElementById('gameContent').innerHTML=html;
+    document.getElementById('bottomBtnContainer').style.display='none';
+    hideLoader();
+    startTimer();
+}
+
+function startTimer(){clearInterval(timerInterval);timeLeft=QUESTION_TIME;updateTimerBar();timerInterval=setInterval(function(){timeLeft--;updateTimerBar();if(timeLeft<=0){clearInterval(timerInterval);if(!isAnswered)timeOut();}},1000);}
+function updateTimerBar(){var f=document.getElementById('timerFill');var t=document.getElementById('timerText');if(!f||!t)return;var pct=(timeLeft/QUESTION_TIME)*100;f.style.width=pct+'%';t.textContent=timeLeft+'s';f.className='timer-bar-fill'+(timeLeft<=10?' danger':timeLeft<=20?' warning':'');}
+function timeOut(){isAnswered=true;var btns=document.querySelectorAll('.option-btn');btns.forEach(function(b){b.classList.add('disabled');});var q=roundQuestions[currentQuestionIndex];var ct=q.options[q.correctOption-1];document.querySelectorAll('.option-btn').forEach(function(b){if(b.getAttribute('data-text')===ct)b.classList.add('selected-correct');});setTimeout(goToNext,800);}
+function goToNext(){currentQuestionIndex++;if(currentQuestionIndex>=QUESTIONS_PER_ROUND){finishRound();}else{renderQuestionScreen();}}
+
+window.selectOption=function(sel,ci,btn){
+    if(isAnswered)return;
+    isAnswered=true;clearInterval(timerInterval);
+    var btns=document.querySelectorAll('.option-btn');btns.forEach(function(b){b.classList.add('disabled');});
+    if(sel===ci){btn.classList.add('selected-correct');myScore+=5;myCorrectCount++;myAnswers.push(true);}
+    else{btn.classList.add('selected-wrong');btns[ci].classList.add('selected-correct');myAnswers.push(false);}
+    setTimeout(goToNext,800);
+};
+
+window.useRemove50=function(){
+    if(isAnswered||actionUsedThisQuestion)return;
+    if(userCoins<50){if(webApp)webApp.showAlert(getTranslation('not_enough'));return;}
+    userCoins-=50;actionUsedThisQuestion=true;document.getElementById('coinsHeader').textContent=userCoins;
+    var q=roundQuestions[currentQuestionIndex];var ct=q.options[q.correctOption-1];
+    var wo=q.options.filter(function(o){return o!==ct;});var th=shuffleArray(wo).slice(0,2);
+    document.querySelectorAll('.option-btn').forEach(function(b){if(th.indexOf(b.getAttribute('data-text'))!==-1)b.classList.add('hidden-option');});
+    disableActions();fetchData('updateUser',{coins:userCoins});
+};
+window.useSwapQuestion=function(){
+    if(isAnswered||actionUsedThisQuestion)return;
+    if(userCoins<100){if(webApp)webApp.showAlert(getTranslation('not_enough'));return;}
+    userCoins-=100;actionUsedThisQuestion=true;document.getElementById('coinsHeader').textContent=userCoins;
+    var rem=questions.filter(function(q){return roundQuestions.indexOf(q)===-1;});
+    if(rem.length>0)roundQuestions[currentQuestionIndex]=shuffleArray(rem)[0];
+    disableActions();fetchData('updateUser',{coins:userCoins});renderQuestionScreen();
+};
+window.useSkipQuestion=function(){
+    if(isAnswered||actionUsedThisQuestion)return;
+    if(userCoins<150){if(webApp)webApp.showAlert(getTranslation('not_enough'));return;}
+    userCoins-=150;actionUsedThisQuestion=true;document.getElementById('coinsHeader').textContent=userCoins;
+    myScore+=5;myCorrectCount++;myAnswers.push(true);
+    disableActions();fetchData('updateUser',{coins:userCoins});clearInterval(timerInterval);setTimeout(goToNext,300);
+};
+function disableActions(){document.querySelectorAll('.action-btn').forEach(function(b){b.disabled=true;});}
+
+function showSubmittingScreen(){
+    var t=getTranslation;
+    var html='<div class="result-banner">';
+    html+='<div class="submitting-loader"></div>';
+    html+='<div class="result-text">'+t('submitting')+'</div>';
+    html+='<div class="result-score">'+t('submitting_wait')+'</div></div>';
+    document.getElementById('gameContent').innerHTML=html;
+    document.getElementById('bottomBtnContainer').style.display='none';
+    hideLoader();
+}
+
+function finishRound(){
+    isInGame=false;isSubmitting=true;
+    showSubmittingScreen();
+    
+    var ansStr=myAnswers.map(function(a){return a?'T':'F';}).join(',');
+    var updateData={};
+    updateData['round'+currentRound+'_p'+(isPlayer1?'1':'2')]=ansStr;
+    
+    fetchData('updateGame',{gameId:roomCode,updates:updateData}).then(function(result){
+        isSubmitting=false;
+        if(result.ok){
+            roundResults.push({myAnswers:myAnswers,myScore:myCorrectCount*5,myCorrect:myCorrectCount});
+            myCorrectCount=0;myAnswers=[];currentRound++;currentQuestionIndex=0;currentTurn++;
+            if(currentRound>TOTAL_ROUNDS){endGame();}else{renderRoundsScreen();}
+        }else{
+            showSubmittingScreen();
+            setTimeout(function(){finishRound();},2000);
+        }
+    });
+}
+
+function endGame(){
+    isInGame=false;clearInterval(timerInterval);clearInterval(checkInterval);
+    var t=getTranslation;
+    var html='<div class="result-banner">';
+    html+='<div class="result-icon"><i class="fa-solid fa-flag-checkered" style="color:#f59e0b;"></i></div>';
+    html+='<div class="result-text">'+t('finished')+'</div>';
+    html+='<div class="result-score">'+t('score')+': '+myScore+'</div>';
+    html+='<button class="result-btn" onclick="backToDashboard()">'+t('back')+'</button></div>';
+    document.getElementById('gameContent').innerHTML=html;
+    document.getElementById('bottomBtnContainer').style.display='none';
+    hideLoader();fetchData('updateGame',{gameId:roomCode,updates:{status:'finished'}});
+}
+window.backToDashboard=function(){window.location.href='../../dashboard/';};
+
+window.handleMainBtn=function(){
+    var myNum=getMyPlayerNum();var isMyTurnNow=false;
+    for(var i=0;i<turnOrder.length;i++){if(turnOrder[i][0]===currentRound&&turnOrder[i][1]===myNum){isMyTurnNow=(i===currentTurn);break;}}
+    if(isMyTurnNow){
+        var allShuffled=shuffleArray(questions);
+        roundQuestions=allShuffled.slice(0,QUESTIONS_PER_ROUND);
+        renderQuestionScreen();
+    }
+};
+
+async function initPlayer1(){
+    roomCode=generateRoomCode();isPlayer1=true;myUserId=getUserId();
+    await fetchData('saveGame',{gameData:{id:roomCode,player1:myUserId,player2:'',round1:'',round2:'',round3:'',round4:'',round5:'',status:'waiting',createdAt:new Date().toISOString()}});
+    gameCreatedAt=new Date().toISOString();
+    renderWaitingScreen();
+    checkInterval=setInterval(async function(){
+        var gameResult=await fetchData('getGame',{gameId:roomCode});
+        if(gameResult.ok&&gameResult.data){
+            var data=gameResult.data;
+            if(data.player2&&data.player2!==''&&String(data.player2)!==String(myUserId)){
+                clearInterval(checkInterval);
+                await fetchData('updateGame',{gameId:roomCode,updates:{status:'in_progress'}});
+                await startOnlineGame();
             }
+        }
+        if(checkTimeExpired(gameCreatedAt)){clearInterval(checkInterval);fetchData('updateGame',{gameId:roomCode,updates:{status:'finished'}});}
+    },3000);
+}
 
-            function getTranslation(k) { var t = translations[currentLang] || translations.fa; return t[k] || translations.fa[k] || k; }
+async function initPlayer2(){
+    isPlayer1=false;myUserId=getUserId();
+    var gameResult=await fetchData('getGame',{gameId:roomCode});
+    if(!gameResult.ok||!gameResult.data){
+        var t=getTranslation;
+        document.getElementById('gameContent').innerHTML='<div class="result-banner"><div class="result-text">'+t('room_not_found')+'</div></div>';
+        document.getElementById('bottomBtnContainer').style.display='none';hideLoader();return;
+    }
+    var data=gameResult.data;
+    gameCreatedAt=data.createdAt||new Date().toISOString();
+    
+    if(String(data.player1)===String(myUserId)){
+        isPlayer1=true;
+        await startOnlineGame();
+        return;
+    }
+    
+    if(data.player2&&String(data.player2)===String(myUserId)){
+        isPlayer1=false;
+        await startOnlineGame();
+        return;
+    }
+    
+    if(!data.player2||data.player2===''){
+        await fetchData('updateGame',{gameId:roomCode,updates:{player2:myUserId,status:'in_progress'}});
+        isPlayer1=false;
+        await startOnlineGame();
+        return;
+    }
+    
+    renderRoomFullScreen();
+}
 
-            function hexToRgb(h) { var r = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(h); return r ? { r: parseInt(r[1],16), g: parseInt(r[2],16), b: parseInt(r[3],16) } : { r:168,g:85,b:247 }; }
-            function shadeColor(c,p){var r=hexToRgb(c);var rr=Math.max(0,Math.min(255,r.r+p));var gg=Math.max(0,Math.min(255,r.g+p));var bb=Math.max(0,Math.min(255,r.b+p));return '#'+((1<<24)+(rr<<16)+(gg<<8)+bb).toString(16).slice(1);}
+async function startOnlineGame(){
+    var ud=await fetchData('getUser',{});
+    if(ud.ok&&ud.data){userCoins=ud.data.coins||0;document.getElementById('coinsHeader').textContent=userCoins;}
+    var qd=await fetchData('getQuestions',{limit:50});
+    if(qd.ok&&Array.isArray(qd.data)&&qd.data.length>=QUESTIONS_PER_ROUND){
+        questions=qd.data;
+        if(currentLang!=='fa'){var translated=[];for(var i=0;i<questions.length;i++){translated.push(await translateQuestion(questions[i],currentLang));}questions=translated;}
+        renderRoundsScreen();startPolling();
+    }else{
+        var t=getTranslation;
+        document.getElementById('gameContent').innerHTML='<div class="result-banner"><div class="result-text">'+t('no_questions')+'</div></div>';
+        document.getElementById('bottomBtnContainer').style.display='none';hideLoader();
+    }
+}
 
-            function applyTheme() {
-                var s = getSettings();
-                currentLang = s.language || 'fa';
-                var t = s.theme || 'light';
-                var p = s.primaryColor || '#a855f7';
-                document.documentElement.setAttribute('data-theme', t);
-                if (t === 'dark') { document.documentElement.style.setProperty('--primary', shadeColor(p, 40)); }
-                else { document.documentElement.style.setProperty('--primary', p); }
-                if (s.animation === false) { document.documentElement.setAttribute('data-animation', 'off'); }
-                else { document.documentElement.removeAttribute('data-animation'); }
-                if (currentLang === 'en') { document.documentElement.setAttribute('dir','ltr'); document.body.style.fontFamily='Arial, sans-serif'; }
-                else if (currentLang === 'ar') { document.documentElement.setAttribute('dir','rtl'); document.body.style.fontFamily='Tahoma, sans-serif'; }
-                else { document.documentElement.setAttribute('dir','rtl'); document.body.style.fontFamily="'IRANSans', Tahoma, sans-serif"; }
-                document.querySelectorAll('[data-i18n]').forEach(function(el){ var k=el.getAttribute('data-i18n'); var t2=translations[currentLang]||translations.fa; if(t2[k]) el.innerHTML=t2[k]; });
-            }
-
-            function getEitaaUser(){return webApp&&webApp.initDataUnsafe&&webApp.initDataUnsafe.user?webApp.initDataUnsafe.user:null;}
-            function getUserId(){var u=getEitaaUser();return u?(typeof u.id==='number'?u.id.toString():String(u.id||'')):'';}
+function startPolling(){
+    clearInterval(checkInterval);
+    checkInterval=setInterval(async function(){
+        if(checkTimeExpired(gameCreatedAt)){handleTimeExpired();return;}
+        var gameResult=await fetchData('getGame',{gameId:roomCode});
+        if(gameResult.ok&&gameResult.data){
+            var data=gameResult.data;
+            if(data.status==='finished'){clearInterval(checkInterval);endGame();return;}
             
-            function fetchData(action, params) {
-                var payload = { action: action, username: getUserId() };
-                if (params) { for (var k in params) { if (params.hasOwnProperty(k)) payload[k] = params[k]; } }
-                
-                return Promise.race([
-                    fetch(API_URL, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                        body: JSON.stringify(payload)
-                    }).then(function(r) { return r.json(); }),
-                    new Promise(function(_, reject) {
-                        setTimeout(function() { reject(new Error('timeout')); }, 45000);
-                    })
-                ]).catch(function(e) {
-                    if (e.message === 'timeout') {
-                        window.location.reload();
-                    }
-                    return { ok: false, error: e.message };
-                });
-            }
-
-            function shuffleArray(a){for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t;}return a;}
-
-            function goToPlay(mode){localStorage.setItem('gameMode',mode);window.location.href='../play/'+mode+'/';}
-            function continueGame(id){localStorage.setItem('onlineRoomCode',id);window.location.href='../play/online/';}
-            function continueLeague(id){localStorage.setItem('leagueCode',id);window.location.href='../play/league/';}
-            function goToResult(id){window.location.href='../result/?id='+id;}
-            function openSupportLink(){
-                if (webApp && webApp.openEitaaLink) {
-                    webApp.openEitaaLink('https://eitaa.com/Amirmahdi_code');
-                } else {
-                    window.open('https://eitaa.com/Amirmahdi_code', '_blank');
-                }
-            }
-            window.goToPlay=goToPlay;window.continueGame=continueGame;window.continueLeague=continueLeague;window.goToResult=goToResult;window.openSupportLink=openSupportLink;
-
-            function animateCount(el,target,dur){
-                var st=0,stt=null;
-                function step(ts){if(!stt)stt=ts;var p=Math.min((ts-stt)/dur,1);var e=1-Math.pow(1-p,3);el.textContent=Math.floor(e*target);if(p<1)requestAnimationFrame(step);else el.textContent=target;}
-                requestAnimationFrame(step);
-            }
-
-            function renderEmpty(text){ return '<div class="empty-state"><img src="'+SAD_IMAGE+'" alt="" draggable="false" oncontextmenu="return false;" ondragstart="return false;"><p>'+text+'</p></div>'; }
-
-            function renderGameCard(g, myId, type) {
-                var isP1 = String(g.player1) === String(myId);
-                var statusClass = g.status === 'waiting' ? 'waiting' : g.status === 'in_progress' ? 'live' : 'finished';
-                var statusText = getTranslation(g.status === 'waiting' ? 'waiting' : g.status === 'in_progress' ? 'live' : 'finished');
-                var subtitle;
-                if (type === 'past') {
-                    subtitle = getTranslation(isP1 ? 'you_p1' : 'you_p2');
-                    statusClass = 'finished';
-                    statusText = getTranslation('finished');
-                } else {
-                    subtitle = getTranslation(isP1 ? 'you_p1' : 'you_p2');
-                }
-                var onclick = type === 'past' ? ' onclick="goToResult(\'' + g.id + '\')"' : ' onclick="continueGame(\'' + g.id + '\')"';
-                var icon = type === 'past' ? 'fa-flag-checkered' : 'fa-globe';
-                return '<div class="game-card"' + onclick + '>' +
-                    '<div class="game-icon"><i class="fa-solid ' + icon + '"></i></div>' +
-                    '<div class="game-info"><div class="game-title">' + g.id + '</div>' +
-                    '<div class="game-subtitle">' + subtitle + '</div></div>' +
-                    '<span class="game-status-badge ' + statusClass + '">' + statusText + '</span></div>';
-            }
-
-            function renderLeagueCard(lg, subtitle, statusText, statusClass) {
-                var onclick = ' onclick="continueLeague(\'' + lg.leagueId + '\')"';
-                return '<div class="game-card"' + onclick + '>' +
-                    '<div class="game-icon"><i class="fa-solid fa-trophy"></i></div>' +
-                    '<div class="game-info"><div class="game-title">' + lg.leagueId + '</div>' +
-                    '<div class="game-subtitle">' + subtitle + '</div></div>' +
-                    '<span class="game-status-badge ' + statusClass + '">' + statusText + '</span></div>';
-            }
-
-            async function loadDashboard() {
-                try {
-                    var myId = getUserId();
-                    if (!myId) {
-                        document.getElementById('coinsHeader').textContent = '0';
-                        document.getElementById('diamondsHeader').textContent = '0';
-                        document.getElementById('loaderWrapper').style.display = 'none';
-                        document.getElementById('dashboardContent').classList.add('show');
-                        return;
-                    }
-
-                    var userData = await fetchData('getUser', {});
-                    if (userData.ok && userData.data) {
-                        userCoins = userData.data.coins || 0;
-                        userDiamonds = userData.data.diamonds || 0;
-                        animateCount(document.getElementById('coinsHeader'), userCoins, 800);
-                        animateCount(document.getElementById('diamondsHeader'), userDiamonds, 800);
-                    }
-
-                    var gamesData = await fetchData('getGamesByPlayer', {});
-                    if (gamesData.ok && Array.isArray(gamesData.data)) {
-                        var allGames = gamesData.data;
-                        
-                        var onlineInProgress = allGames.filter(function(g) {
-                            return !String(g.id).startsWith('LG_') && (g.status === 'waiting' || g.status === 'in_progress');
-                        });
-                        
-                        var past = allGames.filter(function(g) {
-                            return g.status === 'finished';
-                        }).slice(0, 5);
-
-                        document.getElementById('onlineCount').textContent = onlineInProgress.length;
-                        document.getElementById('pastCount').textContent = past.length;
-
-                        var onlineList = document.getElementById('onlineList');
-                        onlineList.innerHTML = onlineInProgress.length === 0 
-                            ? renderEmpty(getTranslation('no_online_games'))
-                            : onlineInProgress.map(function(g) { return renderGameCard(g, myId, 'active'); }).join('');
-
-                        var pastList = document.getElementById('pastList');
-                        pastList.innerHTML = past.length === 0 
-                            ? renderEmpty(getTranslation('no_past_games'))
-                            : past.map(function(g) { return renderGameCard(g, myId, 'past'); }).join('');
-                    }
-
-                    var leagueResult = await fetchData('getLeagueByUser', {});
-                    if (leagueResult.ok && leagueResult.data && !leagueResult.data.winner) {
-                        var lg = leagueResult.data;
-                        
-                        var results = String(lg.results || '').split(',').filter(function(r) { return r !== ''; });
-                        var currentGameNum = results.length + 1;
-                        var match = null;
-                        if (currentGameNum <= 10) {
-                            match = leagueMatches[currentGameNum - 1];
-                        }
-                        
-                        var myPlayerNum = -1;
-                        for (var i = 1; i <= 5; i++) {
-                            if (lg['player' + i] && String(lg['player' + i]).split(',')[0] === String(myId)) {
-                                myPlayerNum = i;
-                                break;
-                            }
-                        }
-                        
-                        var statusText = getTranslation('live');
-                        var statusClass = 'live';
-                        var subtitle = getTranslation('stage') + ' ' + currentGameNum + ' از ۱۰';
-                        
-                        if (myPlayerNum !== -1 && match) {
-                            if (match[0] === myPlayerNum || match[1] === myPlayerNum) {
-                                subtitle += ' - ' + getTranslation('your_turn');
-                                statusText = getTranslation('your_turn');
-                                statusClass = 'live';
-                            } else {
-                                subtitle += ' - ' + getTranslation('waiting_turn');
-                                statusText = getTranslation('waiting_turn');
-                                statusClass = 'waiting';
-                            }
-                        }
-                        
-                        document.getElementById('leagueCount').textContent = '1';
-                        document.getElementById('leagueList').innerHTML = renderLeagueCard(lg, subtitle, statusText, statusClass);
-                    } else {
-                        document.getElementById('leagueCount').textContent = '0';
-                        document.getElementById('leagueList').innerHTML = renderEmpty(getTranslation('no_league_games'));
-                    }
-
-                } catch(e) {
-                    console.error(e);
-                } finally {
-                    document.getElementById('loaderWrapper').style.display = 'none';
-                    document.getElementById('dashboardContent').classList.add('show');
-                }
-            }
-
-            function drawWheel() {
-                var canvas = document.getElementById('wheelCanvas');
-                if (!canvas) return;
-                var ctx = canvas.getContext('2d');
-                var cx = canvas.width/2, cy = canvas.height/2;
-                var radius = canvas.width/2 - 10;
-                var seg = (2*Math.PI)/wheelPrizes.length;
-                ctx.clearRect(0,0,canvas.width,canvas.height);
-                for (var i = 0; i < wheelPrizes.length; i++) {
-                    var sa = i*seg, ea = sa+seg;
-                    ctx.beginPath();ctx.moveTo(cx,cy);ctx.arc(cx,cy,radius,sa,ea);ctx.closePath();
-                    ctx.fillStyle = wheelColors[i];ctx.fill();
-                    ctx.strokeStyle = '#000';ctx.lineWidth = 2;ctx.stroke();
-                    ctx.save();ctx.translate(cx,cy);ctx.rotate(sa+seg/2);
-                    ctx.fillStyle = '#fff';ctx.font = 'bold 11px IRANSans';ctx.textAlign = 'center';
-                    ctx.fillText(wheelPrizes[i].label, radius-35, 0);ctx.restore();
-                }
-            }
-
-            function openWheelModal() {
-                shuffleArray(wheelPrizes);
-                drawWheel();
-                document.getElementById('wheelResult').textContent = '';
-                document.getElementById('wheelModalOverlay').classList.add('show');
-            }
-            function closeWheelModal() {
-                if (!isSpinning) document.getElementById('wheelModalOverlay').classList.remove('show');
-            }
-            window.openWheelModal = openWheelModal;
-            window.closeWheelModal = closeWheelModal;
-
-            function spinWheel() {
-                if (isSpinning) return;
-                if (userCoins < SPIN_COST) { 
-                    document.getElementById('wheelResult').textContent = getTranslation('not_enough_coins'); 
-                    return; 
-                }
-                isSpinning = true;
-                document.getElementById('wheelResult').textContent = '';
-                var seg = 360/wheelPrizes.length;
-                var ri = Math.floor(Math.random()*wheelPrizes.length);
-                var target = -90 - (ri*seg + seg/2);
-                var ca = currentRotation%360;
-                var rot = 1800 + (target - ca);
-                if (rot < 1800) rot += 360;
-                var nr = currentRotation + rot;
-                var canvas = document.getElementById('wheelCanvas');
-                canvas.style.transform = 'rotate('+nr+'deg)';
-                currentRotation = nr;
-                setTimeout(function() {
-                    var prize = wheelPrizes[ri];
-                    if (prize.type === 'empty') { 
-                        userCoins -= SPIN_COST; 
-                        document.getElementById('wheelResult').textContent = getTranslation('empty'); 
-                        fetchData('updateUser', { coins: userCoins });
-                    }
-                    else if (prize.type === 'coins') { 
-                        userCoins = userCoins - SPIN_COST + prize.value; 
-                        document.getElementById('wheelResult').textContent = prize.label; 
-                        fetchData('updateUser', { coins: userCoins });
-                    }
-                    else { 
-                        userDiamonds += prize.value; 
-                        userCoins -= SPIN_COST; 
-                        document.getElementById('wheelResult').textContent = prize.label; 
-                        fetchData('updateUser', { coins: userCoins, diamonds: userDiamonds });
-                    }
-                    document.getElementById('coinsHeader').textContent = userCoins;
-                    document.getElementById('diamondsHeader').textContent = userDiamonds;
-                    isSpinning = false;
-                }, 4200);
-            }
-            window.spinWheel = spinWheel;
-
-            if (webApp) {
-                webApp.ready();
-                webApp.expand();
-                webApp.BackButton.show();
-                webApp.BackButton.onClick(function() {
-                    webApp.showConfirm(getTranslation('exit_confirm'), function(confirmed) {
-                        if (confirmed) {
-                            webApp.close();
-                        }
-                    });
-                });
-            }
+            var myNum=getMyPlayerNum();
+            var opponentNum=myNum===1?2:1;
+            var opponentRoundKey='round'+currentRound+'_p'+opponentNum;
             
-            applyTheme();
-            loadDashboard();
-            
-            setTimeout(function() {
-                var notif = document.getElementById('supportNotification');
-                if (notif) {
-                    notif.style.display = 'none';
+            if(data[opponentRoundKey]&&data[opponentRoundKey]!==''){
+                var btn=document.getElementById('mainBtn');
+                if(btn&&btn.disabled&&btn.textContent===getTranslation('waiting_turn')){
+                    renderRoundsScreen();
                 }
-            }, 5000);
-        })();
-    </script>
+            }
+        }
+    },3000);
+}
+
+function handleBackButton(){
+    if(isSubmitting){
+        if(webApp)webApp.showAlert(getTranslation('submitting'));
+        return;
+    }
+    if(isInGame){
+        webApp.showConfirm(getTranslation('exit_confirm'),function(confirmed){
+            if(confirmed){
+                clearInterval(timerInterval);
+                var ansStr='F,F,F';
+                var updateData={};updateData['round'+currentRound+'_p'+(isPlayer1?'1':'2')]=ansStr;
+                fetchData('updateGame',{gameId:roomCode,updates:updateData});
+                window.location.href='../../dashboard/';
+            }
+        });
+    }else{
+        window.location.href='../../dashboard/';
+    }
+}
+
+async function init(){
+    applyTheme();
+    if(webApp){webApp.ready();webApp.expand();webApp.BackButton.show();webApp.BackButton.onClick(handleBackButton);}
+    myUserId=getUserId();
+    var startParam=getStartParam();
+    var savedRoom=localStorage.getItem('onlineRoomCode');
+    if(startParam){roomCode=startParam;localStorage.removeItem('onlineRoomCode');await initPlayer2();}
+    else if(savedRoom){roomCode=savedRoom;localStorage.removeItem('onlineRoomCode');await initPlayer2();}
+    else{await initPlayer1();}
+}
+
+init();
+})();
+</script>
 </body>
 </html>
