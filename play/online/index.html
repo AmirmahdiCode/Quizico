@@ -54,6 +54,8 @@
         .players-row{display:flex;gap:8px}
         .player-card{flex:1;background:var(--card-bg);border:var(--border);border-radius:var(--radius);padding:10px;text-align:center;box-shadow:var(--shadow)}
         .player-card.active{border-color:var(--gold);border-width:2px}
+        .player-avatar{width:35px;height:35px;border-radius:50%;margin:0 auto 4px;background:var(--bg2);border:var(--border);display:flex;align-items:center;justify-content:center;font-size:16px;color:var(--primary);overflow:hidden}
+        .player-avatar img{width:100%;height:100%;object-fit:cover}
         .player-tag{font-size:9px;font-weight:800;color:var(--dark);margin-bottom:4px}
         .player-score{font-size:13px;font-weight:800;color:var(--gold)}
         .rounds-results{background:var(--card-bg);border:var(--border);border-radius:var(--radius);padding:12px;box-shadow:var(--shadow)}
@@ -152,6 +154,8 @@ var isSubmitting=false;
 var gameCreatedAt='';
 var myName='';
 var opponentName='';
+var myAvatar='default';
+var opponentAvatar='default';
 var turnOrder=[[1,1],[1,2],[2,2],[2,1],[3,1],[3,2],[4,2],[4,1],[5,1],[5,2]];
 var currentTurn=0;
 
@@ -186,6 +190,13 @@ function fetchData(action,params){var payload={action:action,username:getUserId(
 function shuffleArray(a){for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t;}return a}
 function hideLoader(){document.getElementById('loaderWrapper').style.display='none';document.getElementById('gameContent').classList.add('show');}
 function getMyPlayerNum(){return isPlayer1?1:2}
+
+function getAvatarHtml(avatarId){
+    var iconAvatars={'icon_game':'fa-gamepad','icon_trophy':'fa-trophy','icon_star':'fa-star','icon_bolt':'fa-bolt','icon_fire':'fa-fire','icon_crown':'fa-crown','icon_medal':'fa-medal','icon_rocket':'fa-rocket','icon_ghost':'fa-ghost','icon_dragon':'fa-dragon','icon_wand':'fa-wand-magic-sparkles','icon_hat':'fa-hat-wizard','icon_helmet':'fa-helmet-safety','icon_shield':'fa-shield-halved','icon_sword':'fa-hand-fist'};
+    if(!avatarId||avatarId==='default')return '<i class="fa-solid fa-user"></i>';
+    if(iconAvatars[avatarId])return '<i class="fa-solid '+iconAvatars[avatarId]+'"></i>';
+    return '<i class="fa-solid fa-user"></i>';
+}
 
 function checkTimeExpired(createdAt){if(!createdAt)return false;var now=new Date();var created=new Date(createdAt);return (now-created)/(1000*60)>=GAME_TIME_LIMIT;}
 
@@ -260,8 +271,8 @@ function renderRoundsScreen(){
     var t=getTranslation;
     var html='';
     html+='<div class="players-row">';
-    html+='<div class="player-card'+(isMyTurnNow()?' active':'')+'"><div class="player-tag">'+myName+'</div><span class="player-score">'+myScore+'</span></div>';
-    html+='<div class="player-card'+(isMyTurnNow()?'':' active')+'"><div class="player-tag">'+opponentName+'</div><span class="player-score">?</span></div>';
+    html+='<div class="player-card'+(isMyTurnNow()?' active':'')+'"><div class="player-avatar">'+getAvatarHtml(myAvatar)+'</div><div class="player-tag">'+myName+'</div><span class="player-score">'+myScore+'</span></div>';
+    html+='<div class="player-card'+(isMyTurnNow()?'':' active')+'"><div class="player-avatar">'+getAvatarHtml(opponentAvatar)+'</div><div class="player-tag">'+opponentName+'</div><span class="player-score">?</span></div>';
     html+='</div>';
     if(roundResults.length>0){
         html+='<div class="rounds-results"><div class="rounds-title">'+t('results')+'</div>';
@@ -440,15 +451,18 @@ window.handleMainBtn=function(){
     }
 };
 
-async function getPlayerName(userId,fallback){
+async function getPlayerInfo(userId,fallbackName){
     var result=await fetchData('getUser',{username:userId});
-    if(result.ok&&result.data&&result.data.name)return result.data.name;
-    return fallback;
+    if(result.ok&&result.data){
+        return {name:result.data.name||fallbackName,avatar:result.data.avatar||'default'};
+    }
+    return {name:fallbackName,avatar:'default'};
 }
 
 async function initPlayer1(){
     roomCode=generateRoomCode();isPlayer1=true;myUserId=getUserId();
-    myName=await getPlayerName(myUserId,getTranslation('you'));
+    var myInfo=await getPlayerInfo(myUserId,getTranslation('you'));
+    myName=myInfo.name;myAvatar=myInfo.avatar;
     await fetchData('saveGame',{gameData:{id:roomCode,player1:myUserId,player2:'',round1:'',round2:'',round3:'',round4:'',round5:'',status:'waiting',createdAt:new Date().toISOString()}});
     gameCreatedAt=new Date().toISOString();
     renderWaitingScreen();
@@ -458,7 +472,8 @@ async function initPlayer1(){
             var data=gameResult.data;
             if(data.player2&&data.player2!==''&&String(data.player2)!==String(myUserId)){
                 clearInterval(checkInterval);
-                opponentName=await getPlayerName(data.player2,getTranslation('opponent'));
+                var oppInfo=await getPlayerInfo(data.player2,getTranslation('opponent'));
+                opponentName=oppInfo.name;opponentAvatar=oppInfo.avatar;
                 await fetchData('updateGame',{gameId:roomCode,updates:{status:'in_progress'}});
                 await startOnlineGame();
             }
@@ -469,7 +484,8 @@ async function initPlayer1(){
 
 async function initPlayer2(){
     isPlayer1=false;myUserId=getUserId();
-    myName=await getPlayerName(myUserId,getTranslation('you'));
+    var myInfo=await getPlayerInfo(myUserId,getTranslation('you'));
+    myName=myInfo.name;myAvatar=myInfo.avatar;
     var gameResult=await fetchData('getGame',{gameId:roomCode});
     if(!gameResult.ok||!gameResult.data){
         var t=getTranslation;
@@ -481,14 +497,18 @@ async function initPlayer2(){
     
     if(String(data.player1)===String(myUserId)){
         isPlayer1=true;
-        if(data.player2)opponentName=await getPlayerName(data.player2,getTranslation('opponent'));
+        if(data.player2){
+            var oppInfo=await getPlayerInfo(data.player2,getTranslation('opponent'));
+            opponentName=oppInfo.name;opponentAvatar=oppInfo.avatar;
+        }
         await startOnlineGame();
         return;
     }
     
     if(data.player2&&String(data.player2)===String(myUserId)){
         isPlayer1=false;
-        opponentName=await getPlayerName(data.player1,getTranslation('opponent'));
+        var oppInfo2=await getPlayerInfo(data.player1,getTranslation('opponent'));
+        opponentName=oppInfo2.name;opponentAvatar=oppInfo2.avatar;
         await startOnlineGame();
         return;
     }
@@ -496,7 +516,8 @@ async function initPlayer2(){
     if(!data.player2||data.player2===''){
         await fetchData('updateGame',{gameId:roomCode,updates:{player2:myUserId,status:'in_progress'}});
         isPlayer1=false;
-        opponentName=await getPlayerName(data.player1,getTranslation('opponent'));
+        var oppInfo3=await getPlayerInfo(data.player1,getTranslation('opponent'));
+        opponentName=oppInfo3.name;opponentAvatar=oppInfo3.avatar;
         await startOnlineGame();
         return;
     }
@@ -532,10 +553,26 @@ function startPolling(){
             if(data.status==='finished'){clearInterval(checkInterval);endGame();return;}
             
             var currentRoundData=data['round'+currentRound]||'';
-            if(currentRoundData!==''&&!currentRoundData.includes('waiting')){
-                if(!isInGame){
-                    renderRoundsScreen();
+            var myNum=getMyPlayerNum();
+            var myTurnIdx=getMyTurnIndex();
+            var shouldBeMyTurn=false;
+            
+            if(currentRoundData===''){
+                shouldBeMyTurn=(myTurnIdx===currentTurn);
+            }else if(currentRoundData.includes('waiting')){
+                var parts=currentRoundData.split('][');
+                if(myNum===1){
+                    var p1Ans=parts[1]||'';
+                    shouldBeMyTurn=(p1Ans==='waiting'||p1Ans==='');
+                }else{
+                    var p2Ans=parts[2]||'';
+                    p2Ans=p2Ans.replace(']','').replace('[','');
+                    shouldBeMyTurn=(p2Ans==='waiting'||p2Ans==='');
                 }
+            }
+            
+            if(shouldBeMyTurn&&!isInGame){
+                renderRoundsScreen();
             }
         }
     },5000);
