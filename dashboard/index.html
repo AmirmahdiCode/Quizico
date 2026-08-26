@@ -668,8 +668,11 @@
             var currentRotation = 0, isSpinning = false;
             var SPIN_COST = 50;
             var currentLang = 'fa';
-            var refreshTimer = null;
-            var loadTimeout = null;
+
+            var leagueMatches = [
+                [1, 2], [2, 3], [1, 5], [3, 4], [1, 4],
+                [2, 5], [1, 3], [4, 5], [3, 5], [2, 4]
+            ];
 
             document.addEventListener('contextmenu', function(e) { e.preventDefault(); });
             document.addEventListener('dragstart', function(e) { e.preventDefault(); });
@@ -691,7 +694,9 @@
                     waiting: 'منتظر حریف', live: 'در جریان', finished: 'پایان',
                     you_p1: 'تو سازنده بازی هستی', you_p2: 'تو مهمون بازی هستی',
                     not_enough_coins: 'سکه کافی نداری!', empty: 'پوچ!',
-                    support: 'از سازنده حمایت کنید', exit_confirm: 'مطمئن هستید که خارج می‌شوید؟'
+                    support: 'از سازنده حمایت کنید', exit_confirm: 'مطمئن هستید که خارج می‌شوید؟',
+                    your_turn: 'نوبت توئه!', waiting_turn: 'منتظر نوبت',
+                    stage: 'مرحله'
                 },
                 en: {
                     tagline: 'Test your knowledge', loading: 'Loading...',
@@ -707,7 +712,9 @@
                     waiting: 'Waiting', live: 'Live', finished: 'Finished',
                     you_p1: 'You are Player 1', you_p2: 'You are Player 2',
                     not_enough_coins: 'Not enough coins!', empty: 'Empty!',
-                    support: 'Support the developer', exit_confirm: 'Are you sure you want to exit?'
+                    support: 'Support the developer', exit_confirm: 'Are you sure you want to exit?',
+                    your_turn: 'Your turn!', waiting_turn: 'Waiting for turn',
+                    stage: 'Stage'
                 },
                 ar: {
                     tagline: 'اختبر معلوماتك', loading: 'جار التحميل...',
@@ -723,7 +730,9 @@
                     waiting: 'بانتظار الخصم', live: 'جارية', finished: 'انتهت',
                     you_p1: 'أنت اللاعب 1', you_p2: 'أنت اللاعب 2',
                     not_enough_coins: 'عملات غير كافية!', empty: 'فارغ!',
-                    support: 'ادعم المطور', exit_confirm: 'هل أنت متأكد من الخروج؟'
+                    support: 'ادعم المطور', exit_confirm: 'هل أنت متأكد من الخروج؟',
+                    your_turn: 'دورك!', waiting_turn: 'بانتظار الدور',
+                    stage: 'مرحلة'
                 }
             };
 
@@ -775,6 +784,7 @@
 
             function getEitaaUser(){return webApp&&webApp.initDataUnsafe&&webApp.initDataUnsafe.user?webApp.initDataUnsafe.user:null;}
             function getUserId(){var u=getEitaaUser();return u?(typeof u.id==='number'?u.id.toString():String(u.id||'')):'';}
+            
             function fetchData(action, params) {
                 var payload = { action: action, username: getUserId() };
                 if (params) { for (var k in params) { if (params.hasOwnProperty(k)) payload[k] = params[k]; } }
@@ -840,14 +850,13 @@
                     '<span class="game-status-badge ' + statusClass + '">' + statusText + '</span></div>';
             }
 
-            function renderLeagueCard(lg, myId) {
-                var statusText = getTranslation('live');
+            function renderLeagueCard(lg, subtitle, statusText, statusClass) {
                 var onclick = ' onclick="continueLeague(\'' + lg.leagueId + '\')"';
                 return '<div class="game-card"' + onclick + '>' +
                     '<div class="game-icon"><i class="fa-solid fa-trophy"></i></div>' +
                     '<div class="game-info"><div class="game-title">' + lg.leagueId + '</div>' +
-                    '<div class="game-subtitle">' + getTranslation('league_games') + '</div></div>' +
-                    '<span class="game-status-badge live">' + statusText + '</span></div>';
+                    '<div class="game-subtitle">' + subtitle + '</div></div>' +
+                    '<span class="game-status-badge ' + statusClass + '">' + statusText + '</span></div>';
             }
 
             async function loadDashboard() {
@@ -877,16 +886,11 @@
                             return !String(g.id).startsWith('LG_') && (g.status === 'waiting' || g.status === 'in_progress');
                         });
                         
-                        var leagueGames = allGames.filter(function(g) {
-                            return String(g.id).startsWith('LG_') && (g.status === 'waiting' || g.status === 'in_progress');
-                        });
-                        
                         var past = allGames.filter(function(g) {
                             return g.status === 'finished';
                         }).slice(0, 5);
 
                         document.getElementById('onlineCount').textContent = onlineInProgress.length;
-                        document.getElementById('leagueCount').textContent = leagueGames.length;
                         document.getElementById('pastCount').textContent = past.length;
 
                         var onlineList = document.getElementById('onlineList');
@@ -894,17 +898,52 @@
                             ? renderEmpty(getTranslation('no_online_games'))
                             : onlineInProgress.map(function(g) { return renderGameCard(g, myId, 'active'); }).join('');
 
-                        var leagueList = document.getElementById('leagueList');
-                        leagueList.innerHTML = leagueGames.length === 0 
-                            ? renderEmpty(getTranslation('no_league_games'))
-                            : leagueGames.map(function(g) { 
-                                return renderLeagueCard({ leagueId: String(g.id).split('_game')[0] }, myId); 
-                            }).join('');
-
                         var pastList = document.getElementById('pastList');
                         pastList.innerHTML = past.length === 0 
                             ? renderEmpty(getTranslation('no_past_games'))
                             : past.map(function(g) { return renderGameCard(g, myId, 'past'); }).join('');
+                    }
+
+                    var leagueResult = await fetchData('getLeagueByUser', {});
+                    if (leagueResult.ok && leagueResult.data && !leagueResult.data.winner) {
+                        var lg = leagueResult.data;
+                        
+                        var results = String(lg.results || '').split(',').filter(function(r) { return r !== ''; });
+                        var currentGameNum = results.length + 1;
+                        var match = null;
+                        if (currentGameNum <= 10) {
+                            match = leagueMatches[currentGameNum - 1];
+                        }
+                        
+                        var myPlayerNum = -1;
+                        for (var i = 1; i <= 5; i++) {
+                            if (lg['player' + i] && String(lg['player' + i]).split(',')[0] === String(myId)) {
+                                myPlayerNum = i;
+                                break;
+                            }
+                        }
+                        
+                        var statusText = getTranslation('live');
+                        var statusClass = 'live';
+                        var subtitle = getTranslation('stage') + ' ' + currentGameNum + ' از ۱۰';
+                        
+                        if (myPlayerNum !== -1 && match) {
+                            if (match[0] === myPlayerNum || match[1] === myPlayerNum) {
+                                subtitle += ' - ' + getTranslation('your_turn');
+                                statusText = getTranslation('your_turn');
+                                statusClass = 'live';
+                            } else {
+                                subtitle += ' - ' + getTranslation('waiting_turn');
+                                statusText = getTranslation('waiting_turn');
+                                statusClass = 'waiting';
+                            }
+                        }
+                        
+                        document.getElementById('leagueCount').textContent = '1';
+                        document.getElementById('leagueList').innerHTML = renderLeagueCard(lg, subtitle, statusText, statusClass);
+                    } else {
+                        document.getElementById('leagueCount').textContent = '0';
+                        document.getElementById('leagueList').innerHTML = renderEmpty(getTranslation('no_league_games'));
                     }
 
                 } catch(e) {
