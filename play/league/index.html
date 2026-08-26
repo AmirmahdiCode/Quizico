@@ -237,27 +237,6 @@
         .players-search-box input { width: 100%; padding: 8px 35px 8px 10px; border: var(--border); border-radius: 8px; background: var(--bg2); color: var(--text); font-family: inherit; font-size: 9px; outline: none; }
         .players-search-box i { position: absolute; top: 50%; right: 10px; transform: translateY(-50%); color: var(--text-light); font-size: 11px; }
         .players-invite-list { display: flex; flex-direction: column; gap: 6px; max-height: 300px; overflow-y: auto; }
-        .invite-player-item { display: flex; align-items: center; gap: 8px; padding: 8px 10px; border: var(--border); border-radius: 8px; background: var(--bg2); }
-        .invite-avatar { width: 30px; height: 30px; border-radius: 50%; background: var(--bg2); border: var(--border); display: flex; align-items: center; justify-content: center; font-size: 12px; color: var(--primary); overflow: hidden; flex-shrink: 0; }
-        .invite-avatar img { width: 100%; height: 100%; object-fit: cover; }
-        .invite-info { flex: 1; min-width: 0; }
-        .invite-name { font-size: 10px; font-weight: 700; color: var(--dark); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .invite-score { font-size: 8px; color: var(--text-light); }
-        .invite-btn { padding: 5px 12px; background: var(--primary); color: #fff; border: var(--border); border-radius: 6px; font-family: 'IRANSans', Tahoma, sans-serif; font-size: 8px; font-weight: 700; cursor: pointer; box-shadow: 2px 2px 0 #000; flex-shrink: 0; }
-
-        .players-row { display: flex; gap: 8px; }
-        .player-card {
-            flex: 1;
-            background: var(--card-bg);
-            border: var(--border);
-            border-radius: var(--radius);
-            padding: 10px;
-            text-align: center;
-            box-shadow: var(--shadow);
-        }
-        .player-card.active { border-color: var(--gold); border-width: 2px; }
-        .player-tag { font-size: 9px; font-weight: 800; color: var(--dark); margin-bottom: 4px; }
-        .player-score { font-size: 13px; font-weight: 800; color: var(--gold); }
 
         .league-table {
             background: var(--card-bg);
@@ -352,6 +331,7 @@
         .option-btn.selected-correct { background: #10b981; color: #fff; }
         .option-btn.selected-wrong { background: #ef4444; color: #fff; }
         .option-btn.disabled { pointer-events: none; opacity: 0.6; }
+        .option-btn.hidden-option { opacity: 0.2; pointer-events: none; text-decoration: line-through; }
         .option-letter {
             width: 22px;
             height: 22px;
@@ -366,6 +346,26 @@
             flex-shrink: 0;
             border: var(--border);
         }
+
+        .actions-row { display: flex; gap: 6px; margin-bottom: 8px; }
+        .action-btn {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 3px;
+            padding: 7px;
+            border: var(--border);
+            border-radius: 8px;
+            background: var(--card-bg);
+            cursor: pointer;
+            box-shadow: 2px 2px 0 #000;
+            font-family: 'IRANSans', Tahoma, sans-serif;
+            font-size: 8px;
+            font-weight: 700;
+            color: var(--dark);
+        }
+        .action-btn:disabled { opacity: 0.3; cursor: not-allowed; }
 
         .bottom-btn-container {
             position: fixed;
@@ -453,12 +453,13 @@
     <script>
         (function() {
             var webApp = window.Eitaa?.WebApp;
-            var API_URL = 'https://script.google.com/macros/s/AKfycbwV2X5hZB6WSJSezWWsYXq-94gIRu6z6kuzTIupTnHx2VqDKpzlZLcBohnZO2Lk1KHmxA/exec';
+            var API_URL = 'https://script.google.com/macros/s/AKfycbyHQXQ0TffhGyW1MdtI-_sWlZMhLSPDCR3Az5dDkuwv9TJt1o6-f_aCOg_aHJnty_8P/exec';
             var SAD_IMAGE = 'https://cdn.imgurl.ir/uploads/g58935_InShot_20260822_140943752.png';
 
             var TOTAL_ROUNDS = 5;
             var QUESTIONS_PER_ROUND = 3;
             var QUESTION_TIME = 60;
+            var GAME_TIME_LIMIT = 60;
             var leagueCode = null;
             var isCreator = false;
             var currentRound = 1;
@@ -477,6 +478,11 @@
             var userCoins = 0;
             var currentGameId = '';
             var isMyTurn = false;
+            var isInGame = false;
+            var currentGameIndex = 0;
+            var currentOpponentId = '';
+            var gameCreatedAt = '';
+            var actionUsedThisQuestion = false;
 
             var leagueMatches = [
                 [1, 2], [2, 3], [1, 5], [3, 4], [1, 4],
@@ -502,6 +508,36 @@
             }
             function shuffleArray(a){for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t;}return a;}
             function hideLoader(){document.getElementById('loaderWrapper').style.display='none';document.getElementById('gameContent').classList.add('show');}
+
+            function checkTimeExpired(createdAt) {
+                if (!createdAt) return false;
+                var now = new Date();
+                var created = new Date(createdAt);
+                var diffMinutes = (now - created) / (1000 * 60);
+                return diffMinutes >= GAME_TIME_LIMIT;
+            }
+
+            function handleTimeExpired() {
+                clearInterval(timerInterval);
+                clearInterval(checkInterval);
+                isInGame = false;
+                var result = isMyTurn ? '0' : '3';
+                fetchData('updateLeagueResult', { leagueId: leagueCode, gameNum: currentGameIndex + 1, result: result });
+                fetchData('updateGame', { gameId: currentGameId, updates: { status: 'finished' } });
+                
+                var html = '<div class="result-banner">';
+                html += '<div class="result-icon"><i class="fa-solid fa-clock" style="color:#ef4444;"></i></div>';
+                html += '<div class="result-text">وقت بازی تموم شد!</div>';
+                if (isMyTurn) {
+                    html += '<div class="result-score">تو نتونستی به موقع جواب بدی، حریفت برنده شد!</div>';
+                } else {
+                    html += '<div class="result-score">حریفت نتونست به موقع جواب بده، تو برنده شدی!</div>';
+                }
+                html += '<button class="result-btn" onclick="backToLeague()">بازگشت به لیگ</button></div>';
+                document.getElementById('gameContent').innerHTML = html;
+                document.getElementById('bottomBtnContainer').style.display = 'none';
+                hideLoader();
+            }
 
             function renderWaitingScreen() {
                 var inviteLink = 'https://eitaa.com/gameland_app/Quizico?startapp=' + leagueCode + '&btn=بزن.بریم.🚀';
@@ -573,19 +609,20 @@
                     var players = [];
                     for (var i = 1; i <= 5; i++) {
                         if (result.data['player' + i]) {
-                            players.push({ num: i, name: 'بازیکن ' + i, pts: result.data['pts' + i] || 0 });
+                            var pData = String(result.data['player' + i]).split(',');
+                            players.push({ num: i, id: pData[0], pts: parseInt(pData[1]) || 0 });
                         }
                     }
                     players.sort(function(a, b) { return b.pts - a.pts; });
                     document.getElementById('leagueTableBody').innerHTML = players.map(function(p, idx) {
-                        return '<div class="league-table-row"><span class="rank">#' + (idx+1) + '</span><span class="name">' + p.name + '</span><span class="pts">' + p.pts + ' امتیاز</span></div>';
+                        return '<div class="league-table-row"><span class="rank">#' + (idx+1) + '</span><span class="name">بازیکن ' + p.num + '</span><span class="pts">' + p.pts + ' امتیاز</span></div>';
                     }).join('');
 
+                    var results = String(result.data.results || '').split(',').filter(function(r) { return r !== ''; });
                     var gamesHtml = '';
                     for (var j = 0; j < leagueMatches.length; j++) {
                         var m = leagueMatches[j];
-                        var resultKey = 'game' + (j+1);
-                        var gameResult = result.data[resultKey] || '';
+                        var gameResult = results[j] || '';
                         var status = gameResult ? 'done' : 'waiting';
                         var statusText = gameResult ? 'انجام شد' : 'در انتظار';
                         gamesHtml += '<div class="game-item"><span>بازی ' + (j+1) + ':</span><span class="vs">بازیکن ' + m[0] + ' vs بازیکن ' + m[1] + '</span><span class="status ' + status + '">' + statusText + '</span></div>';
@@ -596,10 +633,17 @@
 
             function renderQuestionScreen() {
                 isAnswered = false;
+                isInGame = true;
+                actionUsedThisQuestion = false;
                 var q = currentQuestions[currentQuestionIndex];
                 var opts = shuffleArray(q.options.slice());
                 var ci = opts.indexOf(q.options[q.correctOption - 1]);
-                var html = '<div class="question-card">';
+                var html = '<div class="actions-row">';
+                html += '<button class="action-btn" id="btnRemove" onclick="useRemove50()"><i class="fa-solid fa-trash" style="color:#ef4444;"></i> ۵۰</button>';
+                html += '<button class="action-btn" id="btnSwap" onclick="useSwapQuestion()"><i class="fa-solid fa-arrows-rotate" style="color:#06b6d4;"></i> ۱۰۰</button>';
+                html += '<button class="action-btn" id="btnSkip" onclick="useSkipQuestion()"><i class="fa-solid fa-forward" style="color:#f59e0b;"></i> ۱۵۰</button>';
+                html += '</div>';
+                html += '<div class="question-card">';
                 html += '<div class="question-text">' + q.question + '</div>';
                 html += '<div class="timer-bar-container"><div class="timer-bar-fill" id="timerFill" style="width:100%;"></div></div>';
                 html += '<div class="timer-text" id="timerText">60s</div>';
@@ -663,19 +707,99 @@
                 setTimeout(goToNext, 800);
             };
 
+            window.useRemove50 = function() {
+                if (isAnswered || actionUsedThisQuestion) return;
+                if (userCoins < 50) { if (webApp) webApp.showAlert('سکه کافی نداری!'); return; }
+                userCoins -= 50;
+                actionUsedThisQuestion = true;
+                document.getElementById('coinsHeader').textContent = userCoins;
+                var q = currentQuestions[currentQuestionIndex];
+                var ct = q.options[q.correctOption - 1];
+                var wo = q.options.filter(function(o){return o!==ct;});
+                var th = shuffleArray(wo).slice(0,2);
+                document.querySelectorAll('.option-btn').forEach(function(b){ if(th.indexOf(b.getAttribute('data-text'))!==-1) b.classList.add('hidden-option'); });
+                disableActions();
+                fetchData('updateUser', { coins: userCoins });
+            };
+
+            window.useSwapQuestion = function() {
+                if (isAnswered || actionUsedThisQuestion) return;
+                if (userCoins < 100) { if (webApp) webApp.showAlert('سکه کافی نداری!'); return; }
+                userCoins -= 100;
+                actionUsedThisQuestion = true;
+                document.getElementById('coinsHeader').textContent = userCoins;
+                var rem = questions.filter(function(q){return currentQuestions.indexOf(q)===-1;});
+                if (rem.length > 0) currentQuestions[currentQuestionIndex] = shuffleArray(rem)[0];
+                disableActions();
+                fetchData('updateUser', { coins: userCoins });
+                renderQuestionScreen();
+            };
+
+            window.useSkipQuestion = function() {
+                if (isAnswered || actionUsedThisQuestion) return;
+                if (userCoins < 150) { if (webApp) webApp.showAlert('سکه کافی نداری!'); return; }
+                userCoins -= 150;
+                actionUsedThisQuestion = true;
+                document.getElementById('coinsHeader').textContent = userCoins;
+                myScore += 5;
+                myCorrectCount++;
+                myAnswers.push(true);
+                disableActions();
+                fetchData('updateUser', { coins: userCoins });
+                clearInterval(timerInterval);
+                setTimeout(goToNext, 300);
+            };
+
+            function disableActions(){ document.querySelectorAll('.action-btn').forEach(function(b){b.disabled=true;}); }
+
             function finishRound() {
+                isInGame = false;
                 roundResults.push({ myScore: myCorrectCount * 5, myCorrect: myCorrectCount, myAnswers: myAnswers });
                 var ansStr = myAnswers.map(function(a) { return a ? 'T' : 'F'; }).join(',');
                 var updateData = {};
-                updateData['round' + currentRound] = ansStr;
+                updateData['round' + currentRound + '_p' + (isCreator ? '1' : '2')] = ansStr;
                 fetchData('updateGame', { gameId: currentGameId, updates: updateData });
                 myCorrectCount = 0;
                 myAnswers = [];
                 currentRound++;
                 currentQuestionIndex = 0;
                 currentTurn++;
-                checkTurn();
+                
+                if (currentRound > TOTAL_ROUNDS) {
+                    endLeagueGame();
+                } else {
+                    checkTurn();
+                }
             }
+
+            function endLeagueGame() {
+                isInGame = false;
+                clearInterval(checkInterval);
+                var result = '1';
+                if (myScore > 0) result = '3';
+                fetchData('updateLeagueResult', { leagueId: leagueCode, gameNum: currentGameIndex + 1, result: result });
+                fetchData('updateGame', { gameId: currentGameId, updates: { status: 'finished' } });
+                
+                var html = '<div class="result-banner">';
+                html += '<div class="result-icon"><i class="fa-solid fa-trophy" style="color:#f59e0b;"></i></div>';
+                html += '<div class="result-text">بازی تموم شد!</div>';
+                html += '<div class="result-score">امتیاز تو: ' + myScore + '</div>';
+                html += '<button class="result-btn" onclick="backToLeague()">بازگشت به لیگ</button></div>';
+                document.getElementById('gameContent').innerHTML = html;
+                document.getElementById('bottomBtnContainer').style.display = 'none';
+                hideLoader();
+            }
+
+            window.backToLeague = function() {
+                renderLeagueTable();
+                checkInterval = setInterval(async function() {
+                    var result = await fetchData('getLeague', { leagueId: leagueCode });
+                    if (result.ok && result.data && result.data.winner) {
+                        clearInterval(checkInterval);
+                        showLeagueResults();
+                    }
+                }, 5000);
+            };
 
             function checkTurn() {
                 var myNum = isCreator ? 1 : 2;
@@ -686,6 +810,7 @@
                         break;
                     }
                 }
+                isMyTurn = isMyTurnNow;
                 if (isMyTurnNow) {
                     loadRoundQuestions();
                     renderQuestionScreen();
@@ -695,8 +820,10 @@
             }
 
             function renderWaitingTurnScreen() {
+                isInGame = false;
                 var html = '<div class="result-banner">';
                 html += '<div class="result-text">منتظر حریف...</div>';
+                html += '<div class="result-score">بازی حداکثر ۶۰ دقیقه وقت داره</div>';
                 html += '</div>';
                 document.getElementById('gameContent').innerHTML = html;
                 document.getElementById('bottomBtnContainer').style.display = 'none';
@@ -715,98 +842,62 @@
                 }
             };
 
-            async function initPlayer1() {
-                leagueCode = generateLeagueCode();
-                isCreator = true;
-                myUserId = getUserId();
-                await fetchData('saveLeague', {
-                    leagueId: leagueCode,
-                    creator: myUserId,
-                    player1: myUserId
-                });
-                renderWaitingScreen();
-                checkInterval = setInterval(async function() {
-                    var result = await fetchData('getLeague', { leagueId: leagueCode });
-                    if (result.ok && result.data) {
-                        var count = 0;
-                        for (var i = 1; i <= 5; i++) {
-                            if (result.data['player' + i]) count++;
-                        }
-                        if (count === 5) {
-                            clearInterval(checkInterval);
-                            startLeague();
-                        }
-                    }
-                }, 3000);
-            }
-
-            async function initPlayer2() {
-                isCreator = false;
-                myUserId = getUserId();
+            async function startLeagueGame(gameIndex) {
+                currentGameIndex = gameIndex;
+                currentGameId = leagueCode + '_game' + (gameIndex + 1);
+                currentRound = 1;
+                currentTurn = 0;
+                myScore = 0;
+                myCorrectCount = 0;
+                myAnswers = [];
+                roundResults = [];
+                
+                var match = leagueMatches[gameIndex];
                 var result = await fetchData('getLeague', { leagueId: leagueCode });
                 if (result.ok && result.data) {
-                    if (result.data.player1 === myUserId) {
-                        isCreator = true;
-                        renderWaitingScreen();
-                        checkInterval = setInterval(async function() {
-                            var checkResult = await fetchData('getLeague', { leagueId: leagueCode });
-                            if (checkResult.ok && checkResult.data) {
-                                var count = 0;
-                                for (var i = 1; i <= 5; i++) {
-                                    if (checkResult.data['player' + i]) count++;
-                                }
-                                if (count === 5) {
-                                    clearInterval(checkInterval);
-                                    startLeague();
-                                }
-                            }
-                        }, 3000);
+                    var p1Data = String(result.data['player' + match[0]]).split(',');
+                    var p2Data = String(result.data['player' + match[1]]).split(',');
+                    
+                    if (p1Data[0] === myUserId) { isCreator = true; currentOpponentId = p2Data[0]; }
+                    else if (p2Data[0] === myUserId) { isCreator = false; currentOpponentId = p1Data[0]; }
+                    else {
+                        renderLeagueTable();
                         return;
                     }
-                    var joined = false;
-                    for (var i = 2; i <= 5; i++) {
-                        if (!result.data['player' + i]) {
-                            var updateData = {};
-                            updateData['player' + i] = myUserId;
-                            await fetchData('updateLeague', { leagueId: leagueCode, updates: updateData });
-                            joined = true;
-                            break;
+                    
+                    await fetchData('saveGame', {
+                        gameData: {
+                            id: currentGameId,
+                            player1: p1Data[0],
+                            player2: p2Data[0],
+                            round1: '',
+                            round2: '',
+                            round3: '',
+                            round4: '',
+                            round5: '',
+                            status: 'in_progress',
+                            createdAt: new Date().toISOString()
                         }
+                    });
+                    
+                    gameCreatedAt = new Date().toISOString();
+                    
+                    var qd = await fetchData('getQuestions', { limit: 50 });
+                    if (qd.ok && Array.isArray(qd.data) && qd.data.length >= QUESTIONS_PER_ROUND) {
+                        questions = qd.data;
+                        checkTurn();
+                        startTimeCheck();
                     }
-                    if (!joined) {
-                        document.getElementById('gameContent').innerHTML = '<div class="result-banner"><div class="result-text">لیگ پره!</div></div>';
-                        document.getElementById('bottomBtnContainer').style.display = 'none';
-                        hideLoader();
-                        return;
-                    }
-                    renderWaitingScreen();
-                    checkInterval = setInterval(async function() {
-                        var checkResult = await fetchData('getLeague', { leagueId: leagueCode });
-                        if (checkResult.ok && checkResult.data) {
-                            var count = 0;
-                            for (var i = 1; i <= 5; i++) {
-                                if (checkResult.data['player' + i]) count++;
-                            }
-                            if (count === 5) {
-                                clearInterval(checkInterval);
-                                startLeague();
-                            }
-                        }
-                    }, 3000);
                 }
             }
 
-            async function startLeague() {
-                renderLeagueTable();
+            function startTimeCheck() {
+                clearInterval(checkInterval);
                 checkInterval = setInterval(async function() {
-                    var result = await fetchData('getLeague', { leagueId: leagueCode });
-                    if (result.ok && result.data && result.data.status === 'finished') {
-                        clearInterval(checkInterval);
-                        showLeagueResults();
-                    } else {
-                        loadLeagueData();
+                    if (checkTimeExpired(gameCreatedAt)) {
+                        handleTimeExpired();
                     }
-                }, 5000);
+                }, 30000);
             }
 
             async function showLeagueResults() {
@@ -824,19 +915,37 @@
 
             window.backToDashboard = function() { window.location.href = '../../dashboard/'; };
 
+            function handleBackButton() {
+                if (isInGame) {
+                    webApp.showConfirm('اگه خارج بشی این راند رو با ۰ تمام می‌کنی!', function(confirmed) {
+                        if (confirmed) {
+                            clearInterval(timerInterval);
+                            var ansStr = 'F,F,F';
+                            var updateData = {};
+                            updateData['round' + currentRound + '_p' + (isCreator ? '1' : '2')] = ansStr;
+                            fetchData('updateGame', { gameId: currentGameId, updates: updateData });
+                            window.location.href = '../../dashboard/';
+                        }
+                    });
+                } else {
+                    window.location.href = '../../dashboard/';
+                }
+            }
+
             async function init() {
                 if (webApp) {
                     webApp.ready();
                     webApp.expand();
                     webApp.BackButton.show();
-                    webApp.BackButton.onClick(function() {
-                        webApp.showConfirm('مطمئنی از لیگ خارج میشی؟', function(confirmed) {
-                            if (confirmed) {
-                                window.location.href = '../../dashboard/';
-                            }
-                        });
-                    });
+                    webApp.BackButton.onClick(handleBackButton);
                 }
+                
+                var ud = await fetchData('getUser', {});
+                if (ud.ok && ud.data) {
+                    userCoins = ud.data.coins || 0;
+                    document.getElementById('coinsHeader').textContent = userCoins;
+                }
+                
                 myUserId = getUserId();
                 var startParam = getStartParam();
                 var savedLeague = localStorage.getItem('leagueCode');
@@ -844,13 +953,142 @@
                 if (startParam) {
                     leagueCode = startParam;
                     localStorage.removeItem('leagueCode');
-                    initPlayer2();
+                    await initPlayer2();
                 } else if (savedLeague) {
                     leagueCode = savedLeague;
                     localStorage.removeItem('leagueCode');
-                    initPlayer2();
+                    await initPlayer2();
                 } else {
-                    initPlayer1();
+                    await initPlayer1();
+                }
+            }
+
+            async function initPlayer1() {
+                leagueCode = generateLeagueCode();
+                isCreator = true;
+                myUserId = getUserId();
+                await fetchData('saveLeague', {
+                    leagueId: leagueCode,
+                    creator: myUserId
+                });
+                renderWaitingScreen();
+                checkInterval = setInterval(async function() {
+                    var result = await fetchData('getLeague', { leagueId: leagueCode });
+                    if (result.ok && result.data) {
+                        var count = 0;
+                        for (var i = 1; i <= 5; i++) {
+                            if (result.data['player' + i]) count++;
+                        }
+                        if (count === 5) {
+                            clearInterval(checkInterval);
+                            await startNextGame();
+                        }
+                    }
+                }, 3000);
+            }
+
+            async function initPlayer2() {
+                isCreator = false;
+                myUserId = getUserId();
+                var result = await fetchData('getLeague', { leagueId: leagueCode });
+                if (result.ok && result.data) {
+                    if (String(result.data.player1).split(',')[0] === myUserId) {
+                        isCreator = true;
+                        renderWaitingScreen();
+                        checkInterval = setInterval(async function() {
+                            var checkResult = await fetchData('getLeague', { leagueId: leagueCode });
+                            if (checkResult.ok && checkResult.data) {
+                                var count = 0;
+                                for (var i = 1; i <= 5; i++) {
+                                    if (checkResult.data['player' + i]) count++;
+                                }
+                                if (count === 5) {
+                                    clearInterval(checkInterval);
+                                    await startNextGame();
+                                }
+                            }
+                        }, 3000);
+                        return;
+                    }
+                    
+                    var joined = false;
+                    for (var i = 2; i <= 5; i++) {
+                        if (!result.data['player' + i]) {
+                            await fetchData('joinLeague', { leagueId: leagueCode, userId: myUserId });
+                            joined = true;
+                            break;
+                        }
+                    }
+                    
+                    if (!joined) {
+                        var isAlreadyIn = false;
+                        for (var j = 1; j <= 5; j++) {
+                            if (result.data['player' + j] && String(result.data['player' + j]).split(',')[0] === myUserId) {
+                                isAlreadyIn = true;
+                                break;
+                            }
+                        }
+                        if (!isAlreadyIn) {
+                            document.getElementById('gameContent').innerHTML = '<div class="result-banner"><div class="result-text">لیگ پره!</div></div>';
+                            document.getElementById('bottomBtnContainer').style.display = 'none';
+                            hideLoader();
+                            return;
+                        }
+                    }
+                    
+                    renderWaitingScreen();
+                    checkInterval = setInterval(async function() {
+                        var checkResult = await fetchData('getLeague', { leagueId: leagueCode });
+                        if (checkResult.ok && checkResult.data) {
+                            var count = 0;
+                            for (var i = 1; i <= 5; i++) {
+                                if (checkResult.data['player' + i]) count++;
+                            }
+                            if (count === 5) {
+                                clearInterval(checkInterval);
+                                await startNextGame();
+                            }
+                        }
+                    }, 3000);
+                }
+            }
+
+            async function startNextGame() {
+                var result = await fetchData('getLeague', { leagueId: leagueCode });
+                if (result.ok && result.data) {
+                    var results = String(result.data.results || '').split(',').filter(function(r) { return r !== ''; });
+                    var nextGame = results.length;
+                    
+                    if (nextGame < 10) {
+                        var match = leagueMatches[nextGame];
+                        var p1Data = String(result.data['player' + match[0]]).split(',');
+                        var p2Data = String(result.data['player' + match[1]]).split(',');
+                        
+                        if (p1Data[0] === myUserId || p2Data[0] === myUserId) {
+                            await startLeagueGame(nextGame);
+                        } else {
+                            renderLeagueTable();
+                            checkInterval = setInterval(async function() {
+                                var checkResult = await fetchData('getLeague', { leagueId: leagueCode });
+                                if (checkResult.ok && checkResult.data) {
+                                    var checkResults = String(checkResult.data.results || '').split(',').filter(function(r) { return r !== ''; });
+                                    if (checkResults.length > nextGame) {
+                                        clearInterval(checkInterval);
+                                        await startNextGame();
+                                    }
+                                }
+                            }, 5000);
+                        }
+                    } else {
+                        renderLeagueTable();
+                        checkInterval = setInterval(async function() {
+                            var checkResult = await fetchData('getLeague', { leagueId: leagueCode });
+                            if (checkResult.ok && checkResult.data && checkResult.data.winner) {
+                                clearInterval(checkInterval);
+                                showLeagueResults();
+                            }
+                        }, 5000);
+                    }
                 }
             }
 
