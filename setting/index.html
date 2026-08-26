@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>تنظیمات | Quizico</title>
+    <title>پروفایل | Quizico</title>
     <script src="https://developer.eitaa.com/eitaa-web-app.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/gh/rastikerdar/iran-sans-font@v1.0.0/dist/font-face.css" rel="stylesheet">
@@ -25,6 +25,7 @@
             --shadow: 3px 3px 0 #000000;
             --radius: 12px;
             --border: 1px solid #000000;
+            --gold: #f59e0b;
         }
 
         [data-theme="dark"] {
@@ -121,136 +122,287 @@
             gap: 12px;
         }
 
-        .settings-card {
-            background: var(--card-bg);
+        .loader-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 60vh;
+            gap: 12px;
+        }
+        .loader {
+            width: 50px;
+            height: 50px;
+            border: 5px solid var(--bg3);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+        .loader-text { font-size: 12px; font-weight: 700; color: var(--text); }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .profile-content { display: none; }
+        .profile-content.show { display: flex; flex-direction: column; gap: 12px; }
+
+        .profile-header-card {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
             border: var(--border);
             border-radius: var(--radius);
             padding: 16px;
             box-shadow: var(--shadow);
         }
 
-        .settings-title {
-            font-size: 12px;
-            font-weight: 800;
-            color: var(--dark);
-            margin-bottom: 12px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            border-bottom: 1px dashed var(--text-light);
-            padding-bottom: 8px;
-        }
+        .profile-top { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
 
-        .settings-title i { color: var(--primary); }
-
-        .language-options { display: flex; gap: 8px; flex-wrap: wrap; }
-
-        .lang-btn {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            padding: 8px 16px;
+        .profile-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: #fff;
             border: var(--border);
-            border-radius: 8px;
-            background: var(--bg2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: var(--primary);
+            overflow: hidden;
+            flex-shrink: 0;
             cursor: pointer;
-            box-shadow: 2px 2px 0 #000;
+            transition: all 0.2s ease;
+        }
+        .profile-avatar:active { transform: scale(0.95); }
+        .profile-avatar img { width: 100%; height: 100%; object-fit: cover; }
+
+        .profile-info { flex: 1; min-width: 0; }
+        .profile-name { font-size: 14px; font-weight: 800; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .profile-username { font-size: 9px; color: rgba(255,255,255,0.7); direction: ltr; text-align: right; }
+
+        .change-avatar-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            padding: 8px 14px;
+            background: rgba(255,255,255,0.2);
+            border: 1px solid rgba(255,255,255,0.4);
+            border-radius: 8px;
+            color: #fff;
             font-family: 'IRANSans', Tahoma, sans-serif;
             font-size: 10px;
             font-weight: 700;
-            color: var(--text);
+            cursor: pointer;
             transition: all 0.2s ease;
+            margin-top: 8px;
+            width: 100%;
         }
-        .lang-btn:active { transform: translate(1px, 1px); box-shadow: 1px 1px 0 #000; }
-        .lang-btn.active { background: var(--primary); color: #fff; border-color: var(--primary); }
+        .change-avatar-btn:active { transform: scale(0.97); background: rgba(255,255,255,0.3); }
+        .change-avatar-btn i { font-size: 12px; }
 
-        .theme-options { display: flex; flex-direction: column; gap: 8px; }
-
-        .theme-option {
+        .profile-badges { display: flex; gap: 8px; flex-wrap: wrap; border-top: 1px solid rgba(255,255,255,0.2); padding-top: 10px; }
+        .badge {
             display: flex;
             align-items: center;
-            gap: 10px;
-            padding: 10px 14px;
-            border: var(--border);
+            gap: 4px;
+            background: rgba(255,255,255,0.15);
+            border: 1px solid rgba(255,255,255,0.3);
             border-radius: 8px;
-            cursor: pointer;
-            box-shadow: 2px 2px 0 #000;
-            background: var(--bg2);
-            transition: all 0.2s ease;
-        }
-        .theme-option:active { transform: translate(1px, 1px); box-shadow: 1px 1px 0 #000; }
-        .theme-option.active { background: var(--primary); border-color: var(--primary); }
-        .theme-option.active .theme-option-label { color: #fff; }
-        .theme-option.active .theme-option-desc { color: rgba(255,255,255,0.8); }
-        .theme-option.active i { color: #fff; }
-        .theme-option i { font-size: 18px; color: var(--primary); width: 24px; text-align: center; }
-        .theme-option-label { font-size: 11px; font-weight: 700; color: var(--dark); }
-        .theme-option-desc { font-size: 8px; color: var(--text-light); }
-
-        .color-options { display: flex; gap: 8px; flex-wrap: wrap; }
-
-        .color-option {
-            width: 32px;
-            height: 32px;
-            border-radius: 8px;
-            border: var(--border);
-            cursor: pointer;
-            box-shadow: 2px 2px 0 #000;
-            transition: all 0.2s ease;
-        }
-        .color-option:active { transform: translate(1px, 1px); box-shadow: 1px 1px 0 #000; }
-        .color-option.active { box-shadow: 0 0 15px var(--primary), 2px 2px 0 #000; transform: scale(1.1); }
-
-        .setting-item {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 10px 0;
-            border-bottom: 1px solid var(--bg3);
-        }
-        .setting-item:last-child { border-bottom: none; }
-        .setting-item.disabled { opacity: 0.4; pointer-events: none; }
-
-        .setting-info { display: flex; align-items: center; gap: 10px; }
-        .setting-info i { font-size: 16px; color: var(--primary); width: 22px; text-align: center; }
-        .setting-label { font-size: 11px; font-weight: 700; color: var(--dark); }
-        .setting-desc { font-size: 8px; color: var(--text-light); }
-
-        .coming-soon-badge {
-            font-size: 7px;
+            padding: 3px 10px;
+            font-size: 9px;
             font-weight: 700;
-            padding: 2px 6px;
-            border-radius: 8px;
-            background: var(--bg3);
-            color: var(--text-light);
-            border: var(--border);
-            margin-right: 6px;
+            color: #fff;
         }
 
-        .toggle-switch {
-            width: 40px;
-            height: 22px;
+        .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+
+        .stat-card {
+            background: var(--card-bg);
+            border: var(--border);
+            border-radius: var(--radius);
+            padding: 12px;
+            text-align: center;
+            box-shadow: var(--shadow);
+        }
+        .stat-icon { font-size: 18px; color: var(--primary); margin-bottom: 4px; }
+        .stat-value { font-size: 16px; font-weight: 800; color: var(--dark); }
+        .stat-label { font-size: 8px; color: var(--text-light); }
+
+        .progress-card {
+            background: var(--card-bg);
+            border: var(--border);
+            border-radius: var(--radius);
+            padding: 14px;
+            box-shadow: var(--shadow);
+        }
+        .progress-title { font-size: 11px; font-weight: 800; color: var(--dark); margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
+        .progress-title i { color: var(--primary); }
+        .progress-bar-container {
             background: var(--bg3);
             border: var(--border);
-            border-radius: 20px;
-            cursor: pointer;
+            border-radius: 15px;
+            height: 18px;
+            overflow: hidden;
             position: relative;
-            transition: all 0.3s ease;
-            box-shadow: 2px 2px 0 #000;
-            flex-shrink: 0;
         }
-        .toggle-switch.active { background: var(--primary); }
-        .toggle-switch::after {
-            content: '';
+        .progress-bar-fill {
+            height: 100%;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            border-radius: 15px;
+            transition: width 1s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            width: 0%;
+        }
+        .progress-text {
             position: absolute;
-            top: 2px; right: 20px;
-            width: 14px; height: 14px;
-            background: #fff;
+            top: 50%;
+            right: 50%;
+            transform: translate(50%, -50%);
+            font-size: 8px;
+            font-weight: 800;
+            color: #fff;
+        }
+
+        .league-card {
+            background: var(--card-bg);
+            border: var(--border);
+            border-radius: var(--radius);
+            padding: 14px;
+            box-shadow: var(--shadow);
+        }
+        .league-title { font-size: 11px; font-weight: 800; color: var(--dark); margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
+        .league-title i { color: var(--primary); }
+        .league-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+        .league-item { text-align: center; padding: 10px; border-radius: 8px; border: var(--border); background: var(--bg2); }
+        .league-item.win { background: #10b981; color: #fff; }
+        .league-item.draw { background: #f59e0b; color: #fff; }
+        .league-item.loss { background: #ef4444; color: #fff; }
+        .league-item-value { font-size: 16px; font-weight: 800; display: block; }
+        .league-item-label { font-size: 8px; }
+
+        .achievements-card {
+            background: var(--card-bg);
+            border: var(--border);
+            border-radius: var(--radius);
+            padding: 14px;
+            box-shadow: var(--shadow);
+        }
+        .achievements-title { font-size: 11px; font-weight: 800; color: var(--dark); margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
+        .achievements-title i { color: var(--primary); }
+        .achievements-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+        .achievement-item { text-align: center; padding: 8px 4px; border: var(--border); border-radius: 8px; background: var(--bg2); }
+        .achievement-icon { font-size: 20px; display: block; margin-bottom: 3px; }
+        .achievement-name { font-size: 7px; font-weight: 700; color: var(--dark); }
+        .achievement-item.locked { opacity: 0.3; filter: grayscale(1); }
+
+        .games-history-card {
+            background: var(--card-bg);
+            border: var(--border);
+            border-radius: var(--radius);
+            padding: 14px;
+            box-shadow: var(--shadow);
+        }
+        .games-list { display: flex; flex-direction: column; gap: 6px; max-height: 200px; overflow-y: auto; }
+        .game-item { display: flex; align-items: center; justify-content: space-between; padding: 8px 10px; border: var(--border); border-radius: 8px; background: var(--bg2); }
+        .game-players { font-size: 9px; font-weight: 700; color: var(--dark); }
+        .game-score { font-size: 9px; font-weight: 800; padding: 3px 10px; border-radius: 8px; border: var(--border); }
+        .game-score.win { background: #10b981; color: #fff; }
+        .game-score.loss { background: #ef4444; color: #fff; }
+        .game-score.draw { background: #f59e0b; color: #fff; }
+
+        .empty-state { text-align: center; padding: 14px; color: var(--text-light); font-size: 10px; }
+        .empty-state img { width: 50px; height: 50px; object-fit: contain; margin: 0 auto 6px; display: block; }
+
+        .avatar-modal-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.7);
+            z-index: 1000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .avatar-modal-overlay.show { display: flex; }
+        .avatar-modal {
+            background: var(--card-bg);
+            border: var(--border);
+            border-radius: var(--radius);
+            padding: 16px;
+            box-shadow: 5px 5px 0 #000;
+            max-width: 500px;
+            width: 100%;
+            max-height: 80vh;
+            overflow-y: auto;
+            position: relative;
+        }
+        .avatar-modal-close {
+            position: sticky;
+            top: 0;
+            float: left;
+            width: 28px;
+            height: 28px;
             border: var(--border);
             border-radius: 50%;
-            transition: all 0.3s ease;
+            background: var(--bg2);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
         }
-        .toggle-switch.active::after { right: 2px; }
+        .avatar-modal-title { text-align: center; font-size: 14px; font-weight: 800; color: var(--dark); margin-bottom: 12px; }
+
+        .avatar-category { margin-bottom: 14px; }
+        .avatar-category-title {
+            font-size: 10px;
+            font-weight: 800;
+            color: var(--dark);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .avatar-category-title .price-tag {
+            font-size: 8px;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: 10px;
+            background: var(--bg2);
+            border: var(--border);
+            color: var(--dark);
+        }
+        .avatar-category-title .price-tag.free { background: #d1fae5; color: #059669; }
+
+        .avatar-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; }
+
+        .avatar-item {
+            text-align: center;
+            padding: 8px 4px;
+            border: var(--border);
+            border-radius: 8px;
+            background: var(--bg2);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .avatar-item:active { transform: scale(0.95); }
+        .avatar-item.active { border-color: var(--gold); border-width: 2px; }
+        .avatar-item.owned { border-color: #10b981; }
+        .avatar-item-img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin: 0 auto 4px;
+            background: #fff;
+            border: var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            color: var(--primary);
+            overflow: hidden;
+        }
+        .avatar-item-img img { width: 100%; height: 100%; object-fit: cover; }
+        .avatar-item-price { font-size: 7px; font-weight: 700; color: var(--text-light); }
+        .avatar-item-price.free { color: #059669; }
+        .avatar-item-price.owned { color: #10b981; }
 
         .support-notification {
             position: fixed;
@@ -320,6 +472,10 @@
         .nav-item i { font-size: 18px; }
         .nav-item span { font-size: 8px; font-weight: 600; }
         .nav-item.active { color: var(--primary); }
+
+        @media (max-width: 480px) {
+            .avatar-grid { grid-template-columns: repeat(4, 1fr); }
+        }
     </style>
 </head>
 <body>
@@ -332,95 +488,83 @@
                 <div class="header-logo"><img src="https://cdn.imgurl.ir/uploads/f30974_InShot_20260821_174101103.png" alt="Quizico"></div>
                 <div>
                     <div class="header-title">Quiz<span class="t-accent">ico</span></div>
-                    <div class="header-subtitle" data-i18n="settings">تنظیمات</div>
+                    <div class="header-subtitle" data-i18n="profile">پروفایل</div>
                 </div>
             </div>
         </div>
     </header>
 
     <main class="main-container">
-
-        <div class="settings-card">
-            <div class="settings-title"><i class="fa-solid fa-language"></i> <span data-i18n="language">زبان</span></div>
-            <div class="language-options">
-                <button class="lang-btn" data-lang="fa" onclick="setLanguage('fa')"> فارسی</button>
-                <button class="lang-btn" data-lang="ar" onclick="setLanguage('ar')"> العربية</button>
-                <button class="lang-btn" data-lang="en" onclick="setLanguage('en')"> English</button>
-            </div>
+        <div class="loader-wrapper" id="loaderWrapper">
+            <div class="loader"></div>
+            <div class="loader-text" data-i18n="loading">در حال دریافت...</div>
         </div>
 
-        <div class="settings-card">
-            <div class="settings-title"><i class="fa-solid fa-moon"></i> <span data-i18n="theme">حالت نمایش</span></div>
-            <div class="theme-options">
-                <div class="theme-option" data-theme-mode="light" onclick="setTheme('light')">
-                    <i class="fa-regular fa-sun"></i>
-                    <div>
-                        <div class="theme-option-label" data-i18n="light">حالت روشن</div>
-                        <div class="theme-option-desc" data-i18n="light_desc">همیشه روشن</div>
-                    </div>
-                </div>
-                <div class="theme-option" data-theme-mode="dark" onclick="setTheme('dark')">
-                    <i class="fa-regular fa-moon"></i>
-                    <div>
-                        <div class="theme-option-label" data-i18n="dark">حالت تاریک</div>
-                        <div class="theme-option-desc" data-i18n="dark_desc">همیشه تاریک</div>
-                    </div>
-                </div>
-            </div>
-        </div>
+        <div class="profile-content" id="profileContent">
 
-        <div class="settings-card">
-            <div class="settings-title"><i class="fa-solid fa-palette"></i> <span data-i18n="color_theme">تم رنگ</span></div>
-            <div class="color-options" id="colorOptions">
-                <div class="color-option" data-color="#ef4444" style="background:#ef4444;" onclick="setColor('#ef4444')"></div>
-                <div class="color-option" data-color="#f97316" style="background:#f97316;" onclick="setColor('#f97316')"></div>
-                <div class="color-option" data-color="#f59e0b" style="background:#f59e0b;" onclick="setColor('#f59e0b')"></div>
-                <div class="color-option" data-color="#10b981" style="background:#10b981;" onclick="setColor('#10b981')"></div>
-                <div class="color-option" data-color="#06b6d4" style="background:#06b6d4;" onclick="setColor('#06b6d4')"></div>
-                <div class="color-option" data-color="#3b82f6" style="background:#3b82f6;" onclick="setColor('#3b82f6')"></div>
-                <div class="color-option" data-color="#a855f7" style="background:#a855f7;" onclick="setColor('#a855f7')"></div>
-                <div class="color-option" data-color="#ec4899" style="background:#ec4899;" onclick="setColor('#ec4899')"></div>
+            <div class="profile-header-card">
+                <div class="profile-top">
+                    <div class="profile-avatar" id="profileAvatar" onclick="openAvatarModal()">
+                        <i class="fa-solid fa-user"></i>
+                    </div>
+                    <div class="profile-info">
+                        <div class="profile-name" id="profileName"></div>
+                        <div class="profile-username" id="profileUsername"></div>
+                    </div>
+                </div>
+                <button class="change-avatar-btn" onclick="openAvatarModal()">
+                    <i class="fa-solid fa-camera"></i>
+                    <span data-i18n="change_avatar">تغییر آواتار</span>
+                </button>
+                <div class="profile-badges">
+                    <span class="badge"><i class="fa-solid fa-coins"></i> <span id="coinsValue">0</span> <span data-i18n="coins">سکه</span></span>
+                    <span class="badge"><i class="fa-solid fa-gem"></i> <span id="diamondsValue">0</span> <span data-i18n="diamonds">الماس</span></span>
+                </div>
             </div>
-        </div>
 
-        <div class="settings-card">
-            <div class="settings-title"><i class="fa-solid fa-sliders"></i> <span data-i18n="other">سایر</span></div>
-            <div class="setting-item">
-                <div class="setting-info">
-                    <i class="fa-solid fa-bolt"></i>
-                    <div>
-                        <div class="setting-label" data-i18n="animation">انیمیشن‌ها</div>
-                        <div class="setting-desc" data-i18n="animation_desc">افکت‌های حرکتی</div>
-                    </div>
-                </div>
-                <div class="toggle-switch active" id="animationToggle" onclick="toggleAnimation()"></div>
+            <div class="stats-grid">
+                <div class="stat-card"><div class="stat-icon"><i class="fa-solid fa-star"></i></div><div class="stat-value" id="totalScore">0</div><div class="stat-label" data-i18n="total_score">امتیاز کل</div></div>
+                <div class="stat-card"><div class="stat-icon"><i class="fa-solid fa-gamepad"></i></div><div class="stat-value" id="totalGames">0</div><div class="stat-label" data-i18n="total_games">تعداد بازی</div></div>
+                <div class="stat-card"><div class="stat-icon"><i class="fa-solid fa-chart-line"></i></div><div class="stat-value" id="winRate">0%</div><div class="stat-label" data-i18n="win_rate">درصد برد</div></div>
             </div>
-            <div class="setting-item">
-                <div class="setting-info">
-                    <i class="fa-solid fa-mobile-screen"></i>
-                    <div>
-                        <div class="setting-label" data-i18n="haptic">لرزش</div>
-                        <div class="setting-desc" data-i18n="haptic_desc">بازخورد لمسی</div>
-                    </div>
-                </div>
-                <div class="toggle-switch active" id="hapticToggle" onclick="toggleHaptic()"></div>
-            </div>
-            <div class="setting-item disabled">
-                <div class="setting-info">
-                    <i class="fa-solid fa-envelope"></i>
-                    <div>
-                        <div class="setting-label">
-                            <span data-i18n="invite_messages">دریافت پیام دعوت</span>
-                            <span class="coming-soon-badge" data-i18n="coming_soon">به زودی</span>
-                        </div>
-                        <div class="setting-desc" data-i18n="invite_messages_desc">اطلاع از دعوت‌نامه‌های بازی</div>
-                    </div>
-                </div>
-                <div class="toggle-switch" id="inviteToggle"></div>
-            </div>
-        </div>
 
+            <div class="progress-card">
+                <div class="progress-title"><i class="fa-solid fa-ranking-star"></i> <span data-i18n="next_rank">پیشرفت به رتبه بعدی</span></div>
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill" id="progressFill"></div>
+                    <div class="progress-text" id="progressText">0%</div>
+                </div>
+            </div>
+
+            <div class="league-card">
+                <div class="league-title"><i class="fa-solid fa-trophy"></i> <span data-i18n="league_stats">آمار لیگ</span></div>
+                <div class="league-stats">
+                    <div class="league-item win"><span class="league-item-value" id="winsCount">0</span><span class="league-item-label" data-i18n="wins">برد</span></div>
+                    <div class="league-item draw"><span class="league-item-value" id="drawsCount">0</span><span class="league-item-label" data-i18n="draws">مساوی</span></div>
+                    <div class="league-item loss"><span class="league-item-value" id="lossesCount">0</span><span class="league-item-label" data-i18n="losses">باخت</span></div>
+                </div>
+            </div>
+
+            <div class="achievements-card">
+                <div class="achievements-title"><i class="fa-solid fa-award"></i> <span data-i18n="achievements">افتخارات</span></div>
+                <div class="achievements-grid" id="achievementsGrid"></div>
+            </div>
+
+            <div class="games-history-card">
+                <div class="achievements-title"><i class="fa-solid fa-clock-rotate-left"></i> <span data-i18n="history">تاریخچه بازی‌ها</span></div>
+                <div class="games-list" id="gamesList"></div>
+            </div>
+
+        </div>
     </main>
+
+    <div class="avatar-modal-overlay" id="avatarModalOverlay">
+        <div class="avatar-modal">
+            <div class="avatar-modal-close" onclick="closeAvatarModal()"><i class="fa-solid fa-xmark"></i></div>
+            <div class="avatar-modal-title" data-i18n="choose_avatar">انتخاب آواتار</div>
+            <div id="avatarCategories"></div>
+        </div>
+    </div>
 
     <div class="support-notification" id="supportNotification" onclick="openSupportLink()">
         <img src="https://cdn.imgurl.ir/uploads/v68396_InShot_20260817_190450653.jpg" alt="سازنده">
@@ -434,102 +578,155 @@
     <nav class="bottom-nav">
         <a href="../dashboard/" class="nav-item"><i class="fa-solid fa-house"></i><span data-i18n="home">خانه</span></a>
         <a href="../ranking/" class="nav-item"><i class="fa-solid fa-trophy"></i><span data-i18n="ranking">رتبه</span></a>
-        <a href="../profile/" class="nav-item"><i class="fa-solid fa-user"></i><span data-i18n="profile">پروفایل</span></a>
-        <a href="../setting/" class="nav-item active"><i class="fa-solid fa-gear"></i><span data-i18n="settings_nav">تنظیمات</span></a>
+        <a href="../profile/" class="nav-item active"><i class="fa-solid fa-user"></i><span data-i18n="profile_nav">پروفایل</span></a>
+        <a href="../setting/" class="nav-item"><i class="fa-solid fa-gear"></i><span data-i18n="settings">تنظیمات</span></a>
     </nav>
 
     <script>
         (function() {
             var webApp = window.Eitaa?.WebApp;
+            var API_URL = 'https://script.google.com/macros/s/AKfycbwV2X5hZB6WSJSezWWsYXq-94gIRu6z6kuzTIupTnHx2VqDKpzlZLcBohnZO2Lk1KHmxA/exec';
+            var SAD_IMAGE = 'https://cdn.imgurl.ir/uploads/g58935_InShot_20260822_140943752.png';
+            var userDiamonds = 0;
+            var currentAvatar = 'default';
             var currentLang = 'fa';
 
             var translations = {
                 fa: {
-                    settings: 'تنظیمات', language: 'زبان', theme: 'حالت نمایش',
-                    light: 'حالت روشن', light_desc: 'همیشه روشن',
-                    dark: 'حالت تاریک', dark_desc: 'همیشه تاریک',
-                    color_theme: 'تم رنگ', other: 'سایر',
-                    animation: 'انیمیشن‌ها', animation_desc: 'افکت‌های حرکتی',
-                    haptic: 'لرزش', haptic_desc: 'بازخورد لمسی',
-                    invite_messages: 'دریافت پیام دعوت', invite_messages_desc: 'اطلاع از دعوت‌نامه‌های بازی',
-                    coming_soon: 'به زودی',
-                    home: 'خانه', ranking: 'رتبه', profile: 'پروفایل', settings_nav: 'تنظیمات',
-                    support: 'از سازنده حمایت کنید'
+                    profile: 'پروفایل', loading: 'در حال دریافت...', coins: 'سکه', diamonds: 'الماس',
+                    total_score: 'امتیاز کل', total_games: 'تعداد بازی', win_rate: 'درصد برد',
+                    next_rank: 'پیشرفت به رتبه بعدی', league_stats: 'آمار لیگ',
+                    wins: 'برد', draws: 'مساوی', losses: 'باخت',
+                    achievements: 'افتخارات', history: 'تاریخچه بازی‌ها',
+                    home: 'خانه', ranking: 'رتبه', profile_nav: 'پروفایل', settings: 'تنظیمات',
+                    no_games: 'مسابقه‌ای یافت نشد', choose_avatar: 'انتخاب آواتار',
+                    change_avatar: 'تغییر آواتار',
+                    icons: 'آیکون‌ها', boys: 'پسر بچه', girls: 'دختر بچه',
+                    free: 'رایگان', diamonds_short: 'الماس',
+                    not_enough_diamonds: 'الماس کافی نداری!', avatar_purchased: 'آواتار خریداری شد!',
+                    owned: 'خریداری شده', support: 'از سازنده حمایت کنید'
                 },
                 en: {
-                    settings: 'Settings', language: 'Language', theme: 'Theme',
-                    light: 'Light Mode', light_desc: 'Always light',
-                    dark: 'Dark Mode', dark_desc: 'Always dark',
-                    color_theme: 'Color Theme', other: 'Other',
-                    animation: 'Animations', animation_desc: 'Motion effects',
-                    haptic: 'Haptic', haptic_desc: 'Tactile feedback',
-                    invite_messages: 'Receive Invite Messages', invite_messages_desc: 'Get notified about game invites',
-                    coming_soon: 'Coming Soon',
-                    home: 'Home', ranking: 'Ranking', profile: 'Profile', settings_nav: 'Settings',
-                    support: 'Support the developer'
+                    profile: 'Profile', loading: 'Loading...', coins: 'Coins', diamonds: 'Diamonds',
+                    total_score: 'Total Score', total_games: 'Total Games', win_rate: 'Win Rate',
+                    next_rank: 'Progress to Next Rank', league_stats: 'League Stats',
+                    wins: 'Wins', draws: 'Draws', losses: 'Losses',
+                    achievements: 'Achievements', history: 'Game History',
+                    home: 'Home', ranking: 'Ranking', profile_nav: 'Profile', settings: 'Settings',
+                    no_games: 'No games found', choose_avatar: 'Choose Avatar',
+                    change_avatar: 'Change Avatar',
+                    icons: 'Icons', boys: 'Boys', girls: 'Girls',
+                    free: 'Free', diamonds_short: 'Diamonds',
+                    not_enough_diamonds: 'Not enough diamonds!', avatar_purchased: 'Avatar purchased!',
+                    owned: 'Owned', support: 'Support the developer'
                 },
                 ar: {
-                    settings: 'الإعدادات', language: 'اللغة', theme: 'المظهر',
-                    light: 'وضع فاتح', light_desc: 'فاتح دائمًا',
-                    dark: 'وضع داكن', dark_desc: 'داكن دائمًا',
-                    color_theme: 'لون السمة', other: 'أخرى',
-                    animation: 'الحركات', animation_desc: 'تأثيرات الحركة',
-                    haptic: 'الاهتزاز', haptic_desc: 'ردود فعل لمسية',
-                    invite_messages: 'استقبال رسائل الدعوة', invite_messages_desc: 'تلقي إشعارات دعوات اللعب',
-                    coming_soon: 'قريبًا',
-                    home: 'الرئيسية', ranking: 'الترتيب', profile: 'الملف', settings_nav: 'الإعدادات',
-                    support: 'ادعم المطور'
+                    profile: 'الملف', loading: 'جار التحميل...', coins: 'عملات', diamonds: 'ألماس',
+                    total_score: 'مجموع النقاط', total_games: 'عدد الألعاب', win_rate: 'نسبة الفوز',
+                    next_rank: 'التقدم للرتبة التالية', league_stats: 'إحصائيات الدوري',
+                    wins: 'فوز', draws: 'تعادل', losses: 'خسارة',
+                    achievements: 'الإنجازات', history: 'سجل الألعاب',
+                    home: 'الرئيسية', ranking: 'الترتيب', profile_nav: 'الملف', settings: 'الإعدادات',
+                    no_games: 'لا توجد ألعاب', choose_avatar: 'اختر الصورة الرمزية',
+                    change_avatar: 'تغيير الصورة الرمزية',
+                    icons: 'أيقونات', boys: 'أولاد', girls: 'بنات',
+                    free: 'مجاني', diamonds_short: 'ألماس',
+                    not_enough_diamonds: 'ألماس غير كافي!', avatar_purchased: 'تم شراء الصورة الرمزية!',
+                    owned: 'مملوك', support: 'ادعم المطور'
                 }
             };
+
+            var avatarCategories = [
+                {
+                    id: 'icons',
+                    labelKey: 'icons',
+                    price: 0,
+                    items: [
+                        { id: 'icon_game', icon: 'fa-gamepad' },
+                        { id: 'icon_trophy', icon: 'fa-trophy' },
+                        { id: 'icon_star', icon: 'fa-star' },
+                        { id: 'icon_bolt', icon: 'fa-bolt' },
+                        { id: 'icon_fire', icon: 'fa-fire' },
+                        { id: 'icon_crown', icon: 'fa-crown' },
+                        { id: 'icon_medal', icon: 'fa-medal' },
+                        { id: 'icon_rocket', icon: 'fa-rocket' },
+                        { id: 'icon_ghost', icon: 'fa-ghost' },
+                        { id: 'icon_dragon', icon: 'fa-dragon' },
+                        { id: 'icon_wand', icon: 'fa-wand-magic-sparkles' },
+                        { id: 'icon_hat', icon: 'fa-hat-wizard' },
+                        { id: 'icon_helmet', icon: 'fa-helmet-safety' },
+                        { id: 'icon_shield', icon: 'fa-shield-halved' },
+                        { id: 'icon_sword', icon: 'fa-hand-fist' }
+                    ]
+                },
+                {
+                    id: 'boys',
+                    labelKey: 'boys',
+                    price: 20,
+                    items: [
+                        { id: 'boy_1', url: 'https://cdn.imgurl.ir/uploads/l17100_QkCRHe00vl64Bngk74ayYmWMyWA-NjfsC7SoRbGgrkm1mS-bpQ.png' },
+                        { id: 'boy_2', url: 'https://cdn.imgurl.ir/uploads/g87708_nYSMEcudjDVvsMsfO4B6nrWGmFI-J3OzSBMOSwKo6Mt48wolyg.png' },
+                        { id: 'boy_3', url: 'https://cdn.imgurl.ir/uploads/q01044_VWzDtI4NYQ660EGTVD_xToLVOvw-DkODf3dzQq2kbk2i1b-cIQ.png' },
+                        { id: 'boy_4', url: 'https://cdn.imgurl.ir/uploads/w428496_0RBfnEt77slNmis2YlNfIjtELkE-_nTEsqjVSQafpoCS0X1pXg.png' },
+                        { id: 'boy_5', url: 'https://cdn.imgurl.ir/uploads/h099226_Kaahld11_fKS5dcGDsq-5IvBiC0-olahkKmOTsSjohG4mMsVUw.png' },
+                        { id: 'boy_6', url: 'https://cdn.imgurl.ir/uploads/k778258_pd9TZqS3DHKaaJQOygY-3WFHMAE-NzGEJ7R1Sv-r5Dfc6Zi3Ig.png' },
+                        { id: 'boy_7', url: 'https://cdn.imgurl.ir/uploads/w221825_-1Xu8BzjzGa1I7ZIBVaYpoez4BM-zdVRFGLaRJGymjrVOu_yBA.png' },
+                        { id: 'boy_8', url: 'https://cdn.imgurl.ir/uploads/o12072_rsMh7nSKjcODxjSPFWwfrlpYFe4-RHju528wRf-FCo_v2tJX7w.png' },
+                        { id: 'boy_9', url: 'https://cdn.imgurl.ir/uploads/m007403_MNhHAeXQ-_-nEMVuihCtgYXUS90-5LFmX4D7T2-1RaoN058vnw.png' },
+                        { id: 'boy_10', url: 'https://cdn.imgurl.ir/uploads/h976855_MLDYzJITIyaUkB6efcWGamXK39M-yfLRI0_7RrCmky6p-jgXFw.png' }
+                    ]
+                },
+                {
+                    id: 'girls',
+                    labelKey: 'girls',
+                    price: 20,
+                    items: [
+                        { id: 'girl_1', url: 'https://cdn.imgurl.ir/uploads/h993569_G_wzhIk2ocoOPFhmmQHpUuS1mQc-IXeKOSBFSx6jn_y9tpVazg.png' },
+                        { id: 'girl_2', url: 'https://cdn.imgurl.ir/uploads/u2553__Yb1fK6xw6Di1SX-7xB5v2J7e-g-IYBMcl_wSmqXNTkmAQMGnA.png' },
+                        { id: 'girl_3', url: 'https://cdn.imgurl.ir/uploads/w03550__MlKSY3NXQ9cWkwVioa7hUpr6aI-2MRPg-L3QNOpRTm1oZTHtQ.png' },
+                        { id: 'girl_4', url: 'https://cdn.imgurl.ir/uploads/r074193_q1uxpQIZsrzslDhI1W69Su-XvbY-x5jd5EZ1SyKggCCSjbbxrg.png' },
+                        { id: 'girl_5', url: 'https://cdn.imgurl.ir/uploads/w035688_E2FfMOkE8ZGtuOZqU2q_VGTE6Yw-IU1JraRkSTub6ymIVXQuxA.png' },
+                        { id: 'girl_6', url: 'https://cdn.imgurl.ir/uploads/c895184_bt1drvChqXnDjtGhNgxJ9M2Ho4I-n1KpcnSiSXSboB5rKfBwCg.png' },
+                        { id: 'girl_7', url: 'https://cdn.imgurl.ir/uploads/u246883_b3j_B2NgyZNITErHK5c9A3dWFRA-5bV5bdzHSGi4neWTa9881A.png' },
+                        { id: 'girl_8', url: 'https://cdn.imgurl.ir/uploads/o0025_B1BkJ9n5GL25bnqG-YNn79Qvsds-Erx3uqovQtex6125wXCD7g.png' },
+                        { id: 'girl_9', url: 'https://cdn.imgurl.ir/uploads/t14047_NR8hWSzjLbSm2cXNrBnA2mEh43o-XhY5hyhBSU6s-9c4Fv5wRA.png' },
+                        { id: 'girl_10', url: 'https://cdn.imgurl.ir/uploads/v96829_FouVxzw8xOmCFvf0IEri962BmHQ-LxKzSWS_aj8dcNI5EWVw.png' }
+                    ]
+                }
+            ];
+
+            var allAchievements = [
+                { id: 'first_game', name: 'اولین بازی', icon: '🕹️' },
+                { id: '10_games', name: '۱۰ بازی', icon: '🎮' },
+                { id: '100_games', name: '۱۰۰ بازی', icon: '💻' },
+                { id: '1000_games', name: '۱۰۰۰ بازی', icon: '🔬' },
+                { id: 'first_win', name: 'اولین برد', icon: '🎉' },
+                { id: '10_wins', name: '۱۰ برد', icon: '🎈' },
+                { id: '100_wins', name: '۱۰۰ برد', icon: '🎁' },
+                { id: '1000_wins', name: '۱۰۰۰ برد', icon: '🍰' },
+                { id: '100_score', name: '۱۰۰ امتیاز', icon: '✨' },
+                { id: '1000_score', name: '۱۰۰۰ امتیاز', icon: '⭐' },
+                { id: '10000_score', name: '۱۰۰۰۰ امتیاز', icon: '💫' },
+                { id: '100000_score', name: '۱۰۰۰۰۰ امتیاز', icon: '☄️' }
+            ];
 
             function getSettings() {
                 try {
                     var raw = localStorage.getItem('quizicoSettings');
-                    if (!raw) return { theme: 'light', primaryColor: '#a855f7', animation: true, haptic: true, language: 'fa' };
+                    if (!raw) return { theme: 'light', primaryColor: '#a855f7', animation: true, language: 'fa' };
                     var p = JSON.parse(raw);
                     if (!p.theme) p.theme = 'light';
                     if (!p.primaryColor) p.primaryColor = '#a855f7';
                     if (p.animation === undefined) p.animation = true;
-                    if (p.haptic === undefined) p.haptic = true;
                     if (!p.language) p.language = 'fa';
                     return p;
-                } catch(e) { return { theme: 'light', primaryColor: '#a855f7', animation: true, haptic: true, language: 'fa' }; }
-            }
-
-            function saveSettings(s) {
-                localStorage.setItem('quizicoSettings', JSON.stringify(s));
+                } catch(e) { return { theme: 'light', primaryColor: '#a855f7', animation: true, language: 'fa' }; }
             }
 
             function getTranslation(k) { var t = translations[currentLang] || translations.fa; return t[k] || translations.fa[k] || k; }
 
-            function triggerHaptic(style) {
-                var s = getSettings();
-                if (s.haptic === false) return;
-                if (webApp && webApp.HapticFeedback && webApp.HapticFeedback.impactOccurred) {
-                    try { webApp.HapticFeedback.impactOccurred(style || 'light'); } catch(e) {}
-                }
-            }
-
             function hexToRgb(h) { var r = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(h); return r ? { r: parseInt(r[1],16), g: parseInt(r[2],16), b: parseInt(r[3],16) } : { r:168,g:85,b:247 }; }
             function shadeColor(c,p){var r=hexToRgb(c);var rr=Math.max(0,Math.min(255,r.r+p));var gg=Math.max(0,Math.min(255,r.g+p));var bb=Math.max(0,Math.min(255,r.b+p));return '#'+((1<<24)+(rr<<16)+(gg<<8)+bb).toString(16).slice(1);}
-
-            function applyLanguage(lang) {
-                var t = translations[lang] || translations.fa;
-                document.querySelectorAll('[data-i18n]').forEach(function(el) {
-                    var k = el.getAttribute('data-i18n');
-                    if (t[k]) el.textContent = t[k];
-                });
-                if (lang === 'en') {
-                    document.documentElement.setAttribute('dir', 'ltr');
-                    document.body.style.fontFamily = 'Arial, sans-serif';
-                } else if (lang === 'ar') {
-                    document.documentElement.setAttribute('dir', 'rtl');
-                    document.body.style.fontFamily = 'Tahoma, sans-serif';
-                } else {
-                    document.documentElement.setAttribute('dir', 'rtl');
-                    document.body.style.fontFamily = "'IRANSans', Tahoma, sans-serif";
-                }
-            }
 
             function applyTheme() {
                 var s = getSettings();
@@ -537,70 +734,163 @@
                 var t = s.theme || 'light';
                 var p = s.primaryColor || '#a855f7';
                 document.documentElement.setAttribute('data-theme', t);
-                if (t === 'dark') {
-                    var dp = shadeColor(p, 40);
-                    document.documentElement.style.setProperty('--primary', dp);
-                } else {
-                    document.documentElement.style.setProperty('--primary', p);
-                }
-                if (s.animation === false) {
-                    document.documentElement.setAttribute('data-animation', 'off');
-                } else {
-                    document.documentElement.removeAttribute('data-animation');
-                }
-                document.querySelectorAll('.theme-option').forEach(function(b) {
-                    b.classList.toggle('active', b.dataset.themeMode === t);
-                });
-                document.querySelectorAll('.color-option').forEach(function(b) {
-                    b.classList.toggle('active', b.dataset.color === p);
-                });
-                document.querySelectorAll('.lang-btn').forEach(function(b) {
-                    b.classList.toggle('active', b.dataset.lang === s.language);
-                });
-                document.getElementById('animationToggle').classList.toggle('active', s.animation !== false);
-                document.getElementById('hapticToggle').classList.toggle('active', s.haptic !== false);
-                applyLanguage(s.language);
+                if (t === 'dark') { document.documentElement.style.setProperty('--primary', shadeColor(p, 40)); }
+                else { document.documentElement.style.setProperty('--primary', p); }
+                if (s.animation === false) { document.documentElement.setAttribute('data-animation', 'off'); }
+                else { document.documentElement.removeAttribute('data-animation'); }
+                if (currentLang === 'en') { document.documentElement.setAttribute('dir','ltr'); document.body.style.fontFamily='Arial, sans-serif'; }
+                else if (currentLang === 'ar') { document.documentElement.setAttribute('dir','rtl'); document.body.style.fontFamily='Tahoma, sans-serif'; }
+                else { document.documentElement.setAttribute('dir','rtl'); document.body.style.fontFamily="'IRANSans', Tahoma, sans-serif"; }
+                document.querySelectorAll('[data-i18n]').forEach(function(el){ var k=el.getAttribute('data-i18n'); var t2=translations[currentLang]||translations.fa; if(t2[k]) el.textContent=t2[k]; });
             }
 
-            window.setLanguage = function(l) {
-                var s = getSettings();
-                s.language = l;
-                saveSettings(s);
-                applyTheme();
-                triggerHaptic('light');
+            function getEitaaUser(){return webApp&&webApp.initDataUnsafe&&webApp.initDataUnsafe.user?webApp.initDataUnsafe.user:null;}
+            function getUserId(){var u=getEitaaUser();return u?(typeof u.id==='number'?u.id.toString():String(u.id||'')):'';}
+            function fetchData(action,params){
+                var payload={action:action,username:getUserId()};
+                if(params){for(var k in params){if(params.hasOwnProperty(k))payload[k]=params[k];}}
+                return fetch(API_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(payload)}).then(function(r){return r.json();}).catch(function(){return{ok:false};});
+            }
+
+            function animateCount(el,target,dur){
+                var st=0,stt=null;
+                function step(ts){if(!stt)stt=ts;var p=Math.min((ts-stt)/dur,1);var e=1-Math.pow(1-p,3);el.textContent=Math.floor(e*target);if(p<1)requestAnimationFrame(step);else el.textContent=target;}
+                requestAnimationFrame(step);
+            }
+
+            function renderEmpty(text){ return '<div class="empty-state"><img src="'+SAD_IMAGE+'" alt=""><p>'+text+'</p></div>'; }
+
+            function isAvatarOwned(itemId) {
+                try {
+                    var owned = JSON.parse(localStorage.getItem('ownedAvatars') || '[]');
+                    return owned.indexOf(itemId) !== -1;
+                } catch(e) { return false; }
+            }
+
+            function renderAchievements(data) {
+                var grid = document.getElementById('achievementsGrid');
+                var stats = {};
+                try { stats = JSON.parse(data.stats || '{}'); } catch(e) {}
+                var earned = stats.achievements || [];
+                var score = data.score || 0;
+                var games = stats.games || 0;
+                var wins = stats.wins || 0;
+                if (games >= 1) earned.push('first_game');
+                if (games >= 10) earned.push('10_games');
+                if (games >= 100) earned.push('100_games');
+                if (games >= 1000) earned.push('1000_games');
+                if (wins >= 1) earned.push('first_win');
+                if (wins >= 10) earned.push('10_wins');
+                if (wins >= 100) earned.push('100_wins');
+                if (wins >= 1000) earned.push('1000_wins');
+                if (score >= 100) earned.push('100_score');
+                if (score >= 1000) earned.push('1000_score');
+                if (score >= 10000) earned.push('10000_score');
+                if (score >= 100000) earned.push('100000_score');
+                var uniqueEarned = [];
+                earned.forEach(function(e){ if(uniqueEarned.indexOf(e)===-1) uniqueEarned.push(e); });
+                grid.innerHTML = allAchievements.map(function(a){
+                    var unlocked = uniqueEarned.indexOf(a.id) !== -1;
+                    return '<div class="achievement-item'+(unlocked?'':' locked')+'"><span class="achievement-icon">'+a.icon+'</span><span class="achievement-name">'+a.name+'</span></div>';
+                }).join('');
+            }
+
+            function renderAvatarModal() {
+                var html = '';
+                avatarCategories.forEach(function(cat) {
+                    var label = getTranslation(cat.labelKey);
+                    var priceText = cat.price === 0 ? getTranslation('free') : cat.price + ' ' + getTranslation('diamonds_short');
+                    var priceClass = cat.price === 0 ? ' free' : '';
+                    html += '<div class="avatar-category">';
+                    html += '<div class="avatar-category-title">'+label+' <span class="price-tag'+priceClass+'">'+priceText+'</span></div>';
+                    html += '<div class="avatar-grid">';
+                    cat.items.forEach(function(item) {
+                        var isActive = currentAvatar === item.id;
+                        var isOwned = isAvatarOwned(item.id);
+                        var imgHtml;
+                        if (item.icon) {
+                            imgHtml = '<i class="fa-solid '+item.icon+'"></i>';
+                        } else {
+                            imgHtml = '<img src="'+item.url+'" alt="">';
+                        }
+                        var priceHtml;
+                        if (cat.price === 0 || isOwned) {
+                            priceHtml = '<span class="avatar-item-price owned">'+(cat.price===0?getTranslation('free'):getTranslation('owned'))+'</span>';
+                        } else {
+                            priceHtml = '<span class="avatar-item-price">'+cat.price+' 💎</span>';
+                        }
+                        html += '<div class="avatar-item'+(isActive?' active':'')+(isOwned?' owned':'')+'" onclick="selectAvatar(\''+cat.id+'\',\''+item.id+'\','+cat.price+')">';
+                        html += '<div class="avatar-item-img">'+imgHtml+'</div>';
+                        html += priceHtml;
+                        html += '</div>';
+                    });
+                    html += '</div></div>';
+                });
+                document.getElementById('avatarCategories').innerHTML = html;
+            }
+
+            function openAvatarModal() {
+                renderAvatarModal();
+                document.getElementById('avatarModalOverlay').classList.add('show');
+            }
+            function closeAvatarModal() {
+                document.getElementById('avatarModalOverlay').classList.remove('show');
+            }
+            window.openAvatarModal = openAvatarModal;
+            window.closeAvatarModal = closeAvatarModal;
+
+            window.selectAvatar = function(catId, itemId, price) {
+                var owned = isAvatarOwned(itemId);
+                
+                if (price === 0 || owned) {
+                    currentAvatar = itemId;
+                    fetchData('updateUser', { avatar: itemId });
+                    renderAvatarModal();
+                    updateProfileAvatar();
+                    return;
+                }
+                
+                if (userDiamonds < price) {
+                    if (webApp) webApp.showAlert(getTranslation('not_enough_diamonds'));
+                    return;
+                }
+                
+                userDiamonds -= price;
+                document.getElementById('diamondsValue').textContent = userDiamonds;
+                fetchData('updateUser', { diamonds: userDiamonds });
+                
+                var ownedAvatars = [];
+                try { ownedAvatars = JSON.parse(localStorage.getItem('ownedAvatars') || '[]'); } catch(e) {}
+                if (ownedAvatars.indexOf(itemId) === -1) {
+                    ownedAvatars.push(itemId);
+                    localStorage.setItem('ownedAvatars', JSON.stringify(ownedAvatars));
+                }
+                
+                currentAvatar = itemId;
+                fetchData('updateUser', { avatar: itemId });
+                renderAvatarModal();
+                updateProfileAvatar();
+                if (webApp) webApp.showAlert(getTranslation('avatar_purchased'));
             };
 
-            window.setTheme = function(t) {
-                var s = getSettings();
-                s.theme = t;
-                saveSettings(s);
-                applyTheme();
-                triggerHaptic('light');
-            };
-
-            window.setColor = function(c) {
-                var s = getSettings();
-                s.primaryColor = c;
-                saveSettings(s);
-                applyTheme();
-                triggerHaptic('medium');
-            };
-
-            window.toggleAnimation = function() {
-                var s = getSettings();
-                s.animation = !s.animation;
-                saveSettings(s);
-                applyTheme();
-                triggerHaptic('light');
-            };
-
-            window.toggleHaptic = function() {
-                var s = getSettings();
-                s.haptic = !s.haptic;
-                saveSettings(s);
-                applyTheme();
-                if (s.haptic) triggerHaptic('medium');
-            };
+            function updateProfileAvatar() {
+                var avatarEl = document.getElementById('profileAvatar');
+                var found = null;
+                avatarCategories.forEach(function(cat) {
+                    cat.items.forEach(function(item) {
+                        if (item.id === currentAvatar) found = { cat: cat, item: item };
+                    });
+                });
+                if (found) {
+                    if (found.item.icon) {
+                        avatarEl.innerHTML = '<i class="fa-solid '+found.item.icon+'"></i>';
+                    } else {
+                        avatarEl.innerHTML = '<img src="'+found.item.url+'" alt="">';
+                    }
+                } else {
+                    avatarEl.innerHTML = '<i class="fa-solid fa-user"></i>';
+                }
+            }
 
             function openSupportLink(){
                 if (webApp && webApp.openEitaaLink) {
@@ -611,15 +901,91 @@
             }
             window.openSupportLink = openSupportLink;
 
+            async function loadProfile() {
+                try {
+                    var user = getEitaaUser();
+                    var username = getUserId();
+                    if (user) {
+                        var fullName = (user.first_name||'')+' '+(user.last_name||'');
+                        document.getElementById('profileName').textContent = fullName.trim() || 'کاربر';
+                        document.getElementById('profileUsername').textContent = 'ID: '+username;
+                    }
+                    var userData = await fetchData('getUser', {});
+                    if (userData.ok && userData.data) {
+                        var d = userData.data;
+                        userDiamonds = d.diamonds || 0;
+                        currentAvatar = d.avatar || 'default';
+                        animateCount(document.getElementById('totalScore'), d.score||0, 800);
+                        animateCount(document.getElementById('coinsValue'), d.coins||0, 800);
+                        animateCount(document.getElementById('diamondsValue'), userDiamonds, 800);
+                        renderAchievements(d);
+                        updateProfileAvatar();
+                    }
+                    var league = await fetchData('getLeague', {});
+                    var wins=0,draws=0,losses=0;
+                    if (league.ok && league.data) {
+                        wins = league.data.wins||0;
+                        draws = league.data.draws||0;
+                        losses = league.data.losses||0;
+                    }
+                    animateCount(document.getElementById('winsCount'), wins, 600);
+                    animateCount(document.getElementById('drawsCount'), draws, 600);
+                    animateCount(document.getElementById('lossesCount'), losses, 600);
+                    var total = wins+draws+losses;
+                    var rate = total>0 ? Math.round(wins/total*100) : 0;
+                    document.getElementById('winRate').textContent = rate+'%';
+
+                    var games = await fetchData('getGamesByPlayer', {});
+                    if (games.ok && Array.isArray(games.data)) {
+                        animateCount(document.getElementById('totalGames'), games.data.length, 600);
+                        var list = document.getElementById('gamesList');
+                        if (games.data.length === 0) {
+                            list.innerHTML = renderEmpty(getTranslation('no_games'));
+                        } else {
+                            list.innerHTML = games.data.slice(0,10).map(function(g){
+                                var isP1 = String(g.player1) === String(username);
+                                var opp = isP1 ? g.player2 : g.player1;
+                                var cls = 'draw', txt = getTranslation('draws');
+                                if (g.status === 'finished') { if (isP1) { cls='win'; txt=getTranslation('wins'); } else { cls='loss'; txt=getTranslation('losses'); } }
+                                return '<div class="game-item"><span class="game-players">'+(opp||'?')+'</span><span class="game-score '+cls+'">'+txt+'</span></div>';
+                            }).join('');
+                        }
+                    }
+
+                    var leaderboardData = await fetchData('leaderboard', { limit: 100 });
+                    if (leaderboardData.ok && Array.isArray(leaderboardData.data)) {
+                        var list = leaderboardData.data;
+                        var myRank = null, myScore = 0;
+                        for (var i = 0; i < list.length; i++) {
+                            if (String(list[i].username) === String(username)) { myRank = i+1; myScore = list[i].score||0; break; }
+                        }
+                        var prog = 0;
+                        if (myRank === 1) { prog = 100; }
+                        else if (myRank && myRank > 1) {
+                            var nextScore = list[myRank-2].score || 0;
+                            if (nextScore > 0) { prog = Math.round((myScore/nextScore)*100); if (prog>100) prog=100; }
+                        }
+                        setTimeout(function() {
+                            document.getElementById('progressFill').style.width = prog+'%';
+                            document.getElementById('progressText').textContent = prog+'%';
+                        }, 400);
+                    }
+
+                } catch(e) { console.error(e); }
+                finally {
+                    document.getElementById('loaderWrapper').style.display = 'none';
+                    document.getElementById('profileContent').classList.add('show');
+                }
+            }
+
             if (webApp) {
                 webApp.ready();
                 webApp.BackButton.show();
-                webApp.BackButton.onClick(function() {
-                    window.location.href = '../dashboard/';
-                });
+                webApp.BackButton.onClick(function(){ window.location.href = '../dashboard/'; });
             }
 
             applyTheme();
+            loadProfile();
             
             setTimeout(function() {
                 var notif = document.getElementById('supportNotification');
