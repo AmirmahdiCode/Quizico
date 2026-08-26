@@ -243,12 +243,25 @@ function renderRoomFullScreen(){
 }
 window.createNewRoom=function(){initPlayer1();};
 
+function getMyTurnIndex(){
+    var myNum=getMyPlayerNum();
+    for(var i=0;i<turnOrder.length;i++){
+        if(turnOrder[i][0]===currentRound&&turnOrder[i][1]===myNum)return i;
+    }
+    return -1;
+}
+
+function isMyTurnNow(){
+    var myTurnIdx=getMyTurnIndex();
+    return myTurnIdx===currentTurn;
+}
+
 function renderRoundsScreen(){
     var t=getTranslation;
     var html='';
     html+='<div class="players-row">';
-    html+='<div class="player-card"><div class="player-tag">'+myName+'</div><span class="player-score">'+myScore+'</span></div>';
-    html+='<div class="player-card"><div class="player-tag">'+opponentName+'</div><span class="player-score">?</span></div>';
+    html+='<div class="player-card'+(isMyTurnNow()?' active':'')+'"><div class="player-tag">'+myName+'</div><span class="player-score">'+myScore+'</span></div>';
+    html+='<div class="player-card'+(isMyTurnNow()?'':' active')+'"><div class="player-tag">'+opponentName+'</div><span class="player-score">?</span></div>';
     html+='</div>';
     if(roundResults.length>0){
         html+='<div class="rounds-results"><div class="rounds-title">'+t('results')+'</div>';
@@ -264,11 +277,15 @@ function renderRoundsScreen(){
     }
     document.getElementById('gameContent').innerHTML=html;
     var btn=document.getElementById('mainBtn');
-    var myNum=getMyPlayerNum();
-    var isMyTurnNow=false;
-    for(var i=0;i<turnOrder.length;i++){if(turnOrder[i][0]===currentRound&&turnOrder[i][1]===myNum){isMyTurnNow=(i===currentTurn);break;}}
-    if(isMyTurnNow){btn.textContent=t('your_turn')+' - '+t('start_game')+' '+currentRound;btn.className='main-btn green';btn.disabled=false;}
-    else{btn.textContent=t('waiting_turn');btn.className='main-btn waiting';btn.disabled=true;}
+    if(isMyTurnNow()){
+        btn.textContent=t('your_turn')+' - '+t('start_game')+' '+currentRound;
+        btn.className='main-btn green';
+        btn.disabled=false;
+    }else{
+        btn.textContent=t('waiting_turn');
+        btn.className='main-btn waiting';
+        btn.disabled=true;
+    }
     document.getElementById('bottomBtnContainer').style.display='block';
     hideLoader();
 }
@@ -416,9 +433,7 @@ function endGame(){
 window.backToDashboard=function(){window.location.href='../../dashboard/';};
 
 window.handleMainBtn=function(){
-    var myNum=getMyPlayerNum();var isMyTurnNow=false;
-    for(var i=0;i<turnOrder.length;i++){if(turnOrder[i][0]===currentRound&&turnOrder[i][1]===myNum){isMyTurnNow=(i===currentTurn);break;}}
-    if(isMyTurnNow){
+    if(isMyTurnNow()){
         var allShuffled=shuffleArray(questions);
         roundQuestions=allShuffled.slice(0,QUESTIONS_PER_ROUND);
         renderQuestionScreen();
@@ -449,7 +464,7 @@ async function initPlayer1(){
             }
         }
         if(checkTimeExpired(gameCreatedAt)){clearInterval(checkInterval);fetchData('updateGame',{gameId:roomCode,updates:{status:'finished'}});}
-    },3000);
+    },5000);
 }
 
 async function initPlayer2(){
@@ -518,13 +533,12 @@ function startPolling(){
             
             var currentRoundData=data['round'+currentRound]||'';
             if(currentRoundData!==''&&!currentRoundData.includes('waiting')){
-                var btn=document.getElementById('mainBtn');
-                if(btn&&btn.disabled){
+                if(!isInGame){
                     renderRoundsScreen();
                 }
             }
         }
-    },3000);
+    },5000);
 }
 
 function handleBackButton(){
@@ -537,10 +551,8 @@ function handleBackButton(){
             if(confirmed){
                 clearInterval(timerInterval);
                 var ansStr='F,F,F';
-                var qIds=roundQuestions.map(function(q){return q.id;}).join(',');
-                var myNum=getMyPlayerNum();
                 var updateData={};
-                updateData['round'+currentRound+'_p'+myNum]=ansStr;
+                updateData['round'+currentRound+'_p'+getMyPlayerNum()]=ansStr;
                 fetchData('updateGame',{gameId:roomCode,updates:updateData});
                 window.location.href='../../dashboard/';
             }
