@@ -157,7 +157,6 @@ var opponentName='';
 var myAvatar='default';
 var opponentAvatar='default';
 var turnOrder=[[1,1],[1,2],[2,2],[2,1],[3,1],[3,2],[4,2],[4,1],[5,1],[5,2]];
-var currentTurn=0;
 
 var translations={
 fa:{online:'آنلاین',loading:'در حال دریافت...',start_game:'شروع بازی',you:'تو',opponent:'حریف',results:'نتایج راندها',round:'راند',finished:'بازی تمام شد!',score:'امتیاز',back:'بازگشت',no_questions:'سوال کافی نیست',room_full:'دیر اومدی! یکی دیگه زودتر وارد شده',create_new_room:'ساخت اتاق جدید',waiting_opponent:'هنوز حریفت وارد نشده...',invite_title:'دعوت از دوست',invite_desc:'لینک زیر رو کپی کن و برای دوستت بفرست!',copy:'کپی',link_copied:'لینک کپی شد!',invite_from_players:'انتخاب از لیست بازیکنا',search_players:'جستجوی بازیکن...',not_enough:'سکه کافی نداری!',waiting_turn:'منتظر حریف...',your_turn:'نوبت توست',coming_soon:'به زودی',room_not_found:'اتاق یافت نشد',time_expired:'وقت بازی تموم شد!',exit_confirm:'اگه خارج بشی این راند رو با ۰ تمام می‌کنی!',submitting:'در حال ثبت پاسخ‌ها...',submitting_wait:'لطفاً صبر کنید'},
@@ -193,8 +192,12 @@ function getMyPlayerNum(){return isPlayer1?1:2}
 
 function getAvatarHtml(avatarId){
     var iconAvatars={'icon_game':'fa-gamepad','icon_trophy':'fa-trophy','icon_star':'fa-star','icon_bolt':'fa-bolt','icon_fire':'fa-fire','icon_crown':'fa-crown','icon_medal':'fa-medal','icon_rocket':'fa-rocket','icon_ghost':'fa-ghost','icon_dragon':'fa-dragon','icon_wand':'fa-wand-magic-sparkles','icon_hat':'fa-hat-wizard','icon_helmet':'fa-helmet-safety','icon_shield':'fa-shield-halved','icon_sword':'fa-hand-fist'};
+    var boyAvatars={'boy_1':'https://cdn.imgurl.ir/uploads/l17100_QkCRHe00vl64Bngk74ayYmWMyWA-NjfsC7SoRbGgrkm1mS-bpQ.png','boy_2':'https://cdn.imgurl.ir/uploads/g87708_nYSMEcudjDVvsMsfO4B6nrWGmFI-J3OzSBMOSwKo6Mt48wolyg.png','boy_3':'https://cdn.imgurl.ir/uploads/q01044_VWzDtI4NYQ660EGTVD_xToLVOvw-DkODf3dzQq2kbk2i1b-cIQ.png','boy_4':'https://cdn.imgurl.ir/uploads/w428496_0RBfnEt77slNmis2YlNfIjtELkE-_nTEsqjVSQafpoCS0X1pXg.png','boy_5':'https://cdn.imgurl.ir/uploads/h099226_Kaahld11_fKS5dcGDsq-5IvBiC0-olahkKmOTsSjohG4mMsVUw.png','boy_6':'https://cdn.imgurl.ir/uploads/k778258_pd9TZqS3DHKaaJQOygY-3WFHMAE-NzGEJ7R1Sv-r5Dfc6Zi3Ig.png','boy_7':'https://cdn.imgurl.ir/uploads/w221825_-1Xu8BzjzGa1I7ZIBVaYpoez4BM-zdVRFGLaRJGymjrVOu_yBA.png','boy_8':'https://cdn.imgurl.ir/uploads/o12072_rsMh7nSKjcODxjSPFWwfrlpYFe4-RHju528wRf-FCo_v2tJX7w.png','boy_9':'https://cdn.imgurl.ir/uploads/m007403_MNhHAeXQ-_-nEMVuihCtgYXUS90-5LFmX4D7T2-1RaoN058vnw.png','boy_10':'https://cdn.imgurl.ir/uploads/h976855_MLDYzJITIyaUkB6efcWGamXK39M-yfLRI0_7RrCmky6p-jgXFw.png'};
+    var girlAvatars={'girl_1':'https://cdn.imgurl.ir/uploads/h993569_G_wzhIk2ocoOPFhmmQHpUuS1mQc-IXeKOSBFSx6jn_y9tpVazg.png','girl_2':'https://cdn.imgurl.ir/uploads/u2553__Yb1fK6xw6Di1SX-7xB5v2J7e-g-IYBMcl_wSmqXNTkmAQMGnA.png','girl_3':'https://cdn.imgurl.ir/uploads/w03550__MlKSY3NXQ9cWkwVioa7hUpr6aI-2MRPg-L3QNOpRTm1oZTHtQ.png','girl_4':'https://cdn.imgurl.ir/uploads/r074193_q1uxpQIZsrzslDhI1W69Su-XvbY-x5jd5EZ1SyKggCCSjbbxrg.png','girl_5':'https://cdn.imgurl.ir/uploads/w035688_E2FfMOkE8ZGtuOZqU2q_VGTE6Yw-IU1JraRkSTub6ymIVXQuxA.png','girl_6':'https://cdn.imgurl.ir/uploads/c895184_bt1drvChqXnDjtGhNgxJ9M2Ho4I-n1KpcnSiSXSboB5rKfBwCg.png','girl_7':'https://cdn.imgurl.ir/uploads/u246883_b3j_B2NgyZNITErHK5c9A3dWFRA-5bV5bdzHSGi4neWTa9881A.png','girl_8':'https://cdn.imgurl.ir/uploads/o0025_B1BkJ9n5GL25bnqG-YNn79Qvsds-Erx3uqovQtex6125wXCD7g.png','girl_9':'https://cdn.imgurl.ir/uploads/t14047_NR8hWSzjLbSm2cXNrBnA2mEh43o-XhY5hyhBSU6s-9c4Fv5wRA.png','girl_10':'https://cdn.imgurl.ir/uploads/v96829_FouVxzw8xOmCFvf0IEri962BmHQ-LxKzSWS_aj8dcNI5EWVw.png'};
     if(!avatarId||avatarId==='default')return '<i class="fa-solid fa-user"></i>';
     if(iconAvatars[avatarId])return '<i class="fa-solid '+iconAvatars[avatarId]+'"></i>';
+    if(boyAvatars[avatarId])return '<img src="'+boyAvatars[avatarId]+'" alt="" draggable="false" oncontextmenu="return false;" ondragstart="return false;">';
+    if(girlAvatars[avatarId])return '<img src="'+girlAvatars[avatarId]+'" alt="" draggable="false" oncontextmenu="return false;" ondragstart="return false;">';
     return '<i class="fa-solid fa-user"></i>';
 }
 
@@ -254,25 +257,23 @@ function renderRoomFullScreen(){
 }
 window.createNewRoom=function(){initPlayer1();};
 
-function getMyTurnIndex(){
-    var myNum=getMyPlayerNum();
-    for(var i=0;i<turnOrder.length;i++){
-        if(turnOrder[i][0]===currentRound&&turnOrder[i][1]===myNum)return i;
-    }
-    return -1;
-}
-
-function isMyTurnNow(){
-    var myTurnIdx=getMyTurnIndex();
-    return myTurnIdx===currentTurn;
+function getTurnFromSheet(roundData){
+    if(!roundData||roundData==='')return 0;
+    var parts=roundData.split('][');
+    var p1Ans=parts[1]?parts[1].replace('[','').replace(']',''):'waiting';
+    var p2Ans=parts[2]?parts[2].replace('[','').replace(']',''):'waiting';
+    if(p1Ans!=='waiting'&&p2Ans==='waiting')return 1;
+    if(p1Ans==='waiting'&&p2Ans!=='waiting')return 0;
+    return 2;
 }
 
 function renderRoundsScreen(){
     var t=getTranslation;
+    var myNum=getMyPlayerNum();
     var html='';
     html+='<div class="players-row">';
-    html+='<div class="player-card'+(isMyTurnNow()?' active':'')+'"><div class="player-avatar">'+getAvatarHtml(myAvatar)+'</div><div class="player-tag">'+myName+'</div><span class="player-score">'+myScore+'</span></div>';
-    html+='<div class="player-card'+(isMyTurnNow()?'':' active')+'"><div class="player-avatar">'+getAvatarHtml(opponentAvatar)+'</div><div class="player-tag">'+opponentName+'</div><span class="player-score">?</span></div>';
+    html+='<div class="player-card"><div class="player-avatar">'+getAvatarHtml(myAvatar)+'</div><div class="player-tag">'+myName+'</div><span class="player-score">'+myScore+'</span></div>';
+    html+='<div class="player-card"><div class="player-avatar">'+getAvatarHtml(opponentAvatar)+'</div><div class="player-tag">'+opponentName+'</div><span class="player-score">?</span></div>';
     html+='</div>';
     if(roundResults.length>0){
         html+='<div class="rounds-results"><div class="rounds-title">'+t('results')+'</div>';
@@ -288,15 +289,37 @@ function renderRoundsScreen(){
     }
     document.getElementById('gameContent').innerHTML=html;
     var btn=document.getElementById('mainBtn');
-    if(isMyTurnNow()){
-        btn.textContent=t('your_turn')+' - '+t('start_game')+' '+currentRound;
-        btn.className='main-btn green';
-        btn.disabled=false;
-    }else{
-        btn.textContent=t('waiting_turn');
-        btn.className='main-btn waiting';
-        btn.disabled=true;
-    }
+    fetchData('getGame',{gameId:roomCode}).then(function(gameResult){
+        if(gameResult.ok&&gameResult.data){
+            var roundData=gameResult.data['round'+currentRound]||'';
+            var sheetTurn=getTurnFromSheet(roundData);
+            var shouldBeMyTurn=false;
+            
+            if(sheetTurn===2){
+                currentRound++;
+                if(currentRound>TOTAL_ROUNDS){endGame();return;}
+                renderRoundsScreen();
+                return;
+            }
+            
+            var myTurnIdx=-1;
+            for(var i=0;i<turnOrder.length;i++){
+                if(turnOrder[i][0]===currentRound&&turnOrder[i][1]===myNum){myTurnIdx=i;break;}
+            }
+            
+            shouldBeMyTurn=(myTurnIdx===sheetTurn);
+            
+            if(shouldBeMyTurn){
+                btn.textContent=t('your_turn')+' - '+t('start_game')+' '+currentRound;
+                btn.className='main-btn green';
+                btn.disabled=false;
+            }else{
+                btn.textContent=t('waiting_turn');
+                btn.className='main-btn waiting';
+                btn.disabled=true;
+            }
+        }
+    });
     document.getElementById('bottomBtnContainer').style.display='block';
     hideLoader();
 }
@@ -414,17 +437,13 @@ function finishRound(){
                 isSubmitting=false;
                 if(result.ok){
                     roundResults.push({myAnswers:myAnswers,myScore:myCorrectCount*5,myCorrect:myCorrectCount});
-                    myCorrectCount=0;myAnswers=[];currentRound++;currentQuestionIndex=0;currentTurn++;
-                    if(currentRound>TOTAL_ROUNDS){endGame();}else{renderRoundsScreen();}
+                    myCorrectCount=0;myAnswers=[];
+                    renderRoundsScreen();
                 }else{
                     showSubmittingScreen();
                     setTimeout(function(){finishRound();},2000);
                 }
             });
-        }else{
-            isSubmitting=false;
-            showSubmittingScreen();
-            setTimeout(function(){finishRound();},2000);
         }
     });
 }
@@ -444,11 +463,22 @@ function endGame(){
 window.backToDashboard=function(){window.location.href='../../dashboard/';};
 
 window.handleMainBtn=function(){
-    if(isMyTurnNow()){
-        var allShuffled=shuffleArray(questions);
-        roundQuestions=allShuffled.slice(0,QUESTIONS_PER_ROUND);
-        renderQuestionScreen();
-    }
+    fetchData('getGame',{gameId:roomCode}).then(function(gameResult){
+        if(gameResult.ok&&gameResult.data){
+            var roundData=gameResult.data['round'+currentRound]||'';
+            var sheetTurn=getTurnFromSheet(roundData);
+            var myNum=getMyPlayerNum();
+            var myTurnIdx=-1;
+            for(var i=0;i<turnOrder.length;i++){
+                if(turnOrder[i][0]===currentRound&&turnOrder[i][1]===myNum){myTurnIdx=i;break;}
+            }
+            if(myTurnIdx===sheetTurn){
+                var allShuffled=shuffleArray(questions);
+                roundQuestions=allShuffled.slice(0,QUESTIONS_PER_ROUND);
+                renderQuestionScreen();
+            }
+        }
+    });
 };
 
 async function getPlayerInfo(userId,fallbackName){
@@ -552,26 +582,15 @@ function startPolling(){
             var data=gameResult.data;
             if(data.status==='finished'){clearInterval(checkInterval);endGame();return;}
             
-            var currentRoundData=data['round'+currentRound]||'';
-            var myNum=getMyPlayerNum();
-            var myTurnIdx=getMyTurnIndex();
-            var shouldBeMyTurn=false;
+            var roundData=data['round'+currentRound]||'';
+            var sheetTurn=getTurnFromSheet(roundData);
             
-            if(currentRoundData===''){
-                shouldBeMyTurn=(myTurnIdx===currentTurn);
-            }else if(currentRoundData.includes('waiting')){
-                var parts=currentRoundData.split('][');
-                if(myNum===1){
-                    var p1Ans=parts[1]||'';
-                    shouldBeMyTurn=(p1Ans==='waiting'||p1Ans==='');
-                }else{
-                    var p2Ans=parts[2]||'';
-                    p2Ans=p2Ans.replace(']','').replace('[','');
-                    shouldBeMyTurn=(p2Ans==='waiting'||p2Ans==='');
-                }
+            if(sheetTurn===2){
+                currentRound++;
+                if(currentRound>TOTAL_ROUNDS){endGame();return;}
             }
             
-            if(shouldBeMyTurn&&!isInGame){
+            if(!isInGame){
                 renderRoundsScreen();
             }
         }
