@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لیگ | Quizico</title>
+    <script src="https://developer.eitaa.com/eitaa-web-app.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/gh/rastikerdar/iran-sans-font@v1.0.0/dist/font-face.css" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #faf5ff;
+            --bg2: #f3e8ff;
+            --bg3: #e9d5ff;
+            --primary: #a855f7;
+            --primary-dark: #9333ea;
+            --primary-light: #c084fc;
+            --primary-rgb: 168, 85, 247;
+            --dark: #1e1b2e;
+            --text: #4a4458;
+            --text-light: #6b7280;
+            --white: #ffffff;
+            --card-bg: #ffffff;
+            --header-bg: #ffffff;
+            --shadow: 3px 3px 0 #000000;
+            --radius: 12px;
+            --border: 1px solid #000000;
+            --gold: #f59e0b;
+        }
+
+        [data-theme="dark"] {
+            --bg: #1e1b2e;
+            --bg2: #2d2a3e;
+            --bg3: #3d3a4e;
+            --primary: #c084fc;
+            --primary-dark: #a855f7;
+            --primary-light: #d8b4fe;
+            --primary-rgb: 192, 132, 252;
+            --dark: #f1f5f9;
+            --text: #e2e8f0;
+            --text-light: #94a3b8;
+            --white: #2d2a3e;
+            --card-bg: #2d2a3e;
+            --header-bg: #2d2a3e;
+            --shadow: 3px 3px 0 #000000;
+            --border: 1px solid #475569;
+        }
+
+        [data-animation="off"] * {
+            animation: none !important;
+            transition: none !important;
+        }
+
+        * { 
+            margin: 0; 
+            padding: 0; 
+            box-sizing: border-box;
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            user-select: none;
+            -webkit-user-drag: none;
+            user-drag: none;
+        }
+
+        img {
+            pointer-events: none;
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            user-select: none;
+            -webkit-user-drag: none;
+            user-drag: none;
+        }
+
+        input, textarea {
+            -webkit-user-select: text !important;
+            user-select: text !important;
+            -webkit-touch-callout: default !important;
+        }
+
+        body {
+            font-family: 'IRANSans', Tahoma, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            transition: font-family 0.3s ease;
+        }
+
+        .bg-animation {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            z-index: 0;
+            background: linear-gradient(135deg, var(--bg) 0%, var(--bg2) 40%, var(--bg3) 80%);
+        }
+
+        .header {
+            position: relative;
+            z-index: 10;
+            background: var(--header-bg);
+            border-bottom: var(--border);
+            padding: 10px 16px;
+            position: sticky;
+            top: 0;
+            box-shadow: var(--shadow);
+        }
+
+        .header-inner {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .header-right { display: flex; align-items: center; gap: 8px; }
+
+        .header-logo {
+            width: 38px;
+            height: 38px;
+            border-radius: var(--radius);
+            background: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            padding: 2px;
+            border: var(--border);
+        }
+
+        .header-logo img { width: 95%; height: 95%; object-fit: contain; transform: scale(1.1); }
+        .header-title { font-size: 14px; font-weight: 800; color: var(--dark); }
+        .header-title .t-accent { color: var(--primary); }
+        .header-subtitle { font-size: 8px; color: var(--text-light); }
+
+        .currency-badge {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            background: var(--bg2);
+            border: var(--border);
+            border-radius: 8px;
+            padding: 4px 10px;
+            font-size: 10px;
+            font-weight: 700;
+            color: var(--dark);
+            box-shadow: var(--shadow);
+        }
+        .currency-badge.coins i { color: #f59e0b; }
+
+        .main-container {
+            position: relative;
+            z-index: 5;
+            max-width: 500px;
+            width: 100%;
+            margin: 12px auto;
+            padding: 0 10px 100px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .loader-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 50vh;
+            gap: 10px;
+        }
+        .loader {
+            width: 45px;
+            height: 45px;
+            border: 5px solid var(--bg3);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+        .loader-text { font-size: 11px; font-weight: 700; color: var(--text); }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .game-content { display: none; }
+        .game-content.show { display: flex; flex-direction: column; gap: 10px; }
+
+        .waiting-card {
+            background: var(--card-bg);
+            border: var(--border);
+            border-radius: var(--radius);
+            padding: 20px;
+            box-shadow: var(--shadow);
+            text-align: center;
+        }
+        .waiting-image { width: 100px; height: 100px; object-fit: contain; margin: 0 auto 10px; display: block; }
+        .waiting-text { font-size: 12px; font-weight: 700; color: var(--text); margin-bottom: 10px; }
+        .room-code-display { font-size: 18px; font-weight: 900; color: var(--primary); letter-spacing: 2px; margin-bottom: 10px; }
+
+        .players-row { display: flex; gap: 8px; }
+        .player-card {
+            flex: 1;
+            background: var(--card-bg);
+            border: var(--border);
+            border-radius: var(--radius);
+            padding: 10px;
+            text-align: center;
+            box-shadow: var(--shadow);
+        }
+        .player-card.active { border-color: var(--gold); border-width: 2px; }
+        .player-tag { font-size: 9px; font-weight: 800; color: var(--dark); margin-bottom: 4px; }
+        .player-score { font-size: 13px; font-weight: 800; color: var(--gold); }
+
+        .league-table {
+            background: var(--card-bg);
+            border: var(--border);
+            border-radius: var(--radius);
+            padding: 12px;
+            box-shadow: var(--shadow);
+        }
+        .league-table-title { font-size: 10px; font-weight: 800; color: var(--dark); margin-bottom: 8px; text-align: center; }
+        .league-table-row {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 8px;
+            border: var(--border);
+            border-radius: 6px;
+            background: var(--bg2);
+            margin-bottom: 4px;
+            font-size: 8px;
+            font-weight: 700;
+            color: var(--dark);
+        }
+        .league-table-row .rank { min-width: 25px; font-weight: 800; }
+        .league-table-row .name { flex: 1; }
+        .league-table-row .pts { font-weight: 800; color: var(--primary); }
+
+        .games-list { display: flex; flex-direction: column; gap: 4px; }
+        .game-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 10px;
+            border: var(--border);
+            border-radius: 8px;
+            background: var(--bg2);
+            font-size: 8px;
+            font-weight: 700;
+            color: var(--dark);
+        }
+        .game-item .vs { color: var(--primary); font-weight: 800; }
+        .game-item .status { margin-right: auto; font-size: 7px; padding: 2px 8px; border-radius: 8px; border: var(--border); }
+        .game-item .status.waiting { background: #fef3c7; color: #d97706; }
+        .game-item .status.done { background: #d1fae5; color: #059669; }
+
+        .question-card {
+            background: var(--card-bg);
+            border: var(--border);
+            border-radius: var(--radius);
+            padding: 12px;
+            box-shadow: var(--shadow);
+        }
+        .question-text {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--dark);
+            line-height: 1.7;
+            text-align: center;
+            margin-bottom: 8px;
+        }
+        .timer-bar-container {
+            background: var(--bg3);
+            border: var(--border);
+            border-radius: 8px;
+            height: 6px;
+            overflow: hidden;
+            margin-bottom: 4px;
+        }
+        .timer-bar-fill { height: 100%; background: #10b981; transition: width 1s linear; }
+        .timer-bar-fill.warning { background: #f59e0b; }
+        .timer-bar-fill.danger { background: #ef4444; }
+        .timer-text { font-size: 7px; font-weight: 700; color: var(--text-light); text-align: center; margin-bottom: 8px; }
+
+        .options-grid { display: flex; flex-direction: column; gap: 6px; }
+        .option-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 12px;
+            border: var(--border);
+            border-radius: 8px;
+            background: var(--bg2);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 2px 2px 0 #000;
+            font-family: 'IRANSans', Tahoma, sans-serif;
+            font-size: 10px;
+            font-weight: 600;
+            color: var(--dark);
+            text-align: right;
+        }
+        .option-btn:active { transform: translate(1px, 1px); box-shadow: 1px 1px 0 #000; }
+        .option-btn.selected-correct { background: #10b981; color: #fff; }
+        .option-btn.selected-wrong { background: #ef4444; color: #fff; }
+        .option-btn.disabled { pointer-events: none; opacity: 0.6; }
+        .option-letter {
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: var(--primary);
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 9px;
+            font-weight: 800;
+            flex-shrink: 0;
+            border: var(--border);
+        }
+
+        .bottom-btn-container {
+            position: fixed;
+            bottom: 0; right: 0; left: 0;
+            padding: 8px 16px;
+            background: var(--header-bg);
+            border-top: var(--border);
+            z-index: 100;
+        }
+        .main-btn {
+            width: 100%;
+            max-width: 500px;
+            margin: 0 auto;
+            display: block;
+            padding: 10px;
+            background: var(--gold);
+            color: #fff;
+            border: var(--border);
+            border-radius: 8px;
+            font-family: 'IRANSans', Tahoma, sans-serif;
+            font-size: 11px;
+            font-weight: 800;
+            cursor: pointer;
+            box-shadow: 3px 3px 0 #000;
+        }
+        .main-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .main-btn.green { background: #10b981; }
+        .main-btn.waiting { background: var(--text-light); }
+
+        .result-banner {
+            text-align: center;
+            padding: 16px;
+            background: var(--card-bg);
+            border: var(--border);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+        }
+        .result-icon { font-size: 40px; margin-bottom: 8px; }
+        .result-text { font-size: 14px; font-weight: 800; color: var(--dark); margin-bottom: 4px; }
+        .result-score { font-size: 10px; color: var(--text-light); margin-bottom: 8px; }
+        .result-btn {
+            display: inline-block;
+            padding: 8px 20px;
+            background: var(--primary);
+            color: #fff;
+            border: var(--border);
+            border-radius: 8px;
+            font-family: 'IRANSans', Tahoma, sans-serif;
+            font-size: 10px;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 2px 2px 0 #000;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="bg-animation"></div>
+
+    <header class="header">
+        <div class="header-inner">
+            <div class="header-right">
+                <div class="header-logo"><img src="https://cdn.imgurl.ir/uploads/f30974_InShot_20260821_174101103.png" alt="Quizico" draggable="false" oncontextmenu="return false;" ondragstart="return false;"></div>
+                <div>
+                    <div class="header-title">Quiz<span class="t-accent">ico</span></div>
+                    <div class="header-subtitle">لیگ</div>
+                </div>
+            </div>
+            <span class="currency-badge coins"><i class="fa-solid fa-coins"></i> <span id="coinsHeader">0</span></span>
+        </div>
+    </header>
+
+    <main class="main-container">
+        <div class="loader-wrapper" id="loaderWrapper">
+            <div class="loader"></div>
+            <div class="loader-text">در حال دریافت...</div>
+        </div>
+        <div class="game-content" id="gameContent"></div>
+    </main>
+
+    <div class="bottom-btn-container" id="bottomBtnContainer" style="display:none;">
+        <button class="main-btn" id="mainBtn" onclick="handleMainBtn()">شروع بازی</button>
+    </div>
+
+    <script>
+        (function() {
+            var webApp = window.Eitaa?.WebApp;
+            var API_URL = 'https://script.google.com/macros/s/AKfycbwV2X5hZB6WSJSezWWsYXq-94gIRu6z6kuzTIupTnHx2VqDKpzlZLcBohnZO2Lk1KHmxA/exec';
+
+            var TOTAL_ROUNDS = 5;
+            var QUESTIONS_PER_ROUND = 3;
+            var QUESTION_TIME = 60;
+            var leagueCode = null;
+            var isCreator = false;
+            var currentGameIndex = 0;
+            var currentRound = 1;
+            var currentQuestionIndex = 0;
+            var questions = [];
+            var currentQuestions = [];
+            var isAnswered = false;
+            var myScore = 0;
+            var myCorrectCount = 0;
+            var myAnswers = [];
+            var roundResults = [];
+            var checkInterval = null;
+            var myUserId = '';
+            var timerInterval = null;
+            var timeLeft = QUESTION_TIME;
+            var userCoins = 0;
+            var currentGameId = '';
+            var currentOpponent = '';
+            var isMyTurn = false;
+
+            var leagueMatches = [
+                [1, 2], [2, 3], [1, 5], [3, 4], [1, 4],
+                [2, 5], [1, 3], [4, 5], [3, 5], [2, 4]
+            ];
+
+            var turnOrder = [[1,1],[1,2],[2,2],[2,1],[3,1],[3,2],[4,2],[4,1],[5,1],[5,2]];
+            var currentTurn = 0;
+
+            document.addEventListener('contextmenu', function(e) { e.preventDefault(); });
+            document.addEventListener('dragstart', function(e) { e.preventDefault(); });
+            document.addEventListener('copy', function(e) { if (e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA') e.preventDefault(); });
+            document.addEventListener('cut', function(e) { if (e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA') e.preventDefault(); });
+
+            function getEitaaUser(){return webApp&&webApp.initDataUnsafe&&webApp.initDataUnsafe.user?webApp.initDataUnsafe.user:null;}
+            function getUserId(){var u=getEitaaUser();return u?(typeof u.id==='number'?u.id.toString():String(u.id||'')):'';}
+            function getStartParam(){if(webApp&&webApp.initDataUnsafe&&webApp.initDataUnsafe.start_param)return webApp.initDataUnsafe.start_param;return ''}
+            function generateLeagueCode(){var c='LG_';for(var i=0;i<5;i++){c+=Math.floor(Math.random()*10);}return c}
+            function fetchData(action,params){
+                var payload={action:action,username:getUserId()};
+                if(params){for(var k in params){if(params.hasOwnProperty(k))payload[k]=params[k];}}
+                return fetch(API_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(payload)}).then(function(r){return r.json();}).catch(function(){return{ok:false};});
+            }
+            function shuffleArray(a){for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t;}return a;}
+            function hideLoader(){document.getElementById('loaderWrapper').style.display='none';document.getElementById('gameContent').classList.add('show');}
+
+            function renderWaitingScreen() {
+                var html = '<div class="waiting-card">';
+                html += '<img class="waiting-image" src="https://cdn.imgurl.ir/uploads/g58935_InShot_20260822_140943752.png" alt="" draggable="false" oncontextmenu="return false;" ondragstart="return false;">';
+                html += '<div class="waiting-text">منتظر ورود بازیکن‌ها...</div>';
+                html += '<div class="room-code-display">' + leagueCode + '</div>';
+                html += '<div class="league-table"><div class="league-table-title">بازیکن‌های وارد شده</div><div id="leaguePlayersList"></div></div>';
+                html += '</div>';
+                document.getElementById('gameContent').innerHTML = html;
+                document.getElementById('bottomBtnContainer').style.display = 'none';
+                hideLoader();
+                loadLeaguePlayers();
+            }
+
+            async function loadLeaguePlayers() {
+                var result = await fetchData('getLeague', { leagueId: leagueCode });
+                if (result.ok && result.data) {
+                    var players = [];
+                    for (var i = 1; i <= 5; i++) {
+                        if (result.data['player'+i]) {
+                            players.push('بازیکن ' + i + ': وارد شده');
+                        } else {
+                            players.push('بازیکن ' + i + ': خالی');
+                        }
+                    }
+                    document.getElementById('leaguePlayersList').innerHTML = players.map(function(p) {
+                        return '<div class="league-table-row"><span class="name">' + p + '</span></div>';
+                    }).join('');
+                }
+            }
+
+            function renderLeagueTable() {
+                var html = '<div class="league-table"><div class="league-table-title">جدول لیگ</div><div id="leagueTableBody"></div></div>';
+                html += '<div class="games-list" id="leagueGamesList"></div>';
+                document.getElementById('gameContent').innerHTML = html;
+                document.getElementById('bottomBtnContainer').style.display = 'none';
+                hideLoader();
+                loadLeagueData();
+            }
+
+            async function loadLeagueData() {
+                var result = await fetchData('getLeague', { leagueId: leagueCode });
+                if (result.ok && result.data) {
+                    var players = [];
+                    for (var i = 1; i <= 5; i++) {
+                        if (result.data['player'+i]) {
+                            players.push({ num: i, name: 'بازیکن ' + i, pts: result.data['pts'+i] || 0 });
+                        }
+                    }
+                    players.sort(function(a, b) { return b.pts - a.pts; });
+                    document.getElementById('leagueTableBody').innerHTML = players.map(function(p, idx) {
+                        return '<div class="league-table-row"><span class="rank">#' + (idx+1) + '</span><span class="name">' + p.name + '</span><span class="pts">' + p.pts + ' امتیاز</span></div>';
+                    }).join('');
+
+                    var gamesHtml = '';
+                    for (var j = 0; j < leagueMatches.length; j++) {
+                        var m = leagueMatches[j];
+                        var resultKey = 'game' + (j+1);
+                        var gameResult = result.data[resultKey] || '';
+                        var status = gameResult ? 'done' : 'waiting';
+                        var statusText = gameResult ? 'انجام شد' : 'در انتظار';
+                        gamesHtml += '<div class="game-item"><span>بازی ' + (j+1) + ':</span><span class="vs">بازیکن ' + m[0] + ' vs بازیکن ' + m[1] + '</span><span class="status ' + status + '">' + statusText + '</span></div>';
+                    }
+                    document.getElementById('leagueGamesList').innerHTML = gamesHtml;
+                }
+            }
+
+            function renderQuestionScreen() {
+                isAnswered = false;
+                var q = currentQuestions[currentQuestionIndex];
+                var opts = shuffleArray(q.options.slice());
+                var ci = opts.indexOf(q.options[q.correctOption - 1]);
+                var html = '<div class="question-card">';
+                html += '<div class="question-text">' + q.question + '</div>';
+                html += '<div class="timer-bar-container"><div class="timer-bar-fill" id="timerFill" style="width:100%;"></div></div>';
+                html += '<div class="timer-text" id="timerText">60s</div>';
+                html += '<div class="options-grid">';
+                for (var i = 0; i < opts.length; i++) {
+                    html += '<button class="option-btn" data-text="'+opts[i]+'" onclick="selectOption('+i+','+ci+',this)">';
+                    html += '<span class="option-letter">'+(i+1)+'</span><span>'+opts[i]+'</span></button>';
+                }
+                html += '</div></div>';
+                document.getElementById('gameContent').innerHTML = html;
+                document.getElementById('bottomBtnContainer').style.display = 'none';
+                hideLoader();
+                startTimer();
+            }
+
+            function startTimer() {
+                clearInterval(timerInterval);
+                timeLeft = QUESTION_TIME;
+                updateTimerBar();
+                timerInterval = setInterval(function() {
+                    timeLeft--;
+                    updateTimerBar();
+                    if (timeLeft <= 0) { clearInterval(timerInterval); if (!isAnswered) timeOut(); }
+                }, 1000);
+            }
+            function updateTimerBar() {
+                var f = document.getElementById('timerFill');
+                var t = document.getElementById('timerText');
+                if (!f || !t) return;
+                var pct = (timeLeft / QUESTION_TIME) * 100;
+                f.style.width = pct + '%';
+                t.textContent = timeLeft + 's';
+                f.className = 'timer-bar-fill' + (timeLeft <= 10 ? ' danger' : timeLeft <= 20 ? ' warning' : '');
+            }
+            function timeOut() {
+                isAnswered = true;
+                var btns = document.querySelectorAll('.option-btn');
+                btns.forEach(function(b){b.classList.add('disabled');});
+                var q = currentQuestions[currentQuestionIndex];
+                var ct = q.options[q.correctOption - 1];
+                document.querySelectorAll('.option-btn').forEach(function(b){ if(b.getAttribute('data-text')===ct) b.classList.add('selected-correct'); });
+                setTimeout(goToNext, 800);
+            }
+            function goToNext() {
+                currentQuestionIndex++;
+                if (currentQuestionIndex >= QUESTIONS_PER_ROUND) {
+                    finishRound();
+                } else {
+                    renderQuestionScreen();
+                }
+            }
+
+            window.selectOption = function(sel, ci, btn) {
+                if (isAnswered) return;
+                isAnswered = true;
+                clearInterval(timerInterval);
+                var btns = document.querySelectorAll('.option-btn');
+                btns.forEach(function(b){b.classList.add('disabled');});
+                if (sel === ci) { btn.classList.add('selected-correct'); myScore += 5; myCorrectCount++; myAnswers.push(true); }
+                else { btn.classList.add('selected-wrong'); btns[ci].classList.add('selected-correct'); myAnswers.push(false); }
+                setTimeout(goToNext, 800);
+            };
+
+            function finishRound() {
+                roundResults.push({ myScore: myCorrectCount * 5, myCorrect: myCorrectCount, myAnswers: myAnswers });
+                var ansStr = myAnswers.map(function(a) { return a ? 'T' : 'F'; }).join(',');
+                var updateData = {};
+                updateData['round' + currentRound + '_p' + (isCreator ? '1' : '2')] = ansStr;
+                fetchData('updateGame', { gameId: currentGameId, updates: updateData });
+                myCorrectCount = 0;
+                myAnswers = [];
+                currentRound++;
+                currentQuestionIndex = 0;
+                currentTurn++;
+                checkTurn();
+            }
+
+            function checkTurn() {
+                var myNum = isCreator ? 1 : 2;
+                var isMyTurnNow = false;
+                for (var i = 0; i < turnOrder.length; i++) {
+                    if (turnOrder[i][0] === currentRound && turnOrder[i][1] === myNum) {
+                        isMyTurnNow = (i === currentTurn);
+                        break;
+                    }
+                }
+                if (isMyTurnNow) {
+                    loadRoundQuestions();
+                    renderQuestionScreen();
+                } else {
+                    renderWaitingTurnScreen();
+                }
+            }
+
+            function renderWaitingTurnScreen() {
+                var html = '<div class="result-banner">';
+                html += '<div class="result-text">منتظر حریف...</div>';
+                html += '</div>';
+                document.getElementById('gameContent').innerHTML = html;
+                document.getElementById('bottomBtnContainer').style.display = 'none';
+                hideLoader();
+            }
+
+            function loadRoundQuestions() {
+                var allShuffled = shuffleArray(questions);
+                currentQuestions = allShuffled.slice(0, QUESTIONS_PER_ROUND);
+            }
+
+            window.handleMainBtn = function() {
+                if (isMyTurn) {
+                    loadRoundQuestions();
+                    renderQuestionScreen();
+                }
+            };
+
+            async function initPlayer1() {
+                leagueCode = generateLeagueCode();
+                isCreator = true;
+                myUserId = getUserId();
+                await fetchData('saveLeague', {
+                    leagueId: leagueCode,
+                    creator: myUserId,
+                    player1: myUserId
+                });
+                renderWaitingScreen();
+                checkInterval = setInterval(async function() {
+                    var result = await fetchData('getLeague', { leagueId: leagueCode });
+                    if (result.ok && result.data) {
+                        var count = 0;
+                        for (var i = 1; i <= 5; i++) {
+                            if (result.data['player' + i]) count++;
+                        }
+                        if (count === 5) {
+                            clearInterval(checkInterval);
+                            startLeague();
+                        }
+                    }
+                }, 3000);
+            }
+
+            async function initPlayer2() {
+                isCreator = false;
+                myUserId = getUserId();
+                var result = await fetchData('getLeague', { leagueId: leagueCode });
+                if (result.ok && result.data) {
+                    if (result.data.player1 === myUserId) {
+                        isCreator = true;
+                        renderWaitingScreen();
+                        checkInterval = setInterval(async function() {
+                            var checkResult = await fetchData('getLeague', { leagueId: leagueCode });
+                            if (checkResult.ok && checkResult.data) {
+                                var count = 0;
+                                for (var i = 1; i <= 5; i++) {
+                                    if (checkResult.data['player' + i]) count++;
+                                }
+                                if (count === 5) {
+                                    clearInterval(checkInterval);
+                                    startLeague();
+                                }
+                            }
+                        }, 3000);
+                        return;
+                    }
+                    var joined = false;
+                    for (var i = 2; i <= 5; i++) {
+                        if (!result.data['player' + i]) {
+                            var updateData = {};
+                            updateData['player' + i] = myUserId;
+                            await fetchData('updateLeague', { leagueId: leagueCode, updates: updateData });
+                            joined = true;
+                            break;
+                        }
+                    }
+                    if (!joined) {
+                        document.getElementById('gameContent').innerHTML = '<div class="result-banner"><div class="result-text">لیگ پره!</div></div>';
+                        hideLoader();
+                        return;
+                    }
+                    renderWaitingScreen();
+                    checkInterval = setInterval(async function() {
+                        var checkResult = await fetchData('getLeague', { leagueId: leagueCode });
+                        if (checkResult.ok && checkResult.data) {
+                            var count = 0;
+                            for (var i = 1; i <= 5; i++) {
+                                if (checkResult.data['player' + i]) count++;
+                            }
+                            if (count === 5) {
+                                clearInterval(checkInterval);
+                                startLeague();
+                            }
+                        }
+                    }, 3000);
+                }
+            }
+
+            async function startLeague() {
+                renderLeagueTable();
+                checkInterval = setInterval(async function() {
+                    var result = await fetchData('getLeague', { leagueId: leagueCode });
+                    if (result.ok && result.data && result.data.status === 'finished') {
+                        clearInterval(checkInterval);
+                        showLeagueResults();
+                    } else {
+                        renderLeagueTable();
+                    }
+                }, 5000);
+            }
+
+            async function showLeagueResults() {
+                var result = await fetchData('getLeague', { leagueId: leagueCode });
+                if (result.ok && result.data) {
+                    var html = '<div class="result-banner">';
+                    html += '<div class="result-icon"><i class="fa-solid fa-trophy" style="color:#f59e0b;"></i></div>';
+                    html += '<div class="result-text">لیگ تموم شد!</div>';
+                    html += '<button class="result-btn" onclick="backToDashboard()">بازگشت</button></div>';
+                    document.getElementById('gameContent').innerHTML = html;
+                    document.getElementById('bottomBtnContainer').style.display = 'none';
+                    hideLoader();
+                }
+            }
+
+            window.backToDashboard = function() { window.location.href = '../../dashboard/'; };
+
+            async function init() {
+                if (webApp) {
+                    webApp.ready();
+                    webApp.expand();
+                    webApp.BackButton.show();
+                    webApp.BackButton.onClick(function() {
+                        webApp.showConfirm('مطمئنی از لیگ خارج میشی؟', function(confirmed) {
+                            if (confirmed) {
+                                window.location.href = '../../dashboard/';
+                            }
+                        });
+                    });
+                }
+                myUserId = getUserId();
+                var startParam = getStartParam();
+                var savedLeague = localStorage.getItem('leagueCode');
+                
+                if (startParam) {
+                    leagueCode = startParam;
+                    localStorage.removeItem('leagueCode');
+                    initPlayer2();
+                } else if (savedLeague) {
+                    leagueCode = savedLeague;
+                    localStorage.removeItem('leagueCode');
+                    initPlayer2();
+                } else {
+                    initPlayer1();
+                }
+            }
+
+            init();
+        })();
+    </script>
+</body>
+</html>
