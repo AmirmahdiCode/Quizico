@@ -177,13 +177,12 @@
 
     <script>
         (function() {
-            var webApp = window.Eitaa?.WebApp;
             var API_URL = 'https://script.google.com/macros/s/AKfycbzsGrBIFVNkZYfNsx448awdMpPy42boOUvkSMpqnDWf9-wzbPctRQTIUa_ZpTpuGiVqIw/exec';
             var BOT_TOKEN = '77781793:V~KcJC7%-6R[6mluX-n9AC9!5]-lOe4sYy/-po?thoGR-XohE.2zg-VYpqW,v4-L~5cj?ry-IAuujqcE-2x2nnxNk-8OOXj2BC-qMLC%s6E-eP3rAgzQ-Ja4z(F5e-yb1#0dlr-Vjf8HltQ-YsFu,3mL-M';
 
             function getEitaaUser() {
-                if (webApp && webApp.initDataUnsafe && webApp.initDataUnsafe.user) {
-                    return webApp.initDataUnsafe.user;
+                if (Eitaa && Eitaa.WebApp && Eitaa.WebApp.initDataUnsafe && Eitaa.WebApp.initDataUnsafe.user) {
+                    return Eitaa.WebApp.initDataUnsafe.user;
                 }
                 return null;
             }
@@ -198,8 +197,8 @@
             }
 
             function getStartParam() {
-                if (webApp && webApp.initDataUnsafe && webApp.initDataUnsafe.start_param) {
-                    return webApp.initDataUnsafe.start_param;
+                if (Eitaa && Eitaa.WebApp && Eitaa.WebApp.initDataUnsafe && Eitaa.WebApp.initDataUnsafe.start_param) {
+                    return Eitaa.WebApp.initDataUnsafe.start_param;
                 }
                 return '';
             }
@@ -207,7 +206,7 @@
             async function fetchData(action, params) {
                 try {
                     var username = getUserId();
-                    var initData = webApp?.initData || '';
+                    var initData = Eitaa?.WebApp?.initData || '';
 
                     var payload = {
                         action: action,
@@ -262,8 +261,8 @@
             }
 
             function openSupportLink(){
-                if (webApp && webApp.openEitaaLink) {
-                    webApp.openEitaaLink('https://eitaa.com/Amirmahdi_code');
+                if (Eitaa && Eitaa.WebApp && Eitaa.WebApp.openEitaaLink) {
+                    Eitaa.WebApp.openEitaaLink('https://eitaa.com/Amirmahdi_code');
                 } else {
                     window.open('https://eitaa.com/Amirmahdi_code', '_blank');
                 }
@@ -282,10 +281,8 @@
             }
 
             async function init() {
-                if (webApp) {
-                    webApp.ready();
-                    webApp.expand();
-                }
+                Eitaa.WebApp.ready();
+                Eitaa.WebApp.expand();
 
                 var startParam = getStartParam();
                 var user = getEitaaUser();
@@ -296,23 +293,17 @@
                     return;
                 }
 
-                if (webApp && typeof webApp.requestWriteAccess === 'function') {
-                    webApp.requestWriteAccess(function(granted) {
-                        if (granted) {
-                            proceedToGame(true);
-                        } else {
-                            updateStatusText('دسترسی رد شد', 'برنامه بسته می‌شود...');
-                            
-                            setTimeout(function() {
-                                if (webApp && typeof webApp.close === 'function') {
-                                    webApp.close();
-                                }
-                            }, 1500);
-                        }
-                    });
-                } else {
-                    proceedToGame(false);
-                }
+                Eitaa.WebApp.requestWriteAccess(function(granted) {
+                    if (granted) {
+                        proceedToGame(true);
+                    } else {
+                        updateStatusText('دسترسی رد شد', 'برنامه بسته می‌شود...');
+                        
+                        setTimeout(function() {
+                            Eitaa.WebApp.close();
+                        }, 1500);
+                    }
+                });
 
                 async function proceedToGame(isNewAccess) {
                     var fullName = (user.first_name || '') + ' ' + (user.last_name || '');
@@ -356,10 +347,10 @@
                 }
             }
 
-            if (webApp) {
-                webApp.BackButton.show();
-                webApp.BackButton.onClick(function() {
-                    webApp.close();
+            if (Eitaa && Eitaa.WebApp) {
+                Eitaa.WebApp.BackButton.show();
+                Eitaa.WebApp.BackButton.onClick(function() {
+                    Eitaa.WebApp.close();
                 });
             }
 
