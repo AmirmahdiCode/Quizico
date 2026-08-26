@@ -1,1 +1,633 @@
-.
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تنظیمات | Quizico</title>
+    <script src="https://developer.eitaa.com/eitaa-web-app.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/gh/rastikerdar/iran-sans-font@v1.0.0/dist/font-face.css" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #faf5ff;
+            --bg2: #f3e8ff;
+            --bg3: #e9d5ff;
+            --primary: #a855f7;
+            --primary-dark: #9333ea;
+            --primary-light: #c084fc;
+            --primary-rgb: 168, 85, 247;
+            --dark: #1e1b2e;
+            --text: #4a4458;
+            --text-light: #6b7280;
+            --white: #ffffff;
+            --card-bg: #ffffff;
+            --header-bg: #ffffff;
+            --shadow: 3px 3px 0 #000000;
+            --radius: 12px;
+            --border: 1px solid #000000;
+        }
+
+        [data-theme="dark"] {
+            --bg: #1e1b2e;
+            --bg2: #2d2a3e;
+            --bg3: #3d3a4e;
+            --primary: #c084fc;
+            --primary-dark: #a855f7;
+            --primary-light: #d8b4fe;
+            --primary-rgb: 192, 132, 252;
+            --dark: #f1f5f9;
+            --text: #e2e8f0;
+            --text-light: #94a3b8;
+            --white: #2d2a3e;
+            --card-bg: #2d2a3e;
+            --header-bg: #2d2a3e;
+            --shadow: 3px 3px 0 #000000;
+            --border: 1px solid #475569;
+        }
+
+        [data-animation="off"] * {
+            animation: none !important;
+            transition: none !important;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'IRANSans', Tahoma, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            transition: font-family 0.3s ease;
+        }
+
+        .bg-animation {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            z-index: 0;
+            background: linear-gradient(135deg, var(--bg) 0%, var(--bg2) 40%, var(--bg3) 80%);
+        }
+
+        .header {
+            position: relative;
+            z-index: 10;
+            background: var(--header-bg);
+            border-bottom: var(--border);
+            padding: 12px 20px;
+            position: sticky;
+            top: 0;
+            box-shadow: var(--shadow);
+        }
+
+        .header-inner {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .header-right { display: flex; align-items: center; gap: 10px; }
+
+        .header-logo {
+            width: 44px;
+            height: 44px;
+            border-radius: var(--radius);
+            background: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            padding: 2px;
+            border: var(--border);
+        }
+
+        .header-logo img { width: 95%; height: 95%; object-fit: contain; transform: scale(1.1); }
+        .header-title { font-size: 16px; font-weight: 800; color: var(--dark); }
+        .header-title .t-accent { color: var(--primary); }
+        .header-subtitle { font-size: 8px; color: var(--text-light); }
+
+        .main-container {
+            position: relative;
+            z-index: 5;
+            max-width: 600px;
+            width: 100%;
+            margin: 16px auto;
+            padding: 0 12px 80px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .settings-card {
+            background: var(--card-bg);
+            border: var(--border);
+            border-radius: var(--radius);
+            padding: 16px;
+            box-shadow: var(--shadow);
+        }
+
+        .settings-title {
+            font-size: 12px;
+            font-weight: 800;
+            color: var(--dark);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border-bottom: 1px dashed var(--text-light);
+            padding-bottom: 8px;
+        }
+
+        .settings-title i { color: var(--primary); }
+
+        .language-options { display: flex; gap: 8px; flex-wrap: wrap; }
+
+        .lang-btn {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 16px;
+            border: var(--border);
+            border-radius: 8px;
+            background: var(--bg2);
+            cursor: pointer;
+            box-shadow: 2px 2px 0 #000;
+            font-family: 'IRANSans', Tahoma, sans-serif;
+            font-size: 10px;
+            font-weight: 700;
+            color: var(--text);
+            transition: all 0.2s ease;
+        }
+        .lang-btn:active { transform: translate(1px, 1px); box-shadow: 1px 1px 0 #000; }
+        .lang-btn.active { background: var(--primary); color: #fff; border-color: var(--primary); }
+
+        .theme-options { display: flex; flex-direction: column; gap: 8px; }
+
+        .theme-option {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 14px;
+            border: var(--border);
+            border-radius: 8px;
+            cursor: pointer;
+            box-shadow: 2px 2px 0 #000;
+            background: var(--bg2);
+            transition: all 0.2s ease;
+        }
+        .theme-option:active { transform: translate(1px, 1px); box-shadow: 1px 1px 0 #000; }
+        .theme-option.active { background: var(--primary); border-color: var(--primary); }
+        .theme-option.active .theme-option-label { color: #fff; }
+        .theme-option.active .theme-option-desc { color: rgba(255,255,255,0.8); }
+        .theme-option.active i { color: #fff; }
+        .theme-option i { font-size: 18px; color: var(--primary); width: 24px; text-align: center; }
+        .theme-option-label { font-size: 11px; font-weight: 700; color: var(--dark); }
+        .theme-option-desc { font-size: 8px; color: var(--text-light); }
+
+        .color-options { display: flex; gap: 8px; flex-wrap: wrap; }
+
+        .color-option {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            border: var(--border);
+            cursor: pointer;
+            box-shadow: 2px 2px 0 #000;
+            transition: all 0.2s ease;
+        }
+        .color-option:active { transform: translate(1px, 1px); box-shadow: 1px 1px 0 #000; }
+        .color-option.active { box-shadow: 0 0 15px var(--primary), 2px 2px 0 #000; transform: scale(1.1); }
+
+        .setting-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--bg3);
+        }
+        .setting-item:last-child { border-bottom: none; }
+        .setting-item.disabled { opacity: 0.4; pointer-events: none; }
+
+        .setting-info { display: flex; align-items: center; gap: 10px; }
+        .setting-info i { font-size: 16px; color: var(--primary); width: 22px; text-align: center; }
+        .setting-label { font-size: 11px; font-weight: 700; color: var(--dark); }
+        .setting-desc { font-size: 8px; color: var(--text-light); }
+
+        .coming-soon-badge {
+            font-size: 7px;
+            font-weight: 700;
+            padding: 2px 6px;
+            border-radius: 8px;
+            background: var(--bg3);
+            color: var(--text-light);
+            border: var(--border);
+            margin-right: 6px;
+        }
+
+        .toggle-switch {
+            width: 40px;
+            height: 22px;
+            background: var(--bg3);
+            border: var(--border);
+            border-radius: 20px;
+            cursor: pointer;
+            position: relative;
+            transition: all 0.3s ease;
+            box-shadow: 2px 2px 0 #000;
+            flex-shrink: 0;
+        }
+        .toggle-switch.active { background: var(--primary); }
+        .toggle-switch::after {
+            content: '';
+            position: absolute;
+            top: 2px; right: 20px;
+            width: 14px; height: 14px;
+            background: #fff;
+            border: var(--border);
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+        .toggle-switch.active::after { right: 2px; }
+
+        .support-notification {
+            position: fixed;
+            top: 75px;
+            right: 10px;
+            left: 10px;
+            max-width: 400px;
+            margin: 0 auto;
+            background: var(--card-bg);
+            border: var(--border);
+            border-radius: var(--radius);
+            box-shadow: 5px 5px 0 #000;
+            padding: 10px 14px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            z-index: 2000;
+            animation: slideDownNotif 0.5s ease forwards, slideUpNotif 0.5s ease 4.5s forwards;
+            cursor: pointer;
+        }
+        .support-notification img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: var(--border);
+            object-fit: cover;
+        }
+        .support-notification .notif-info { flex: 1; }
+        .support-notification .notif-name { font-size: 10px; font-weight: 800; color: var(--dark); }
+        .support-notification .notif-desc { font-size: 8px; color: var(--text-light); }
+        .support-notification i { color: var(--text-light); font-size: 10px; }
+
+        @keyframes slideDownNotif {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes slideUpNotif {
+            from { opacity: 1; transform: translateY(0); }
+            to { opacity: 0; transform: translateY(-20px); }
+        }
+
+        .bottom-nav {
+            position: fixed;
+            bottom: 0; right: 0; left: 0;
+            background: var(--header-bg);
+            border-top: var(--border);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            padding: 6px 0;
+            z-index: 999;
+        }
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
+            cursor: pointer;
+            text-decoration: none;
+            color: var(--text-light);
+            padding: 4px 12px;
+            font-family: inherit;
+            background: none;
+            border: none;
+            font-size: 12px;
+        }
+        .nav-item i { font-size: 18px; }
+        .nav-item span { font-size: 8px; font-weight: 600; }
+        .nav-item.active { color: var(--primary); }
+    </style>
+</head>
+<body>
+
+    <div class="bg-animation"></div>
+
+    <header class="header">
+        <div class="header-inner">
+            <div class="header-right">
+                <div class="header-logo"><img src="https://cdn.imgurl.ir/uploads/f30974_InShot_20260821_174101103.png" alt="Quizico"></div>
+                <div>
+                    <div class="header-title">Quiz<span class="t-accent">ico</span></div>
+                    <div class="header-subtitle" data-i18n="settings">تنظیمات</div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="main-container">
+
+        <div class="settings-card">
+            <div class="settings-title"><i class="fa-solid fa-language"></i> <span data-i18n="language">زبان</span></div>
+            <div class="language-options">
+                <button class="lang-btn" data-lang="fa" onclick="setLanguage('fa')"> فارسی</button>
+                <button class="lang-btn" data-lang="ar" onclick="setLanguage('ar')"> العربية</button>
+                <button class="lang-btn" data-lang="en" onclick="setLanguage('en')"> English</button>
+            </div>
+        </div>
+
+        <div class="settings-card">
+            <div class="settings-title"><i class="fa-solid fa-moon"></i> <span data-i18n="theme">حالت نمایش</span></div>
+            <div class="theme-options">
+                <div class="theme-option" data-theme-mode="light" onclick="setTheme('light')">
+                    <i class="fa-regular fa-sun"></i>
+                    <div>
+                        <div class="theme-option-label" data-i18n="light">حالت روشن</div>
+                        <div class="theme-option-desc" data-i18n="light_desc">همیشه روشن</div>
+                    </div>
+                </div>
+                <div class="theme-option" data-theme-mode="dark" onclick="setTheme('dark')">
+                    <i class="fa-regular fa-moon"></i>
+                    <div>
+                        <div class="theme-option-label" data-i18n="dark">حالت تاریک</div>
+                        <div class="theme-option-desc" data-i18n="dark_desc">همیشه تاریک</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="settings-card">
+            <div class="settings-title"><i class="fa-solid fa-palette"></i> <span data-i18n="color_theme">تم رنگ</span></div>
+            <div class="color-options" id="colorOptions">
+                <div class="color-option" data-color="#ef4444" style="background:#ef4444;" onclick="setColor('#ef4444')"></div>
+                <div class="color-option" data-color="#f97316" style="background:#f97316;" onclick="setColor('#f97316')"></div>
+                <div class="color-option" data-color="#f59e0b" style="background:#f59e0b;" onclick="setColor('#f59e0b')"></div>
+                <div class="color-option" data-color="#10b981" style="background:#10b981;" onclick="setColor('#10b981')"></div>
+                <div class="color-option" data-color="#06b6d4" style="background:#06b6d4;" onclick="setColor('#06b6d4')"></div>
+                <div class="color-option" data-color="#3b82f6" style="background:#3b82f6;" onclick="setColor('#3b82f6')"></div>
+                <div class="color-option" data-color="#a855f7" style="background:#a855f7;" onclick="setColor('#a855f7')"></div>
+                <div class="color-option" data-color="#ec4899" style="background:#ec4899;" onclick="setColor('#ec4899')"></div>
+            </div>
+        </div>
+
+        <div class="settings-card">
+            <div class="settings-title"><i class="fa-solid fa-sliders"></i> <span data-i18n="other">سایر</span></div>
+            <div class="setting-item">
+                <div class="setting-info">
+                    <i class="fa-solid fa-bolt"></i>
+                    <div>
+                        <div class="setting-label" data-i18n="animation">انیمیشن‌ها</div>
+                        <div class="setting-desc" data-i18n="animation_desc">افکت‌های حرکتی</div>
+                    </div>
+                </div>
+                <div class="toggle-switch active" id="animationToggle" onclick="toggleAnimation()"></div>
+            </div>
+            <div class="setting-item">
+                <div class="setting-info">
+                    <i class="fa-solid fa-mobile-screen"></i>
+                    <div>
+                        <div class="setting-label" data-i18n="haptic">لرزش</div>
+                        <div class="setting-desc" data-i18n="haptic_desc">بازخورد لمسی</div>
+                    </div>
+                </div>
+                <div class="toggle-switch active" id="hapticToggle" onclick="toggleHaptic()"></div>
+            </div>
+            <div class="setting-item disabled">
+                <div class="setting-info">
+                    <i class="fa-solid fa-envelope"></i>
+                    <div>
+                        <div class="setting-label">
+                            <span data-i18n="invite_messages">دریافت پیام دعوت</span>
+                            <span class="coming-soon-badge" data-i18n="coming_soon">به زودی</span>
+                        </div>
+                        <div class="setting-desc" data-i18n="invite_messages_desc">اطلاع از دعوت‌نامه‌های بازی</div>
+                    </div>
+                </div>
+                <div class="toggle-switch" id="inviteToggle"></div>
+            </div>
+        </div>
+
+    </main>
+
+    <div class="support-notification" id="supportNotification" onclick="openSupportLink()">
+        <img src="https://cdn.imgurl.ir/uploads/v68396_InShot_20260817_190450653.jpg" alt="سازنده">
+        <div class="notif-info">
+            <div class="notif-name">امیرمهدی | Amirmahdi</div>
+            <div class="notif-desc" data-i18n="support">از سازنده حمایت کنید</div>
+        </div>
+        <i class="fa-solid fa-chevron-left"></i>
+    </div>
+
+    <nav class="bottom-nav">
+        <a href="../dashboard/" class="nav-item"><i class="fa-solid fa-house"></i><span data-i18n="home">خانه</span></a>
+        <a href="../ranking/" class="nav-item"><i class="fa-solid fa-trophy"></i><span data-i18n="ranking">رتبه</span></a>
+        <a href="../profile/" class="nav-item"><i class="fa-solid fa-user"></i><span data-i18n="profile">پروفایل</span></a>
+        <a href="../setting/" class="nav-item active"><i class="fa-solid fa-gear"></i><span data-i18n="settings_nav">تنظیمات</span></a>
+    </nav>
+
+    <script>
+        (function() {
+            var webApp = window.Eitaa?.WebApp;
+            var currentLang = 'fa';
+
+            var translations = {
+                fa: {
+                    settings: 'تنظیمات', language: 'زبان', theme: 'حالت نمایش',
+                    light: 'حالت روشن', light_desc: 'همیشه روشن',
+                    dark: 'حالت تاریک', dark_desc: 'همیشه تاریک',
+                    color_theme: 'تم رنگ', other: 'سایر',
+                    animation: 'انیمیشن‌ها', animation_desc: 'افکت‌های حرکتی',
+                    haptic: 'لرزش', haptic_desc: 'بازخورد لمسی',
+                    invite_messages: 'دریافت پیام دعوت', invite_messages_desc: 'اطلاع از دعوت‌نامه‌های بازی',
+                    coming_soon: 'به زودی',
+                    home: 'خانه', ranking: 'رتبه', profile: 'پروفایل', settings_nav: 'تنظیمات',
+                    support: 'از سازنده حمایت کنید'
+                },
+                en: {
+                    settings: 'Settings', language: 'Language', theme: 'Theme',
+                    light: 'Light Mode', light_desc: 'Always light',
+                    dark: 'Dark Mode', dark_desc: 'Always dark',
+                    color_theme: 'Color Theme', other: 'Other',
+                    animation: 'Animations', animation_desc: 'Motion effects',
+                    haptic: 'Haptic', haptic_desc: 'Tactile feedback',
+                    invite_messages: 'Receive Invite Messages', invite_messages_desc: 'Get notified about game invites',
+                    coming_soon: 'Coming Soon',
+                    home: 'Home', ranking: 'Ranking', profile: 'Profile', settings_nav: 'Settings',
+                    support: 'Support the developer'
+                },
+                ar: {
+                    settings: 'الإعدادات', language: 'اللغة', theme: 'المظهر',
+                    light: 'وضع فاتح', light_desc: 'فاتح دائمًا',
+                    dark: 'وضع داكن', dark_desc: 'داكن دائمًا',
+                    color_theme: 'لون السمة', other: 'أخرى',
+                    animation: 'الحركات', animation_desc: 'تأثيرات الحركة',
+                    haptic: 'الاهتزاز', haptic_desc: 'ردود فعل لمسية',
+                    invite_messages: 'استقبال رسائل الدعوة', invite_messages_desc: 'تلقي إشعارات دعوات اللعب',
+                    coming_soon: 'قريبًا',
+                    home: 'الرئيسية', ranking: 'الترتيب', profile: 'الملف', settings_nav: 'الإعدادات',
+                    support: 'ادعم المطور'
+                }
+            };
+
+            function getSettings() {
+                try {
+                    var raw = localStorage.getItem('quizicoSettings');
+                    if (!raw) return { theme: 'light', primaryColor: '#a855f7', animation: true, haptic: true, language: 'fa' };
+                    var p = JSON.parse(raw);
+                    if (!p.theme) p.theme = 'light';
+                    if (!p.primaryColor) p.primaryColor = '#a855f7';
+                    if (p.animation === undefined) p.animation = true;
+                    if (p.haptic === undefined) p.haptic = true;
+                    if (!p.language) p.language = 'fa';
+                    return p;
+                } catch(e) { return { theme: 'light', primaryColor: '#a855f7', animation: true, haptic: true, language: 'fa' }; }
+            }
+
+            function saveSettings(s) {
+                localStorage.setItem('quizicoSettings', JSON.stringify(s));
+            }
+
+            function getTranslation(k) { var t = translations[currentLang] || translations.fa; return t[k] || translations.fa[k] || k; }
+
+            function triggerHaptic(style) {
+                var s = getSettings();
+                if (s.haptic === false) return;
+                if (webApp && webApp.HapticFeedback && webApp.HapticFeedback.impactOccurred) {
+                    try { webApp.HapticFeedback.impactOccurred(style || 'light'); } catch(e) {}
+                }
+            }
+
+            function hexToRgb(h) { var r = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(h); return r ? { r: parseInt(r[1],16), g: parseInt(r[2],16), b: parseInt(r[3],16) } : { r:168,g:85,b:247 }; }
+            function shadeColor(c,p){var r=hexToRgb(c);var rr=Math.max(0,Math.min(255,r.r+p));var gg=Math.max(0,Math.min(255,r.g+p));var bb=Math.max(0,Math.min(255,r.b+p));return '#'+((1<<24)+(rr<<16)+(gg<<8)+bb).toString(16).slice(1);}
+
+            function applyLanguage(lang) {
+                var t = translations[lang] || translations.fa;
+                document.querySelectorAll('[data-i18n]').forEach(function(el) {
+                    var k = el.getAttribute('data-i18n');
+                    if (t[k]) el.textContent = t[k];
+                });
+                if (lang === 'en') {
+                    document.documentElement.setAttribute('dir', 'ltr');
+                    document.body.style.fontFamily = 'Arial, sans-serif';
+                } else if (lang === 'ar') {
+                    document.documentElement.setAttribute('dir', 'rtl');
+                    document.body.style.fontFamily = 'Tahoma, sans-serif';
+                } else {
+                    document.documentElement.setAttribute('dir', 'rtl');
+                    document.body.style.fontFamily = "'IRANSans', Tahoma, sans-serif";
+                }
+            }
+
+            function applyTheme() {
+                var s = getSettings();
+                currentLang = s.language || 'fa';
+                var t = s.theme || 'light';
+                var p = s.primaryColor || '#a855f7';
+                document.documentElement.setAttribute('data-theme', t);
+                if (t === 'dark') {
+                    var dp = shadeColor(p, 40);
+                    document.documentElement.style.setProperty('--primary', dp);
+                } else {
+                    document.documentElement.style.setProperty('--primary', p);
+                }
+                if (s.animation === false) {
+                    document.documentElement.setAttribute('data-animation', 'off');
+                } else {
+                    document.documentElement.removeAttribute('data-animation');
+                }
+                document.querySelectorAll('.theme-option').forEach(function(b) {
+                    b.classList.toggle('active', b.dataset.themeMode === t);
+                });
+                document.querySelectorAll('.color-option').forEach(function(b) {
+                    b.classList.toggle('active', b.dataset.color === p);
+                });
+                document.querySelectorAll('.lang-btn').forEach(function(b) {
+                    b.classList.toggle('active', b.dataset.lang === s.language);
+                });
+                document.getElementById('animationToggle').classList.toggle('active', s.animation !== false);
+                document.getElementById('hapticToggle').classList.toggle('active', s.haptic !== false);
+                applyLanguage(s.language);
+            }
+
+            window.setLanguage = function(l) {
+                var s = getSettings();
+                s.language = l;
+                saveSettings(s);
+                applyTheme();
+                triggerHaptic('light');
+            };
+
+            window.setTheme = function(t) {
+                var s = getSettings();
+                s.theme = t;
+                saveSettings(s);
+                applyTheme();
+                triggerHaptic('light');
+            };
+
+            window.setColor = function(c) {
+                var s = getSettings();
+                s.primaryColor = c;
+                saveSettings(s);
+                applyTheme();
+                triggerHaptic('medium');
+            };
+
+            window.toggleAnimation = function() {
+                var s = getSettings();
+                s.animation = !s.animation;
+                saveSettings(s);
+                applyTheme();
+                triggerHaptic('light');
+            };
+
+            window.toggleHaptic = function() {
+                var s = getSettings();
+                s.haptic = !s.haptic;
+                saveSettings(s);
+                applyTheme();
+                if (s.haptic) triggerHaptic('medium');
+            };
+
+            function openSupportLink(){
+                if (webApp && webApp.openEitaaLink) {
+                    webApp.openEitaaLink('https://eitaa.com/Amirmahdi_code');
+                } else {
+                    window.open('https://eitaa.com/Amirmahdi_code', '_blank');
+                }
+            }
+            window.openSupportLink = openSupportLink;
+
+            if (webApp) {
+                webApp.ready();
+                webApp.BackButton.show();
+                webApp.BackButton.onClick(function() {
+                    window.location.href = '../dashboard/';
+                });
+            }
+
+            applyTheme();
+            
+            setTimeout(function() {
+                var notif = document.getElementById('supportNotification');
+                if (notif) {
+                    notif.style.display = 'none';
+                }
+            }, 5000);
+        })();
+    </script>
+</body>
+</html>
