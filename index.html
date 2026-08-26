@@ -195,7 +195,11 @@
         })
         .then(function(r) { return r.json(); })
         .then(function(result) {
-            window.Eitaa.WebApp.showAlert('نتیجه: ' + JSON.stringify(result));
+            if (result.ok) {
+                window.Eitaa.WebApp.showAlert('پیام ارسال شد!');
+            } else {
+                window.Eitaa.WebApp.showAlert('خطا: ' + (result.error || 'نامشخص'));
+            }
         })
         .catch(function(e) {
             window.Eitaa.WebApp.showAlert('خطا: ' + e.message);
