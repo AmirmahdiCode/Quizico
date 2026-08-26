@@ -110,7 +110,7 @@
             <div class="header-logo"><img src="https://cdn.imgurl.ir/uploads/f30974_InShot_20260821_174101103.png" alt="Quizico" draggable="false" oncontextmenu="return false;" ondragstart="return false;"></div>
             <div>
                 <div class="header-title">Quiz<span class="t-accent">ico</span></div>
-                <div class="header-subtitle">آنلاین</div>
+                <div class="header-subtitle" data-i18n="online">آنلاین</div>
             </div>
         </div>
         <span class="currency-badge coins"><i class="fa-solid fa-coins"></i> <span id="coinsHeader">0</span></span>
@@ -119,12 +119,12 @@
 <main class="main-container">
     <div class="loader-wrapper" id="loaderWrapper">
         <div class="loader"></div>
-        <div class="loader-text">در حال دریافت...</div>
+        <div class="loader-text" data-i18n="loading">در حال دریافت...</div>
     </div>
     <div class="game-content" id="gameContent"></div>
 </main>
 <div class="bottom-btn-container" id="bottomBtnContainer" style="display:none;">
-    <button class="main-btn" id="mainBtn" onclick="handleMainBtn()">شروع بازی</button>
+    <button class="main-btn" id="mainBtn" onclick="handleMainBtn()" data-i18n="start_game">شروع بازی</button>
 </div>
 <script>
 (function(){
@@ -150,12 +150,31 @@ var checkInterval=null;
 var myUserId='';
 var myAnswers=[];
 var isAnswered=false;
+var currentLang='fa';
 var userCoins=0;
 var actionUsedThisQuestion=false;
 var isInGame=false;
 var gameCreatedAt='';
 var turnOrder=[[1,1],[1,2],[2,2],[2,1],[3,1],[3,2],[4,2],[4,1],[5,1],[5,2]];
 var currentTurn=0;
+
+var translations={
+fa:{online:'آنلاین',loading:'در حال دریافت...',start_game:'شروع بازی',start_round:'شروع راند',you:'تو',opponent:'حریف',results:'نتایج راندها',round:'راند',finished:'بازی تمام شد!',score:'امتیاز',back:'بازگشت',no_questions:'سوال کافی نیست',room_full:'دیر اومدی! یکی دیگه زودتر وارد شده',create_new_room:'ساخت اتاق جدید',waiting_opponent:'هنوز حریفت وارد نشده...',invite_title:'دعوت از دوست',invite_desc:'لینک زیر رو کپی کن و برای دوستت بفرست!',copy:'کپی',invite_from_players:'انتخاب از لیست بازیکنا',search_players:'جستجوی بازیکن...',invite_sent:'لینک کپی شد!',not_enough:'سکه کافی نداری!',waiting_turn:'منتظر حریف...',your_turn:'نوبت توست',coming_soon:'به زودی',room_not_found:'اتاق یافت نشد',time_expired:'وقت بازی تموم شد!',exit_confirm:'اگه خارج بشی این راند رو با ۰ تمام می‌کنی!'},
+en:{online:'Online',loading:'Loading...',start_game:'Start Game',start_round:'Start Round',you:'You',opponent:'Opponent',results:'Round Results',round:'Round',finished:'Game Over!',score:'Score',back:'Back',no_questions:'Not enough questions',room_full:'Too late! Someone else joined',create_new_room:'Create New Room',waiting_opponent:'Waiting for opponent...',invite_title:'Invite Friend',invite_desc:'Copy the link below and send it to your friend!',copy:'Copy',invite_from_players:'Invite from players',search_players:'Search players...',invite_sent:'Link copied!',not_enough:'Not enough coins!',waiting_turn:'Waiting for opponent...',your_turn:'Your turn',coming_soon:'Coming Soon',room_not_found:'Room not found',time_expired:'Time expired!',exit_confirm:'If you leave, this round will be 0!'},
+ar:{online:'عبر الإنترنت',loading:'جار التحميل...',start_game:'ابدأ اللعبة',start_round:'ابدأ الجولة',you:'أنت',opponent:'الخصم',results:'نتائج الجولات',round:'جولة',finished:'انتهت اللعبة!',score:'النقاط',back:'رجوع',no_questions:'أسئلة غير كافية',room_full:'متأخر! شخص آخر انضم',create_new_room:'إنشاء غرفة جديدة',waiting_opponent:'بانتظار الخصم...',invite_title:'دعوة صديق',invite_desc:'انسخ الرابط أدناه وأرسله إلى صديقك!',copy:'نسخ',invite_from_players:'اختر من اللاعبين',search_players:'ابحث عن لاعب...',invite_sent:'تم نسخ الرابط!',not_enough:'عملات غير كافية!',waiting_turn:'بانتظار الخصم...',your_turn:'دورك',coming_soon:'قريبًا',room_not_found:'الغرفة غير موجودة',time_expired:'انتهى الوقت!',exit_confirm:'إذا غادرت، ستكون هذه الجولة 0!'}
+};
+
+function getSettings(){try{var raw=localStorage.getItem('quizicoSettings');if(!raw)return{theme:'light',primaryColor:'#a855f7',animation:true,language:'fa'};var p=JSON.parse(raw);if(!p.theme)p.theme='light';if(!p.primaryColor)p.primaryColor='#a855f7';if(p.animation===undefined)p.animation=true;if(!p.language)p.language='fa';return p;}catch(e){return{theme:'light',primaryColor:'#a855f7',animation:true,language:'fa'}}}
+function getTranslation(k){var t=translations[currentLang]||translations.fa;return t[k]||translations.fa[k]||k}
+function hexToRgb(h){var r=/^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(h);return r?{r:parseInt(r[1],16),g:parseInt(r[2],16),b:parseInt(r[3],16)}:{r:168,g:85,b:247}}
+function shadeColor(c,p){var r=hexToRgb(c);var rr=Math.max(0,Math.min(255,r.r+p));var gg=Math.max(0,Math.min(255,r.g+p));var bb=Math.max(0,Math.min(255,r.b+p));return '#'+((1<<24)+(rr<<16)+(gg<<8)+bb).toString(16).slice(1)}
+function applyTheme(){var s=getSettings();currentLang=s.language||'fa';var t=s.theme||'light';var p=s.primaryColor||'#a855f7';document.documentElement.setAttribute('data-theme',t);if(t==='dark'){document.documentElement.style.setProperty('--primary',shadeColor(p,40));}else{document.documentElement.style.setProperty('--primary',p);}if(s.animation===false){document.documentElement.setAttribute('data-animation','off');}else{document.documentElement.removeAttribute('data-animation');}if(currentLang==='en'){document.documentElement.setAttribute('dir','ltr');document.body.style.fontFamily='Arial, sans-serif';}else if(currentLang==='ar'){document.documentElement.setAttribute('dir','rtl');document.body.style.fontFamily='Tahoma, sans-serif';}else{document.documentElement.setAttribute('dir','rtl');document.body.style.fontFamily="'IRANSans', Tahoma, sans-serif";}document.querySelectorAll('[data-i18n]').forEach(function(el){var k=el.getAttribute('data-i18n');var t2=translations[currentLang]||translations.fa;if(t2[k])el.textContent=t2[k];});}
+
+function sleep(ms){return new Promise(function(r){setTimeout(r,ms);});}
+function translateGoogle(text,tl){var url='https://translate.googleapis.com/translate_a/single?client=gtx&sl=fa&tl='+tl+'&dt=t&q='+encodeURIComponent(text);return fetch(url).then(function(r){return r.json();}).then(function(d){return d&&d[0]&&d[0][0]?d[0][0][0]:null;}).catch(function(){return null;});}
+function translateMyMemory(text,tl){var url='https://api.mymemory.translated.net/get?q='+encodeURIComponent(text)+'&langpair=fa|'+tl;return fetch(url).then(function(r){return r.json();}).then(function(d){return d&&d.responseData&&d.responseData.translatedText?d.responseData.translatedText:null;}).catch(function(){return null;});}
+async function translateText(text,tl){if(tl==='fa')return text;var r=await translateGoogle(text,tl);if(r)return r;await sleep(100);r=await translateMyMemory(text,tl);if(r)return r;return text;}
+async function translateQuestion(q,lang){if(lang==='fa')return q;var tl=lang==='en'?'en':'ar';var tq=await translateText(q.question,tl);await sleep(80);var topts=[];for(var i=0;i<q.options.length;i++){topts.push(await translateText(q.options[i],tl));await sleep(80);}return{id:q.id,question:tq,options:topts,correctOption:q.correctOption};}
 
 document.addEventListener('contextmenu',function(e){e.preventDefault();});
 document.addEventListener('dragstart',function(e){e.preventDefault();});
@@ -171,46 +190,42 @@ function shuffleArray(a){for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.ran
 function hideLoader(){document.getElementById('loaderWrapper').style.display='none';document.getElementById('gameContent').classList.add('show');}
 function getMyPlayerNum(){return isPlayer1?1:2}
 
-function checkTimeExpired(createdAt){
-    if(!createdAt)return false;
-    var now=new Date();
-    var created=new Date(createdAt);
-    var diffMinutes=(now-created)/(1000*60);
-    return diffMinutes>=GAME_TIME_LIMIT;
-}
+function checkTimeExpired(createdAt){if(!createdAt)return false;var now=new Date();var created=new Date(createdAt);var diffMinutes=(now-created)/(1000*60);return diffMinutes>=GAME_TIME_LIMIT;}
 
 function handleTimeExpired(){
     clearInterval(timerInterval);
     clearInterval(checkInterval);
     isInGame=false;
     fetchData('updateGame',{gameId:roomCode,updates:{status:'finished'}});
+    var t=getTranslation;
     var html='<div class="result-banner">';
     html+='<div class="result-icon"><i class="fa-solid fa-clock" style="color:#ef4444;"></i></div>';
-    html+='<div class="result-text">وقت بازی تموم شد!</div>';
-    html+='<button class="result-btn" onclick="backToDashboard()">بازگشت</button></div>';
+    html+='<div class="result-text">'+t('time_expired')+'</div>';
+    html+='<button class="result-btn" onclick="backToDashboard()">'+t('back')+'</button></div>';
     document.getElementById('gameContent').innerHTML=html;
     document.getElementById('bottomBtnContainer').style.display='none';
     hideLoader();
 }
 
 function renderWaitingScreen(){
+    var t=getTranslation;
     var inviteLink='https://eitaa.com/gameland_app/Quizico?startapp='+roomCode+'&btn=بزن.بریم.🚀';
     var html='<div class="waiting-card">';
     html+='<img class="waiting-image" src="'+SAD_IMAGE+'" alt="" draggable="false" oncontextmenu="return false;" ondragstart="return false;">';
-    html+='<div class="waiting-text">هنوز حریفت وارد نشده...</div>';
+    html+='<div class="waiting-text">'+t('waiting_opponent')+'</div>';
     html+='<div class="room-code-display">'+roomCode+'</div>';
     html+='<div class="invite-box">';
-    html+='<div class="invite-box-title">دعوت از دوست</div>';
-    html+='<div class="invite-box-desc">لینک زیر رو کپی کن و برای دوستت بفرست!</div>';
+    html+='<div class="invite-box-title">'+t('invite_title')+'</div>';
+    html+='<div class="invite-box-desc">'+t('invite_desc')+'</div>';
     html+='<div class="invite-link-box">';
     html+='<span class="invite-link" id="inviteLink">'+inviteLink+'</span>';
-    html+='<button class="copy-btn" onclick="copyInviteLink()">کپی</button>';
+    html+='<button class="copy-btn" onclick="copyInviteLink()">'+t('copy')+'</button>';
     html+='</div>';
     html+='</div>';
     html+='<div class="players-invite-section">';
-    html+='<div class="coming-soon-overlay">به زودی</div>';
-    html+='<div class="players-invite-title">انتخاب از لیست بازیکنا</div>';
-    html+='<div class="players-search-box"><i class="fa-solid fa-search"></i><input type="text" placeholder="جستجوی بازیکن..."></div>';
+    html+='<div class="coming-soon-overlay">'+t('coming_soon')+'</div>';
+    html+='<div class="players-invite-title">'+t('invite_from_players')+'</div>';
+    html+='<div class="players-search-box"><i class="fa-solid fa-search"></i><input type="text" placeholder="'+t('search_players')+'"></div>';
     html+='<div class="players-invite-list"></div>';
     html+='</div>';
     html+='</div>';
@@ -221,15 +236,16 @@ function renderWaitingScreen(){
 
 window.copyInviteLink=function(){
     var link=document.getElementById('inviteLink').textContent;
-    if(navigator.clipboard){navigator.clipboard.writeText(link).then(function(){if(webApp)webApp.showAlert('لینک کپی شد!');});}
+    if(navigator.clipboard){navigator.clipboard.writeText(link).then(function(){if(webApp)webApp.showAlert(getTranslation('invite_sent'));});}
     if(webApp)webApp.HapticFeedback?.impactOccurred('light');
 };
 
 function renderRoomFullScreen(){
+    var t=getTranslation;
     var html='<div class="result-banner">';
     html+='<div class="result-icon"><i class="fa-solid fa-user-clock" style="color:#f59e0b;"></i></div>';
-    html+='<div class="result-text">دیر اومدی! یکی دیگه زودتر وارد شده</div>';
-    html+='<button class="result-btn" onclick="createNewRoom()">ساخت اتاق جدید</button>';
+    html+='<div class="result-text">'+t('room_full')+'</div>';
+    html+='<button class="result-btn" onclick="createNewRoom()">'+t('create_new_room')+'</button>';
     html+='</div>';
     document.getElementById('gameContent').innerHTML=html;
     document.getElementById('bottomBtnContainer').style.display='none';
@@ -238,18 +254,19 @@ function renderRoomFullScreen(){
 window.createNewRoom=function(){initPlayer1();};
 
 function renderRoundsScreen(){
+    var t=getTranslation;
     var html='';
     html+='<div class="players-row">';
-    html+='<div class="player-card"><div class="player-tag">تو</div><span class="player-score">'+myScore+'</span></div>';
-    html+='<div class="player-card"><div class="player-tag">حریف</div><span class="player-score">?</span></div>';
+    html+='<div class="player-card"><div class="player-tag">'+t('you')+'</div><span class="player-score">'+myScore+'</span></div>';
+    html+='<div class="player-card"><div class="player-tag">'+t('opponent')+'</div><span class="player-score">?</span></div>';
     html+='</div>';
     if(roundResults.length>0){
-        html+='<div class="rounds-results"><div class="rounds-title">نتایج راندها</div>';
+        html+='<div class="rounds-results"><div class="rounds-title">'+t('results')+'</div>';
         for(var i=0;i<roundResults.length;i++){
             var r=roundResults[i];
             html+='<div class="round-result-item">';
-            html+='<div class="round-result-row"><span class="round-result-player">راند '+(i+1)+'</span></div>';
-            html+='<div class="round-result-row"><span class="round-result-player">تو</span><div class="round-dots">';
+            html+='<div class="round-result-row"><span class="round-result-player">'+t('round')+' '+(i+1)+'</span></div>';
+            html+='<div class="round-result-row"><span class="round-result-player">'+t('you')+'</span><div class="round-dots">';
             for(var j=0;j<QUESTIONS_PER_ROUND;j++)html+='<span class="result-dot'+(j<r.myCorrect?'':' wrong')+'">'+(j+1)+'</span>';
             html+='</div><span class="round-result-count">+'+r.myScore+'</span></div>';
             html+='</div>';
@@ -267,11 +284,11 @@ function renderRoundsScreen(){
         }
     }
     if(isMyTurnNow){
-        btn.textContent='نوبت توست - شروع راند '+currentRound;
+        btn.textContent=t('your_turn')+' - '+t('start_round')+' '+currentRound;
         btn.className='main-btn green';
         btn.disabled=false;
     }else{
-        btn.textContent='منتظر حریف...';
+        btn.textContent=t('waiting_turn');
         btn.className='main-btn waiting';
         btn.disabled=true;
     }
@@ -280,6 +297,7 @@ function renderRoundsScreen(){
 }
 
 function renderQuestionScreen(){
+    var t=getTranslation;
     isAnswered=false;
     isInGame=true;
     actionUsedThisQuestion=false;
@@ -355,7 +373,7 @@ window.selectOption=function(sel,ci,btn){
 };
 window.useRemove50=function(){
     if(isAnswered||actionUsedThisQuestion)return;
-    if(userCoins<50){if(webApp)webApp.showAlert('سکه کافی نداری!');return;}
+    if(userCoins<50){if(webApp)webApp.showAlert(getTranslation('not_enough'));return;}
     userCoins-=50;
     actionUsedThisQuestion=true;
     document.getElementById('coinsHeader').textContent=userCoins;
@@ -369,7 +387,7 @@ window.useRemove50=function(){
 };
 window.useSwapQuestion=function(){
     if(isAnswered||actionUsedThisQuestion)return;
-    if(userCoins<100){if(webApp)webApp.showAlert('سکه کافی نداری!');return;}
+    if(userCoins<100){if(webApp)webApp.showAlert(getTranslation('not_enough'));return;}
     userCoins-=100;
     actionUsedThisQuestion=true;
     document.getElementById('coinsHeader').textContent=userCoins;
@@ -381,7 +399,7 @@ window.useSwapQuestion=function(){
 };
 window.useSkipQuestion=function(){
     if(isAnswered||actionUsedThisQuestion)return;
-    if(userCoins<150){if(webApp)webApp.showAlert('سکه کافی نداری!');return;}
+    if(userCoins<150){if(webApp)webApp.showAlert(getTranslation('not_enough'));return;}
     userCoins-=150;
     actionUsedThisQuestion=true;
     document.getElementById('coinsHeader').textContent=userCoins;
@@ -418,11 +436,12 @@ function endGame(){
     isInGame=false;
     clearInterval(timerInterval);
     clearInterval(checkInterval);
+    var t=getTranslation;
     var html='<div class="result-banner">';
     html+='<div class="result-icon"><i class="fa-solid fa-flag-checkered" style="color:#f59e0b;"></i></div>';
-    html+='<div class="result-text">بازی تمام شد!</div>';
-    html+='<div class="result-score">امتیاز تو: '+myScore+'</div>';
-    html+='<button class="result-btn" onclick="backToDashboard()">بازگشت</button></div>';
+    html+='<div class="result-text">'+t('finished')+'</div>';
+    html+='<div class="result-score">'+t('score')+': '+myScore+'</div>';
+    html+='<button class="result-btn" onclick="backToDashboard()">'+t('back')+'</button></div>';
     document.getElementById('gameContent').innerHTML=html;
     document.getElementById('bottomBtnContainer').style.display='none';
     hideLoader();
@@ -475,7 +494,8 @@ async function initPlayer2(){
     myUserId=getUserId();
     var gameResult=await fetchData('getGame',{gameId:roomCode});
     if(!gameResult.ok||!gameResult.data){
-        document.getElementById('gameContent').innerHTML='<div class="result-banner"><div class="result-text">اتاق یافت نشد</div></div>';
+        var t=getTranslation;
+        document.getElementById('gameContent').innerHTML='<div class="result-banner"><div class="result-text">'+t('room_not_found')+'</div></div>';
         document.getElementById('bottomBtnContainer').style.display='none';
         hideLoader();
         return;
@@ -527,10 +547,18 @@ async function startOnlineGame(){
     var qd=await fetchData('getQuestions',{limit:50});
     if(qd.ok&&Array.isArray(qd.data)&&qd.data.length>=QUESTIONS_PER_ROUND){
         questions=qd.data;
+        if(currentLang!=='fa'){
+            var translated=[];
+            for(var i=0;i<questions.length;i++){
+                translated.push(await translateQuestion(questions[i],currentLang));
+            }
+            questions=translated;
+        }
         renderRoundsScreen();
         startPolling();
     }else{
-        document.getElementById('gameContent').innerHTML='<div class="result-banner"><div class="result-text">سوال کافی نیست</div></div>';
+        var t=getTranslation;
+        document.getElementById('gameContent').innerHTML='<div class="result-banner"><div class="result-text">'+t('no_questions')+'</div></div>';
         document.getElementById('bottomBtnContainer').style.display='none';
         hideLoader();
     }
@@ -556,7 +584,7 @@ function startPolling(){
 
 function handleBackButton(){
     if(isInGame){
-        webApp.showConfirm('اگه خارج بشی این راند رو با ۰ تمام می‌کنی!',function(confirmed){
+        webApp.showConfirm(getTranslation('exit_confirm'),function(confirmed){
             if(confirmed){
                 clearInterval(timerInterval);
                 var ansStr='F,F,F';
@@ -572,6 +600,7 @@ function handleBackButton(){
 }
 
 async function init(){
+    applyTheme();
     if(webApp){
         webApp.ready();
         webApp.expand();
