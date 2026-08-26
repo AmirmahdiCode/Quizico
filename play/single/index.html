@@ -51,7 +51,31 @@
             transition: none !important;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        * { 
+            margin: 0; 
+            padding: 0; 
+            box-sizing: border-box;
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            user-select: none;
+            -webkit-user-drag: none;
+            user-drag: none;
+        }
+
+        img {
+            pointer-events: none;
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            user-select: none;
+            -webkit-user-drag: none;
+            user-drag: none;
+        }
+
+        input, textarea {
+            -webkit-user-select: text !important;
+            user-select: text !important;
+            -webkit-touch-callout: default !important;
+        }
 
         body {
             font-family: 'IRANSans', Tahoma, sans-serif;
@@ -389,7 +413,7 @@
     <header class="header">
         <div class="header-inner">
             <div class="header-right">
-                <div class="header-logo"><img src="https://cdn.imgurl.ir/uploads/f30974_InShot_20260821_174101103.png" alt="Quizico"></div>
+                <div class="header-logo"><img src="https://cdn.imgurl.ir/uploads/f30974_InShot_20260821_174101103.png" alt="Quizico" draggable="false" oncontextmenu="return false;" ondragstart="return false;"></div>
                 <div>
                     <div class="header-title">Quiz<span class="t-accent">ico</span></div>
                     <div class="header-subtitle" data-i18n="single">تک‌نفره</div>
@@ -414,7 +438,7 @@
     <script>
         (function() {
             var webApp = window.Eitaa?.WebApp;
-            var API_URL = 'https://script.google.com/macros/s/AKfycbzsGrBIFVNkZYfNsx448awdMpPy42boOUvkSMpqnDWf9-wzbPctRQTIUa_ZpTpuGiVqIw/exec';
+            var API_URL = 'https://script.google.com/macros/s/AKfycbwV2X5hZB6WSJSezWWsYXq-94gIRu6z6kuzTIupTnHx2VqDKpzlZLcBohnZO2Lk1KHmxA/exec';
 
             var TOTAL_ROUNDS = 5;
             var QUESTIONS_PER_ROUND = 3;
@@ -433,6 +457,11 @@
             var actionUsedThisQuestion = false;
             var currentLang = 'fa';
             var gameId = 'game_' + Date.now();
+
+            document.addEventListener('contextmenu', function(e) { e.preventDefault(); });
+            document.addEventListener('dragstart', function(e) { e.preventDefault(); });
+            document.addEventListener('copy', function(e) { if (e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA') e.preventDefault(); });
+            document.addEventListener('cut', function(e) { if (e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA') e.preventDefault(); });
 
             var translations = {
                 fa: { single:'تک‌نفره', loading:'در حال دریافت...', start_round:'شروع راند', your_turn:'نوبت توست', opponent_turn:'نوبت حریفه...', round_done:'دست تمام شد!', you:'تو', opponent:'حریف', results:'نتایج راندها', question:'سوال', of:'از', round:'راند', win:'بردی!', lose:'باختی!', draw:'مساوی شدی!', score:'امتیاز', coins:'سکه', back:'بازگشت', no_questions:'سوالی یافت نشد', remove:'۵۰', swap:'۱۰۰', skip:'۱۵۰', not_enough:'سکه کافی نداری!' },
@@ -482,33 +511,6 @@
             }
 
             function sleep(ms){return new Promise(function(r){setTimeout(r,ms);});}
-
-            function translateGoogle(text, tl) {
-                var url = 'https://translate.googleapis.com/translate_a/single?client=gtx&sl=fa&tl='+tl+'&dt=t&q='+encodeURIComponent(text);
-                return fetch(url).then(function(r){return r.json();}).then(function(d){return d&&d[0]&&d[0][0]?d[0][0][0]:null;}).catch(function(){return null;});
-            }
-            function translateMyMemory(text, tl) {
-                var url = 'https://api.mymemory.translated.net/get?q='+encodeURIComponent(text)+'&langpair=fa|'+tl;
-                return fetch(url).then(function(r){return r.json();}).then(function(d){return d&&d.responseData&&d.responseData.translatedText?d.responseData.translatedText:null;}).catch(function(){return null;});
-            }
-            async function translateText(text, tl) {
-                if (tl === 'fa') return text;
-                var r = await translateGoogle(text, tl);
-                if (r) return r;
-                await sleep(100);
-                r = await translateMyMemory(text, tl);
-                if (r) return r;
-                return text;
-            }
-            async function translateQuestion(q, lang) {
-                if (lang === 'fa') return q;
-                var tl = lang === 'en' ? 'en' : 'ar';
-                var tq = await translateText(q.question, tl);
-                await sleep(80);
-                var topts = [];
-                for (var i = 0; i < q.options.length; i++) { topts.push(await translateText(q.options[i], tl)); await sleep(80); }
-                return { id:q.id, question:tq, options:topts, correctOption:q.correctOption };
-            }
 
             function getEitaaUser(){return webApp&&webApp.initDataUnsafe&&webApp.initDataUnsafe.user?webApp.initDataUnsafe.user:null;}
             function getUserId(){var u=getEitaaUser();return u?(typeof u.id==='number'?u.id.toString():String(u.id||'')):'';}
@@ -733,13 +735,6 @@
                 var qd = await fetchData('getQuestions', { limit: 50 });
                 if (qd.ok && Array.isArray(qd.data) && qd.data.length > 0) {
                     questions = qd.data;
-                    if (currentLang !== 'fa') {
-                        var translated = [];
-                        var needed = TOTAL_ROUNDS * QUESTIONS_PER_ROUND;
-                        var selected = shuffleArray(questions).slice(0, needed);
-                        for (var i = 0; i < selected.length; i++) translated.push(await translateQuestion(selected[i], currentLang));
-                        questions = translated;
-                    }
                     renderMainScreen();
                     document.getElementById('mainBtn').textContent = getTranslation('start_round') + ' 1';
                     document.getElementById('bottomBtnContainer').style.display = 'block';
