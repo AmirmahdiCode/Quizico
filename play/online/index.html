@@ -267,33 +267,76 @@ function getTurnFromSheet(roundData){
     return 2;
 }
 
+function getRoundResultsFromSheet(gameData){
+    var results=[];
+    for(var r=1;r<=5;r++){
+        var roundData=gameData['round'+r]||'';
+        if(roundData!==''){
+            var parts=roundData.split('][');
+            var p1Ans=parts[1]?parts[1].replace('[','').replace(']',''):'';
+            var p2Ans=parts[2]?parts[2].replace('[','').replace(']',''):'';
+            var myAns=isPlayer1?p1Ans:p2Ans;
+            var oppAns=isPlayer1?p2Ans:p1Ans;
+            
+            if(myAns!=='waiting'&&myAns!==''){
+                var myCorrect=0;
+                for(var i=0;i<myAns.length;i++){
+                    if(myAns[i]==='T')myCorrect++;
+                }
+                results.push({myCorrect:myCorrect,myScore:myCorrect*5,oppAns:oppAns});
+            }
+        }
+    }
+    return results;
+}
+
 function renderRoundsScreen(){
     var t=getTranslation;
     var myNum=getMyPlayerNum();
-    var html='';
-    html+='<div class="players-row">';
-    html+='<div class="player-card"><div class="player-avatar">'+getAvatarHtml(myAvatar)+'</div><div class="player-tag">'+myName+'</div><span class="player-score">'+myScore+'</span></div>';
-    html+='<div class="player-card"><div class="player-avatar">'+getAvatarHtml(opponentAvatar)+'</div><div class="player-tag">'+opponentName+'</div><span class="player-score">?</span></div>';
-    html+='</div>';
-    if(roundResults.length>0){
-        html+='<div class="rounds-results"><div class="rounds-title">'+t('results')+'</div>';
-        for(var i=0;i<roundResults.length;i++){
-            var r=roundResults[i];
-            html+='<div class="round-result-item">';
-            html+='<div class="round-result-row"><span class="round-result-player">'+t('round')+' '+(i+1)+'</span></div>';
-            html+='<div class="round-result-row"><span class="round-result-player">'+myName+'</span><div class="round-dots">';
-            for(var j=0;j<QUESTIONS_PER_ROUND;j++)html+='<span class="result-dot'+(j<r.myCorrect?'':' wrong')+'">'+(j+1)+'</span>';
-            html+='</div><span class="round-result-count">+'+r.myScore+'</span></div></div>';
-        }
-        html+='</div>';
-    }
-    document.getElementById('gameContent').innerHTML=html;
-    var btn=document.getElementById('mainBtn');
+    
     fetchData('getGame',{gameId:roomCode}).then(function(gameResult){
         if(gameResult.ok&&gameResult.data){
-            var roundData=gameResult.data['round'+currentRound]||'';
+            var data=gameResult.data;
+            var allResults=getRoundResultsFromSheet(data);
+            
+            var html='';
+            html+='<div class="players-row">';
+            html+='<div class="player-card"><div class="player-avatar">'+getAvatarHtml(myAvatar)+'</div><div class="player-tag">'+myName+'</div><span class="player-score">'+myScore+'</span></div>';
+            html+='<div class="player-card"><div class="player-avatar">'+getAvatarHtml(opponentAvatar)+'</div><div class="player-tag">'+opponentName+'</div><span class="player-score">?</span></div>';
+            html+='</div>';
+            
+            if(allResults.length>0){
+                html+='<div class="rounds-results"><div class="rounds-title">'+t('results')+'</div>';
+                for(var i=0;i<allResults.length;i++){
+                    var r=allResults[i];
+                    html+='<div class="round-result-item">';
+                    html+='<div class="round-result-row"><span class="round-result-player">'+t('round')+' '+(i+1)+'</span></div>';
+                    html+='<div class="round-result-row"><span class="round-result-player">'+myName+'</span><div class="round-dots">';
+                    for(var j=0;j<QUESTIONS_PER_ROUND;j++)html+='<span class="result-dot'+(j<r.myCorrect?'':' wrong')+'">'+(j+1)+'</span>';
+                    html+='</div><span class="round-result-count">+'+r.myScore+'</span></div>';
+                    if(r.oppAns!=='waiting'&&r.oppAns!==''){
+                        var oppCorrect=0;
+                        for(var k=0;k<r.oppAns.length;k++){if(r.oppAns[k]==='T')oppCorrect++;}
+                        html+='<div class="round-result-row"><span class="round-result-player">'+opponentName+'</span><div class="round-dots">';
+                        for(var l=0;l<QUESTIONS_PER_ROUND;l++)html+='<span class="result-dot'+(l<oppCorrect?'':' wrong')+'">'+(l+1)+'</span>';
+                        html+='</div><span class="round-result-count">+'+oppCorrect*5+'</span></div>';
+                    }else{
+                        html+='<div class="round-result-row"><span class="round-result-player">'+opponentName+'</span><span class="round-result-count">...'+t('waiting_turn')+'</span></div>';
+                    }
+                    html+='</div>';
+                }
+                html+='</div>';
+            }
+            
+            document.getElementById('gameContent').innerHTML=html;
+            
+            var btn=document.getElementById('mainBtn');
+            var roundData=data['round'+currentRound]||'';
             var sheetTurn=getTurnFromSheet(roundData);
-            var shouldBeMyTurn=false;
+            var myTurnIdx=-1;
+            for(var i=0;i<turnOrder.length;i++){
+                if(turnOrder[i][0]===currentRound&&turnOrder[i][1]===myNum){myTurnIdx=i;break;}
+            }
             
             if(sheetTurn===2){
                 currentRound++;
@@ -302,14 +345,7 @@ function renderRoundsScreen(){
                 return;
             }
             
-            var myTurnIdx=-1;
-            for(var i=0;i<turnOrder.length;i++){
-                if(turnOrder[i][0]===currentRound&&turnOrder[i][1]===myNum){myTurnIdx=i;break;}
-            }
-            
-            shouldBeMyTurn=(myTurnIdx===sheetTurn);
-            
-            if(shouldBeMyTurn){
+            if(myTurnIdx===sheetTurn){
                 btn.textContent=t('your_turn')+' - '+t('start_game')+' '+currentRound;
                 btn.className='main-btn green';
                 btn.disabled=false;
@@ -318,10 +354,11 @@ function renderRoundsScreen(){
                 btn.className='main-btn waiting';
                 btn.disabled=true;
             }
+            
+            document.getElementById('bottomBtnContainer').style.display='block';
+            hideLoader();
         }
     });
-    document.getElementById('bottomBtnContainer').style.display='block';
-    hideLoader();
 }
 
 function renderQuestionScreen(){
@@ -436,7 +473,6 @@ function finishRound(){
             fetchData('updateGame',{gameId:roomCode,updates:updateData}).then(function(result){
                 isSubmitting=false;
                 if(result.ok){
-                    roundResults.push({myAnswers:myAnswers,myScore:myCorrectCount*5,myCorrect:myCorrectCount});
                     myCorrectCount=0;myAnswers=[];
                     renderRoundsScreen();
                 }else{
@@ -581,14 +617,6 @@ function startPolling(){
         if(gameResult.ok&&gameResult.data){
             var data=gameResult.data;
             if(data.status==='finished'){clearInterval(checkInterval);endGame();return;}
-            
-            var roundData=data['round'+currentRound]||'';
-            var sheetTurn=getTurnFromSheet(roundData);
-            
-            if(sheetTurn===2){
-                currentRound++;
-                if(currentRound>TOTAL_ROUNDS){endGame();return;}
-            }
             
             if(!isInGame){
                 renderRoundsScreen();
