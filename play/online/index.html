@@ -137,7 +137,6 @@ var myScore=0;
 var myCorrectCount=0;
 var questions=[];
 var roundQuestions=[];
-var roundResults=[];
 var timerInterval=null;
 var timeLeft=QUESTION_TIME;
 var roomCode=null;
@@ -160,6 +159,7 @@ var opponentAvatar='default';
 var turnOrder=[[1,1],[1,2],[2,2],[2,1],[3,1],[3,2],[4,2],[4,1],[5,1],[5,2]];
 var isGameEnded=false;
 var gameFinishedCalled=false;
+var isPollingActive=false;
 
 var translations={
 fa:{online:'آنلاین',loading:'در حال دریافت...',start_game:'شروع بازی',you:'تو',opponent:'حریف',results:'نتایج راندها',round:'راند',finished:'بازی تمام شد!',score:'امتیاز',back:'بازگشت',no_questions:'سوال کافی نیست',room_full:'دیر اومدی! یکی دیگه زودتر وارد شده',create_new_room:'ساخت اتاق جدید',waiting_opponent:'هنوز حریفت وارد نشده...',invite_title:'دعوت از دوست',invite_desc:'لینک زیر رو کپی کن و برای دوستت بفرست!',copy:'کپی',link_copied:'لینک کپی شد!',invite_from_players:'انتخاب از لیست بازیکنا',search_players:'جستجوی بازیکن...',not_enough:'سکه کافی نداری!',waiting_turn:'منتظر حریف...',your_turn:'نوبت توست',coming_soon:'به زودی',room_not_found:'اتاق یافت نشد',time_expired:'وقت بازی تموم شد!',exit_confirm:'اگه خارج بشی این راند رو با ۰ تمام می‌کنی!',submitting:'در حال ثبت پاسخ‌ها...',submitting_wait:'لطفاً صبر کنید',win:'بردی!',lose:'باختی!',draw:'مساوی شدی!',coins:'سکه',not_found:'اتاق یافت نشد'},
@@ -207,7 +207,7 @@ function getAvatarHtml(avatarId){
 function checkTimeExpired(createdAt){if(!createdAt)return false;var now=new Date();var created=new Date(createdAt);return (now-created)/(1000*60)>=GAME_TIME_LIMIT;}
 
 function handleTimeExpired(){
-    clearInterval(timerInterval);clearInterval(checkInterval);isInGame=false;isSubmitting=false;
+    clearInterval(timerInterval);clearInterval(checkInterval);isInGame=false;isSubmitting=false;isPollingActive=false;
     fetchData('updateGame',{gameId:roomCode,updates:{status:'finished'}});
     var t=getTranslation;
     var html='<div class="result-banner">';
@@ -291,14 +291,16 @@ function getRoundResultsFromSheet(gameData){
 }
 
 function renderRoundsScreen(){
+    if(isInGame||isSubmitting||gameFinishedCalled)return;
     var t=getTranslation;
     var myNum=getMyPlayerNum();
     
     fetchData('getGame',{gameId:roomCode}).then(function(gameResult){
         if(gameResult.ok&&gameResult.data){
             var data=gameResult.data;
-            var allResults=getRoundResultsFromSheet(data);
+            if(data.status==='finished'){endGame();return;}
             
+            var allResults=getRoundResultsFromSheet(data);
             var html='';
             html+='<div class="players-row">';
             html+='<div class="player-card"><div class="player-avatar">'+getAvatarHtml(myAvatar)+'</div><div class="player-tag">'+myName+'</div><span class="player-score">'+myScore+'</span></div>';
@@ -340,10 +342,7 @@ function renderRoundsScreen(){
             
             if(sheetTurn===2){
                 currentRound++;
-                if(currentRound>TOTAL_ROUNDS){
-                    endGame();
-                    return;
-                }
+                if(currentRound>TOTAL_ROUNDS){endGame();return;}
                 renderRoundsScreen();
                 return;
             }
@@ -454,11 +453,8 @@ function finishRound(){
             var currentRoundData=gameResult.data['round'+currentRound]||'';
             
             if(currentRoundData===''){
-                if(myNum===1){
-                    currentRoundData='['+qIds+']['+ansStr+'][waiting]';
-                }else{
-                    currentRoundData='['+qIds+'][waiting]['+ansStr+']';
-                }
+                if(myNum===1){currentRoundData='['+qIds+']['+ansStr+'][waiting]';}
+                else{currentRoundData='['+qIds+'][waiting]['+ansStr+']';}
             }else{
                 var parts=currentRoundData.split('][');
                 if(myNum===1){
@@ -490,7 +486,7 @@ function finishRound(){
 function endGame(){
     if(gameFinishedCalled)return;
     gameFinishedCalled=true;
-    isInGame=false;isGameEnded=true;
+    isInGame=false;isGameEnded=true;isPollingActive=false;
     clearInterval(timerInterval);clearInterval(checkInterval);
     
     var t=getTranslation;
@@ -556,20 +552,7 @@ async function initPlayer1(){
     await fetchData('saveGame',{gameData:{id:roomCode,player1:myUserId,player2:'',round1:'',round2:'',round3:'',round4:'',round5:'',status:'waiting',createdAt:new Date().toISOString()}});
     gameCreatedAt=new Date().toISOString();
     renderWaitingScreen();
-    checkInterval=setInterval(async function(){
-        var gameResult=await fetchData('getGame',{gameId:roomCode});
-        if(gameResult.ok&&gameResult.data){
-            var data=gameResult.data;
-            if(data.player2&&data.player2!==''&&String(data.player2)!==String(myUserId)){
-                clearInterval(checkInterval);
-                var oppInfo=await getPlayerInfo(data.player2,getTranslation('opponent'));
-                opponentName=oppInfo.name;opponentAvatar=oppInfo.avatar;
-                await fetchData('updateGame',{gameId:roomCode,updates:{status:'in_progress'}});
-                await startOnlineGame();
-            }
-        }
-        if(checkTimeExpired(gameCreatedAt)){clearInterval(checkInterval);fetchData('updateGame',{gameId:roomCode,updates:{status:'finished'}});}
-    },5000);
+    startWaitingPolling();
 }
 
 async function initPlayer2(){
@@ -579,7 +562,7 @@ async function initPlayer2(){
     var gameResult=await fetchData('getGame',{gameId:roomCode});
     if(!gameResult.ok||!gameResult.data){
         var t=getTranslation;
-        document.getElementById('gameContent').innerHTML='<div class="result-banner"><div class="result-text">'+t('not_found')+'</div></div>';
+        document.getElementById('gameContent').innerHTML='<div class="result-banner"><div class="result-text">'+t('not_found')+'</div><button class="result-btn" onclick="backToDashboard()">'+t('back')+'</button></div>';
         document.getElementById('bottomBtnContainer').style.display='none';hideLoader();return;
     }
     var data=gameResult.data;
@@ -633,7 +616,31 @@ async function startOnlineGame(){
     }
 }
 
+function startWaitingPolling(){
+    if(isPollingActive)return;
+    isPollingActive=true;
+    clearInterval(checkInterval);
+    checkInterval=setInterval(async function(){
+        if(checkTimeExpired(gameCreatedAt)){handleTimeExpired();return;}
+        if(gameFinishedCalled)return;
+        var gameResult=await fetchData('getGame',{gameId:roomCode});
+        if(gameResult.ok&&gameResult.data){
+            var data=gameResult.data;
+            if(data.status==='finished'){clearInterval(checkInterval);endGame();return;}
+            if(data.player2&&data.player2!==''&&String(data.player2)!==String(myUserId)&&isPlayer1){
+                clearInterval(checkInterval);
+                var oppInfo=await getPlayerInfo(data.player2,getTranslation('opponent'));
+                opponentName=oppInfo.name;opponentAvatar=oppInfo.avatar;
+                await fetchData('updateGame',{gameId:roomCode,updates:{status:'in_progress'}});
+                await startOnlineGame();
+            }
+        }
+    },5000);
+}
+
 function startPolling(){
+    if(isPollingActive)return;
+    isPollingActive=true;
     clearInterval(checkInterval);
     checkInterval=setInterval(async function(){
         if(checkTimeExpired(gameCreatedAt)){handleTimeExpired();return;}
