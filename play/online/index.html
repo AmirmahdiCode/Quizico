@@ -34,7 +34,7 @@
         .game-content{display:none}
         .game-content.show{display:flex;flex-direction:column;gap:10px}
         .waiting-card{background:var(--card-bg);border:var(--border);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow);text-align:center}
-        .waiting-image{width:100px;height:100px;object-fit:contain;margin:0 auto 10px;display:block}
+        .waiting-image{width:120px;height:120px;object-fit:contain;margin:0 auto 10px;display:block}
         .waiting-text{font-size:12px;font-weight:700;color:var(--text);margin-bottom:10px}
         .room-code-display{font-size:18px;font-weight:900;color:var(--primary);letter-spacing:2px;margin-bottom:10px}
         .invite-box{background:#fff7ed;border:2px solid #f97316;border-radius:10px;padding:12px;margin-top:10px;text-align:center}
@@ -90,11 +90,11 @@
         .main-btn:disabled{opacity:.5;cursor:not-allowed}
         .main-btn.green{background:#10b981}
         .main-btn.waiting{background:var(--text-light)}
-        .result-banner{text-align:center;padding:20px;background:var(--card-bg);border:var(--border);border-radius:var(--radius);box-shadow:var(--shadow)}
-        .result-icon{font-size:40px;margin-bottom:8px}
-        .result-text{font-size:14px;font-weight:800;color:var(--dark);margin-bottom:6px}
+        .result-banner{text-align:center;padding:30px 20px;background:var(--card-bg);border:var(--border);border-radius:var(--radius);box-shadow:var(--shadow)}
+        .result-image{width:100px;height:100px;object-fit:contain;margin:0 auto 12px;display:block}
+        .result-text{font-size:16px;font-weight:800;color:var(--dark);margin-bottom:6px}
         .result-score{font-size:10px;color:var(--text-light);margin-bottom:10px}
-        .result-btn{display:inline-block;padding:8px 20px;background:var(--primary);color:#fff;border:var(--border);border-radius:8px;font-family:'IRANSans',Tahoma,sans-serif;font-size:10px;font-weight:700;cursor:pointer;box-shadow:2px 2px 0 #000;margin:4px}
+        .result-btn{display:inline-block;padding:10px 24px;background:var(--primary);color:#fff;border:var(--border);border-radius:8px;font-family:'IRANSans',Tahoma,sans-serif;font-size:11px;font-weight:700;cursor:pointer;box-shadow:2px 2px 0 #000;margin:4px}
         .submitting-loader{width:50px;height:50px;border:5px solid var(--bg3);border-top-color:var(--primary);border-radius:50%;animation:spin .8s linear infinite;margin:20px auto}
     </style>
 </head>
@@ -123,7 +123,11 @@
 (function(){
 var webApp=window.Eitaa?.WebApp;
 var API_URL='https://script.google.com/macros/s/AKfycbyHQXQ0TffhGyW1MdtI-_sWlZMhLSPDCR3Az5dDkuwv9TJt1o6-f_aCOg_aHJnty_8P/exec';
-var SAD_IMAGE='https://cdn.imgurl.ir/uploads/g58935_InShot_20260822_140943752.png';
+var IMG_WAITING='https://cdn.imgurl.ir/uploads/f070529_ZiVVzyG6H6JBTVARK1c2iXoOCoQ-BXQCnElKRyuk09mmEqyQcA.png';
+var IMG_WIN='https://cdn.imgurl.ir/uploads/d7569_SdlnXbvBsDzeGpo9E0ppeiGOtsY-sZLBOMrqTzS-F7ZsAm2fTQ.png';
+var IMG_DRAW='https://cdn.imgurl.ir/uploads/c44955_RXKwRTR4RXAXv-bftIWrthaOW8o-EiM7ZrOGTbSQIsFh1fjuvw.png';
+var IMG_LOSE='https://cdn.imgurl.ir/uploads/h063599_nwNHMksFNfYhy_4KjF92buiid4I-7_5NRme2TZyRlB9Ek8YBxQ.png';
+var IMG_TIME_UP='https://cdn.imgurl.ir/uploads/u005079_GP-dAQTAQiioXT6l7NAdu0tU6Xs-QSdDD2fhSDCwYEnUwM5opw.png';
 var TOTAL_ROUNDS=5,QUESTIONS_PER_ROUND=3,QUESTION_TIME=60,GAME_TIME_LIMIT=60;
 var currentRound=1,currentQuestionIndex=0,myScore=0,myCorrectCount=0,timeLeft=QUESTION_TIME;
 var questions=[],roundQuestions=[],myAnswers=[];
@@ -179,10 +183,10 @@ return '<i class="fa-solid fa-user"></i>';
 function checkTimeExpired(createdAt){if(!createdAt)return false;var now=new Date();var created=new Date(createdAt);return (now-created)/(1000*60)>=GAME_TIME_LIMIT;}
 
 function handleTimeExpired(){
-clearInterval(timerInterval);clearInterval(checkInterval);isInGame=false;isSubmitting=false;isPollingActive=false;
+clearInterval(timerInterval);clearInterval(checkInterval);isInGame=false;isSubmitting=false;isPollingActive=false;isGameEnded=true;gameFinishedCalled=true;
 fetchData('updateGame',{gameId:roomCode,updates:{status:'finished'}});
 var t=getTranslation;
-var html='<div class="result-banner"><div class="result-icon"><i class="fa-solid fa-clock" style="color:#ef4444;"></i></div><div class="result-text">'+t('time_expired')+'</div><button class="result-btn" onclick="backToDashboard()">'+t('back')+'</button></div>';
+var html='<div class="result-banner"><img class="result-image" src="'+IMG_TIME_UP+'" alt="" draggable="false" oncontextmenu="return false;" ondragstart="return false;"><div class="result-text">'+t('time_expired')+'</div><button class="result-btn" onclick="backToDashboard()">'+t('back')+'</button></div>';
 document.getElementById('gameContent').innerHTML=html;
 document.getElementById('bottomBtnContainer').style.display='none';
 hideLoader();
@@ -192,7 +196,7 @@ function renderWaitingScreen(){
 var t=getTranslation;
 var inviteLink='https://eitaa.com/gameland_app/Quizico?startapp='+roomCode+'&btn=بزن.بریم.🚀';
 var html='<div class="waiting-card">';
-html+='<img class="waiting-image" src="'+SAD_IMAGE+'" alt="" draggable="false" oncontextmenu="return false;" ondragstart="return false;">';
+html+='<img class="waiting-image" src="'+IMG_WAITING+'" alt="" draggable="false" oncontextmenu="return false;" ondragstart="return false;">';
 html+='<div class="waiting-text">'+t('waiting_opponent')+'</div><div class="room-code-display">'+roomCode+'</div>';
 html+='<div class="invite-box"><div class="invite-box-title">'+t('invite_title')+'</div><div class="invite-box-desc">'+t('invite_desc')+'</div>';
 html+='<div class="invite-link-box"><span class="invite-link" id="inviteLink">'+inviteLink+'</span><button class="copy-btn" onclick="copyInviteLink()">'+t('copy')+'</button></div></div>';
@@ -282,18 +286,9 @@ var roundData=data['round'+currentRound]||'';
 var sheetTurn=getTurnFromSheet(roundData);
 var myTurnIdx=-1;
 for(var i=0;i<turnOrder.length;i++){if(turnOrder[i][0]===currentRound&&turnOrder[i][1]===myNum){myTurnIdx=i;break;}}
-if(sheetTurn===2){
-currentRound++;
-if(currentRound>TOTAL_ROUNDS){endGame();return;}
-renderRoundsScreen();return;
-}
-if(myTurnIdx===sheetTurn){
-btn.textContent=t('your_turn')+' - '+t('start_game')+' '+currentRound;
-btn.className='main-btn green';btn.disabled=false;
-}else{
-btn.textContent=t('waiting_turn');
-btn.className='main-btn waiting';btn.disabled=true;
-}
+if(sheetTurn===2){currentRound++;if(currentRound>TOTAL_ROUNDS){endGame();return;}renderRoundsScreen();return;}
+if(myTurnIdx===sheetTurn){btn.textContent=t('your_turn')+' - '+t('start_game')+' '+currentRound;btn.className='main-btn green';btn.disabled=false;}
+else{btn.textContent=t('waiting_turn');btn.className='main-btn waiting';btn.disabled=true;}
 document.getElementById('bottomBtnContainer').style.display='block';
 hideLoader();
 }
@@ -359,14 +354,8 @@ var myNum=getMyPlayerNum();
 fetchData('getGame',{gameId:roomCode}).then(function(gameResult){
 if(gameResult.ok&&gameResult.data){
 var currentRoundData=gameResult.data['round'+currentRound]||'';
-if(currentRoundData===''){
-if(myNum===1){currentRoundData='['+qIds+']['+ansStr+'][waiting]';}
-else{currentRoundData='['+qIds+'][waiting]['+ansStr+']';}
-}else{
-var parts=currentRoundData.split('][');
-if(myNum===1){var p2Ans=parts[2]?parts[2].replace(']','').replace('[',''):'waiting';currentRoundData='['+qIds+']['+ansStr+']['+p2Ans+']';}
-else{var p1Ans=parts[1]?parts[1].replace(']','').replace('[',''):'waiting';currentRoundData='['+qIds+']['+p1Ans+']['+ansStr+']';}
-}
+if(currentRoundData===''){if(myNum===1){currentRoundData='['+qIds+']['+ansStr+'][waiting]';}else{currentRoundData='['+qIds+'][waiting]['+ansStr+']';}}
+else{var parts=currentRoundData.split('][');if(myNum===1){var p2Ans=parts[2]?parts[2].replace(']','').replace('[',''):'waiting';currentRoundData='['+qIds+']['+ansStr+']['+p2Ans+']';}else{var p1Ans=parts[1]?parts[1].replace(']','').replace('[',''):'waiting';currentRoundData='['+qIds+']['+p1Ans+']['+ansStr+']';}}
 var updateData={};updateData['round'+currentRound]=currentRoundData;
 fetchData('updateGame',{gameId:roomCode,updates:updateData}).then(function(result){
 isSubmitting=false;
@@ -388,8 +377,9 @@ if(myScore>0){sc=75;cr=300;}
 else if(myScore<0){sc=-25;}
 else{sc=25;}
 fetchData('getUser',{}).then(function(ud){if(ud.ok&&ud.data){userTotalScore=ud.data.score||0;userCoins=ud.data.coins||0;userTotalScore+=sc;userCoins+=cr;fetchData('updateUser',{score:userTotalScore,coins:userCoins});}});
+var img=sc>0?IMG_WIN:sc<0?IMG_LOSE:IMG_DRAW;
 var html='<div class="result-banner">';
-html+='<div class="result-icon">'+(sc>0?'<i class="fa-solid fa-trophy" style="color:#f59e0b;"></i>':sc<0?'<i class="fa-solid fa-face-frown" style="color:#ef4444;"></i>':'<i class="fa-solid fa-handshake" style="color:#f59e0b;"></i>')+'</div>';
+html+='<img class="result-image" src="'+img+'" alt="" draggable="false" oncontextmenu="return false;" ondragstart="return false;">';
 html+='<div class="result-text">'+(sc>0?t('win'):sc<0?t('lose'):t('draw'))+'</div>';
 html+='<div class="result-score">'+t('score')+': '+(sc>=0?'+':'')+sc+'</div>';
 if(cr>0)html+='<div class="result-score">'+t('coins')+': +'+cr+'</div>';
@@ -409,11 +399,7 @@ var sheetTurn=getTurnFromSheet(roundData);
 var myNum=getMyPlayerNum();
 var myTurnIdx=-1;
 for(var i=0;i<turnOrder.length;i++){if(turnOrder[i][0]===currentRound&&turnOrder[i][1]===myNum){myTurnIdx=i;break;}}
-if(myTurnIdx===sheetTurn){
-var allShuffled=shuffleArray(questions);
-roundQuestions=allShuffled.slice(0,QUESTIONS_PER_ROUND);
-renderQuestionScreen();
-}
+if(myTurnIdx===sheetTurn){var allShuffled=shuffleArray(questions);roundQuestions=allShuffled.slice(0,QUESTIONS_PER_ROUND);renderQuestionScreen();}
 }
 });
 };
@@ -426,8 +412,7 @@ return{name:fallbackName,avatar:'default'};
 
 async function initPlayer1(){
 roomCode=generateRoomCode();isPlayer1=true;myUserId=getUserId();
-var myInfo=await getPlayerInfo(myUserId,getTranslation('you'));
-myName=myInfo.name;myAvatar=myInfo.avatar;
+var myInfo=await getPlayerInfo(myUserId,getTranslation('you'));myName=myInfo.name;myAvatar=myInfo.avatar;
 await fetchData('saveGame',{gameData:{id:roomCode,player1:myUserId,player2:'',round1:'',round2:'',round3:'',round4:'',round5:'',status:'waiting',createdAt:new Date().toISOString()}});
 gameCreatedAt=new Date().toISOString();
 renderWaitingScreen();
@@ -436,8 +421,7 @@ startWaitingPolling();
 
 async function initPlayer2(){
 isPlayer1=false;myUserId=getUserId();
-var myInfo=await getPlayerInfo(myUserId,getTranslation('you'));
-myName=myInfo.name;myAvatar=myInfo.avatar;
+var myInfo=await getPlayerInfo(myUserId,getTranslation('you'));myName=myInfo.name;myAvatar=myInfo.avatar;
 var gameResult=await fetchData('getGame',{gameId:roomCode});
 if(!gameResult.ok||!gameResult.data){
 var t=getTranslation;
@@ -544,21 +528,20 @@ var startParam=getStartParam();
 var savedRoom=localStorage.getItem('onlineRoomCode');
 var createNew=localStorage.getItem('createNewRoom');
 
-if(startParam){
+if(createNew){
+localStorage.removeItem('createNewRoom');
+localStorage.removeItem('onlineRoomCode');
+await initPlayer1();
+}
+else if(startParam){
 roomCode=startParam;
 localStorage.removeItem('onlineRoomCode');
-localStorage.removeItem('createNewRoom');
 await initPlayer2();
 }
 else if(savedRoom){
 roomCode=savedRoom;
 localStorage.removeItem('onlineRoomCode');
-localStorage.removeItem('createNewRoom');
 await initPlayer2();
-}
-else if(createNew){
-localStorage.removeItem('createNewRoom');
-await initPlayer1();
 }
 else{
 var t=getTranslation;
