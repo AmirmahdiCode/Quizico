@@ -524,13 +524,12 @@ async function init(){
 applyTheme();
 if(webApp){webApp.ready();webApp.expand();webApp.BackButton.show();webApp.BackButton.onClick(handleBackButton);}
 myUserId=getUserId();
+var urlParams=new URLSearchParams(window.location.search);
+var isNew=urlParams.get('new');
 var startParam=getStartParam();
 var savedRoom=localStorage.getItem('onlineRoomCode');
-var createNew=localStorage.getItem('createNewRoom');
 
-if(createNew){
-localStorage.removeItem('createNewRoom');
-localStorage.removeItem('onlineRoomCode');
+if(isNew==='1'){
 await initPlayer1();
 }
 else if(startParam){
