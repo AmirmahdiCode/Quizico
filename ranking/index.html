@@ -189,31 +189,6 @@
             color: var(--text-light);
         }
 
-        .my-rank-card {
-            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-            border: var(--border);
-            border-radius: var(--radius);
-            padding: 14px 18px;
-            box-shadow: var(--shadow);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-        .my-rank-left { display: flex; align-items: center; gap: 12px; }
-        .my-rank-number { font-size: 22px; font-weight: 800; color: #fff; min-width: 40px; }
-        .my-rank-info { color: #fff; }
-        .my-rank-name { font-size: 13px; font-weight: 700; }
-        .my-rank-score { font-size: 9px; opacity: 0.8; }
-        .my-rank-badge {
-            background: rgba(255,255,255,0.2);
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 9px;
-            font-weight: 700;
-            color: #fff;
-            border: 1px solid rgba(255,255,255,0.3);
-        }
-
         .rank-list { display: flex; flex-direction: column; gap: 6px; }
 
         .rank-item {
@@ -290,6 +265,59 @@
             box-shadow: var(--shadow);
         }
         .rank-empty img { width: 60px; height: 60px; object-fit: contain; margin: 0 auto 8px; display: block; }
+
+        .my-rank-float {
+            position: fixed;
+            bottom: 70px;
+            right: 10px;
+            left: 10px;
+            max-width: 400px;
+            margin: 0 auto;
+            background: var(--card-bg);
+            border: 1px solid var(--primary);
+            border-radius: 20px;
+            padding: 6px 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            z-index: 500;
+            box-shadow: 0 2px 10px rgba(168,85,247,0.2);
+            cursor: pointer;
+        }
+        .my-rank-float .my-rank-number {
+            font-size: 12px;
+            font-weight: 800;
+            color: var(--primary);
+            min-width: 25px;
+        }
+        .my-rank-float .my-rank-avatar {
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            background: var(--bg2);
+            border: 1px solid var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+        .my-rank-float .my-rank-avatar img { width: 100%; height: 100%; object-fit: cover; }
+        .my-rank-float .my-rank-name {
+            font-size: 10px;
+            font-weight: 700;
+            color: var(--dark);
+            flex: 1;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .my-rank-float .my-rank-score {
+            font-size: 9px;
+            font-weight: 800;
+            color: var(--gold);
+        }
 
         .profile-modal-overlay {
             position: fixed;
@@ -463,21 +491,17 @@
                 <input type="text" id="searchInput" data-i18n-placeholder="search_placeholder" placeholder="جستجوی کاربر..." oninput="filterRankings()">
             </div>
 
-            <div class="my-rank-card">
-                <div class="my-rank-left">
-                    <div class="my-rank-number" id="myRankNumber">-</div>
-                    <div class="my-rank-info">
-                        <div class="my-rank-name" id="myRankName">...</div>
-                        <div class="my-rank-score" id="myRankScore"></div>
-                    </div>
-                </div>
-                <div class="my-rank-badge" data-i18n="your_rank">رتبه شما</div>
-            </div>
-
             <div class="rank-list" id="rankList"></div>
 
         </div>
     </main>
+
+    <div class="my-rank-float" id="myRankFloat" style="display:none;" onclick="scrollToMyRank()">
+        <span class="my-rank-number" id="myRankFloatNumber">-</span>
+        <span class="my-rank-avatar" id="myRankFloatAvatar"><i class="fa-solid fa-user"></i></span>
+        <span class="my-rank-name" id="myRankFloatName">...</span>
+        <span class="my-rank-score" id="myRankFloatScore">0</span>
+    </div>
 
     <div class="profile-modal-overlay" id="profileModalOverlay">
         <div class="profile-modal">
@@ -515,81 +539,36 @@
     <script>
         (function() {
             var webApp = window.Eitaa?.WebApp;
-            var API_URL = 'https://script.google.com/macros/s/AKfycbwV2X5hZB6WSJSezWWsYXq-94gIRu6z6kuzTIupTnHx2VqDKpzlZLcBohnZO2Lk1KHmxA/exec';
+            var API_URL = 'https://script.google.com/macros/s/AKfycbyHQXQ0TffhGyW1MdtI-_sWlZMhLSPDCR3Az5dDkuwv9TJt1o6-f_aCOg_aHJnty_8P/exec';
             var SAD_IMAGE = 'https://cdn.imgurl.ir/uploads/g58935_InShot_20260822_140943752.png';
             var allRankings = [];
             var currentLang = 'fa';
 
-            document.addEventListener('contextmenu', function(e) {
-                e.preventDefault();
-            });
-
-            document.addEventListener('dragstart', function(e) {
-                e.preventDefault();
-            });
-
-            document.addEventListener('copy', function(e) {
-                if (e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA') {
-                    e.preventDefault();
-                }
-            });
-
-            document.addEventListener('cut', function(e) {
-                if (e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA') {
-                    e.preventDefault();
-                }
-            });
+            document.addEventListener('contextmenu', function(e) { e.preventDefault(); });
+            document.addEventListener('dragstart', function(e) { e.preventDefault(); });
+            document.addEventListener('copy', function(e) { if (e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA') e.preventDefault(); });
+            document.addEventListener('cut', function(e) { if (e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA') e.preventDefault(); });
 
             var translations = {
                 fa: {
-                    ranking: 'رتبه‌بندی',
-                    loading: 'در حال دریافت...',
-                    your_rank: 'رتبه شما',
-                    home: 'خانه',
-                    ranking_nav: 'رتبه',
-                    profile: 'پروفایل',
-                    settings: 'تنظیمات',
-                    no_users: 'کاربری یافت نشد',
-                    search_placeholder: 'جستجوی کاربر...',
-                    score: 'امتیاز',
-                    you: 'شما',
-                    unknown: 'ناشناس',
-                    coins: 'سکه',
-                    diamonds: 'الماس',
+                    ranking: 'رتبه‌بندی', loading: 'در حال دریافت...', your_rank: 'رتبه شما',
+                    home: 'خانه', ranking_nav: 'رتبه', profile: 'پروفایل', settings: 'تنظیمات',
+                    no_users: 'کاربری یافت نشد', search_placeholder: 'جستجوی کاربر...',
+                    score: 'امتیاز', you: 'شما', unknown: 'ناشناس', coins: 'سکه', diamonds: 'الماس',
                     support: 'از سازنده حمایت کنید'
                 },
                 en: {
-                    ranking: 'Ranking',
-                    loading: 'Loading...',
-                    your_rank: 'Your Rank',
-                    home: 'Home',
-                    ranking_nav: 'Ranking',
-                    profile: 'Profile',
-                    settings: 'Settings',
-                    no_users: 'No users found',
-                    search_placeholder: 'Search users...',
-                    score: 'Score',
-                    you: 'You',
-                    unknown: 'Unknown',
-                    coins: 'Coins',
-                    diamonds: 'Diamonds',
+                    ranking: 'Ranking', loading: 'Loading...', your_rank: 'Your Rank',
+                    home: 'Home', ranking_nav: 'Ranking', profile: 'Profile', settings: 'Settings',
+                    no_users: 'No users found', search_placeholder: 'Search users...',
+                    score: 'Score', you: 'You', unknown: 'Unknown', coins: 'Coins', diamonds: 'Diamonds',
                     support: 'Support the developer'
                 },
                 ar: {
-                    ranking: 'الترتيب',
-                    loading: 'جار التحميل...',
-                    your_rank: 'رتبتك',
-                    home: 'الرئيسية',
-                    ranking_nav: 'الترتيب',
-                    profile: 'الملف',
-                    settings: 'الإعدادات',
-                    no_users: 'لا يوجد مستخدمين',
-                    search_placeholder: 'ابحث عن مستخدم...',
-                    score: 'النقاط',
-                    you: 'أنت',
-                    unknown: 'غير معروف',
-                    coins: 'عملات',
-                    diamonds: 'ألماس',
+                    ranking: 'الترتيب', loading: 'جار التحميل...', your_rank: 'رتبتك',
+                    home: 'الرئيسية', ranking_nav: 'الترتيب', profile: 'الملف', settings: 'الإعدادات',
+                    no_users: 'لا يوجد مستخدمين', search_placeholder: 'ابحث عن مستخدم...',
+                    score: 'النقاط', you: 'أنت', unknown: 'غير معروف', coins: 'عملات', diamonds: 'ألماس',
                     support: 'ادعم المطور'
                 }
             };
@@ -730,13 +709,10 @@
                 document.getElementById('modalLoader').style.display = 'block';
                 document.getElementById('modalContent').style.display = 'none';
                 document.getElementById('profileModalOverlay').classList.add('show');
-                
                 var result = await fetchData('getUser', { username: username });
-                
                 setTimeout(function() {
                     document.getElementById('modalLoader').style.display = 'none';
                     document.getElementById('modalContent').style.display = 'block';
-                    
                     if (result.ok && result.data) {
                         var d = result.data;
                         document.getElementById('modalAvatar').innerHTML = getAvatarHtml(d.avatar);
@@ -751,6 +727,13 @@
 
             window.closeProfileModal = function() {
                 document.getElementById('profileModalOverlay').classList.remove('show');
+            };
+
+            window.scrollToMyRank = function() {
+                var items = document.querySelectorAll('.rank-item.is-me');
+                if (items.length > 0) {
+                    items[0].scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
             };
 
             function openSupportLink(){
@@ -770,15 +753,25 @@
                     if (result.ok && Array.isArray(result.data) && result.data.length > 0) {
                         allRankings = result.data;
                         renderRankList(allRankings, myId);
-                        var myRank = null, myScore = 0;
+                        
+                        var myRank = null, myScore = 0, myName = '...', myAvatar = 'default';
                         for (var i = 0; i < allRankings.length; i++) {
-                            if (String(allRankings[i].username) === String(myId)) { myRank = i+1; myScore = allRankings[i].score||0; break; }
+                            if (String(allRankings[i].username) === String(myId)) {
+                                myRank = i+1;
+                                myScore = allRankings[i].score||0;
+                                myName = allRankings[i].name || getTranslation('you');
+                                myAvatar = allRankings[i].avatar || 'default';
+                                break;
+                            }
                         }
-                        document.getElementById('myRankNumber').textContent = myRank ? '#'+myRank : '-';
-                        var u = getEitaaUser();
-                        var name = u ? ((u.first_name||'')+' '+(u.last_name||'')).trim() : getTranslation('you');
-                        document.getElementById('myRankName').textContent = name || getTranslation('you');
-                        document.getElementById('myRankScore').textContent = scoreLabel + ': ' + myScore;
+                        
+                        if (myRank) {
+                            document.getElementById('myRankFloatNumber').textContent = '#'+myRank;
+                            document.getElementById('myRankFloatAvatar').innerHTML = getAvatarHtml(myAvatar);
+                            document.getElementById('myRankFloatName').textContent = myName;
+                            document.getElementById('myRankFloatScore').textContent = myScore;
+                            document.getElementById('myRankFloat').style.display = 'flex';
+                        }
                     } else {
                         var noUsers = getTranslation('no_users');
                         document.getElementById('rankList').innerHTML = '<div class="rank-empty"><img src="'+SAD_IMAGE+'" alt="" draggable="false" oncontextmenu="return false;" ondragstart="return false;"><p>'+noUsers+'</p></div>';
@@ -801,9 +794,7 @@
             
             setTimeout(function() {
                 var notif = document.getElementById('supportNotification');
-                if (notif) {
-                    notif.style.display = 'none';
-                }
+                if (notif) { notif.style.display = 'none'; }
             }, 5000);
         })();
     </script>
