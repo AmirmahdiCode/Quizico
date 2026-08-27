@@ -34,7 +34,7 @@
         .game-content{display:none}
         .game-content.show{display:flex;flex-direction:column;gap:10px}
         .waiting-card{background:var(--card-bg);border:var(--border);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow);text-align:center}
-        .waiting-image{width:100px;height:100px;object-fit:contain;margin:0 auto 10px;display:block}
+        .waiting-image{width:120px;height:120px;object-fit:contain;margin:0 auto 10px;display:block}
         .waiting-text{font-size:12px;font-weight:700;color:var(--text);margin-bottom:10px}
         .room-code-display{font-size:18px;font-weight:900;color:var(--primary);letter-spacing:2px;margin-bottom:10px}
         .invite-box{background:#fff7ed;border:2px solid #f97316;border-radius:10px;padding:12px;margin-top:10px;text-align:center}
@@ -86,11 +86,11 @@
         .main-btn:disabled{opacity:.5;cursor:not-allowed}
         .main-btn.green{background:#10b981}
         .main-btn.waiting{background:var(--text-light)}
-        .result-banner{text-align:center;padding:20px;background:var(--card-bg);border:var(--border);border-radius:var(--radius);box-shadow:var(--shadow)}
-        .result-icon{font-size:40px;margin-bottom:8px}
-        .result-text{font-size:14px;font-weight:800;color:var(--dark);margin-bottom:6px}
+        .result-banner{text-align:center;padding:30px 20px;background:var(--card-bg);border:var(--border);border-radius:var(--radius);box-shadow:var(--shadow)}
+        .result-image{width:100px;height:100px;object-fit:contain;margin:0 auto 12px;display:block}
+        .result-text{font-size:16px;font-weight:800;color:var(--dark);margin-bottom:6px}
         .result-score{font-size:10px;color:var(--text-light);margin-bottom:10px}
-        .result-btn{display:inline-block;padding:8px 20px;background:var(--primary);color:#fff;border:var(--border);border-radius:8px;font-family:'IRANSans',Tahoma,sans-serif;font-size:10px;font-weight:700;cursor:pointer;box-shadow:2px 2px 0 #000;margin:4px}
+        .result-btn{display:inline-block;padding:10px 24px;background:var(--primary);color:#fff;border:var(--border);border-radius:8px;font-family:'IRANSans',Tahoma,sans-serif;font-size:11px;font-weight:700;cursor:pointer;box-shadow:2px 2px 0 #000;margin:4px}
         .submitting-loader{width:50px;height:50px;border:5px solid var(--bg3);border-top-color:var(--primary);border-radius:50%;animation:spin .8s linear infinite;margin:20px auto}
         .player-avatar{width:35px;height:35px;border-radius:50%;margin:0 auto 4px;background:var(--bg2);border:var(--border);display:flex;align-items:center;justify-content:center;font-size:16px;color:var(--primary);overflow:hidden}
         .player-avatar img{width:100%;height:100%;object-fit:cover}
@@ -135,7 +135,13 @@
 (function(){
 var webApp=window.Eitaa?.WebApp;
 var API_URL='https://script.google.com/macros/s/AKfycbyHQXQ0TffhGyW1MdtI-_sWlZMhLSPDCR3Az5dDkuwv9TJt1o6-f_aCOg_aHJnty_8P/exec';
-var SAD_IMAGE='https://cdn.imgurl.ir/uploads/g58935_InShot_20260822_140943752.png';
+var IMG_WAITING='https://cdn.imgurl.ir/uploads/f070529_ZiVVzyG6H6JBTVARK1c2iXoOCoQ-BXQCnElKRyuk09mmEqyQcA.png';
+var IMG_WIN='https://cdn.imgurl.ir/uploads/d7569_SdlnXbvBsDzeGpo9E0ppeiGOtsY-sZLBOMrqTzS-F7ZsAm2fTQ.png';
+var IMG_DRAW='https://cdn.imgurl.ir/uploads/c44955_RXKwRTR4RXAXv-bftIWrthaOW8o-EiM7ZrOGTbSQIsFh1fjuvw.png';
+var IMG_LOSE='https://cdn.imgurl.ir/uploads/h063599_nwNHMksFNfYhy_4KjF92buiid4I-7_5NRme2TZyRlB9Ek8YBxQ.png';
+var IMG_TIME_UP='https://cdn.imgurl.ir/uploads/u005079_GP-dAQTAQiioXT6l7NAdu0tU6Xs-QSdDD2fhSDCwYEnUwM5opw.png';
+var IMG_CHAMPION='https://cdn.imgurl.ir/uploads/f34920_axMPKrekPpyGdl5CeLMz4NQ75Vw-ATIHfHqWQ7qPB7ooY-pHrA.png';
+var IMG_RUNNERUP='https://cdn.imgurl.ir/uploads/a62639_l6vse3s3j4wxbTZ2zTJLrLYK5kE-_gKRnxfXQQGUfR3AgGfjjA.png';
 var TOTAL_ROUNDS=5,QUESTIONS_PER_ROUND=3,QUESTION_TIME=60,GAME_TIME_LIMIT=60;
 var leagueCode=null,isCreator=false,currentRound=1,currentQuestionIndex=0;
 var questions=[],currentQuestions=[],myAnswers=[];
@@ -150,9 +156,9 @@ var leagueMatches=[[1,2],[2,3],[1,5],[3,4],[1,4],[2,5],[1,3],[4,5],[3,5],[2,4]];
 var turnOrder=[[1,1],[1,2],[2,2],[2,1],[3,1],[3,2],[4,2],[4,1],[5,1],[5,2]];
 
 var translations={
-fa:{league:'لیگ',loading:'در حال دریافت...',start_game:'شروع بازی',waiting_players:'منتظر ورود بازیکن‌ها...',invite_friends:'دعوت از دوستان',invite_desc:'لینک زیر رو کپی کن و برای دوستات بفرست تا وارد لیگ بشن!',copy:'کپی',link_copied:'لینک کپی شد!',coming_soon:'به زودی',invite_from_players:'انتخاب از لیست بازیکنا',search_players:'جستجوی بازیکن...',players_joined:'بازیکن‌های وارد شده',empty_slot:'جای خالی ⬜',league_table:'جدول لیگ',points:'امتیاز',game:'بازی',done:'انجام شد',waiting:'در انتظار',not_enough:'سکه کافی نداری!',back:'بازگشت',league_full:'لیگ پره! دیر اومدی!',create_new_league:'ساخت لیگ جدید',league_finished:'لیگ تموم شد!',game_finished:'بازی تموم شد!',your_score:'امتیاز تو',back_to_league:'بازگشت به لیگ',waiting_opponent:'منتظر حریف...',game_time_limit:'بازی حداکثر ۶۰ دقیقه وقت داره',time_expired:'وقت بازی تموم شد!',time_expired_lose:'تو نتونستی به موقع جواب بدی، حریفت برنده شد!',time_expired_win:'حریفت نتونست به موقع جواب بده، تو برنده شدی!',exit_confirm:'اگه خارج بشی این راند رو با ۰ تمام می‌کنی!',submitting:'در حال ثبت پاسخ‌ها...',submitting_wait:'لطفاً صبر کنید',you:'تو',opponent:'حریف',round:'راند',not_found:'لیگ یافت نشد'},
-en:{league:'League',loading:'Loading...',start_game:'Start Game',waiting_players:'Waiting for players...',invite_friends:'Invite Friends',invite_desc:'Copy the link below and send it to your friends!',copy:'Copy',link_copied:'Link copied!',coming_soon:'Coming Soon',invite_from_players:'Invite from players',search_players:'Search players...',players_joined:'Players Joined',empty_slot:'Empty Slot ⬜',league_table:'League Table',points:'Points',game:'Game',done:'Done',waiting:'Waiting',not_enough:'Not enough coins!',back:'Back',league_full:'League is full! Too late!',create_new_league:'Create New League',league_finished:'League finished!',game_finished:'Game finished!',your_score:'Your Score',back_to_league:'Back to League',waiting_opponent:'Waiting for opponent...',game_time_limit:'Game has a 60 minute time limit',time_expired:'Time expired!',time_expired_lose:'You did not answer in time, your opponent won!',time_expired_win:'Your opponent did not answer in time, you won!',exit_confirm:'If you leave, this round will be 0!',submitting:'Saving answers...',submitting_wait:'Please wait',you:'You',opponent:'Opponent',round:'Round',not_found:'League not found'},
-ar:{league:'الدوري',loading:'جار التحميل...',start_game:'ابدأ اللعبة',waiting_players:'بانتظار اللاعبين...',invite_friends:'دعوة الأصدقاء',invite_desc:'انسخ الرابط أدناه وأرسله إلى أصدقائك!',copy:'نسخ',link_copied:'تم نسخ الرابط!',coming_soon:'قريبًا',invite_from_players:'اختر من اللاعبين',search_players:'ابحث عن لاعب...',players_joined:'اللاعبون المنضمون',empty_slot:'مكان فارغ ⬜',league_table:'جدول الدوري',points:'النقاط',game:'لعبة',done:'تم',waiting:'بانتظار',not_enough:'عملات غير كافية!',back:'رجوع',league_full:'الدوري ممتلئ! متأخر!',create_new_league:'إنشاء دوري جديد',league_finished:'انتهى الدوري!',game_finished:'انتهت اللعبة!',your_score:'نقاطك',back_to_league:'العودة إلى الدوري',waiting_opponent:'بانتظار الخصم...',game_time_limit:'اللعبة لها حد زمني 60 دقيقة',time_expired:'انتهى الوقت!',time_expired_lose:'لم تجب في الوقت، خصمك فاز!',time_expired_win:'خصمك لم يجب في الوقت، أنت فزت!',exit_confirm:'إذا غادرت، ستكون هذه الجولة 0!',submitting:'جار حفظ الإجابات...',submitting_wait:'يرجى الانتظار',you:'أنت',opponent:'الخصم',round:'جولة',not_found:'الدوري غير موجود'}
+fa:{league:'لیگ',loading:'در حال دریافت...',start_game:'شروع بازی',waiting_players:'منتظر ورود بازیکن‌ها...',invite_friends:'دعوت از دوستان',invite_desc:'لینک زیر رو کپی کن و برای دوستات بفرست تا وارد لیگ بشن!',copy:'کپی',link_copied:'لینک کپی شد!',coming_soon:'به زودی',invite_from_players:'انتخاب از لیست بازیکنا',search_players:'جستجوی بازیکن...',players_joined:'بازیکن‌های وارد شده',empty_slot:'جای خالی ⬜',league_table:'جدول لیگ',points:'امتیاز',game:'بازی',done:'انجام شد',waiting:'در انتظار',not_enough:'سکه کافی نداری!',back:'بازگشت',league_full:'لیگ پره! دیر اومدی!',create_new_league:'ساخت لیگ جدید',league_finished:'لیگ تموم شد!',game_finished:'بازی تموم شد!',your_score:'امتیاز تو',back_to_league:'بازگشت به لیگ',waiting_opponent:'منتظر حریف...',game_time_limit:'بازی حداکثر ۶۰ دقیقه وقت داره',time_expired:'وقت بازی تموم شد!',time_expired_lose:'تو نتونستی به موقع جواب بدی، حریفت برنده شد!',time_expired_win:'حریفت نتونست به موقع جواب بده، تو برنده شدی!',exit_confirm:'اگه خارج بشی این راند رو با ۰ تمام می‌کنی!',submitting:'در حال ثبت پاسخ‌ها...',submitting_wait:'لطفاً صبر کنید',you:'تو',opponent:'حریف',round:'راند',not_found:'لیگ یافت نشد',win:'بردی!',lose:'باختی!',draw:'مساوی شدی!'},
+en:{league:'League',loading:'Loading...',start_game:'Start Game',waiting_players:'Waiting for players...',invite_friends:'Invite Friends',invite_desc:'Copy the link below and send it to your friends!',copy:'Copy',link_copied:'Link copied!',coming_soon:'Coming Soon',invite_from_players:'Invite from players',search_players:'Search players...',players_joined:'Players Joined',empty_slot:'Empty Slot ⬜',league_table:'League Table',points:'Points',game:'Game',done:'Done',waiting:'Waiting',not_enough:'Not enough coins!',back:'Back',league_full:'League is full! Too late!',create_new_league:'Create New League',league_finished:'League finished!',game_finished:'Game finished!',your_score:'Your Score',back_to_league:'Back to League',waiting_opponent:'Waiting for opponent...',game_time_limit:'Game has a 60 minute time limit',time_expired:'Time expired!',time_expired_lose:'You did not answer in time, your opponent won!',time_expired_win:'Your opponent did not answer in time, you won!',exit_confirm:'If you leave, this round will be 0!',submitting:'Saving answers...',submitting_wait:'Please wait',you:'You',opponent:'Opponent',round:'Round',not_found:'League not found',win:'You Win!',lose:'You Lose!',draw:'Draw!'},
+ar:{league:'الدوري',loading:'جار التحميل...',start_game:'ابدأ اللعبة',waiting_players:'بانتظار اللاعبين...',invite_friends:'دعوة الأصدقاء',invite_desc:'انسخ الرابط أدناه وأرسله إلى أصدقائك!',copy:'نسخ',link_copied:'تم نسخ الرابط!',coming_soon:'قريبًا',invite_from_players:'اختر من اللاعبين',search_players:'ابحث عن لاعب...',players_joined:'اللاعبون المنضمون',empty_slot:'مكان فارغ ⬜',league_table:'جدول الدوري',points:'النقاط',game:'لعبة',done:'تم',waiting:'بانتظار',not_enough:'عملات غير كافية!',back:'رجوع',league_full:'الدوري ممتلئ! متأخر!',create_new_league:'إنشاء دوري جديد',league_finished:'انتهى الدوري!',game_finished:'انتهت اللعبة!',your_score:'نقاطك',back_to_league:'العودة إلى الدوري',waiting_opponent:'بانتظار الخصم...',game_time_limit:'اللعبة لها حد زمني 60 دقيقة',time_expired:'انتهى الوقت!',time_expired_lose:'لم تجب في الوقت، خصمك فاز!',time_expired_win:'خصمك لم يجب في الوقت، أنت فزت!',exit_confirm:'إذا غادرت، ستكون هذه الجولة 0!',submitting:'جار حفظ الإجابات...',submitting_wait:'يرجى الانتظار',you:'أنت',opponent:'الخصم',round:'جولة',not_found:'الدوري غير موجود',win:'فزت!',lose:'خسرت!',draw:'تعادل!'}
 };
 
 function getSettings(){try{var raw=localStorage.getItem('quizicoSettings');if(!raw)return{theme:'light',primaryColor:'#a855f7',animation:true,language:'fa'};var p=JSON.parse(raw);if(!p.theme)p.theme='light';if(!p.primaryColor)p.primaryColor='#a855f7';if(p.animation===undefined)p.animation=true;if(!p.language)p.language='fa';return p;}catch(e){return{theme:'light',primaryColor:'#a855f7',animation:true,language:'fa'}}}
@@ -229,12 +235,12 @@ return results;
 }
 
 function handleTimeExpired(){
-clearInterval(timerInterval);clearInterval(checkInterval);isInGame=false;isSubmitting=false;isPollingActive=false;
+clearInterval(timerInterval);clearInterval(checkInterval);isInGame=false;isSubmitting=false;isPollingActive=false;gameFinishedCalled=true;
 var result=isMyTurn?'0':'3';
 fetchData('updateLeagueResult',{leagueId:leagueCode,gameNum:currentGameIndex+1,result:result});
 fetchData('updateGame',{gameId:currentGameId,updates:{status:'finished'}});
 var t=getTranslation;
-var html='<div class="result-banner"><div class="result-icon"><i class="fa-solid fa-clock" style="color:#ef4444;"></i></div><div class="result-text">'+t('time_expired')+'</div>'+(isMyTurn?'<div class="result-score">'+t('time_expired_lose')+'</div>':'<div class="result-score">'+t('time_expired_win')+'</div>')+'<button class="result-btn" onclick="backToLeague()">'+t('back_to_league')+'</button></div>';
+var html='<div class="result-banner"><img class="result-image" src="'+IMG_TIME_UP+'" alt="" draggable="false" oncontextmenu="return false;" ondragstart="return false;"><div class="result-text">'+t('time_expired')+'</div>'+(isMyTurn?'<div class="result-score">'+t('time_expired_lose')+'</div>':'<div class="result-score">'+t('time_expired_win')+'</div>')+'<button class="result-btn" onclick="backToLeague()">'+t('back_to_league')+'</button></div>';
 document.getElementById('gameContent').innerHTML=html;
 document.getElementById('bottomBtnContainer').style.display='none';
 hideLoader();
@@ -244,7 +250,7 @@ function renderWaitingScreen(){
 var t=getTranslation;
 var inviteLink='https://eitaa.com/gameland_app/Quizico?startapp='+leagueCode+'&btn=بزن.بریم.🚀';
 var html='<div class="waiting-card">';
-html+='<img class="waiting-image" src="'+SAD_IMAGE+'" alt="" draggable="false" oncontextmenu="return false;" ondragstart="return false;">';
+html+='<img class="waiting-image" src="'+IMG_WAITING+'" alt="" draggable="false" oncontextmenu="return false;" ondragstart="return false;">';
 html+='<div class="waiting-text">'+t('waiting_players')+'</div><div class="room-code-display">'+leagueCode+'</div>';
 html+='<div class="invite-box"><div class="invite-box-title">'+t('invite_friends')+'</div><div class="invite-box-desc">'+t('invite_desc')+'</div>';
 html+='<div class="invite-link-box"><span class="invite-link" id="inviteLink">'+inviteLink+'</span><button class="copy-btn" onclick="copyInviteLink()">'+t('copy')+'</button></div></div>';
@@ -377,14 +383,8 @@ var myNum=isCreator?1:2;
 fetchData('getGame',{gameId:currentGameId}).then(function(gameResult){
 if(gameResult.ok&&gameResult.data){
 var currentRoundData=gameResult.data['round'+currentRound]||'';
-if(currentRoundData===''){
-if(myNum===1){currentRoundData='['+qIds+']['+ansStr+'][waiting]';}
-else{currentRoundData='['+qIds+'][waiting]['+ansStr+']';}
-}else{
-var parts=currentRoundData.split('][');
-if(myNum===1){var p2Ans=parts[2]?parts[2].replace(']','').replace('[',''):'waiting';currentRoundData='['+qIds+']['+ansStr+']['+p2Ans+']';}
-else{var p1Ans=parts[1]?parts[1].replace(']','').replace('[',''):'waiting';currentRoundData='['+qIds+']['+p1Ans+']['+ansStr+']';}
-}
+if(currentRoundData===''){if(myNum===1){currentRoundData='['+qIds+']['+ansStr+'][waiting]';}else{currentRoundData='['+qIds+'][waiting]['+ansStr+']';}}
+else{var parts=currentRoundData.split('][');if(myNum===1){var p2Ans=parts[2]?parts[2].replace(']','').replace('[',''):'waiting';currentRoundData='['+qIds+']['+ansStr+']['+p2Ans+']';}else{var p1Ans=parts[1]?parts[1].replace(']','').replace('[',''):'waiting';currentRoundData='['+qIds+']['+p1Ans+']['+ansStr+']';}}
 var updateData={};updateData['round'+currentRound]=currentRoundData;
 fetchData('updateGame',{gameId:currentGameId,updates:updateData}).then(function(result){
 isSubmitting=false;
@@ -434,20 +434,9 @@ var roundData=data['round'+currentRound]||'';
 var sheetTurn=getTurnFromSheet(roundData);
 var myTurnIdx=-1;
 for(var i=0;i<turnOrder.length;i++){if(turnOrder[i][0]===currentRound&&turnOrder[i][1]===myNum){myTurnIdx=i;break;}}
-if(sheetTurn===2){
-currentRound++;
-if(currentRound>TOTAL_ROUNDS){endLeagueGame();return;}
-renderRoundsScreen();return;
-}
-if(myTurnIdx===sheetTurn){
-isMyTurn=true;
-btn.textContent=t('your_turn')+' - '+t('start_game')+' '+currentRound;
-btn.className='main-btn green';btn.disabled=false;
-}else{
-isMyTurn=false;
-btn.textContent=t('waiting_turn');
-btn.className='main-btn waiting';btn.disabled=true;
-}
+if(sheetTurn===2){currentRound++;if(currentRound>TOTAL_ROUNDS){endLeagueGame();return;}renderRoundsScreen();return;}
+if(myTurnIdx===sheetTurn){isMyTurn=true;btn.textContent=t('your_turn')+' - '+t('start_game')+' '+currentRound;btn.className='main-btn green';btn.disabled=false;}
+else{isMyTurn=false;btn.textContent=t('waiting_turn');btn.className='main-btn waiting';btn.disabled=true;}
 document.getElementById('bottomBtnContainer').style.display='block';
 hideLoader();
 }
@@ -463,7 +452,9 @@ var result='1';if(myScore>0)result='3';
 fetchData('updateLeagueResult',{leagueId:leagueCode,gameNum:currentGameIndex+1,result:result});
 fetchData('updateGame',{gameId:currentGameId,updates:{status:'finished'}});
 var t=getTranslation;
-var html='<div class="result-banner"><div class="result-icon"><i class="fa-solid fa-trophy" style="color:#f59e0b;"></i></div><div class="result-text">'+t('game_finished')+'</div><div class="result-score">'+t('your_score')+': '+myScore+'</div><button class="result-btn" onclick="backToLeague()">'+t('back_to_league')+'</button></div>';
+var img=result==='3'?IMG_WIN:IMG_LOSE;
+var txt=result==='3'?t('win'):t('lose');
+var html='<div class="result-banner"><img class="result-image" src="'+img+'" alt="" draggable="false" oncontextmenu="return false;" ondragstart="return false;"><div class="result-text">'+txt+'</div><div class="result-score">'+t('your_score')+': '+myScore+'</div><button class="result-btn" onclick="backToLeague()">'+t('back_to_league')+'</button></div>';
 document.getElementById('gameContent').innerHTML=html;
 document.getElementById('bottomBtnContainer').style.display='none';
 hideLoader();
@@ -473,7 +464,11 @@ window.backToLeague=function(){gameFinishedCalled=false;renderLeagueTable();star
 
 async function showLeagueResults(){
 var t=getTranslation;
-var html='<div class="result-banner"><div class="result-icon"><i class="fa-solid fa-trophy" style="color:#f59e0b;"></i></div><div class="result-text">'+t('league_finished')+'</div><button class="result-btn" onclick="backToDashboard()">'+t('back')+'</button></div>';
+var result=await fetchData('getLeague',{leagueId:leagueCode});
+var img=IMG_CHAMPION;
+var txt=t('league_finished');
+if(result.ok&&result.data&&result.data.winner===myUserId){img=IMG_CHAMPION;txt=t('league_finished');}
+var html='<div class="result-banner"><img class="result-image" src="'+img+'" alt="" draggable="false" oncontextmenu="return false;" ondragstart="return false;"><div class="result-text">'+txt+'</div><button class="result-btn" onclick="backToDashboard()">'+t('back')+'</button></div>';
 document.getElementById('gameContent').innerHTML=html;
 document.getElementById('bottomBtnContainer').style.display='none';
 hideLoader();
@@ -600,25 +595,23 @@ if(webApp){webApp.ready();webApp.expand();webApp.BackButton.show();webApp.BackBu
 var ud=await fetchData('getUser',{});
 if(ud.ok&&ud.data){userCoins=ud.data.coins||0;document.getElementById('coinsHeader').textContent=userCoins;}
 myUserId=getUserId();
+var urlParams=new URLSearchParams(window.location.search);
+var isNew=urlParams.get('new');
 var startParam=getStartParam();
 var savedLeague=localStorage.getItem('leagueCode');
-var createNew=localStorage.getItem('createNewLeague');
 
-if(startParam){
+if(isNew==='1'){
+await initPlayer1();
+}
+else if(startParam){
 leagueCode=startParam;
 localStorage.removeItem('leagueCode');
-localStorage.removeItem('createNewLeague');
 await initPlayer2();
 }
 else if(savedLeague){
 leagueCode=savedLeague;
 localStorage.removeItem('leagueCode');
-localStorage.removeItem('createNewLeague');
 await initPlayer2();
-}
-else if(createNew){
-localStorage.removeItem('createNewLeague');
-await initPlayer1();
 }
 else{
 var t=getTranslation;
