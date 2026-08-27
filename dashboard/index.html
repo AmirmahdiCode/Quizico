@@ -669,10 +669,7 @@
             var SPIN_COST = 50;
             var currentLang = 'fa';
 
-            var leagueMatches = [
-                [1, 2], [2, 3], [1, 5], [3, 4], [1, 4],
-                [2, 5], [1, 3], [4, 5], [3, 5], [2, 4]
-            ];
+            var leagueMatches = [[1,2],[2,3],[1,5],[3,4],[1,4],[2,5],[1,3],[4,5],[3,5],[2,4]];
 
             document.addEventListener('contextmenu', function(e) { e.preventDefault(); });
             document.addEventListener('dragstart', function(e) { e.preventDefault(); });
@@ -785,7 +782,6 @@
             function fetchData(action, params) {
                 var payload = { action: action, username: getUserId() };
                 if (params) { for (var k in params) { if (params.hasOwnProperty(k)) payload[k] = params[k]; } }
-                
                 return Promise.race([
                     fetch(API_URL, {
                         method: 'POST',
@@ -796,9 +792,7 @@
                         setTimeout(function() { reject(new Error('timeout')); }, 45000);
                     })
                 ]).catch(function(e) {
-                    if (e.message === 'timeout') {
-                        window.location.reload();
-                    }
+                    if (e.message === 'timeout') { window.location.reload(); }
                     return { ok: false, error: e.message };
                 });
             }
@@ -878,23 +872,16 @@
                     var gamesData = await fetchData('getGamesByPlayer', {});
                     if (gamesData.ok && Array.isArray(gamesData.data)) {
                         var allGames = gamesData.data;
-                        
                         var onlineInProgress = allGames.filter(function(g) {
                             return !String(g.id).startsWith('LG_') && (g.status === 'waiting' || g.status === 'in_progress');
                         });
-                        
-                        var past = allGames.filter(function(g) {
-                            return g.status === 'finished';
-                        }).slice(0, 5);
-
+                        var past = allGames.filter(function(g) { return g.status === 'finished'; }).slice(0, 5);
                         document.getElementById('onlineCount').textContent = onlineInProgress.length;
                         document.getElementById('pastCount').textContent = past.length;
-
                         var onlineList = document.getElementById('onlineList');
                         onlineList.innerHTML = onlineInProgress.length === 0 
                             ? renderEmpty(getTranslation('no_online_games'))
                             : onlineInProgress.map(function(g) { return renderGameCard(g, myId, 'active'); }).join('');
-
                         var pastList = document.getElementById('pastList');
                         pastList.innerHTML = past.length === 0 
                             ? renderEmpty(getTranslation('no_past_games'))
@@ -904,26 +891,17 @@
                     var leagueResult = await fetchData('getLeagueByUser', {});
                     if (leagueResult.ok && leagueResult.data && !leagueResult.data.winner) {
                         var lg = leagueResult.data;
-                        
                         var results = String(lg.results || '').split(',').filter(function(r) { return r !== ''; });
                         var currentGameNum = results.length + 1;
                         var match = null;
-                        if (currentGameNum <= 10) {
-                            match = leagueMatches[currentGameNum - 1];
-                        }
-                        
+                        if (currentGameNum <= 10) { match = leagueMatches[currentGameNum - 1]; }
                         var myPlayerNum = -1;
                         for (var i = 1; i <= 5; i++) {
-                            if (lg['player' + i] && String(lg['player' + i]).split(',')[0] === String(myId)) {
-                                myPlayerNum = i;
-                                break;
-                            }
+                            if (lg['player' + i] && String(lg['player' + i]).split(',')[0] === String(myId)) { myPlayerNum = i; break; }
                         }
-                        
                         var statusText = getTranslation('live');
                         var statusClass = 'live';
                         var subtitle = getTranslation('stage') + ' ' + currentGameNum + ' از ۱۰';
-                        
                         if (myPlayerNum !== -1 && match) {
                             if (match[0] === myPlayerNum || match[1] === myPlayerNum) {
                                 subtitle += ' - ' + getTranslation('your_turn');
@@ -935,7 +913,6 @@
                                 statusClass = 'waiting';
                             }
                         }
-                        
                         document.getElementById('leagueCount').textContent = '1';
                         document.getElementById('leagueList').innerHTML = renderLeagueCard(lg, subtitle, statusText, statusClass);
                     } else {
@@ -943,9 +920,8 @@
                         document.getElementById('leagueList').innerHTML = renderEmpty(getTranslation('no_league_games'));
                     }
 
-                } catch(e) {
-                    console.error(e);
-                } finally {
+                } catch(e) { console.error(e); }
+                finally {
                     document.getElementById('loaderWrapper').style.display = 'none';
                     document.getElementById('dashboardContent').classList.add('show');
                 }
@@ -970,24 +946,14 @@
                 }
             }
 
-            function openWheelModal() {
-                shuffleArray(wheelPrizes);
-                drawWheel();
-                document.getElementById('wheelResult').textContent = '';
-                document.getElementById('wheelModalOverlay').classList.add('show');
-            }
-            function closeWheelModal() {
-                if (!isSpinning) document.getElementById('wheelModalOverlay').classList.remove('show');
-            }
+            function openWheelModal() { shuffleArray(wheelPrizes); drawWheel(); document.getElementById('wheelResult').textContent = ''; document.getElementById('wheelModalOverlay').classList.add('show'); }
+            function closeWheelModal() { if (!isSpinning) document.getElementById('wheelModalOverlay').classList.remove('show'); }
             window.openWheelModal = openWheelModal;
             window.closeWheelModal = closeWheelModal;
 
             function spinWheel() {
                 if (isSpinning) return;
-                if (userCoins < SPIN_COST) { 
-                    document.getElementById('wheelResult').textContent = getTranslation('not_enough_coins'); 
-                    return; 
-                }
+                if (userCoins < SPIN_COST) { document.getElementById('wheelResult').textContent = getTranslation('not_enough_coins'); return; }
                 isSpinning = true;
                 document.getElementById('wheelResult').textContent = '';
                 var seg = 360/wheelPrizes.length;
@@ -1002,22 +968,9 @@
                 currentRotation = nr;
                 setTimeout(function() {
                     var prize = wheelPrizes[ri];
-                    if (prize.type === 'empty') { 
-                        userCoins -= SPIN_COST; 
-                        document.getElementById('wheelResult').textContent = getTranslation('empty'); 
-                        fetchData('updateUser', { coins: userCoins });
-                    }
-                    else if (prize.type === 'coins') { 
-                        userCoins = userCoins - SPIN_COST + prize.value; 
-                        document.getElementById('wheelResult').textContent = prize.label; 
-                        fetchData('updateUser', { coins: userCoins });
-                    }
-                    else { 
-                        userDiamonds += prize.value; 
-                        userCoins -= SPIN_COST; 
-                        document.getElementById('wheelResult').textContent = prize.label; 
-                        fetchData('updateUser', { coins: userCoins, diamonds: userDiamonds });
-                    }
+                    if (prize.type === 'empty') { userCoins -= SPIN_COST; document.getElementById('wheelResult').textContent = getTranslation('empty'); fetchData('updateUser', { coins: userCoins }); }
+                    else if (prize.type === 'coins') { userCoins = userCoins - SPIN_COST + prize.value; document.getElementById('wheelResult').textContent = prize.label; fetchData('updateUser', { coins: userCoins }); }
+                    else { userDiamonds += prize.value; userCoins -= SPIN_COST; document.getElementById('wheelResult').textContent = prize.label; fetchData('updateUser', { coins: userCoins, diamonds: userDiamonds }); }
                     document.getElementById('coinsHeader').textContent = userCoins;
                     document.getElementById('diamondsHeader').textContent = userDiamonds;
                     isSpinning = false;
@@ -1031,9 +984,7 @@
                 webApp.BackButton.show();
                 webApp.BackButton.onClick(function() {
                     webApp.showConfirm(getTranslation('exit_confirm'), function(confirmed) {
-                        if (confirmed) {
-                            webApp.close();
-                        }
+                        if (confirmed) { webApp.close(); }
                     });
                 });
             }
@@ -1043,9 +994,7 @@
             
             setTimeout(function() {
                 var notif = document.getElementById('supportNotification');
-                if (notif) {
-                    notif.style.display = 'none';
-                }
+                if (notif) { notif.style.display = 'none'; }
             }, 5000);
         })();
     </script>
