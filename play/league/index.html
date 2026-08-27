@@ -125,10 +125,7 @@
     </div>
 </header>
 <main class="main-container">
-    <div class="loader-wrapper" id="loaderWrapper">
-        <div class="loader"></div>
-        <div class="loader-text" data-i18n="loading">در حال دریافت...</div>
-    </div>
+    <div class="loader-wrapper" id="loaderWrapper"><div class="loader"></div><div class="loader-text" data-i18n="loading">در حال دریافت...</div></div>
     <div class="game-content" id="gameContent"></div>
 </main>
 <div class="bottom-btn-container" id="bottomBtnContainer" style="display:none;">
@@ -139,40 +136,16 @@
 var webApp=window.Eitaa?.WebApp;
 var API_URL='https://script.google.com/macros/s/AKfycbyHQXQ0TffhGyW1MdtI-_sWlZMhLSPDCR3Az5dDkuwv9TJt1o6-f_aCOg_aHJnty_8P/exec';
 var SAD_IMAGE='https://cdn.imgurl.ir/uploads/g58935_InShot_20260822_140943752.png';
-var TOTAL_ROUNDS=5;
-var QUESTIONS_PER_ROUND=3;
-var QUESTION_TIME=60;
-var GAME_TIME_LIMIT=60;
-var leagueCode=null;
-var isCreator=false;
-var currentRound=1;
-var currentQuestionIndex=0;
-var questions=[];
-var currentQuestions=[];
-var isAnswered=false;
-var myScore=0;
-var myCorrectCount=0;
-var myAnswers=[];
-var checkInterval=null;
-var myUserId='';
-var timerInterval=null;
-var timeLeft=QUESTION_TIME;
-var userCoins=0;
-var currentGameId='';
-var isMyTurn=false;
-var isInGame=false;
-var currentGameIndex=0;
-var currentOpponentId='';
-var gameCreatedAt='';
-var actionUsedThisQuestion=false;
-var currentLang='fa';
-var isSubmitting=false;
-var myName='';
-var opponentName='';
-var myAvatar='default';
-var opponentAvatar='default';
-var isPollingActive=false;
-var gameFinishedCalled=false;
+var TOTAL_ROUNDS=5,QUESTIONS_PER_ROUND=3,QUESTION_TIME=60,GAME_TIME_LIMIT=60;
+var leagueCode=null,isCreator=false,currentRound=1,currentQuestionIndex=0;
+var questions=[],currentQuestions=[],myAnswers=[];
+var checkInterval=null,timerInterval=null;
+var myUserId='',timeLeft=QUESTION_TIME,userCoins=0;
+var currentGameId='',isMyTurn=false,isInGame=false,currentGameIndex=0,currentOpponentId='',gameCreatedAt='';
+var isAnswered=false,actionUsedThisQuestion=false,currentLang='fa',isSubmitting=false;
+var myName='',opponentName='',myAvatar='default',opponentAvatar='default';
+var isPollingActive=false,gameFinishedCalled=false;
+var myScore=0,myCorrectCount=0;
 var leagueMatches=[[1,2],[2,3],[1,5],[3,4],[1,4],[2,5],[1,3],[4,5],[3,5],[2,4]];
 var turnOrder=[[1,1],[1,2],[2,2],[2,1],[3,1],[3,2],[4,2],[4,1],[5,1],[5,2]];
 
@@ -187,7 +160,6 @@ function getTranslation(k){var t=translations[currentLang]||translations.fa;retu
 function hexToRgb(h){var r=/^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(h);return r?{r:parseInt(r[1],16),g:parseInt(r[2],16),b:parseInt(r[3],16)}:{r:168,g:85,b:247}}
 function shadeColor(c,p){var r=hexToRgb(c);var rr=Math.max(0,Math.min(255,r.r+p));var gg=Math.max(0,Math.min(255,r.g+p));var bb=Math.max(0,Math.min(255,r.b+p));return '#'+((1<<24)+(rr<<16)+(gg<<8)+bb).toString(16).slice(1)}
 function applyTheme(){var s=getSettings();currentLang=s.language||'fa';var t=s.theme||'light';var p=s.primaryColor||'#a855f7';document.documentElement.setAttribute('data-theme',t);if(t==='dark'){document.documentElement.style.setProperty('--primary',shadeColor(p,40));}else{document.documentElement.style.setProperty('--primary',p);}if(s.animation===false){document.documentElement.setAttribute('data-animation','off');}else{document.documentElement.removeAttribute('data-animation');}if(currentLang==='en'){document.documentElement.setAttribute('dir','ltr');document.body.style.fontFamily='Arial, sans-serif';}else if(currentLang==='ar'){document.documentElement.setAttribute('dir','rtl');document.body.style.fontFamily='Tahoma, sans-serif';}else{document.documentElement.setAttribute('dir','rtl');document.body.style.fontFamily="'IRANSans', Tahoma, sans-serif";}document.querySelectorAll('[data-i18n]').forEach(function(el){var k=el.getAttribute('data-i18n');var t2=translations[currentLang]||translations.fa;if(t2[k])el.textContent=t2[k];});}
-
 function sleep(ms){return new Promise(function(r){setTimeout(r,ms);});}
 function translateGoogle(text,tl){var url='https://translate.googleapis.com/translate_a/single?client=gtx&sl=fa&tl='+tl+'&dt=t&q='+encodeURIComponent(text);return fetch(url).then(function(r){return r.json();}).then(function(d){return d&&d[0]&&d[0][0]?d[0][0][0]:null;}).catch(function(){return null;});}
 function translateMyMemory(text,tl){var url='https://api.mymemory.translated.net/get?q='+encodeURIComponent(text)+'&langpair=fa|'+tl;return fetch(url).then(function(r){return r.json();}).then(function(d){return d&&d.responseData&&d.responseData.translatedText?d.responseData.translatedText:null;}).catch(function(){return null;});}
@@ -208,186 +180,165 @@ function shuffleArray(a){for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.ran
 function hideLoader(){document.getElementById('loaderWrapper').style.display='none';document.getElementById('gameContent').classList.add('show');}
 
 function getAvatarHtml(avatarId){
-    var iconAvatars={'icon_game':'fa-gamepad','icon_trophy':'fa-trophy','icon_star':'fa-star','icon_bolt':'fa-bolt','icon_fire':'fa-fire','icon_crown':'fa-crown','icon_medal':'fa-medal','icon_rocket':'fa-rocket','icon_ghost':'fa-ghost','icon_dragon':'fa-dragon','icon_wand':'fa-wand-magic-sparkles','icon_hat':'fa-hat-wizard','icon_helmet':'fa-helmet-safety','icon_shield':'fa-shield-halved','icon_sword':'fa-hand-fist'};
-    var boyAvatars={'boy_1':'https://cdn.imgurl.ir/uploads/l17100_QkCRHe00vl64Bngk74ayYmWMyWA-NjfsC7SoRbGgrkm1mS-bpQ.png','boy_2':'https://cdn.imgurl.ir/uploads/g87708_nYSMEcudjDVvsMsfO4B6nrWGmFI-J3OzSBMOSwKo6Mt48wolyg.png','boy_3':'https://cdn.imgurl.ir/uploads/q01044_VWzDtI4NYQ660EGTVD_xToLVOvw-DkODf3dzQq2kbk2i1b-cIQ.png','boy_4':'https://cdn.imgurl.ir/uploads/w428496_0RBfnEt77slNmis2YlNfIjtELkE-_nTEsqjVSQafpoCS0X1pXg.png','boy_5':'https://cdn.imgurl.ir/uploads/h099226_Kaahld11_fKS5dcGDsq-5IvBiC0-olahkKmOTsSjohG4mMsVUw.png','boy_6':'https://cdn.imgurl.ir/uploads/k778258_pd9TZqS3DHKaaJQOygY-3WFHMAE-NzGEJ7R1Sv-r5Dfc6Zi3Ig.png','boy_7':'https://cdn.imgurl.ir/uploads/w221825_-1Xu8BzjzGa1I7ZIBVaYpoez4BM-zdVRFGLaRJGymjrVOu_yBA.png','boy_8':'https://cdn.imgurl.ir/uploads/o12072_rsMh7nSKjcODxjSPFWwfrlpYFe4-RHju528wRf-FCo_v2tJX7w.png','boy_9':'https://cdn.imgurl.ir/uploads/m007403_MNhHAeXQ-_-nEMVuihCtgYXUS90-5LFmX4D7T2-1RaoN058vnw.png','boy_10':'https://cdn.imgurl.ir/uploads/h976855_MLDYzJITIyaUkB6efcWGamXK39M-yfLRI0_7RrCmky6p-jgXFw.png'};
-    var girlAvatars={'girl_1':'https://cdn.imgurl.ir/uploads/h993569_G_wzhIk2ocoOPFhmmQHpUuS1mQc-IXeKOSBFSx6jn_y9tpVazg.png','girl_2':'https://cdn.imgurl.ir/uploads/u2553__Yb1fK6xw6Di1SX-7xB5v2J7e-g-IYBMcl_wSmqXNTkmAQMGnA.png','girl_3':'https://cdn.imgurl.ir/uploads/w03550__MlKSY3NXQ9cWkwVioa7hUpr6aI-2MRPg-L3QNOpRTm1oZTHtQ.png','girl_4':'https://cdn.imgurl.ir/uploads/r074193_q1uxpQIZsrzslDhI1W69Su-XvbY-x5jd5EZ1SyKggCCSjbbxrg.png','girl_5':'https://cdn.imgurl.ir/uploads/w035688_E2FfMOkE8ZGtuOZqU2q_VGTE6Yw-IU1JraRkSTub6ymIVXQuxA.png','girl_6':'https://cdn.imgurl.ir/uploads/c895184_bt1drvChqXnDjtGhNgxJ9M2Ho4I-n1KpcnSiSXSboB5rKfBwCg.png','girl_7':'https://cdn.imgurl.ir/uploads/u246883_b3j_B2NgyZNITErHK5c9A3dWFRA-5bV5bdzHSGi4neWTa9881A.png','girl_8':'https://cdn.imgurl.ir/uploads/o0025_B1BkJ9n5GL25bnqG-YNn79Qvsds-Erx3uqovQtex6125wXCD7g.png','girl_9':'https://cdn.imgurl.ir/uploads/t14047_NR8hWSzjLbSm2cXNrBnA2mEh43o-XhY5hyhBSU6s-9c4Fv5wRA.png','girl_10':'https://cdn.imgurl.ir/uploads/v96829_FouVxzw8xOmCFvf0IEri962BmHQ-LxKzSWS_aj8dcNI5EWVw.png'};
-    if(!avatarId||avatarId==='default')return '<i class="fa-solid fa-user"></i>';
-    if(iconAvatars[avatarId])return '<i class="fa-solid '+iconAvatars[avatarId]+'"></i>';
-    if(boyAvatars[avatarId])return '<img src="'+boyAvatars[avatarId]+'" alt="" draggable="false" oncontextmenu="return false;" ondragstart="return false;">';
-    if(girlAvatars[avatarId])return '<img src="'+girlAvatars[avatarId]+'" alt="" draggable="false" oncontextmenu="return false;" ondragstart="return false;">';
-    return '<i class="fa-solid fa-user"></i>';
+var iconAvatars={'icon_game':'fa-gamepad','icon_trophy':'fa-trophy','icon_star':'fa-star','icon_bolt':'fa-bolt','icon_fire':'fa-fire','icon_crown':'fa-crown','icon_medal':'fa-medal','icon_rocket':'fa-rocket','icon_ghost':'fa-ghost','icon_dragon':'fa-dragon','icon_wand':'fa-wand-magic-sparkles','icon_hat':'fa-hat-wizard','icon_helmet':'fa-helmet-safety','icon_shield':'fa-shield-halved','icon_sword':'fa-hand-fist'};
+var boyAvatars={'boy_1':'https://cdn.imgurl.ir/uploads/l17100_QkCRHe00vl64Bngk74ayYmWMyWA-NjfsC7SoRbGgrkm1mS-bpQ.png','boy_2':'https://cdn.imgurl.ir/uploads/g87708_nYSMEcudjDVvsMsfO4B6nrWGmFI-J3OzSBMOSwKo6Mt48wolyg.png','boy_3':'https://cdn.imgurl.ir/uploads/q01044_VWzDtI4NYQ660EGTVD_xToLVOvw-DkODf3dzQq2kbk2i1b-cIQ.png','boy_4':'https://cdn.imgurl.ir/uploads/w428496_0RBfnEt77slNmis2YlNfIjtELkE-_nTEsqjVSQafpoCS0X1pXg.png','boy_5':'https://cdn.imgurl.ir/uploads/h099226_Kaahld11_fKS5dcGDsq-5IvBiC0-olahkKmOTsSjohG4mMsVUw.png','boy_6':'https://cdn.imgurl.ir/uploads/k778258_pd9TZqS3DHKaaJQOygY-3WFHMAE-NzGEJ7R1Sv-r5Dfc6Zi3Ig.png','boy_7':'https://cdn.imgurl.ir/uploads/w221825_-1Xu8BzjzGa1I7ZIBVaYpoez4BM-zdVRFGLaRJGymjrVOu_yBA.png','boy_8':'https://cdn.imgurl.ir/uploads/o12072_rsMh7nSKjcODxjSPFWwfrlpYFe4-RHju528wRf-FCo_v2tJX7w.png','boy_9':'https://cdn.imgurl.ir/uploads/m007403_MNhHAeXQ-_-nEMVuihCtgYXUS90-5LFmX4D7T2-1RaoN058vnw.png','boy_10':'https://cdn.imgurl.ir/uploads/h976855_MLDYzJITIyaUkB6efcWGamXK39M-yfLRI0_7RrCmky6p-jgXFw.png'};
+var girlAvatars={'girl_1':'https://cdn.imgurl.ir/uploads/h993569_G_wzhIk2ocoOPFhmmQHpUuS1mQc-IXeKOSBFSx6jn_y9tpVazg.png','girl_2':'https://cdn.imgurl.ir/uploads/u2553__Yb1fK6xw6Di1SX-7xB5v2J7e-g-IYBMcl_wSmqXNTkmAQMGnA.png','girl_3':'https://cdn.imgurl.ir/uploads/w03550__MlKSY3NXQ9cWkwVioa7hUpr6aI-2MRPg-L3QNOpRTm1oZTHtQ.png','girl_4':'https://cdn.imgurl.ir/uploads/r074193_q1uxpQIZsrzslDhI1W69Su-XvbY-x5jd5EZ1SyKggCCSjbbxrg.png','girl_5':'https://cdn.imgurl.ir/uploads/w035688_E2FfMOkE8ZGtuOZqU2q_VGTE6Yw-IU1JraRkSTub6ymIVXQuxA.png','girl_6':'https://cdn.imgurl.ir/uploads/c895184_bt1drvChqXnDjtGhNgxJ9M2Ho4I-n1KpcnSiSXSboB5rKfBwCg.png','girl_7':'https://cdn.imgurl.ir/uploads/u246883_b3j_B2NgyZNITErHK5c9A3dWFRA-5bV5bdzHSGi4neWTa9881A.png','girl_8':'https://cdn.imgurl.ir/uploads/o0025_B1BkJ9n5GL25bnqG-YNn79Qvsds-Erx3uqovQtex6125wXCD7g.png','girl_9':'https://cdn.imgurl.ir/uploads/t14047_NR8hWSzjLbSm2cXNrBnA2mEh43o-XhY5hyhBSU6s-9c4Fv5wRA.png','girl_10':'https://cdn.imgurl.ir/uploads/v96829_FouVxzw8xOmCFvf0IEri962BmHQ-LxKzSWS_aj8dcNI5EWVw.png'};
+if(!avatarId||avatarId==='default')return '<i class="fa-solid fa-user"></i>';
+if(iconAvatars[avatarId])return '<i class="fa-solid '+iconAvatars[avatarId]+'"></i>';
+if(boyAvatars[avatarId])return '<img src="'+boyAvatars[avatarId]+'" alt="" draggable="false" oncontextmenu="return false;" ondragstart="return false;">';
+if(girlAvatars[avatarId])return '<img src="'+girlAvatars[avatarId]+'" alt="" draggable="false" oncontextmenu="return false;" ondragstart="return false;">';
+return '<i class="fa-solid fa-user"></i>';
 }
 
 async function getPlayerInfo(userId,fallbackName){
-    var result=await fetchData('getUser',{username:userId});
-    if(result.ok&&result.data){return {name:result.data.name||fallbackName,avatar:result.data.avatar||'default'};}
-    return {name:fallbackName,avatar:'default'};
+var result=await fetchData('getUser',{username:userId});
+if(result.ok&&result.data){return{name:result.data.name||fallbackName,avatar:result.data.avatar||'default'};}
+return{name:fallbackName,avatar:'default'};
 }
 
 function checkTimeExpired(createdAt){if(!createdAt)return false;var now=new Date();var created=new Date(createdAt);return (now-created)/(1000*60)>=GAME_TIME_LIMIT;}
 
 function getTurnFromSheet(roundData){
-    if(!roundData||roundData==='')return 0;
-    var parts=roundData.split('][');
-    var p1Ans=parts[1]?parts[1].replace('[','').replace(']',''):'waiting';
-    var p2Ans=parts[2]?parts[2].replace('[','').replace(']',''):'waiting';
-    if(p1Ans!=='waiting'&&p2Ans==='waiting')return 1;
-    if(p1Ans==='waiting'&&p2Ans!=='waiting')return 0;
-    return 2;
+if(!roundData||roundData==='')return 0;
+var parts=roundData.split('][');
+var p1Ans=parts[1]?parts[1].replace('[','').replace(']',''):'waiting';
+var p2Ans=parts[2]?parts[2].replace('[','').replace(']',''):'waiting';
+if(p1Ans!=='waiting'&&p2Ans==='waiting')return 1;
+if(p1Ans==='waiting'&&p2Ans!=='waiting')return 0;
+return 2;
 }
 
 function getRoundResultsFromSheet(gameData){
-    var results=[];
-    for(var r=1;r<=5;r++){
-        var roundData=gameData['round'+r]||'';
-        if(roundData!==''){
-            var parts=roundData.split('][');
-            var p1Ans=parts[1]?parts[1].replace('[','').replace(']',''):'';
-            var p2Ans=parts[2]?parts[2].replace('[','').replace(']',''):'';
-            var myAns=isCreator?p1Ans:p2Ans;
-            var oppAns=isCreator?p2Ans:p1Ans;
-            if(myAns!=='waiting'&&myAns!==''){
-                var myCorrect=0;
-                for(var i=0;i<myAns.length;i++){if(myAns[i]==='T')myCorrect++;}
-                results.push({myCorrect:myCorrect,myScore:myCorrect*5,oppAns:oppAns});
-            }
-        }
-    }
-    return results;
+var results=[];
+for(var r=1;r<=5;r++){
+var roundData=gameData['round'+r]||'';
+if(roundData!==''){
+var parts=roundData.split('][');
+var p1Ans=parts[1]?parts[1].replace('[','').replace(']',''):'';
+var p2Ans=parts[2]?parts[2].replace('[','').replace(']',''):'';
+var myAns=isCreator?p1Ans:p2Ans;
+var oppAns=isCreator?p2Ans:p1Ans;
+if(myAns!=='waiting'&&myAns!==''){
+var myCorrect=0;
+for(var i=0;i<myAns.length;i++){if(myAns[i]==='T')myCorrect++;}
+results.push({myCorrect:myCorrect,myScore:myCorrect*5,oppAns:oppAns});
+}
+}
+}
+return results;
 }
 
 function handleTimeExpired(){
-    clearInterval(timerInterval);clearInterval(checkInterval);isInGame=false;isSubmitting=false;isPollingActive=false;
-    var result=isMyTurn?'0':'3';
-    fetchData('updateLeagueResult',{leagueId:leagueCode,gameNum:currentGameIndex+1,result:result});
-    fetchData('updateGame',{gameId:currentGameId,updates:{status:'finished'}});
-    var t=getTranslation;
-    var html='<div class="result-banner">';
-    html+='<div class="result-icon"><i class="fa-solid fa-clock" style="color:#ef4444;"></i></div>';
-    html+='<div class="result-text">'+t('time_expired')+'</div>';
-    html+=isMyTurn?'<div class="result-score">'+t('time_expired_lose')+'</div>':'<div class="result-score">'+t('time_expired_win')+'</div>';
-    html+='<button class="result-btn" onclick="backToLeague()">'+t('back_to_league')+'</button></div>';
-    document.getElementById('gameContent').innerHTML=html;
-    document.getElementById('bottomBtnContainer').style.display='none';
-    hideLoader();
+clearInterval(timerInterval);clearInterval(checkInterval);isInGame=false;isSubmitting=false;isPollingActive=false;
+var result=isMyTurn?'0':'3';
+fetchData('updateLeagueResult',{leagueId:leagueCode,gameNum:currentGameIndex+1,result:result});
+fetchData('updateGame',{gameId:currentGameId,updates:{status:'finished'}});
+var t=getTranslation;
+var html='<div class="result-banner"><div class="result-icon"><i class="fa-solid fa-clock" style="color:#ef4444;"></i></div><div class="result-text">'+t('time_expired')+'</div>'+(isMyTurn?'<div class="result-score">'+t('time_expired_lose')+'</div>':'<div class="result-score">'+t('time_expired_win')+'</div>')+'<button class="result-btn" onclick="backToLeague()">'+t('back_to_league')+'</button></div>';
+document.getElementById('gameContent').innerHTML=html;
+document.getElementById('bottomBtnContainer').style.display='none';
+hideLoader();
 }
 
 function renderWaitingScreen(){
-    var t=getTranslation;
-    var inviteLink='https://eitaa.com/gameland_app/Quizico?startapp='+leagueCode+'&btn=بزن.بریم.🚀';
-    var html='<div class="waiting-card">';
-    html+='<img class="waiting-image" src="'+SAD_IMAGE+'" alt="" draggable="false" oncontextmenu="return false;" ondragstart="return false;">';
-    html+='<div class="waiting-text">'+t('waiting_players')+'</div>';
-    html+='<div class="room-code-display">'+leagueCode+'</div>';
-    html+='<div class="invite-box">';
-    html+='<div class="invite-box-title">'+t('invite_friends')+'</div>';
-    html+='<div class="invite-box-desc">'+t('invite_desc')+'</div>';
-    html+='<div class="invite-link-box">';
-    html+='<span class="invite-link" id="inviteLink">'+inviteLink+'</span>';
-    html+='<button class="copy-btn" onclick="copyInviteLink()">'+t('copy')+'</button></div></div>';
-    html+='<div class="players-invite-section">';
-    html+='<div class="coming-soon-overlay">'+t('coming_soon')+'</div>';
-    html+='<div class="players-invite-title">'+t('invite_from_players')+'</div>';
-    html+='<div class="players-search-box"><i class="fa-solid fa-search"></i><input type="text" placeholder="'+t('search_players')+'"></div>';
-    html+='<div class="players-invite-list"></div></div>';
-    html+='<div class="league-table"><div class="league-table-title">'+t('players_joined')+'</div><div id="leaguePlayersList"></div></div></div>';
-    document.getElementById('gameContent').innerHTML=html;
-    document.getElementById('bottomBtnContainer').style.display='none';
-    hideLoader();
-    loadLeaguePlayers();
+var t=getTranslation;
+var inviteLink='https://eitaa.com/gameland_app/Quizico?startapp='+leagueCode+'&btn=بزن.بریم.🚀';
+var html='<div class="waiting-card">';
+html+='<img class="waiting-image" src="'+SAD_IMAGE+'" alt="" draggable="false" oncontextmenu="return false;" ondragstart="return false;">';
+html+='<div class="waiting-text">'+t('waiting_players')+'</div><div class="room-code-display">'+leagueCode+'</div>';
+html+='<div class="invite-box"><div class="invite-box-title">'+t('invite_friends')+'</div><div class="invite-box-desc">'+t('invite_desc')+'</div>';
+html+='<div class="invite-link-box"><span class="invite-link" id="inviteLink">'+inviteLink+'</span><button class="copy-btn" onclick="copyInviteLink()">'+t('copy')+'</button></div></div>';
+html+='<div class="players-invite-section"><div class="coming-soon-overlay">'+t('coming_soon')+'</div><div class="players-invite-title">'+t('invite_from_players')+'</div><div class="players-search-box"><i class="fa-solid fa-search"></i><input type="text" placeholder="'+t('search_players')+'"></div><div class="players-invite-list"></div></div>';
+html+='<div class="league-table"><div class="league-table-title">'+t('players_joined')+'</div><div id="leaguePlayersList"></div></div></div>';
+document.getElementById('gameContent').innerHTML=html;
+document.getElementById('bottomBtnContainer').style.display='none';
+hideLoader();
+loadLeaguePlayers();
 }
 
-window.copyInviteLink=function(){
-    var link=document.getElementById('inviteLink').textContent;
-    if(navigator.clipboard){navigator.clipboard.writeText(link).then(function(){if(webApp)webApp.showAlert(getTranslation('link_copied'));});}
-    if(webApp)webApp.HapticFeedback?.impactOccurred('light');
-};
+window.copyInviteLink=function(){var link=document.getElementById('inviteLink').textContent;if(navigator.clipboard){navigator.clipboard.writeText(link).then(function(){if(webApp)webApp.showAlert(getTranslation('link_copied'));});}if(webApp)webApp.HapticFeedback?.impactOccurred('light');};
 
 async function loadLeaguePlayers(){
-    var result=await fetchData('getLeague',{leagueId:leagueCode});
-    if(result.ok&&result.data){
-        var playersHtml='';
-        for(var i=1;i<=5;i++){
-            if(result.data['player'+i]){
-                var pId=String(result.data['player'+i]).split(',')[0];
-                var pInfo=await getPlayerInfo(pId,'بازیکن '+i);
-                playersHtml+='<div class="league-table-row"><span class="player-avatar" style="width:20px;height:20px;font-size:10px;margin:0;">'+getAvatarHtml(pInfo.avatar)+'</span><span class="name">'+pInfo.name+' ✅</span></div>';
-            }else{
-                playersHtml+='<div class="league-table-row"><span class="name">'+getTranslation('empty_slot')+'</span></div>';
-            }
-        }
-        document.getElementById('leaguePlayersList').innerHTML=playersHtml;
-    }
+var result=await fetchData('getLeague',{leagueId:leagueCode});
+if(result.ok&&result.data){
+var playersHtml='';
+for(var i=1;i<=5;i++){
+if(result.data['player'+i]){
+var pId=String(result.data['player'+i]).split(',')[0];
+var pInfo=await getPlayerInfo(pId,'بازیکن '+i);
+playersHtml+='<div class="league-table-row"><span class="player-avatar" style="width:20px;height:20px;font-size:10px;margin:0;">'+getAvatarHtml(pInfo.avatar)+'</span><span class="name">'+pInfo.name+' ✅</span></div>';
+}else{
+playersHtml+='<div class="league-table-row"><span class="name">'+getTranslation('empty_slot')+'</span></div>';
+}
+}
+document.getElementById('leaguePlayersList').innerHTML=playersHtml;
+}
 }
 
 function renderLeagueTable(){
-    if(isInGame||isSubmitting)return;
-    var t=getTranslation;
-    var html='<div class="league-table"><div class="league-table-title">'+t('league_table')+'</div><div id="leagueTableBody"></div></div>';
-    html+='<div class="games-list" id="leagueGamesList"></div>';
-    document.getElementById('gameContent').innerHTML=html;
-    document.getElementById('bottomBtnContainer').style.display='none';
-    hideLoader();
-    loadLeagueData();
+if(isInGame||isSubmitting)return;
+var t=getTranslation;
+var html='<div class="league-table"><div class="league-table-title">'+t('league_table')+'</div><div id="leagueTableBody"></div></div><div class="games-list" id="leagueGamesList"></div>';
+document.getElementById('gameContent').innerHTML=html;
+document.getElementById('bottomBtnContainer').style.display='none';
+hideLoader();
+loadLeagueData();
 }
 
 async function loadLeagueData(){
-    var t=getTranslation;
-    var result=await fetchData('getLeague',{leagueId:leagueCode});
-    if(result.ok&&result.data){
-        if(result.data.winner){showLeagueResults();return;}
-        var players=[];
-        for(var i=1;i<=5;i++){
-            if(result.data['player'+i]){
-                var pData=String(result.data['player'+i]).split(',');
-                var pId=pData[0];
-                var pInfo=await getPlayerInfo(pId,'بازیکن '+i);
-                players.push({num:i,name:pInfo.name,avatar:pInfo.avatar,pts:parseInt(pData[1])||0});
-            }
-        }
-        players.sort(function(a,b){return b.pts-a.pts;});
-        document.getElementById('leagueTableBody').innerHTML=players.map(function(p,idx){
-            return '<div class="league-table-row"><span class="rank">#'+(idx+1)+'</span><span class="player-avatar" style="width:20px;height:20px;font-size:10px;margin:0;">'+getAvatarHtml(p.avatar)+'</span><span class="name">'+p.name+'</span><span class="pts">'+p.pts+' '+t('points')+'</span></div>';
-        }).join('');
-        var results=String(result.data.results||'').split(',').filter(function(r){return r!=='';});
-        var gamesHtml='';
-        for(var j=0;j<leagueMatches.length;j++){
-            var m=leagueMatches[j];
-            var gameResult=results[j]||'';
-            var status=gameResult?'done':'waiting';
-            var statusText=gameResult?t('done'):t('waiting');
-            var p1Info=await getPlayerInfo(String(result.data['player'+m[0]]).split(',')[0],'بازیکن '+m[0]);
-            var p2Info=await getPlayerInfo(String(result.data['player'+m[1]]).split(',')[0],'بازیکن '+m[1]);
-            gamesHtml+='<div class="game-item"><span>'+t('game')+' '+(j+1)+':</span><span class="vs">'+p1Info.name+' vs '+p2Info.name+'</span><span class="status '+status+'">'+statusText+'</span></div>';
-        }
-        document.getElementById('leagueGamesList').innerHTML=gamesHtml;
-    }
+var t=getTranslation;
+var result=await fetchData('getLeague',{leagueId:leagueCode});
+if(result.ok&&result.data){
+if(result.data.winner){showLeagueResults();return;}
+var players=[];
+for(var i=1;i<=5;i++){
+if(result.data['player'+i]){
+var pData=String(result.data['player'+i]).split(',');
+var pId=pData[0];
+var pInfo=await getPlayerInfo(pId,'بازیکن '+i);
+players.push({num:i,name:pInfo.name,avatar:pInfo.avatar,pts:parseInt(pData[1])||0});
+}
+}
+players.sort(function(a,b){return b.pts-a.pts;});
+document.getElementById('leagueTableBody').innerHTML=players.map(function(p,idx){
+return '<div class="league-table-row"><span class="rank">#'+(idx+1)+'</span><span class="player-avatar" style="width:20px;height:20px;font-size:10px;margin:0;">'+getAvatarHtml(p.avatar)+'</span><span class="name">'+p.name+'</span><span class="pts">'+p.pts+' '+t('points')+'</span></div>';
+}).join('');
+var results=String(result.data.results||'').split(',').filter(function(r){return r!=='';});
+var gamesHtml='';
+for(var j=0;j<leagueMatches.length;j++){
+var m=leagueMatches[j];
+var gameResult=results[j]||'';
+var status=gameResult?'done':'waiting';
+var statusText=gameResult?t('done'):t('waiting');
+var p1Info=await getPlayerInfo(String(result.data['player'+m[0]]).split(',')[0],'بازیکن '+m[0]);
+var p2Info=await getPlayerInfo(String(result.data['player'+m[1]]).split(',')[0],'بازیکن '+m[1]);
+gamesHtml+='<div class="game-item"><span>'+t('game')+' '+(j+1)+':</span><span class="vs">'+p1Info.name+' vs '+p2Info.name+'</span><span class="status '+status+'">'+statusText+'</span></div>';
+}
+document.getElementById('leagueGamesList').innerHTML=gamesHtml;
+}
 }
 
 function renderQuestionScreen(){
-    var t=getTranslation;
-    isAnswered=false;isInGame=true;actionUsedThisQuestion=false;
-    var q=currentQuestions[currentQuestionIndex];
-    var opts=shuffleArray(q.options.slice());
-    var ci=opts.indexOf(q.options[q.correctOption-1]);
-    var html='<div class="actions-row">';
-    html+='<button class="action-btn" onclick="useRemove50()"><i class="fa-solid fa-trash" style="color:#ef4444;"></i> ۵۰</button>';
-    html+='<button class="action-btn" onclick="useSwapQuestion()"><i class="fa-solid fa-arrows-rotate" style="color:#06b6d4;"></i> ۱۰۰</button>';
-    html+='<button class="action-btn" onclick="useSkipQuestion()"><i class="fa-solid fa-forward" style="color:#f59e0b;"></i> ۱۵۰</button></div>';
-    html+='<div class="question-card">';
-    html+='<div class="question-text">'+q.question+'</div>';
-    html+='<div class="timer-bar-container"><div class="timer-bar-fill" id="timerFill" style="width:100%;"></div></div>';
-    html+='<div class="timer-text" id="timerText">60s</div>';
-    html+='<div class="options-grid">';
-    for(var i=0;i<opts.length;i++){
-        html+='<button class="option-btn" data-text="'+opts[i]+'" onclick="selectOption('+i+','+ci+',this)">';
-        html+='<span class="option-letter">'+(i+1)+'</span><span>'+opts[i]+'</span></button>';
-    }
-    html+='</div></div>';
-    document.getElementById('gameContent').innerHTML=html;
-    document.getElementById('bottomBtnContainer').style.display='none';
-    hideLoader();
-    startTimer();
+var t=getTranslation;
+isAnswered=false;isInGame=true;actionUsedThisQuestion=false;
+var q=currentQuestions[currentQuestionIndex];
+var opts=shuffleArray(q.options.slice());
+var ci=opts.indexOf(q.options[q.correctOption-1]);
+var html='<div class="actions-row">';
+html+='<button class="action-btn" onclick="useRemove50()"><i class="fa-solid fa-trash" style="color:#ef4444;"></i> ۵۰</button>';
+html+='<button class="action-btn" onclick="useSwapQuestion()"><i class="fa-solid fa-arrows-rotate" style="color:#06b6d4;"></i> ۱۰۰</button>';
+html+='<button class="action-btn" onclick="useSkipQuestion()"><i class="fa-solid fa-forward" style="color:#f59e0b;"></i> ۱۵۰</button></div>';
+html+='<div class="question-card"><div class="question-text">'+q.question+'</div>';
+html+='<div class="timer-bar-container"><div class="timer-bar-fill" id="timerFill" style="width:100%;"></div></div><div class="timer-text" id="timerText">60s</div>';
+html+='<div class="options-grid">';
+for(var i=0;i<opts.length;i++){
+html+='<button class="option-btn" data-text="'+opts[i]+'" onclick="selectOption('+i+','+ci+',this)"><span class="option-letter">'+(i+1)+'</span><span>'+opts[i]+'</span></button>';
+}
+html+='</div></div>';
+document.getElementById('gameContent').innerHTML=html;
+document.getElementById('bottomBtnContainer').style.display='none';
+hideLoader();
+startTimer();
 }
 
 function startTimer(){clearInterval(timerInterval);timeLeft=QUESTION_TIME;updateTimerBar();timerInterval=setInterval(function(){timeLeft--;updateTimerBar();if(timeLeft<=0){clearInterval(timerInterval);if(!isAnswered)timeOut();}},1000);}
@@ -396,179 +347,136 @@ function timeOut(){isAnswered=true;var btns=document.querySelectorAll('.option-b
 function goToNext(){currentQuestionIndex++;if(currentQuestionIndex>=QUESTIONS_PER_ROUND){finishRound();}else{renderQuestionScreen();}}
 
 window.selectOption=function(sel,ci,btn){
-    if(isAnswered)return;
-    isAnswered=true;clearInterval(timerInterval);
-    var btns=document.querySelectorAll('.option-btn');btns.forEach(function(b){b.classList.add('disabled');});
-    if(sel===ci){btn.classList.add('selected-correct');myScore+=5;myCorrectCount++;myAnswers.push(true);}
-    else{btn.classList.add('selected-wrong');btns[ci].classList.add('selected-correct');myAnswers.push(false);}
-    setTimeout(goToNext,800);
+if(isAnswered)return;
+isAnswered=true;clearInterval(timerInterval);
+var btns=document.querySelectorAll('.option-btn');btns.forEach(function(b){b.classList.add('disabled');});
+if(sel===ci){btn.classList.add('selected-correct');myScore+=5;myCorrectCount++;myAnswers.push(true);}
+else{btn.classList.add('selected-wrong');btns[ci].classList.add('selected-correct');myAnswers.push(false);}
+setTimeout(goToNext,800);
 };
 
-window.useRemove50=function(){
-    if(isAnswered||actionUsedThisQuestion)return;
-    if(userCoins<50){if(webApp)webApp.showAlert(getTranslation('not_enough'));return;}
-    userCoins-=50;actionUsedThisQuestion=true;document.getElementById('coinsHeader').textContent=userCoins;
-    var q=currentQuestions[currentQuestionIndex];var ct=q.options[q.correctOption-1];
-    var wo=q.options.filter(function(o){return o!==ct;});var th=shuffleArray(wo).slice(0,2);
-    document.querySelectorAll('.option-btn').forEach(function(b){if(th.indexOf(b.getAttribute('data-text'))!==-1)b.classList.add('hidden-option');});
-    disableActions();fetchData('updateUser',{coins:userCoins});
-};
-window.useSwapQuestion=function(){
-    if(isAnswered||actionUsedThisQuestion)return;
-    if(userCoins<100){if(webApp)webApp.showAlert(getTranslation('not_enough'));return;}
-    userCoins-=100;actionUsedThisQuestion=true;document.getElementById('coinsHeader').textContent=userCoins;
-    var rem=questions.filter(function(q){return currentQuestions.indexOf(q)===-1;});
-    if(rem.length>0)currentQuestions[currentQuestionIndex]=shuffleArray(rem)[0];
-    disableActions();fetchData('updateUser',{coins:userCoins});renderQuestionScreen();
-};
-window.useSkipQuestion=function(){
-    if(isAnswered||actionUsedThisQuestion)return;
-    if(userCoins<150){if(webApp)webApp.showAlert(getTranslation('not_enough'));return;}
-    userCoins-=150;actionUsedThisQuestion=true;document.getElementById('coinsHeader').textContent=userCoins;
-    myScore+=5;myCorrectCount++;myAnswers.push(true);
-    disableActions();fetchData('updateUser',{coins:userCoins});clearInterval(timerInterval);setTimeout(goToNext,300);
-};
+window.useRemove50=function(){if(isAnswered||actionUsedThisQuestion)return;if(userCoins<50){if(webApp)webApp.showAlert(getTranslation('not_enough'));return;}userCoins-=50;actionUsedThisQuestion=true;document.getElementById('coinsHeader').textContent=userCoins;var q=currentQuestions[currentQuestionIndex];var ct=q.options[q.correctOption-1];var wo=q.options.filter(function(o){return o!==ct;});var th=shuffleArray(wo).slice(0,2);document.querySelectorAll('.option-btn').forEach(function(b){if(th.indexOf(b.getAttribute('data-text'))!==-1)b.classList.add('hidden-option');});disableActions();fetchData('updateUser',{coins:userCoins});};
+window.useSwapQuestion=function(){if(isAnswered||actionUsedThisQuestion)return;if(userCoins<100){if(webApp)webApp.showAlert(getTranslation('not_enough'));return;}userCoins-=100;actionUsedThisQuestion=true;document.getElementById('coinsHeader').textContent=userCoins;var rem=questions.filter(function(q){return currentQuestions.indexOf(q)===-1;});if(rem.length>0)currentQuestions[currentQuestionIndex]=shuffleArray(rem)[0];disableActions();fetchData('updateUser',{coins:userCoins});renderQuestionScreen();};
+window.useSkipQuestion=function(){if(isAnswered||actionUsedThisQuestion)return;if(userCoins<150){if(webApp)webApp.showAlert(getTranslation('not_enough'));return;}userCoins-=150;actionUsedThisQuestion=true;document.getElementById('coinsHeader').textContent=userCoins;myScore+=5;myCorrectCount++;myAnswers.push(true);disableActions();fetchData('updateUser',{coins:userCoins});clearInterval(timerInterval);setTimeout(goToNext,300);};
 function disableActions(){document.querySelectorAll('.action-btn').forEach(function(b){b.disabled=true;});}
 
 function showSubmittingScreen(){
-    var t=getTranslation;
-    var html='<div class="result-banner">';
-    html+='<div class="submitting-loader"></div>';
-    html+='<div class="result-text">'+t('submitting')+'</div>';
-    html+='<div class="result-score">'+t('submitting_wait')+'</div></div>';
-    document.getElementById('gameContent').innerHTML=html;
-    document.getElementById('bottomBtnContainer').style.display='none';
-    hideLoader();
+var t=getTranslation;
+var html='<div class="result-banner"><div class="submitting-loader"></div><div class="result-text">'+t('submitting')+'</div><div class="result-score">'+t('submitting_wait')+'</div></div>';
+document.getElementById('gameContent').innerHTML=html;
+document.getElementById('bottomBtnContainer').style.display='none';
+hideLoader();
 }
 
 function finishRound(){
-    isInGame=false;isSubmitting=true;
-    showSubmittingScreen();
-    var qIds=currentQuestions.map(function(q){return q.id;}).join(',');
-    var ansStr=myAnswers.map(function(a){return a?'T':'F';}).join(',');
-    var myNum=isCreator?1:2;
-    fetchData('getGame',{gameId:currentGameId}).then(function(gameResult){
-        if(gameResult.ok&&gameResult.data){
-            var currentRoundData=gameResult.data['round'+currentRound]||'';
-            if(currentRoundData===''){
-                if(myNum===1){currentRoundData='['+qIds+']['+ansStr+'][waiting]';}
-                else{currentRoundData='['+qIds+'][waiting]['+ansStr+']';}
-            }else{
-                var parts=currentRoundData.split('][');
-                if(myNum===1){
-                    var p2Ans=parts[2]?parts[2].replace(']','').replace('[',''):'waiting';
-                    currentRoundData='['+qIds+']['+ansStr+']['+p2Ans+']';
-                }else{
-                    var p1Ans=parts[1]?parts[1].replace(']','').replace('[',''):'waiting';
-                    currentRoundData='['+qIds+']['+p1Ans+']['+ansStr+']';
-                }
-            }
-            var updateData={};updateData['round'+currentRound]=currentRoundData;
-            fetchData('updateGame',{gameId:currentGameId,updates:updateData}).then(function(result){
-                isSubmitting=false;
-                if(result.ok){myCorrectCount=0;myAnswers=[];renderRoundsScreen();}
-                else{showSubmittingScreen();setTimeout(function(){finishRound();},2000);}
-            });
-        }
-    });
+isInGame=false;isSubmitting=true;
+showSubmittingScreen();
+var qIds=currentQuestions.map(function(q){return q.id;}).join(',');
+var ansStr=myAnswers.map(function(a){return a?'T':'F';}).join(',');
+var myNum=isCreator?1:2;
+fetchData('getGame',{gameId:currentGameId}).then(function(gameResult){
+if(gameResult.ok&&gameResult.data){
+var currentRoundData=gameResult.data['round'+currentRound]||'';
+if(currentRoundData===''){
+if(myNum===1){currentRoundData='['+qIds+']['+ansStr+'][waiting]';}
+else{currentRoundData='['+qIds+'][waiting]['+ansStr+']';}
+}else{
+var parts=currentRoundData.split('][');
+if(myNum===1){var p2Ans=parts[2]?parts[2].replace(']','').replace('[',''):'waiting';currentRoundData='['+qIds+']['+ansStr+']['+p2Ans+']';}
+else{var p1Ans=parts[1]?parts[1].replace(']','').replace('[',''):'waiting';currentRoundData='['+qIds+']['+p1Ans+']['+ansStr+']';}
+}
+var updateData={};updateData['round'+currentRound]=currentRoundData;
+fetchData('updateGame',{gameId:currentGameId,updates:updateData}).then(function(result){
+isSubmitting=false;
+if(result.ok){myCorrectCount=0;myAnswers=[];renderRoundsScreen();}
+else{showSubmittingScreen();setTimeout(function(){finishRound();},2000);}
+});
+}
+});
 }
 
 function renderRoundsScreen(){
-    if(isInGame||isSubmitting||gameFinishedCalled)return;
-    var t=getTranslation;
-    var myNum=isCreator?1:2;
-    fetchData('getGame',{gameId:currentGameId}).then(function(gameResult){
-        if(gameResult.ok&&gameResult.data){
-            var data=gameResult.data;
-            if(data.status==='finished'){endLeagueGame();return;}
-            var allResults=getRoundResultsFromSheet(data);
-            var html='';
-            html+='<div class="players-row">';
-            html+='<div class="player-card"><div class="player-avatar">'+getAvatarHtml(myAvatar)+'</div><div class="player-tag">'+myName+'</div><span class="player-score">'+myScore+'</span></div>';
-            html+='<div class="player-card"><div class="player-avatar">'+getAvatarHtml(opponentAvatar)+'</div><div class="player-tag">'+opponentName+'</div><span class="player-score">?</span></div>';
-            html+='</div>';
-            if(allResults.length>0){
-                html+='<div class="rounds-results"><div class="rounds-title">'+t('results')+'</div>';
-                for(var i=0;i<allResults.length;i++){
-                    var r=allResults[i];
-                    html+='<div class="round-result-item">';
-                    html+='<div class="round-result-row"><span class="round-result-player">'+t('round')+' '+(i+1)+'</span></div>';
-                    html+='<div class="round-result-row"><span class="round-result-player">'+myName+'</span><div class="round-dots">';
-                    for(var j=0;j<QUESTIONS_PER_ROUND;j++)html+='<span class="result-dot'+(j<r.myCorrect?'':' wrong')+'">'+(j+1)+'</span>';
-                    html+='</div><span class="round-result-count">+'+r.myScore+'</span></div>';
-                    if(r.oppAns!=='waiting'&&r.oppAns!==''){
-                        var oppCorrect=0;
-                        for(var k=0;k<r.oppAns.length;k++){if(r.oppAns[k]==='T')oppCorrect++;}
-                        html+='<div class="round-result-row"><span class="round-result-player">'+opponentName+'</span><div class="round-dots">';
-                        for(var l=0;l<QUESTIONS_PER_ROUND;l++)html+='<span class="result-dot'+(l<oppCorrect?'':' wrong')+'">'+(l+1)+'</span>';
-                        html+='</div><span class="round-result-count">+'+oppCorrect*5+'</span></div>';
-                    }else{
-                        html+='<div class="round-result-row"><span class="round-result-player">'+opponentName+'</span><span class="round-result-count">...'+t('waiting_turn')+'</span></div>';
-                    }
-                    html+='</div>';
-                }
-                html+='</div>';
-            }
-            document.getElementById('gameContent').innerHTML=html;
-            var btn=document.getElementById('mainBtn');
-            var roundData=data['round'+currentRound]||'';
-            var sheetTurn=getTurnFromSheet(roundData);
-            var myTurnIdx=-1;
-            for(var i=0;i<turnOrder.length;i++){
-                if(turnOrder[i][0]===currentRound&&turnOrder[i][1]===myNum){myTurnIdx=i;break;}
-            }
-            if(sheetTurn===2){
-                currentRound++;
-                if(currentRound>TOTAL_ROUNDS){endLeagueGame();return;}
-                renderRoundsScreen();return;
-            }
-            if(myTurnIdx===sheetTurn){
-                isMyTurn=true;
-                btn.textContent=t('your_turn')+' - '+t('start_game')+' '+currentRound;
-                btn.className='main-btn green';btn.disabled=false;
-            }else{
-                isMyTurn=false;
-                btn.textContent=t('waiting_turn');
-                btn.className='main-btn waiting';btn.disabled=true;
-            }
-            document.getElementById('bottomBtnContainer').style.display='block';
-            hideLoader();
-        }
-    });
+if(isInGame||isSubmitting||gameFinishedCalled)return;
+var t=getTranslation;
+var myNum=isCreator?1:2;
+fetchData('getGame',{gameId:currentGameId}).then(function(gameResult){
+if(gameResult.ok&&gameResult.data){
+var data=gameResult.data;
+if(data.status==='finished'){endLeagueGame();return;}
+var allResults=getRoundResultsFromSheet(data);
+var html='<div class="players-row">';
+html+='<div class="player-card"><div class="player-avatar">'+getAvatarHtml(myAvatar)+'</div><div class="player-tag">'+myName+'</div><span class="player-score">'+myScore+'</span></div>';
+html+='<div class="player-card"><div class="player-avatar">'+getAvatarHtml(opponentAvatar)+'</div><div class="player-tag">'+opponentName+'</div><span class="player-score">?</span></div></div>';
+if(allResults.length>0){
+html+='<div class="rounds-results"><div class="rounds-title">'+t('results')+'</div>';
+for(var i=0;i<allResults.length;i++){
+var r=allResults[i];
+html+='<div class="round-result-item"><div class="round-result-row"><span class="round-result-player">'+t('round')+' '+(i+1)+'</span></div>';
+html+='<div class="round-result-row"><span class="round-result-player">'+myName+'</span><div class="round-dots">';
+for(var j=0;j<QUESTIONS_PER_ROUND;j++)html+='<span class="result-dot'+(j<r.myCorrect?'':' wrong')+'">'+(j+1)+'</span>';
+html+='</div><span class="round-result-count">+'+r.myScore+'</span></div>';
+if(r.oppAns!=='waiting'&&r.oppAns!==''){
+var oppCorrect=0;
+for(var k=0;k<r.oppAns.length;k++){if(r.oppAns[k]==='T')oppCorrect++;}
+html+='<div class="round-result-row"><span class="round-result-player">'+opponentName+'</span><div class="round-dots">';
+for(var l=0;l<QUESTIONS_PER_ROUND;l++)html+='<span class="result-dot'+(l<oppCorrect?'':' wrong')+'">'+(l+1)+'</span>';
+html+='</div><span class="round-result-count">+'+oppCorrect*5+'</span></div>';
+}else{
+html+='<div class="round-result-row"><span class="round-result-player">'+opponentName+'</span><span class="round-result-count">...'+t('waiting_turn')+'</span></div>';
+}
+html+='</div>';
+}
+html+='</div>';
+}
+document.getElementById('gameContent').innerHTML=html;
+var btn=document.getElementById('mainBtn');
+var roundData=data['round'+currentRound]||'';
+var sheetTurn=getTurnFromSheet(roundData);
+var myTurnIdx=-1;
+for(var i=0;i<turnOrder.length;i++){if(turnOrder[i][0]===currentRound&&turnOrder[i][1]===myNum){myTurnIdx=i;break;}}
+if(sheetTurn===2){
+currentRound++;
+if(currentRound>TOTAL_ROUNDS){endLeagueGame();return;}
+renderRoundsScreen();return;
+}
+if(myTurnIdx===sheetTurn){
+isMyTurn=true;
+btn.textContent=t('your_turn')+' - '+t('start_game')+' '+currentRound;
+btn.className='main-btn green';btn.disabled=false;
+}else{
+isMyTurn=false;
+btn.textContent=t('waiting_turn');
+btn.className='main-btn waiting';btn.disabled=true;
+}
+document.getElementById('bottomBtnContainer').style.display='block';
+hideLoader();
+}
+});
 }
 
 function endLeagueGame(){
-    if(gameFinishedCalled)return;
-    gameFinishedCalled=true;
-    isInGame=false;isPollingActive=false;
-    clearInterval(timerInterval);clearInterval(checkInterval);
-    var result='1';if(myScore>0)result='3';
-    fetchData('updateLeagueResult',{leagueId:leagueCode,gameNum:currentGameIndex+1,result:result});
-    fetchData('updateGame',{gameId:currentGameId,updates:{status:'finished'}});
-    var t=getTranslation;
-    var html='<div class="result-banner">';
-    html+='<div class="result-icon"><i class="fa-solid fa-trophy" style="color:#f59e0b;"></i></div>';
-    html+='<div class="result-text">'+t('game_finished')+'</div>';
-    html+='<div class="result-score">'+t('your_score')+': '+myScore+'</div>';
-    html+='<button class="result-btn" onclick="backToLeague()">'+t('back_to_league')+'</button></div>';
-    document.getElementById('gameContent').innerHTML=html;
-    document.getElementById('bottomBtnContainer').style.display='none';hideLoader();
+if(gameFinishedCalled)return;
+gameFinishedCalled=true;
+isInGame=false;isPollingActive=false;
+clearInterval(timerInterval);clearInterval(checkInterval);
+var result='1';if(myScore>0)result='3';
+fetchData('updateLeagueResult',{leagueId:leagueCode,gameNum:currentGameIndex+1,result:result});
+fetchData('updateGame',{gameId:currentGameId,updates:{status:'finished'}});
+var t=getTranslation;
+var html='<div class="result-banner"><div class="result-icon"><i class="fa-solid fa-trophy" style="color:#f59e0b;"></i></div><div class="result-text">'+t('game_finished')+'</div><div class="result-score">'+t('your_score')+': '+myScore+'</div><button class="result-btn" onclick="backToLeague()">'+t('back_to_league')+'</button></div>';
+document.getElementById('gameContent').innerHTML=html;
+document.getElementById('bottomBtnContainer').style.display='none';
+hideLoader();
 }
 
-window.backToLeague=function(){
-    gameFinishedCalled=false;
-    renderLeagueTable();
-    startLeaguePolling();
-};
+window.backToLeague=function(){gameFinishedCalled=false;renderLeagueTable();startLeaguePolling();};
 
 async function showLeagueResults(){
-    var t=getTranslation;
-    var html='<div class="result-banner">';
-    html+='<div class="result-icon"><i class="fa-solid fa-trophy" style="color:#f59e0b;"></i></div>';
-    html+='<div class="result-text">'+t('league_finished')+'</div>';
-    html+='<button class="result-btn" onclick="backToDashboard()">'+t('back')+'</button></div>';
-    document.getElementById('gameContent').innerHTML=html;
-    document.getElementById('bottomBtnContainer').style.display='none';hideLoader();
+var t=getTranslation;
+var html='<div class="result-banner"><div class="result-icon"><i class="fa-solid fa-trophy" style="color:#f59e0b;"></i></div><div class="result-text">'+t('league_finished')+'</div><button class="result-btn" onclick="backToDashboard()">'+t('back')+'</button></div>';
+document.getElementById('gameContent').innerHTML=html;
+document.getElementById('bottomBtnContainer').style.display='none';
+hideLoader();
 }
 
 window.backToDashboard=function(){window.location.href='../../dashboard/';};
@@ -576,234 +484,206 @@ window.backToDashboard=function(){window.location.href='../../dashboard/';};
 function loadRoundQuestions(){var allShuffled=shuffleArray(questions);currentQuestions=allShuffled.slice(0,QUESTIONS_PER_ROUND);}
 
 window.handleMainBtn=function(){
-    fetchData('getGame',{gameId:currentGameId}).then(function(gameResult){
-        if(gameResult.ok&&gameResult.data){
-            var roundData=gameResult.data['round'+currentRound]||'';
-            var sheetTurn=getTurnFromSheet(roundData);
-            var myNum=isCreator?1:2;
-            var myTurnIdx=-1;
-            for(var i=0;i<turnOrder.length;i++){
-                if(turnOrder[i][0]===currentRound&&turnOrder[i][1]===myNum){myTurnIdx=i;break;}
-            }
-            if(myTurnIdx===sheetTurn){
-                loadRoundQuestions();
-                renderQuestionScreen();
-            }
-        }
-    });
+fetchData('getGame',{gameId:currentGameId}).then(function(gameResult){
+if(gameResult.ok&&gameResult.data){
+var roundData=gameResult.data['round'+currentRound]||'';
+var sheetTurn=getTurnFromSheet(roundData);
+var myNum=isCreator?1:2;
+var myTurnIdx=-1;
+for(var i=0;i<turnOrder.length;i++){if(turnOrder[i][0]===currentRound&&turnOrder[i][1]===myNum){myTurnIdx=i;break;}}
+if(myTurnIdx===sheetTurn){loadRoundQuestions();renderQuestionScreen();}
+}
+});
 };
 
 async function startLeagueGame(gameIndex){
-    currentGameIndex=gameIndex;currentGameId=leagueCode+'_game'+(gameIndex+1);
-    currentRound=1;myScore=0;myCorrectCount=0;myAnswers=[];gameFinishedCalled=false;
-    var match=leagueMatches[gameIndex];
-    var result=await fetchData('getLeague',{leagueId:leagueCode});
-    if(result.ok&&result.data){
-        var p1Data=String(result.data['player'+match[0]]).split(',');
-        var p2Data=String(result.data['player'+match[1]]).split(',');
-        if(p1Data[0]===myUserId){
-            isCreator=true;currentOpponentId=p2Data[0];
-            var myInfo=await getPlayerInfo(myUserId,getTranslation('you'));
-            myName=myInfo.name;myAvatar=myInfo.avatar;
-            var oppInfo=await getPlayerInfo(p2Data[0],getTranslation('opponent'));
-            opponentName=oppInfo.name;opponentAvatar=oppInfo.avatar;
-        }
-        else if(p2Data[0]===myUserId){
-            isCreator=false;currentOpponentId=p1Data[0];
-            var myInfo2=await getPlayerInfo(myUserId,getTranslation('you'));
-            myName=myInfo2.name;myAvatar=myInfo2.avatar;
-            var oppInfo2=await getPlayerInfo(p1Data[0],getTranslation('opponent'));
-            opponentName=oppInfo2.name;opponentAvatar=oppInfo2.avatar;
-        }
-        else{renderLeagueTable();return;}
-        
-        await fetchData('saveGame',{gameData:{id:currentGameId,player1:p1Data[0],player2:p2Data[0],round1:'',round2:'',round3:'',round4:'',round5:'',status:'in_progress',createdAt:new Date().toISOString()}});
-        gameCreatedAt=new Date().toISOString();
-        var qd=await fetchData('getQuestions',{limit:50});
-        if(qd.ok&&Array.isArray(qd.data)&&qd.data.length>=QUESTIONS_PER_ROUND){
-            questions=qd.data;
-            if(currentLang!=='fa'){var translated=[];for(var i=0;i<questions.length;i++){translated.push(await translateQuestion(questions[i],currentLang));}questions=translated;}
-            renderRoundsScreen();startGamePolling();
-        }
-    }
+currentGameIndex=gameIndex;currentGameId=leagueCode+'_game'+(gameIndex+1);
+currentRound=1;myScore=0;myCorrectCount=0;myAnswers=[];gameFinishedCalled=false;
+var match=leagueMatches[gameIndex];
+var result=await fetchData('getLeague',{leagueId:leagueCode});
+if(result.ok&&result.data){
+var p1Data=String(result.data['player'+match[0]]).split(',');
+var p2Data=String(result.data['player'+match[1]]).split(',');
+if(p1Data[0]===myUserId){
+isCreator=true;currentOpponentId=p2Data[0];
+var myInfo=await getPlayerInfo(myUserId,getTranslation('you'));myName=myInfo.name;myAvatar=myInfo.avatar;
+var oppInfo=await getPlayerInfo(p2Data[0],getTranslation('opponent'));opponentName=oppInfo.name;opponentAvatar=oppInfo.avatar;
+}
+else if(p2Data[0]===myUserId){
+isCreator=false;currentOpponentId=p1Data[0];
+var myInfo2=await getPlayerInfo(myUserId,getTranslation('you'));myName=myInfo2.name;myAvatar=myInfo2.avatar;
+var oppInfo2=await getPlayerInfo(p1Data[0],getTranslation('opponent'));opponentName=oppInfo2.name;opponentAvatar=oppInfo2.avatar;
+}
+else{renderLeagueTable();return;}
+await fetchData('saveGame',{gameData:{id:currentGameId,player1:p1Data[0],player2:p2Data[0],round1:'',round2:'',round3:'',round4:'',round5:'',status:'in_progress',createdAt:new Date().toISOString()}});
+gameCreatedAt=new Date().toISOString();
+var qd=await fetchData('getQuestions',{limit:50});
+if(qd.ok&&Array.isArray(qd.data)&&qd.data.length>=QUESTIONS_PER_ROUND){
+questions=qd.data;
+if(currentLang!=='fa'){var translated=[];for(var i=0;i<questions.length;i++){translated.push(await translateQuestion(questions[i],currentLang));}questions=translated;}
+renderRoundsScreen();startGamePolling();
+}
+}
 }
 
 function startWaitingPolling(){
-    if(isPollingActive)return;
-    isPollingActive=true;
-    clearInterval(checkInterval);
-    checkInterval=setInterval(async function(){
-        var result=await fetchData('getLeague',{leagueId:leagueCode});
-        if(result.ok&&result.data){
-            var count=0;
-            for(var i=1;i<=5;i++){if(result.data['player'+i])count++;}
-            if(count===5){
-                clearInterval(checkInterval);
-                isPollingActive=false;
-                await startNextGame();
-            }else{
-                loadLeaguePlayers();
-            }
-        }
-    },5000);
+if(isPollingActive)return;
+isPollingActive=true;
+clearInterval(checkInterval);
+checkInterval=setInterval(async function(){
+var result=await fetchData('getLeague',{leagueId:leagueCode});
+if(result.ok&&result.data){
+var count=0;
+for(var i=1;i<=5;i++){if(result.data['player'+i])count++;}
+if(count===5){clearInterval(checkInterval);isPollingActive=false;await startNextGame();}
+else{loadLeaguePlayers();}
+}
+},5000);
 }
 
 function startGamePolling(){
-    if(isPollingActive)return;
-    isPollingActive=true;
-    clearInterval(checkInterval);
-    checkInterval=setInterval(async function(){
-        if(checkTimeExpired(gameCreatedAt)){handleTimeExpired();return;}
-        if(gameFinishedCalled)return;
-        var gameResult=await fetchData('getGame',{gameId:currentGameId});
-        if(gameResult.ok&&gameResult.data){
-            var data=gameResult.data;
-            if(data.status==='finished'){clearInterval(checkInterval);endLeagueGame();return;}
-            if(!isInGame){renderRoundsScreen();}
-        }
-    },5000);
+if(isPollingActive)return;
+isPollingActive=true;
+clearInterval(checkInterval);
+checkInterval=setInterval(async function(){
+if(checkTimeExpired(gameCreatedAt)){handleTimeExpired();return;}
+if(gameFinishedCalled)return;
+var gameResult=await fetchData('getGame',{gameId:currentGameId});
+if(gameResult.ok&&gameResult.data){
+var data=gameResult.data;
+if(data.status==='finished'){clearInterval(checkInterval);endLeagueGame();return;}
+if(!isInGame){renderRoundsScreen();}
+}
+},5000);
 }
 
 function startLeaguePolling(){
-    if(isPollingActive)return;
-    isPollingActive=true;
-    clearInterval(checkInterval);
-    checkInterval=setInterval(async function(){
-        var result=await fetchData('getLeague',{leagueId:leagueCode});
-        if(result.ok&&result.data){
-            if(result.data.winner){
-                clearInterval(checkInterval);
-                isPollingActive=false;
-                showLeagueResults();
-            }else{
-                var results=String(result.data.results||'').split(',').filter(function(r){return r!=='';});
-                if(results.length<10){
-                    var match=leagueMatches[results.length];
-                    var p1Id=String(result.data['player'+match[0]]).split(',')[0];
-                    var p2Id=String(result.data['player'+match[1]]).split(',')[0];
-                    if(p1Id===myUserId||p2Id===myUserId){
-                        clearInterval(checkInterval);
-                        isPollingActive=false;
-                        await startLeagueGame(results.length);
-                    }else{
-                        renderLeagueTable();
-                    }
-                }
-            }
-        }
-    },5000);
+if(isPollingActive)return;
+isPollingActive=true;
+clearInterval(checkInterval);
+checkInterval=setInterval(async function(){
+var result=await fetchData('getLeague',{leagueId:leagueCode});
+if(result.ok&&result.data){
+if(result.data.winner){clearInterval(checkInterval);isPollingActive=false;showLeagueResults();}
+else{
+var results=String(result.data.results||'').split(',').filter(function(r){return r!=='';});
+if(results.length<10){
+var match=leagueMatches[results.length];
+var p1Id=String(result.data['player'+match[0]]).split(',')[0];
+var p2Id=String(result.data['player'+match[1]]).split(',')[0];
+if(p1Id===myUserId||p2Id===myUserId){clearInterval(checkInterval);isPollingActive=false;await startLeagueGame(results.length);}
+else{renderLeagueTable();}
+}
+}
+}
+},5000);
 }
 
 function handleBackButton(){
-    if(isSubmitting){if(webApp)webApp.showAlert(getTranslation('submitting'));return;}
-    if(isInGame){
-        webApp.showConfirm(getTranslation('exit_confirm'),function(confirmed){
-            if(confirmed){
-                clearInterval(timerInterval);
-                var ansStr='F,F,F';
-                var updateData={};
-                updateData['round'+currentRound+'_p'+(isCreator?'1':'2')]=ansStr;
-                fetchData('updateGame',{gameId:currentGameId,updates:updateData});
-                window.location.href='../../dashboard/';
-            }
-        });
-    }else{window.location.href='../../dashboard/';}
+if(isSubmitting){if(webApp)webApp.showAlert(getTranslation('submitting'));return;}
+if(isInGame){
+webApp.showConfirm(getTranslation('exit_confirm'),function(confirmed){
+if(confirmed){
+clearInterval(timerInterval);
+var ansStr='F,F,F';
+var updateData={};updateData['round'+currentRound+'_p'+(isCreator?'1':'2')]=ansStr;
+fetchData('updateGame',{gameId:currentGameId,updates:updateData});
+window.location.href='../../dashboard/';
+}
+});
+}else{window.location.href='../../dashboard/';}
 }
 
 async function init(){
-    applyTheme();
-    if(webApp){webApp.ready();webApp.expand();webApp.BackButton.show();webApp.BackButton.onClick(handleBackButton);}
-    var ud=await fetchData('getUser',{});
-    if(ud.ok&&ud.data){userCoins=ud.data.coins||0;document.getElementById('coinsHeader').textContent=userCoins;}
-    myUserId=getUserId();
-    var startParam=getStartParam();
-    var savedLeague=localStorage.getItem('leagueCode');
-    
-    if(startParam){
-        leagueCode=startParam;
-        localStorage.removeItem('leagueCode');
-        await initPlayer2();
-    }
-    else if(savedLeague){
-        leagueCode=savedLeague;
-        localStorage.removeItem('leagueCode');
-        await initPlayer2();
-    }
-    else{
-        var t=getTranslation;
-        document.getElementById('gameContent').innerHTML='<div class="result-banner"><div class="result-text">'+t('not_found')+'</div><button class="result-btn" onclick="backToDashboard()">'+t('back')+'</button></div>';
-        document.getElementById('bottomBtnContainer').style.display='none';hideLoader();
-    }
+applyTheme();
+if(webApp){webApp.ready();webApp.expand();webApp.BackButton.show();webApp.BackButton.onClick(handleBackButton);}
+var ud=await fetchData('getUser',{});
+if(ud.ok&&ud.data){userCoins=ud.data.coins||0;document.getElementById('coinsHeader').textContent=userCoins;}
+myUserId=getUserId();
+var startParam=getStartParam();
+var savedLeague=localStorage.getItem('leagueCode');
+var createNew=localStorage.getItem('createNewLeague');
+
+if(startParam){
+leagueCode=startParam;
+localStorage.removeItem('leagueCode');
+localStorage.removeItem('createNewLeague');
+await initPlayer2();
+}
+else if(savedLeague){
+leagueCode=savedLeague;
+localStorage.removeItem('leagueCode');
+localStorage.removeItem('createNewLeague');
+await initPlayer2();
+}
+else if(createNew){
+localStorage.removeItem('createNewLeague');
+await initPlayer1();
+}
+else{
+var t=getTranslation;
+document.getElementById('gameContent').innerHTML='<div class="result-banner"><div class="result-text">'+t('not_found')+'</div><button class="result-btn" onclick="backToDashboard()">'+t('back')+'</button></div>';
+document.getElementById('bottomBtnContainer').style.display='none';hideLoader();
+}
 }
 
 async function initPlayer1(){
-    leagueCode=generateLeagueCode();isCreator=true;myUserId=getUserId();
-    await fetchData('saveLeague',{leagueId:leagueCode,creator:myUserId});
-    renderWaitingScreen();
-    startWaitingPolling();
+leagueCode=generateLeagueCode();isCreator=true;myUserId=getUserId();
+await fetchData('saveLeague',{leagueId:leagueCode,creator:myUserId});
+renderWaitingScreen();
+startWaitingPolling();
 }
 
 async function initPlayer2(){
-    isCreator=false;myUserId=getUserId();
-    var result=await fetchData('getLeague',{leagueId:leagueCode});
-    if(!result.ok||!result.data){
-        var t=getTranslation;
-        document.getElementById('gameContent').innerHTML='<div class="result-banner"><div class="result-text">'+t('not_found')+'</div><button class="result-btn" onclick="backToDashboard()">'+t('back')+'</button></div>';
-        document.getElementById('bottomBtnContainer').style.display='none';hideLoader();return;
-    }
-    var data=result.data;
-    var myPosition=-1;
-    for(var i=1;i<=5;i++){
-        if(data['player'+i]&&String(data['player'+i]).split(',')[0]===String(myUserId)){myPosition=i;break;}
-    }
-    if(myPosition!==-1){
-        if(myPosition===1)isCreator=true;else isCreator=false;
-        var count=0;
-        for(var j=1;j<=5;j++){if(data['player'+j])count++;}
-        if(count===5){await startNextGame();}
-        else{renderWaitingScreen();startWaitingPolling();}
-        return;
-    }
-    var joined=false;
-    for(var k=2;k<=5;k++){
-        if(!data['player'+k]){
-            await fetchData('joinLeague',{leagueId:leagueCode,userId:myUserId});
-            joined=true;break;
-        }
-    }
-    if(!joined){
-        var t=getTranslation;
-        var html='<div class="result-banner">';
-        html+='<div class="result-icon"><i class="fa-solid fa-user-clock" style="color:#f59e0b;"></i></div>';
-        html+='<div class="result-text">'+t('league_full')+'</div>';
-        html+='<button class="result-btn" onclick="createNewLeague()">'+t('create_new_league')+'</button></div>';
-        document.getElementById('gameContent').innerHTML=html;
-        document.getElementById('bottomBtnContainer').style.display='none';hideLoader();
-        return;
-    }
-    renderWaitingScreen();
-    startWaitingPolling();
+isCreator=false;myUserId=getUserId();
+var result=await fetchData('getLeague',{leagueId:leagueCode});
+if(!result.ok||!result.data){
+var t=getTranslation;
+document.getElementById('gameContent').innerHTML='<div class="result-banner"><div class="result-text">'+t('not_found')+'</div><button class="result-btn" onclick="backToDashboard()">'+t('back')+'</button></div>';
+document.getElementById('bottomBtnContainer').style.display='none';hideLoader();return;
+}
+var data=result.data;
+var myPosition=-1;
+for(var i=1;i<=5;i++){if(data['player'+i]&&String(data['player'+i]).split(',')[0]===String(myUserId)){myPosition=i;break;}}
+if(myPosition!==-1){
+if(myPosition===1)isCreator=true;else isCreator=false;
+var count=0;
+for(var j=1;j<=5;j++){if(data['player'+j])count++;}
+if(count===5){await startNextGame();}
+else{renderWaitingScreen();startWaitingPolling();}
+return;
+}
+var joined=false;
+for(var k=2;k<=5;k++){
+if(!data['player'+k]){await fetchData('joinLeague',{leagueId:leagueCode,userId:myUserId});joined=true;break;}
+}
+if(!joined){
+var t=getTranslation;
+var html='<div class="result-banner"><div class="result-icon"><i class="fa-solid fa-user-clock" style="color:#f59e0b;"></i></div><div class="result-text">'+t('league_full')+'</div><button class="result-btn" onclick="createNewLeague()">'+t('create_new_league')+'</button></div>';
+document.getElementById('gameContent').innerHTML=html;
+document.getElementById('bottomBtnContainer').style.display='none';hideLoader();
+return;
+}
+renderWaitingScreen();
+startWaitingPolling();
 }
 
 window.createNewLeague=function(){initPlayer1();};
 
 async function startNextGame(){
-    var result=await fetchData('getLeague',{leagueId:leagueCode});
-    if(result.ok&&result.data){
-        if(result.data.winner){showLeagueResults();return;}
-        var results=String(result.data.results||'').split(',').filter(function(r){return r!=='';});
-        var nextGame=results.length;
-        if(nextGame<10){
-            var match=leagueMatches[nextGame];
-            var p1Id=String(result.data['player'+match[0]]).split(',')[0];
-            var p2Id=String(result.data['player'+match[1]]).split(',')[0];
-            if(p1Id===myUserId||p2Id===myUserId){await startLeagueGame(nextGame);}
-            else{renderLeagueTable();startLeaguePolling();}
-        }else{
-            renderLeagueTable();
-            startLeaguePolling();
-        }
-    }
+var result=await fetchData('getLeague',{leagueId:leagueCode});
+if(result.ok&&result.data){
+if(result.data.winner){showLeagueResults();return;}
+var results=String(result.data.results||'').split(',').filter(function(r){return r!=='';});
+var nextGame=results.length;
+if(nextGame<10){
+var match=leagueMatches[nextGame];
+var p1Id=String(result.data['player'+match[0]]).split(',')[0];
+var p2Id=String(result.data['player'+match[1]]).split(',')[0];
+if(p1Id===myUserId||p2Id===myUserId){await startLeagueGame(nextGame);}
+else{renderLeagueTable();startLeaguePolling();}
+}else{renderLeagueTable();startLeaguePolling();}
+}
 }
 
 init();
