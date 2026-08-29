@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>تنظیمات | Quizico</title>
     <script src="https://developer.eitaa.com/eitaa-web-app.js"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/gh/rastikerdar/iran-sans-font@v1.0.0/dist/font-face.css" rel="stylesheet">
     <style>
         :root {
@@ -139,7 +139,7 @@
             max-width: 600px;
             width: 100%;
             margin: 16px auto;
-            padding: 0 12px 80px;
+            padding: 0 12px 100px;
             display: flex;
             flex-direction: column;
             gap: 12px;
@@ -318,15 +318,31 @@
 
         .bottom-nav {
             position: fixed;
-            bottom: 0; right: 0; left: 0;
-            background: var(--header-bg);
-            border-top: var(--border);
+            bottom: 10px;
+            right: 5%;
+            left: 5%;
+            width: 90%;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            border-radius: 25px;
             display: flex;
             justify-content: space-around;
             align-items: center;
-            padding: 6px 0;
+            padding: 8px 0;
             z-index: 999;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
         }
+
+        [data-theme="dark"] .bottom-nav {
+            background: rgba(45, 42, 62, 0.7);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
         .nav-item {
             display: flex;
             flex-direction: column;
@@ -340,8 +356,9 @@
             background: none;
             border: none;
             font-size: 12px;
+            transition: color 0.2s ease;
         }
-        .nav-item i { font-size: 18px; }
+        .nav-item i { font-size: 20px; }
         .nav-item span { font-size: 8px; font-weight: 600; }
         .nav-item.active { color: var(--primary); }
     </style>
@@ -365,7 +382,7 @@
     <main class="main-container">
 
         <div class="settings-card">
-            <div class="settings-title"><i class="fa-solid fa-language"></i> <span data-i18n="language">زبان</span></div>
+            <div class="settings-title"><i class="bi bi-translate"></i> <span data-i18n="language">زبان</span></div>
             <div class="language-options">
                 <button class="lang-btn" data-lang="fa" onclick="setLanguage('fa')"> فارسی</button>
                 <button class="lang-btn" data-lang="ar" onclick="setLanguage('ar')"> العربية</button>
@@ -374,17 +391,17 @@
         </div>
 
         <div class="settings-card">
-            <div class="settings-title"><i class="fa-solid fa-moon"></i> <span data-i18n="theme">حالت نمایش</span></div>
+            <div class="settings-title"><i class="bi bi-moon-stars"></i> <span data-i18n="theme">حالت نمایش</span></div>
             <div class="theme-options">
                 <div class="theme-option" data-theme-mode="light" onclick="setTheme('light')">
-                    <i class="fa-regular fa-sun"></i>
+                    <i class="bi bi-sun"></i>
                     <div>
                         <div class="theme-option-label" data-i18n="light">حالت روشن</div>
                         <div class="theme-option-desc" data-i18n="light_desc">همیشه روشن</div>
                     </div>
                 </div>
                 <div class="theme-option" data-theme-mode="dark" onclick="setTheme('dark')">
-                    <i class="fa-regular fa-moon"></i>
+                    <i class="bi bi-moon"></i>
                     <div>
                         <div class="theme-option-label" data-i18n="dark">حالت تاریک</div>
                         <div class="theme-option-desc" data-i18n="dark_desc">همیشه تاریک</div>
@@ -394,7 +411,7 @@
         </div>
 
         <div class="settings-card">
-            <div class="settings-title"><i class="fa-solid fa-palette"></i> <span data-i18n="color_theme">تم رنگ</span></div>
+            <div class="settings-title"><i class="bi bi-palette"></i> <span data-i18n="color_theme">تم رنگ</span></div>
             <div class="color-options" id="colorOptions">
                 <div class="color-option" data-color="#ef4444" style="background:#ef4444;" onclick="setColor('#ef4444')"></div>
                 <div class="color-option" data-color="#f97316" style="background:#f97316;" onclick="setColor('#f97316')"></div>
@@ -408,10 +425,10 @@
         </div>
 
         <div class="settings-card">
-            <div class="settings-title"><i class="fa-solid fa-sliders"></i> <span data-i18n="other">سایر</span></div>
+            <div class="settings-title"><i class="bi bi-sliders"></i> <span data-i18n="other">سایر</span></div>
             <div class="setting-item">
                 <div class="setting-info">
-                    <i class="fa-solid fa-bolt"></i>
+                    <i class="bi bi-lightning-charge"></i>
                     <div>
                         <div class="setting-label" data-i18n="animation">انیمیشن‌ها</div>
                         <div class="setting-desc" data-i18n="animation_desc">افکت‌های حرکتی</div>
@@ -421,7 +438,7 @@
             </div>
             <div class="setting-item">
                 <div class="setting-info">
-                    <i class="fa-solid fa-mobile-screen"></i>
+                    <i class="bi bi-phone-vibrate"></i>
                     <div>
                         <div class="setting-label" data-i18n="haptic">لرزش</div>
                         <div class="setting-desc" data-i18n="haptic_desc">بازخورد لمسی</div>
@@ -431,7 +448,7 @@
             </div>
             <div class="setting-item disabled">
                 <div class="setting-info">
-                    <i class="fa-solid fa-envelope"></i>
+                    <i class="bi bi-envelope"></i>
                     <div>
                         <div class="setting-label">
                             <span data-i18n="invite_messages">دریافت پیام دعوت</span>
@@ -452,14 +469,14 @@
             <div class="notif-name">امیرمهدی | Amirmahdi</div>
             <div class="notif-desc" data-i18n="support">از سازنده حمایت کنید</div>
         </div>
-        <i class="fa-solid fa-chevron-left"></i>
+        <i class="bi bi-chevron-left"></i>
     </div>
 
     <nav class="bottom-nav">
-        <div class="nav-item" onclick="window.location.href='../dashboard/'"><i class="fa-solid fa-house"></i><span data-i18n="home">خانه</span></div>
-        <div class="nav-item" onclick="window.location.href='../ranking/'"><i class="fa-solid fa-trophy"></i><span data-i18n="ranking">رتبه</span></div>
-        <div class="nav-item" onclick="window.location.href='../profile/'"><i class="fa-solid fa-user"></i><span data-i18n="profile">پروفایل</span></div>
-        <div class="nav-item active" onclick="window.location.href='../setting/'"><i class="fa-solid fa-gear"></i><span data-i18n="settings_nav">تنظیمات</span></div>
+        <div class="nav-item" onclick="window.location.href='../dashboard/'"><i class="bi bi-house-door"></i><span data-i18n="home">خانه</span></div>
+        <div class="nav-item" onclick="window.location.href='../ranking/'"><i class="bi bi-trophy"></i><span data-i18n="ranking">رتبه</span></div>
+        <div class="nav-item" onclick="window.location.href='../profile/'"><i class="bi bi-person"></i><span data-i18n="profile">پروفایل</span></div>
+        <div class="nav-item active" onclick="window.location.href='../setting/'"><i class="bi bi-gear"></i><span data-i18n="settings_nav">تنظیمات</span></div>
     </nav>
 
     <script>
