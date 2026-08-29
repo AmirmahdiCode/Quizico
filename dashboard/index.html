@@ -6,7 +6,6 @@
     <title>Quizico</title>
     <script src="https://developer.eitaa.com/eitaa-web-app.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/gh/rastikerdar/iran-sans-font@v1.0.0/dist/font-face.css" rel="stylesheet">
     <style>
         :root {
@@ -101,6 +100,16 @@
         .header-logo img { width: 100%; height: 100%; object-fit: contain; }
         .header-title { font-size: 18px; font-weight: 800; color: var(--dark); }
         .header-title .t-accent { color: var(--primary); }
+        .header-subtitle { font-size: 8px; color: var(--text-light); }
+        .header-currency { display: flex; align-items: center; gap: 6px; }
+        .currency-badge {
+            display: flex; align-items: center; gap: 4px;
+            background: var(--bg2); border: var(--border); border-radius: 8px;
+            padding: 4px 10px; font-size: 10px; font-weight: 700;
+            color: var(--dark); box-shadow: 2px 2px 0 #000;
+        }
+        .currency-badge.coins i { color: #f59e0b; }
+        .currency-badge.diamonds i { color: #06b6d4; }
 
         .main-container {
             position: relative; z-index: 5;
@@ -210,11 +219,11 @@
             box-shadow: var(--shadow); cursor: pointer; transition: all 0.2s ease;
         }
         .support-card:active { transform: translate(1px, 1px); box-shadow: 1px 1px 0 #000; }
-        .support-card i.fa-circle-user { font-size: 45px; color: var(--primary); }
+        .support-card img { width: 45px; height: 45px; border-radius: 50%; border: var(--border); object-fit: cover; }
         .support-info { flex: 1; }
         .support-name { font-size: 11px; font-weight: 800; color: var(--dark); }
         .support-desc { font-size: 8px; color: var(--text-light); }
-        .support-card .bi-chevron-left { color: var(--text-light); font-size: 12px; }
+        .support-card i { color: var(--text-light); font-size: 12px; }
 
         .support-notification {
             position: fixed; top: 75px; right: 5%; left: 5%;
@@ -325,7 +334,12 @@
                 <div class="header-logo"><img src="https://cdn.imgurl.ir/uploads/f30974_InShot_20260821_174101103.png" alt="Quizico" draggable="false" oncontextmenu="return false;" ondragstart="return false;"></div>
                 <div>
                     <div class="header-title" id="headerTitle">کوییز<span class="t-accent">یکو</span></div>
+                    <div class="header-subtitle" data-i18n="tagline">اطلاعات خودت رو محک بزن</div>
                 </div>
+            </div>
+            <div class="header-currency">
+                <span class="currency-badge coins"><i class="bi bi-coin"></i> <span id="coinsHeader">0</span></span>
+                <span class="currency-badge diamonds"><i class="bi bi-gem"></i> <span id="diamondsHeader">0</span></span>
             </div>
         </div>
     </header>
@@ -395,7 +409,7 @@
             </div>
 
             <div class="support-card" onclick="openSupportLink()">
-                <i class="fa-solid fa-circle-user"></i>
+                <img src="https://cdn.imgurl.ir/uploads/v68396_InShot_20260817_190450653.jpg" alt="سازنده" draggable="false" oncontextmenu="return false;" ondragstart="return false;">
                 <div class="support-info">
                     <div class="support-name">امیرمهدی | Amirmahdi</div>
                     <div class="support-desc" data-i18n="support">از سازنده حمایت کنید</div>
@@ -461,6 +475,7 @@
 
             var translations = {
                 fa: {
+                    tagline: 'اطلاعات خودت رو محک بزن',
                     loading: 'در حال دریافت...',
                     daily_challenge_text: 'مسابقه روزانه',
                     wheel: 'گردونه',
@@ -496,6 +511,7 @@
                     stage: 'مرحله'
                 },
                 en: {
+                    tagline: 'Test your knowledge',
                     loading: 'Loading...',
                     daily_challenge_text: 'Daily Challenge',
                     wheel: 'Wheel',
@@ -531,6 +547,7 @@
                     stage: 'Stage'
                 },
                 ar: {
+                    tagline: 'اختبر معلوماتك',
                     loading: 'جار التحميل...',
                     daily_challenge_text: 'التحدي اليومي',
                     wheel: 'العجلة',
