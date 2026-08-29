@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>تنظیمات | Quizico</title>
     <script src="https://developer.eitaa.com/eitaa-web-app.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/gh/rastikerdar/iran-sans-font@v1.0.0/dist/font-face.css" rel="stylesheet">
     <style>
         :root {
@@ -97,9 +98,11 @@
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
             border-bottom: 1px solid rgba(255, 255, 255, 0.3);
-            padding: 12px 20px;
+            padding: 10px 20px;
             position: sticky;
-            top: 0;
+            top: 10px;
+            margin: 10px 5% 0;
+            border-radius: 20px;
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
         }
 
@@ -130,11 +133,11 @@
             justify-content: center;
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
             overflow: hidden;
-            padding: 4px;
+            padding: 2px;
             border: 1px solid rgba(255,255,255,0.3);
         }
 
-        .header-logo img { width: 95%; height: 95%; object-fit: contain; }
+        .header-logo img { width: 100%; height: 100%; object-fit: contain; }
         .header-title { font-size: 16px; font-weight: 800; color: var(--dark); }
         .header-title .t-accent { color: var(--primary); }
         .header-subtitle { font-size: 8px; color: var(--text-light); }
@@ -380,11 +383,7 @@
         }
         .nav-item.active img {
             opacity: 1;
-            filter: brightness(0) saturate(100%) invert(25%) sepia(90%) saturate(3000%) hue-rotate(260deg);
-            animation: bounce 1.5s ease-in-out infinite;
-        }
-        [data-theme="dark"] .nav-item.active img {
-            filter: brightness(0) saturate(100%) invert(60%) sepia(90%) saturate(3000%) hue-rotate(260deg);
+            filter: none;
             animation: bounce 1.5s ease-in-out infinite;
         }
         .nav-item span { font-size: 7px; font-weight: 600; }
@@ -501,8 +500,8 @@
     </div>
 
     <nav class="bottom-nav">
-        <div class="nav-item" onclick="window.location.href='../dashboard/'"><img src="https://uploadkon.ir/uploads/a13d29_26home-iconbase.svg" alt="خانه" draggable="false" oncontextmenu="return false;" ondragstart="return false;"><span data-i18n="home">خانه</span></div>
-        <div class="nav-item" onclick="window.location.href='../ranking/'"><img src="https://uploadkon.ir/uploads/e39a29_26ranking-star-31189-iconbase.svg" alt="رتبه" draggable="false" oncontextmenu="return false;" ondragstart="return false;"><span data-i18n="ranking">رتبه</span></div>
+        <div class="nav-item" onclick="window.location.href='../dashboard/'"><img src="https://uploadkon.ir/uploads/bdf329_26home-iconbase-1-.svg" alt="خانه" draggable="false" oncontextmenu="return false;" ondragstart="return false;"><span data-i18n="home">خانه</span></div>
+        <div class="nav-item" onclick="window.location.href='../ranking/'"><img src="https://uploadkon.ir/uploads/8c9f29_26medal-1st-iconbase.svg" alt="رتبه" draggable="false" oncontextmenu="return false;" ondragstart="return false;"><span data-i18n="ranking">رتبه</span></div>
         <div class="nav-item" onclick="window.location.href='../profile/'"><img src="https://uploadkon.ir/uploads/684129_26profile-iconbase.svg" alt="پروفایل" draggable="false" oncontextmenu="return false;" ondragstart="return false;"><span data-i18n="profile">پروفایل</span></div>
         <div class="nav-item active" onclick="window.location.href='../setting/'"><img src="https://uploadkon.ir/uploads/629f29_26setting-iconbase.svg" alt="تنظیمات" draggable="false" oncontextmenu="return false;" ondragstart="return false;"><span data-i18n="settings_nav">تنظیمات</span></div>
     </nav>
@@ -512,25 +511,10 @@
             var webApp = window.Eitaa?.WebApp;
             var currentLang = 'fa';
 
-            document.addEventListener('contextmenu', function(e) {
-                e.preventDefault();
-            });
-
-            document.addEventListener('dragstart', function(e) {
-                e.preventDefault();
-            });
-
-            document.addEventListener('copy', function(e) {
-                if (e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA') {
-                    e.preventDefault();
-                }
-            });
-
-            document.addEventListener('cut', function(e) {
-                if (e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA') {
-                    e.preventDefault();
-                }
-            });
+            document.addEventListener('contextmenu', function(e) { e.preventDefault(); });
+            document.addEventListener('dragstart', function(e) { e.preventDefault(); });
+            document.addEventListener('copy', function(e) { if (e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA') e.preventDefault(); });
+            document.addEventListener('cut', function(e) { if (e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA') e.preventDefault(); });
 
             var translations = {
                 fa: {
@@ -585,10 +569,7 @@
                 } catch(e) { return { theme: 'light', primaryColor: '#a855f7', animation: true, haptic: true, language: 'fa' }; }
             }
 
-            function saveSettings(s) {
-                localStorage.setItem('quizicoSettings', JSON.stringify(s));
-            }
-
+            function saveSettings(s) { localStorage.setItem('quizicoSettings', JSON.stringify(s)); }
             function getTranslation(k) { var t = translations[currentLang] || translations.fa; return t[k] || translations.fa[k] || k; }
 
             function triggerHaptic(style) {
@@ -608,16 +589,9 @@
                     var k = el.getAttribute('data-i18n');
                     if (t[k]) el.textContent = t[k];
                 });
-                if (lang === 'en') {
-                    document.documentElement.setAttribute('dir', 'ltr');
-                    document.body.style.fontFamily = 'Arial, sans-serif';
-                } else if (lang === 'ar') {
-                    document.documentElement.setAttribute('dir', 'rtl');
-                    document.body.style.fontFamily = 'Tahoma, sans-serif';
-                } else {
-                    document.documentElement.setAttribute('dir', 'rtl');
-                    document.body.style.fontFamily = "'IRANSans', Tahoma, sans-serif";
-                }
+                if (lang === 'en') { document.documentElement.setAttribute('dir', 'ltr'); document.body.style.fontFamily = 'Arial, sans-serif'; }
+                else if (lang === 'ar') { document.documentElement.setAttribute('dir', 'rtl'); document.body.style.fontFamily = 'Tahoma, sans-serif'; }
+                else { document.documentElement.setAttribute('dir', 'rtl'); document.body.style.fontFamily = "'IRANSans', Tahoma, sans-serif"; }
             }
 
             function applyTheme() {
@@ -626,96 +600,38 @@
                 var t = s.theme || 'light';
                 var p = s.primaryColor || '#a855f7';
                 document.documentElement.setAttribute('data-theme', t);
-                if (t === 'dark') {
-                    var dp = shadeColor(p, 40);
-                    document.documentElement.style.setProperty('--primary', dp);
-                } else {
-                    document.documentElement.style.setProperty('--primary', p);
-                }
-                if (s.animation === false) {
-                    document.documentElement.setAttribute('data-animation', 'off');
-                } else {
-                    document.documentElement.removeAttribute('data-animation');
-                }
-                document.querySelectorAll('.theme-option').forEach(function(b) {
-                    b.classList.toggle('active', b.dataset.themeMode === t);
-                });
-                document.querySelectorAll('.color-option').forEach(function(b) {
-                    b.classList.toggle('active', b.dataset.color === p);
-                });
-                document.querySelectorAll('.lang-btn').forEach(function(b) {
-                    b.classList.toggle('active', b.dataset.lang === s.language);
-                });
+                if (t === 'dark') { document.documentElement.style.setProperty('--primary', shadeColor(p, 40)); }
+                else { document.documentElement.style.setProperty('--primary', p); }
+                if (s.animation === false) { document.documentElement.setAttribute('data-animation', 'off'); }
+                else { document.documentElement.removeAttribute('data-animation'); }
+                document.querySelectorAll('.theme-option').forEach(function(b) { b.classList.toggle('active', b.dataset.themeMode === t); });
+                document.querySelectorAll('.color-option').forEach(function(b) { b.classList.toggle('active', b.dataset.color === p); });
+                document.querySelectorAll('.lang-btn').forEach(function(b) { b.classList.toggle('active', b.dataset.lang === s.language); });
                 document.getElementById('animationToggle').classList.toggle('active', s.animation !== false);
                 document.getElementById('hapticToggle').classList.toggle('active', s.haptic !== false);
                 applyLanguage(s.language);
             }
 
-            window.setLanguage = function(l) {
-                var s = getSettings();
-                s.language = l;
-                saveSettings(s);
-                applyTheme();
-                triggerHaptic('light');
-            };
-
-            window.setTheme = function(t) {
-                var s = getSettings();
-                s.theme = t;
-                saveSettings(s);
-                applyTheme();
-                triggerHaptic('light');
-            };
-
-            window.setColor = function(c) {
-                var s = getSettings();
-                s.primaryColor = c;
-                saveSettings(s);
-                applyTheme();
-                triggerHaptic('medium');
-            };
-
-            window.toggleAnimation = function() {
-                var s = getSettings();
-                s.animation = !s.animation;
-                saveSettings(s);
-                applyTheme();
-                triggerHaptic('light');
-            };
-
-            window.toggleHaptic = function() {
-                var s = getSettings();
-                s.haptic = !s.haptic;
-                saveSettings(s);
-                applyTheme();
-                if (s.haptic) triggerHaptic('medium');
-            };
+            window.setLanguage = function(l) { var s = getSettings(); s.language = l; saveSettings(s); applyTheme(); triggerHaptic('light'); };
+            window.setTheme = function(t) { var s = getSettings(); s.theme = t; saveSettings(s); applyTheme(); triggerHaptic('light'); };
+            window.setColor = function(c) { var s = getSettings(); s.primaryColor = c; saveSettings(s); applyTheme(); triggerHaptic('medium'); };
+            window.toggleAnimation = function() { var s = getSettings(); s.animation = !s.animation; saveSettings(s); applyTheme(); triggerHaptic('light'); };
+            window.toggleHaptic = function() { var s = getSettings(); s.haptic = !s.haptic; saveSettings(s); applyTheme(); if (s.haptic) triggerHaptic('medium'); };
 
             function openSupportLink(){
-                if (webApp && webApp.openEitaaLink) {
-                    webApp.openEitaaLink('https://eitaa.com/Amirmahdi_code');
-                } else {
-                    window.open('https://eitaa.com/Amirmahdi_code', '_blank');
-                }
+                if (webApp && webApp.openEitaaLink) { webApp.openEitaaLink('https://eitaa.com/Amirmahdi_code'); }
+                else { window.open('https://eitaa.com/Amirmahdi_code', '_blank'); }
             }
             window.openSupportLink = openSupportLink;
 
             if (webApp) {
                 webApp.ready();
                 webApp.BackButton.show();
-                webApp.BackButton.onClick(function() {
-                    window.location.href = '../dashboard/';
-                });
+                webApp.BackButton.onClick(function() { window.location.href = '../dashboard/'; });
             }
 
             applyTheme();
-            
-            setTimeout(function() {
-                var notif = document.getElementById('supportNotification');
-                if (notif) {
-                    notif.style.display = 'none';
-                }
-            }, 5000);
+            setTimeout(function() { var notif = document.getElementById('supportNotification'); if (notif) { notif.style.display = 'none'; } }, 5000);
         })();
     </script>
 </body>
