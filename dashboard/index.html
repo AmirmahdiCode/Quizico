@@ -101,16 +101,6 @@
         .header-logo img { width: 100%; height: 100%; object-fit: contain; }
         .header-title { font-size: 18px; font-weight: 800; color: var(--dark); }
         .header-title .t-accent { color: var(--primary); }
-        .header-subtitle { font-size: 8px; color: var(--text-light); }
-        .header-currency { display: flex; align-items: center; gap: 6px; }
-        .currency-badge {
-            display: flex; align-items: center; gap: 4px;
-            background: var(--bg2); border: var(--border); border-radius: 8px;
-            padding: 4px 10px; font-size: 10px; font-weight: 700;
-            color: var(--dark); box-shadow: 2px 2px 0 #000;
-        }
-        .currency-badge.coins i { color: #f59e0b; }
-        .currency-badge.diamonds i { color: #06b6d4; }
 
         .main-container {
             position: relative; z-index: 5;
@@ -220,11 +210,11 @@
             box-shadow: var(--shadow); cursor: pointer; transition: all 0.2s ease;
         }
         .support-card:active { transform: translate(1px, 1px); box-shadow: 1px 1px 0 #000; }
-        .support-card img { width: 45px; height: 45px; border-radius: 50%; border: var(--border); object-fit: cover; }
+        .support-card i.fa-circle-user { font-size: 45px; color: var(--primary); }
         .support-info { flex: 1; }
         .support-name { font-size: 11px; font-weight: 800; color: var(--dark); }
         .support-desc { font-size: 8px; color: var(--text-light); }
-        .support-card i { color: var(--text-light); font-size: 12px; }
+        .support-card .bi-chevron-left { color: var(--text-light); font-size: 12px; }
 
         .support-notification {
             position: fixed; top: 75px; right: 5%; left: 5%;
@@ -250,7 +240,6 @@
         .support-notification img { width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--primary); object-fit: cover; }
         .support-notification .notif-info { flex: 1; }
         .support-notification .notif-name { font-size: 10px; font-weight: 800; color: var(--dark); }
-        .support-notification .notif-desc { font-size: 8px; color: var(--text-light); }
         .support-notification i { color: var(--text-light); font-size: 10px; }
 
         @keyframes slideDownNotif { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
@@ -335,13 +324,8 @@
             <div class="header-right">
                 <div class="header-logo"><img src="https://cdn.imgurl.ir/uploads/f30974_InShot_20260821_174101103.png" alt="Quizico" draggable="false" oncontextmenu="return false;" ondragstart="return false;"></div>
                 <div>
-                    <div class="header-title">کوییز<span class="t-accent">یکو</span></div>
-                    <div class="header-subtitle" data-i18n="tagline">اطلاعات خودت رو محک بزن</div>
+                    <div class="header-title" id="headerTitle">کوییز<span class="t-accent">یکو</span></div>
                 </div>
-            </div>
-            <div class="header-currency">
-                <span class="currency-badge coins"><i class="bi bi-coin"></i> <span id="coinsHeader">0</span></span>
-                <span class="currency-badge diamonds"><i class="bi bi-gem"></i> <span id="diamondsHeader">0</span></span>
             </div>
         </div>
     </header>
@@ -411,8 +395,7 @@
             </div>
 
             <div class="support-card" onclick="openSupportLink()">
-                <!-- آواتار کاربر با Font Awesome -->
-                <i class="fa-solid fa-circle-user" style="font-size:45px;color:var(--primary);"></i>
+                <i class="fa-solid fa-circle-user"></i>
                 <div class="support-info">
                     <div class="support-name">امیرمهدی | Amirmahdi</div>
                     <div class="support-desc" data-i18n="support">از سازنده حمایت کنید</div>
@@ -423,11 +406,9 @@
     </main>
 
     <div class="support-notification" id="supportNotification" onclick="openSupportLink()">
-        <!-- آواتار کاربر با Font Awesome -->
-        <i class="fa-solid fa-circle-user" style="font-size:40px;color:var(--primary);"></i>
+        <img src="https://cdn.imgurl.ir/uploads/v68396_InShot_20260817_190450653.jpg" alt="سازنده" draggable="false" oncontextmenu="return false;" ondragstart="return false;">
         <div class="notif-info">
             <div class="notif-name">امیرمهدی | Amirmahdi</div>
-            <div class="notif-desc" data-i18n="support">از سازنده حمایت کنید</div>
         </div>
         <i class="bi bi-chevron-left"></i>
     </div>
@@ -480,7 +461,6 @@
 
             var translations = {
                 fa: {
-                    tagline: 'اطلاعات خودت رو محک بزن',
                     loading: 'در حال دریافت...',
                     daily_challenge_text: 'مسابقه روزانه',
                     wheel: 'گردونه',
@@ -516,7 +496,6 @@
                     stage: 'مرحله'
                 },
                 en: {
-                    tagline: 'Test your knowledge',
                     loading: 'Loading...',
                     daily_challenge_text: 'Daily Challenge',
                     wheel: 'Wheel',
@@ -552,7 +531,6 @@
                     stage: 'Stage'
                 },
                 ar: {
-                    tagline: 'اختبر معلوماتك',
                     loading: 'جار التحميل...',
                     daily_challenge_text: 'التحدي اليومي',
                     wheel: 'العجلة',
@@ -632,6 +610,15 @@
                 return '#' + ((1<<24) + (rr<<16) + (gg<<8) + bb).toString(16).slice(1);
             }
 
+            function updateHeaderTitle(lang) {
+                var titleEl = document.getElementById('headerTitle');
+                if (lang === 'en') {
+                    titleEl.innerHTML = 'Quiz<span class="t-accent">ico</span>';
+                } else {
+                    titleEl.innerHTML = 'کوییز<span class="t-accent">یکو</span>';
+                }
+            }
+
             function applyTheme() {
                 var s = getSettings();
                 currentLang = s.language || 'fa';
@@ -658,6 +645,7 @@
                     document.documentElement.setAttribute('dir', 'rtl');
                     document.body.style.fontFamily = "'Digi Kian Grunge', 'IRANSans', Tahoma, sans-serif";
                 }
+                updateHeaderTitle(currentLang);
                 document.querySelectorAll('[data-i18n]').forEach(function(el) {
                     var k = el.getAttribute('data-i18n');
                     var t2 = translations[currentLang] || translations.fa;
@@ -750,8 +738,6 @@
                 try {
                     var myId = getUserId();
                     if (!myId) {
-                        document.getElementById('coinsHeader').textContent = '0';
-                        document.getElementById('diamondsHeader').textContent = '0';
                         document.getElementById('loaderWrapper').style.display = 'none';
                         document.getElementById('dashboardContent').classList.add('show');
                         return;
