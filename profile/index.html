@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>پروفایل | Quizico</title>
     <script src="https://developer.eitaa.com/eitaa-web-app.js"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/gh/rastikerdar/iran-sans-font@v1.0.0/dist/font-face.css" rel="stylesheet">
     <style>
         :root{--bg:#faf5ff;--bg2:#f3e8ff;--bg3:#e9d5ff;--primary:#a855f7;--primary-dark:#9333ea;--primary-light:#c084fc;--primary-rgb:168,85,247;--dark:#1e1b2e;--text:#4a4458;--text-light:#6b7280;--white:#fff;--card-bg:#fff;--header-bg:#fff;--shadow:3px 3px 0 #000;--radius:12px;--border:1px solid #000;--gold:#f59e0b}
@@ -24,7 +24,7 @@
         .header-title{font-size:16px;font-weight:800;color:var(--dark)}
         .header-title .t-accent{color:var(--primary)}
         .header-subtitle{font-size:8px;color:var(--text-light)}
-        .main-container{position:relative;z-index:5;max-width:600px;width:100%;margin:16px auto;padding:0 12px 80px;display:flex;flex-direction:column;gap:12px}
+        .main-container{position:relative;z-index:5;max-width:600px;width:100%;margin:16px auto;padding:0 12px 90px;display:flex;flex-direction:column;gap:12px}
         .loader-wrapper{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:60vh;gap:12px}
         .loader{width:50px;height:50px;border:5px solid var(--bg3);border-top-color:var(--primary);border-radius:50%;animation:spin .8s linear infinite}
         .loader-text{font-size:12px;font-weight:700;color:var(--text)}
@@ -106,10 +106,11 @@
         .support-notification i{color:var(--text-light);font-size:10px}
         @keyframes slideDownNotif{from{opacity:0;transform:translateY(-20px)}to{opacity:1;transform:translateY(0)}}
         @keyframes slideUpNotif{from{opacity:1;transform:translateY(0)}to{opacity:0;transform:translateY(-20px)}}
-        .bottom-nav{position:fixed;bottom:0;right:0;left:0;background:var(--header-bg);border-top:var(--border);display:flex;justify-content:space-around;align-items:center;padding:6px 0;z-index:999}
-        .nav-item{display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer;text-decoration:none;color:var(--text-light);padding:4px 12px;font-family:inherit;background:none;border:none;font-size:12px}
+        .bottom-nav{position:fixed;bottom:8px;right:5%;left:5%;width:90%;margin:0 auto;background:rgba(255,255,255,.5);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,.3);border-radius:25px;display:flex;justify-content:space-around;align-items:center;padding:4px 0;z-index:999;box-shadow:0 4px 20px rgba(0,0,0,.06)}
+        [data-theme="dark"] .bottom-nav{background:rgba(45,42,62,.5);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,.1)}
+        .nav-item{display:flex;flex-direction:column;align-items:center;gap:1px;cursor:pointer;text-decoration:none;color:var(--text-light);padding:4px 10px;font-family:inherit;background:none;border:none;font-size:12px}
         .nav-item i{font-size:18px}
-        .nav-item span{font-size:8px;font-weight:600}
+        .nav-item span{font-size:7px;font-weight:600}
         .nav-item.active{color:var(--primary)}
         @media(max-width:480px){.avatar-grid{grid-template-columns:repeat(4,1fr)}}
     </style>
@@ -139,18 +140,18 @@
                 </div>
             </div>
             <div class="profile-actions-row">
-                <button class="change-avatar-btn" onclick="openAvatarModal()"><i class="fa-solid fa-camera"></i> <span data-i18n="change_avatar">تغییر آواتار</span></button>
-                <span class="badge"><i class="fa-solid fa-coins"></i> <span class="badge-value" id="coinsValue">0</span></span>
-                <span class="badge"><i class="fa-solid fa-gem"></i> <span class="badge-value" id="diamondsValue">0</span></span>
+                <button class="change-avatar-btn" onclick="openAvatarModal()"><i class="bi bi-camera"></i> <span data-i18n="change_avatar">تغییر آواتار</span></button>
+                <span class="badge"><i class="bi bi-coin"></i> <span class="badge-value" id="coinsValue">0</span></span>
+                <span class="badge"><i class="bi bi-gem"></i> <span class="badge-value" id="diamondsValue">0</span></span>
             </div>
         </div>
         <div class="stats-grid">
-            <div class="stat-card"><div class="stat-icon"><i class="fa-solid fa-star"></i></div><div class="stat-value" id="totalScore">0</div><div class="stat-label" data-i18n="total_score">امتیاز کل</div></div>
-            <div class="stat-card"><div class="stat-icon"><i class="fa-solid fa-gamepad"></i></div><div class="stat-value" id="totalGames">0</div><div class="stat-label" data-i18n="total_games">تعداد بازی</div></div>
-            <div class="stat-card"><div class="stat-icon"><i class="fa-solid fa-chart-line"></i></div><div class="stat-value" id="winRate">0%</div><div class="stat-label" data-i18n="win_rate">درصد برد</div></div>
+            <div class="stat-card"><div class="stat-icon"><i class="bi bi-star"></i></div><div class="stat-value" id="totalScore">0</div><div class="stat-label" data-i18n="total_score">امتیاز کل</div></div>
+            <div class="stat-card"><div class="stat-icon"><i class="bi bi-controller"></i></div><div class="stat-value" id="totalGames">0</div><div class="stat-label" data-i18n="total_games">تعداد بازی</div></div>
+            <div class="stat-card"><div class="stat-icon"><i class="bi bi-graph-up-arrow"></i></div><div class="stat-value" id="winRate">0%</div><div class="stat-label" data-i18n="win_rate">درصد برد</div></div>
         </div>
         <div class="league-card">
-            <div class="league-title"><i class="fa-solid fa-trophy"></i> <span data-i18n="league_stats">آمار لیگ</span></div>
+            <div class="league-title"><i class="bi bi-trophy"></i> <span data-i18n="league_stats">آمار لیگ</span></div>
             <div class="league-stats">
                 <div class="league-item champion"><span class="league-item-value" id="championCount">0</span><span class="league-item-label" data-i18n="champion">قهرمانی</span></div>
                 <div class="league-item runnerup"><span class="league-item-value" id="runnerupCount">0</span><span class="league-item-label" data-i18n="runnerup">نایب قهرمانی</span></div>
@@ -158,18 +159,18 @@
             </div>
         </div>
         <div class="achievements-card">
-            <div class="achievements-title"><i class="fa-solid fa-award"></i> <span data-i18n="achievements">افتخارات</span></div>
+            <div class="achievements-title"><i class="bi bi-award"></i> <span data-i18n="achievements">افتخارات</span></div>
             <div class="achievements-grid" id="achievementsGrid"></div>
         </div>
         <div class="games-history-card">
-            <div class="achievements-title"><i class="fa-solid fa-clock-rotate-left"></i> <span data-i18n="history">تاریخچه بازی‌ها</span></div>
+            <div class="achievements-title"><i class="bi bi-clock-history"></i> <span data-i18n="history">تاریخچه بازی‌ها</span></div>
             <div class="games-list" id="gamesList"></div>
         </div>
     </div>
 </main>
 <div class="avatar-modal-overlay" id="avatarModalOverlay">
     <div class="avatar-modal">
-        <div class="avatar-modal-close" onclick="closeAvatarModal()"><i class="fa-solid fa-xmark"></i></div>
+        <div class="avatar-modal-close" onclick="closeAvatarModal()"><i class="bi bi-x"></i></div>
         <div class="avatar-modal-title" data-i18n="choose_avatar">انتخاب آواتار</div>
         <div id="avatarCategories"></div>
     </div>
@@ -177,13 +178,13 @@
 <div class="support-notification" id="supportNotification" onclick="openSupportLink()">
     <img src="https://cdn.imgurl.ir/uploads/v68396_InShot_20260817_190450653.jpg" alt="سازنده" draggable="false" oncontextmenu="return false;" ondragstart="return false;">
     <div class="notif-info"><div class="notif-name">امیرمهدی | Amirmahdi</div><div class="notif-desc" data-i18n="support">از سازنده حمایت کنید</div></div>
-    <i class="fa-solid fa-chevron-left"></i>
+    <i class="bi bi-chevron-left"></i>
 </div>
 <nav class="bottom-nav">
-    <div class="nav-item" onclick="window.location.href='../dashboard/'"><i class="fa-solid fa-house"></i><span data-i18n="home">خانه</span></div>
-    <div class="nav-item" onclick="window.location.href='../ranking/'"><i class="fa-solid fa-trophy"></i><span data-i18n="ranking">رتبه</span></div>
-    <div class="nav-item active" onclick="window.location.href='../profile/'"><i class="fa-solid fa-user"></i><span data-i18n="profile_nav">پروفایل</span></div>
-    <div class="nav-item" onclick="window.location.href='../setting/'"><i class="fa-solid fa-gear"></i><span data-i18n="settings">تنظیمات</span></div>
+    <div class="nav-item" onclick="window.location.href='../dashboard/'"><i class="bi bi-house-door"></i><span data-i18n="home">خانه</span></div>
+    <div class="nav-item" onclick="window.location.href='../ranking/'"><i class="bi bi-trophy"></i><span data-i18n="ranking">رتبه</span></div>
+    <div class="nav-item active" onclick="window.location.href='../profile/'"><i class="bi bi-person"></i><span data-i18n="profile_nav">پروفایل</span></div>
+    <div class="nav-item" onclick="window.location.href='../setting/'"><i class="bi bi-gear"></i><span data-i18n="settings">تنظیمات</span></div>
 </nav>
 <script>
 (function(){
@@ -345,15 +346,6 @@ var championCount=0,runnerupCount=0,leagueLosses=0;
 var allLeagues=await fetchData('getLeagueByUser',{});
 if(allLeagues.ok&&allLeagues.data){
 if(allLeagues.data.winner===username)championCount++;
-}
-var leagueListData=await fetchData('leaderboard',{limit:100});
-if(leagueListData.ok&&Array.isArray(leagueListData.data)){
-for(var l=0;l<leagueListData.data.length;l++){
-if(leagueListData.data[l].username===username){
-runnerupCount=0;
-break;
-}
-}
 }
 animateCount(document.getElementById('championCount'),championCount,600);
 animateCount(document.getElementById('runnerupCount'),runnerupCount,600);
