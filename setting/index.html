@@ -215,29 +215,18 @@
             cursor: pointer; text-decoration: none; color: var(--text-light);
             padding: 4px 10px; font-family: inherit; background: none; border: none; font-size: 12px;
         }
-        .nav-icon {
+        .nav-item img {
             width: 20px; height: 20px;
-            background-color: var(--text-light);
-            -webkit-mask-size: contain;
-            mask-size: contain;
-            -webkit-mask-repeat: no-repeat;
-            mask-repeat: no-repeat;
-            -webkit-mask-position: center;
-            mask-position: center;
             opacity: 0.5;
+            filter: brightness(0);
         }
-        [data-theme="dark"] .nav-icon {
-            background-color: #fff;
+        [data-theme="dark"] .nav-item img {
+            filter: brightness(0) invert(1);
         }
-        .nav-item.active .nav-icon {
-            background-color: var(--primary);
+        .nav-item.active img {
             opacity: 1;
             animation: bounce 1.5s ease-in-out infinite;
         }
-        .nav-icon-home { -webkit-mask-image: url('https://uploadkon.ir/uploads/bdf329_26home-iconbase-1-.svg'); mask-image: url('https://uploadkon.ir/uploads/bdf329_26home-iconbase-1-.svg'); }
-        .nav-icon-ranking { -webkit-mask-image: url('https://uploadkon.ir/uploads/8c9f29_26medal-1st-iconbase.svg'); mask-image: url('https://uploadkon.ir/uploads/8c9f29_26medal-1st-iconbase.svg'); }
-        .nav-icon-profile { -webkit-mask-image: url('https://uploadkon.ir/uploads/774429_26profile-iconbase-1-.svg'); mask-image: url('https://uploadkon.ir/uploads/774429_26profile-iconbase-1-.svg'); }
-        .nav-icon-settings { -webkit-mask-image: url('https://uploadkon.ir/uploads/629f29_26setting-iconbase.svg'); mask-image: url('https://uploadkon.ir/uploads/629f29_26setting-iconbase.svg'); }
         .nav-item span { font-size: 7px; font-weight: 600; }
         .nav-item.active { color: var(--primary); }
     </style>
@@ -337,10 +326,10 @@
     </div>
 
     <nav class="bottom-nav">
-        <div class="nav-item" onclick="window.location.href='../dashboard/'"><div class="nav-icon nav-icon-home"></div><span data-i18n="home">خانه</span></div>
-        <div class="nav-item" onclick="window.location.href='../ranking/'"><div class="nav-icon nav-icon-ranking"></div><span data-i18n="ranking">رتبه</span></div>
-        <div class="nav-item" onclick="window.location.href='../profile/'"><div class="nav-icon nav-icon-profile"></div><span data-i18n="profile">پروفایل</span></div>
-        <div class="nav-item active" onclick="window.location.href='../setting/'"><div class="nav-icon nav-icon-settings"></div><span data-i18n="settings_nav">تنظیمات</span></div>
+        <div class="nav-item" onclick="window.location.href='../dashboard/'"><img src="https://uploadkon.ir/uploads/bdf329_26home-iconbase-1-.svg" alt="خانه" draggable="false" oncontextmenu="return false;" ondragstart="return false;"><span data-i18n="home">خانه</span></div>
+        <div class="nav-item" onclick="window.location.href='../ranking/'"><img src="https://uploadkon.ir/uploads/8c9f29_26medal-1st-iconbase.svg" alt="رتبه" draggable="false" oncontextmenu="return false;" ondragstart="return false;"><span data-i18n="ranking">رتبه</span></div>
+        <div class="nav-item" onclick="window.location.href='../profile/'"><img src="https://uploadkon.ir/uploads/774429_26profile-iconbase-1-.svg" alt="پروفایل" draggable="false" oncontextmenu="return false;" ondragstart="return false;"><span data-i18n="profile">پروفایل</span></div>
+        <div class="nav-item active" onclick="window.location.href='../setting/'"><img src="https://uploadkon.ir/uploads/629f29_26setting-iconbase.svg" alt="تنظیمات" draggable="false" oncontextmenu="return false;" ondragstart="return false;"><span data-i18n="settings_nav">تنظیمات</span></div>
     </nav>
 
     <script>
