@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>تک‌نفره | Quizico</title>
     <script src="https://developer.eitaa.com/eitaa-web-app.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/gh/rastikerdar/iran-sans-font@v1.0.0/dist/font-face.css" rel="stylesheet">
     <style>
@@ -21,7 +22,6 @@
             --text-light: #6b7280;
             --white: #ffffff;
             --card-bg: #ffffff;
-            --header-bg: #ffffff;
             --shadow: 3px 3px 0 #000000;
             --radius: 12px;
             --border: 1px solid #000000;
@@ -41,44 +41,22 @@
             --text-light: #94a3b8;
             --white: #2d2a3e;
             --card-bg: #2d2a3e;
-            --header-bg: #2d2a3e;
             --shadow: 3px 3px 0 #000000;
             --border: 1px solid #475569;
         }
 
-        [data-animation="off"] * {
-            animation: none !important;
-            transition: none !important;
-        }
+        [data-animation="off"] * { animation: none !important; transition: none !important; }
 
         * { 
-            margin: 0; 
-            padding: 0; 
-            box-sizing: border-box;
-            -webkit-touch-callout: none;
-            -webkit-user-select: none;
-            user-select: none;
-            -webkit-user-drag: none;
-            user-drag: none;
+            margin: 0; padding: 0; box-sizing: border-box;
+            -webkit-touch-callout: none; -webkit-user-select: none; user-select: none;
+            -webkit-user-drag: none; user-drag: none;
         }
-
-        img {
-            pointer-events: none;
-            -webkit-touch-callout: none;
-            -webkit-user-select: none;
-            user-select: none;
-            -webkit-user-drag: none;
-            user-drag: none;
-        }
-
-        input, textarea {
-            -webkit-user-select: text !important;
-            user-select: text !important;
-            -webkit-touch-callout: default !important;
-        }
+        img { pointer-events: none; -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; -webkit-user-drag: none; user-drag: none; }
+        input, textarea { -webkit-user-select: text !important; user-select: text !important; -webkit-touch-callout: default !important; }
 
         body {
-            font-family: 'IRANSans', Tahoma, sans-serif;
+            font-family: 'Digi Kian Grunge', 'IRANSans', Tahoma, sans-serif;
             background: var(--bg);
             color: var(--text);
             min-height: 100vh;
@@ -87,327 +65,173 @@
             transition: font-family 0.3s ease;
         }
 
-        .bg-animation {
-            position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            z-index: 0;
-            background: linear-gradient(135deg, var(--bg) 0%, var(--bg2) 40%, var(--bg3) 80%);
-        }
+        .bg-animation { position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 0; background: linear-gradient(135deg, var(--bg) 0%, var(--bg2) 40%, var(--bg3) 80%); }
 
         .header {
             position: relative;
             z-index: 10;
-            background: var(--header-bg);
-            border-bottom: var(--border);
-            padding: 10px 16px;
+            background: rgba(255, 255, 255, 0.5);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--primary);
+            padding: 10px 20px;
             position: sticky;
             top: 0;
-            box-shadow: var(--shadow);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
         }
 
-        .header-inner {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            max-width: 500px;
-            margin: 0 auto;
+        [data-theme="dark"] .header {
+            background: rgba(45, 42, 62, 0.5);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--primary);
         }
 
-        .header-right { display: flex; align-items: center; gap: 8px; }
+        .header-inner { display: flex; align-items: center; justify-content: space-between; max-width: 600px; margin: 0 auto; }
+        .header-right { display: flex; align-items: center; gap: 10px; }
 
         .header-logo {
-            width: 38px;
-            height: 38px;
-            border-radius: var(--radius);
+            width: 44px; height: 44px;
+            border-radius: 50%;
             background: var(--primary);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: var(--shadow);
-            overflow: hidden;
-            padding: 2px;
-            border: var(--border);
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            overflow: hidden; padding: 2px;
+            border: 1px solid var(--primary);
         }
-
-        .header-logo img { width: 95%; height: 95%; object-fit: contain; transform: scale(1.1); }
-        .header-title { font-size: 14px; font-weight: 800; color: var(--dark); }
+        .header-logo img { width: 100%; height: 100%; object-fit: contain; }
+        .header-title { font-size: 18px; font-weight: 800; color: var(--dark); }
         .header-title .t-accent { color: var(--primary); }
-        .header-subtitle { font-size: 8px; color: var(--text-light); }
-
         .currency-badge {
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            background: var(--bg2);
-            border: var(--border);
-            border-radius: 8px;
-            padding: 4px 10px;
-            font-size: 10px;
-            font-weight: 700;
-            color: var(--dark);
-            box-shadow: var(--shadow);
+            display: flex; align-items: center; gap: 4px;
+            background: var(--bg2); border: var(--border); border-radius: 8px;
+            padding: 4px 10px; font-size: 10px; font-weight: 700;
+            color: var(--dark); box-shadow: 2px 2px 0 #000;
         }
         .currency-badge.coins i { color: #f59e0b; }
 
         .main-container {
-            position: relative;
-            z-index: 5;
-            max-width: 500px;
-            width: 100%;
-            margin: 12px auto;
-            padding: 0 10px 100px;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
+            position: relative; z-index: 5;
+            max-width: 600px; width: 100%;
+            margin: 16px auto; padding: 0 12px 100px;
+            display: flex; flex-direction: column; gap: 12px;
         }
 
-        .loader-wrapper {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 50vh;
-            gap: 10px;
-        }
-        .loader {
-            width: 45px;
-            height: 45px;
-            border: 5px solid var(--bg3);
-            border-top-color: var(--primary);
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
-        }
-        .loader-text { font-size: 11px; font-weight: 700; color: var(--text); }
+        .loader-wrapper { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 50vh; gap: 10px; }
+        .loader { width: 50px; height: 50px; border: 5px solid var(--bg3); border-top-color: var(--primary); border-radius: 50%; animation: spin .8s linear infinite; }
+        .loader-text { font-size: 12px; font-weight: 700; color: var(--text); }
         @keyframes spin { to { transform: rotate(360deg); } }
 
         .game-content { display: none; }
-        .game-content.show { display: flex; flex-direction: column; gap: 10px; }
+        .game-content.show { display: flex; flex-direction: column; gap: 12px; }
 
         .players-row { display: flex; gap: 8px; }
-
         .player-card {
-            flex: 1;
-            background: var(--card-bg);
-            border: var(--border);
-            border-radius: var(--radius);
-            padding: 10px;
-            text-align: center;
-            box-shadow: var(--shadow);
+            flex: 1; background: var(--card-bg); border: var(--border); border-radius: var(--radius);
+            padding: 16px; text-align: center; box-shadow: var(--shadow);
         }
         .player-card.active { border-color: var(--gold); border-width: 2px; }
-        .player-tag { font-size: 9px; font-weight: 800; color: var(--dark); margin-bottom: 4px; }
         .player-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            margin: 0 auto 4px;
-            background: var(--bg2);
-            border: var(--border);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 16px;
-            color: var(--primary);
+            width: 40px; height: 40px; border-radius: 50%; margin: 0 auto 4px;
+            background: var(--bg2); border: var(--border);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 18px; color: var(--primary); overflow: hidden;
         }
+        .player-avatar img { width: 100%; height: 100%; object-fit: cover; }
+        .player-tag { font-size: 9px; font-weight: 800; color: var(--dark); margin-bottom: 4px; }
         .player-score { font-size: 13px; font-weight: 800; color: var(--gold); }
 
         .message-card {
-            background: var(--card-bg);
-            border: var(--border);
-            border-radius: var(--radius);
-            padding: 8px 12px;
-            box-shadow: var(--shadow);
-            text-align: center;
-            font-size: 9px;
-            font-weight: 600;
-            color: var(--text);
+            background: var(--card-bg); border: var(--border); border-radius: var(--radius);
+            padding: 12px 16px; box-shadow: var(--shadow); text-align: center;
+            font-size: 9px; font-weight: 600; color: var(--text);
         }
 
-        .rounds-results {
-            background: var(--card-bg);
-            border: var(--border);
-            border-radius: var(--radius);
-            padding: 12px;
-            box-shadow: var(--shadow);
+        .rounds-results { background: var(--card-bg); border: var(--border); border-radius: var(--radius); padding: 16px; box-shadow: var(--shadow); }
+        .rounds-title {
+            font-size: 13px; font-weight: 800; color: var(--dark); margin-bottom: 12px;
+            text-align: center; border-bottom: 1px dashed var(--text-light); padding-bottom: 8px;
         }
-        .rounds-title { font-size: 10px; font-weight: 800; color: var(--dark); margin-bottom: 8px; text-align: center; }
         .round-result-item {
-            background: rgba(245, 158, 11, 0.1);
-            border: 1px solid var(--gold);
-            border-radius: 8px;
-            padding: 8px;
-            margin-bottom: 6px;
+            background: rgba(245,158,11,.1); border: 1px solid var(--gold); border-radius: 8px;
+            padding: 8px; margin-bottom: 6px;
         }
-        .round-result-row {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            font-size: 8px;
-            padding: 2px 0;
-        }
+        .round-result-row { display: flex; align-items: center; justify-content: space-between; font-size: 8px; padding: 2px 0; }
         .round-result-player { font-weight: 700; color: var(--dark); min-width: 25px; }
         .round-dots { display: flex; gap: 3px; flex: 1; justify-content: center; }
         .result-dot {
-            width: 14px;
-            height: 14px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 6px;
-            font-weight: 800;
-            border: var(--border);
-            background: #10b981;
-            color: #fff;
+            width: 14px; height: 14px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 6px; font-weight: 800; border: var(--border); background: #10b981; color: #fff;
         }
         .result-dot.wrong { background: #ef4444; }
         .round-result-count { font-weight: 800; font-size: 8px; color: var(--dark); }
 
-        .question-card {
-            background: var(--card-bg);
-            border: var(--border);
-            border-radius: var(--radius);
-            padding: 12px;
-            box-shadow: var(--shadow);
-        }
-        .question-text {
-            font-size: 11px;
-            font-weight: 700;
-            color: var(--dark);
-            line-height: 1.7;
-            text-align: center;
-            margin-bottom: 8px;
-        }
-        .timer-bar-container {
-            background: var(--bg3);
-            border: var(--border);
-            border-radius: 8px;
-            height: 6px;
-            overflow: hidden;
-            margin-bottom: 4px;
-        }
+        .question-card { background: var(--card-bg); border: var(--border); border-radius: var(--radius); padding: 16px; box-shadow: var(--shadow); }
+        .question-text { font-size: 11px; font-weight: 700; color: var(--dark); line-height: 1.7; text-align: center; margin-bottom: 8px; }
+        .timer-bar-container { background: var(--bg3); border: var(--border); border-radius: 8px; height: 6px; overflow: hidden; margin-bottom: 4px; }
         .timer-bar-fill { height: 100%; background: #10b981; transition: width 1s linear; }
         .timer-bar-fill.warning { background: #f59e0b; }
         .timer-bar-fill.danger { background: #ef4444; }
         .timer-text { font-size: 7px; font-weight: 700; color: var(--text-light); text-align: center; margin-bottom: 8px; }
-
         .options-grid { display: flex; flex-direction: column; gap: 6px; }
-
         .option-btn {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            padding: 10px 12px;
-            border: var(--border);
-            border-radius: 8px;
-            background: var(--bg2);
-            cursor: pointer;
-            transition: all 0.2s ease;
-            box-shadow: 2px 2px 0 #000;
-            font-family: 'IRANSans', Tahoma, sans-serif;
-            font-size: 10px;
-            font-weight: 600;
-            color: var(--dark);
-            text-align: right;
+            display: flex; align-items: center; gap: 8px; padding: 10px 12px;
+            border: var(--border); border-radius: 8px; background: var(--bg2);
+            cursor: pointer; transition: all .2s ease; box-shadow: 2px 2px 0 #000;
+            font-family: 'Digi Kian Grunge', 'IRANSans', Tahoma, sans-serif;
+            font-size: 10px; font-weight: 600; color: var(--dark); text-align: right;
         }
         .option-btn:active { transform: translate(1px, 1px); box-shadow: 1px 1px 0 #000; }
         .option-btn.selected-correct { background: #10b981; color: #fff; }
         .option-btn.selected-wrong { background: #ef4444; color: #fff; }
-        .option-btn.disabled { pointer-events: none; opacity: 0.6; }
-        .option-btn.hidden-option { opacity: 0.2; pointer-events: none; text-decoration: line-through; }
-
+        .option-btn.disabled { pointer-events: none; opacity: .6; }
+        .option-btn.hidden-option { opacity: .2; pointer-events: none; text-decoration: line-through; }
         .option-letter {
-            width: 22px;
-            height: 22px;
-            border-radius: 50%;
-            background: var(--primary);
-            color: #fff;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 9px;
-            font-weight: 800;
-            flex-shrink: 0;
-            border: var(--border);
+            width: 22px; height: 22px; border-radius: 50%;
+            background: var(--primary); color: #fff;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 9px; font-weight: 800; flex-shrink: 0; border: var(--border);
         }
-
         .actions-row { display: flex; gap: 6px; margin-bottom: 8px; }
-
         .action-btn {
-            flex: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 3px;
-            padding: 7px;
-            border: var(--border);
-            border-radius: 8px;
-            background: var(--card-bg);
-            cursor: pointer;
-            box-shadow: 2px 2px 0 #000;
-            font-family: 'IRANSans', Tahoma, sans-serif;
-            font-size: 8px;
-            font-weight: 700;
-            color: var(--dark);
+            flex: 1; display: flex; align-items: center; justify-content: center; gap: 3px;
+            padding: 7px; border: var(--border); border-radius: 8px; background: var(--card-bg);
+            cursor: pointer; box-shadow: 2px 2px 0 #000;
+            font-family: 'Digi Kian Grunge', 'IRANSans', Tahoma, sans-serif;
+            font-size: 8px; font-weight: 700; color: var(--dark);
         }
-        .action-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+        .action-btn:disabled { opacity: .3; cursor: not-allowed; }
 
         .bottom-btn-container {
-            position: fixed;
-            bottom: 0; right: 0; left: 0;
-            padding: 8px 16px;
-            background: var(--header-bg);
-            border-top: var(--border);
+            position: fixed; bottom: 8px; right: 5%; left: 5%; width: 90%; margin: 0 auto;
             z-index: 100;
         }
-
         .main-btn {
-            width: 100%;
-            max-width: 500px;
-            margin: 0 auto;
-            display: block;
-            padding: 10px;
-            background: var(--gold);
-            color: #fff;
-            border: var(--border);
-            border-radius: 8px;
-            font-family: 'IRANSans', Tahoma, sans-serif;
-            font-size: 11px;
-            font-weight: 800;
-            cursor: pointer;
-            box-shadow: 3px 3px 0 #000;
+            width: 100%; max-width: 600px; margin: 0 auto; display: block; padding: 10px;
+            background: var(--gold); color: #fff; border: var(--border); border-radius: 25px;
+            font-family: 'Digi Kian Grunge', 'IRANSans', Tahoma, sans-serif;
+            font-size: 11px; font-weight: 800; cursor: pointer; box-shadow: 3px 3px 0 #000;
         }
-        .main-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .main-btn:disabled { opacity: .5; cursor: not-allowed; }
         .main-btn.waiting { background: var(--text-light); }
 
         .result-banner {
-            text-align: center;
-            padding: 16px;
-            background: var(--card-bg);
-            border: var(--border);
-            border-radius: var(--radius);
-            box-shadow: var(--shadow);
+            text-align: center; padding: 30px 20px;
+            background: var(--card-bg); border: var(--border); border-radius: var(--radius); box-shadow: var(--shadow);
         }
-        .result-icon { font-size: 40px; margin-bottom: 8px; }
-        .result-text { font-size: 14px; font-weight: 800; color: var(--dark); margin-bottom: 4px; }
-        .result-score { font-size: 10px; color: var(--text-light); margin-bottom: 8px; }
+        .result-image { width: 100px; height: 100px; object-fit: contain; margin: 0 auto 12px; display: block; }
+        .result-text { font-size: 16px; font-weight: 800; color: var(--dark); margin-bottom: 6px; }
+        .result-score { font-size: 10px; color: var(--text-light); margin-bottom: 10px; }
         .result-btn {
-            display: inline-block;
-            padding: 8px 20px;
-            background: var(--primary);
-            color: #fff;
-            border: var(--border);
-            border-radius: 8px;
-            font-family: 'IRANSans', Tahoma, sans-serif;
-            font-size: 10px;
-            font-weight: 700;
-            cursor: pointer;
-            box-shadow: 2px 2px 0 #000;
+            display: inline-block; padding: 10px 24px;
+            background: var(--primary); color: #fff; border: var(--border); border-radius: 8px;
+            font-family: 'Digi Kian Grunge', 'IRANSans', Tahoma, sans-serif;
+            font-size: 11px; font-weight: 700; cursor: pointer; box-shadow: 2px 2px 0 #000; margin: 4px;
         }
     </style>
 </head>
 <body>
-
     <div class="bg-animation"></div>
 
     <header class="header">
@@ -415,11 +239,10 @@
             <div class="header-right">
                 <div class="header-logo"><img src="https://cdn.imgurl.ir/uploads/f30974_InShot_20260821_174101103.png" alt="Quizico" draggable="false" oncontextmenu="return false;" ondragstart="return false;"></div>
                 <div>
-                    <div class="header-title">Quiz<span class="t-accent">ico</span></div>
-                    <div class="header-subtitle" data-i18n="single">تک‌نفره</div>
+                    <div class="header-title" id="headerTitle">کوییز<span class="t-accent">یکو</span></div>
                 </div>
             </div>
-            <span class="currency-badge coins"><i class="fa-solid fa-coins"></i> <span id="coinsHeader">0</span></span>
+            <span class="currency-badge coins"><i class="bi bi-coin"></i> <span id="coinsHeader">0</span></span>
         </div>
     </header>
 
@@ -438,7 +261,10 @@
     <script>
         (function() {
             var webApp = window.Eitaa?.WebApp;
-            var API_URL = 'https://script.google.com/macros/s/AKfycbwV2X5hZB6WSJSezWWsYXq-94gIRu6z6kuzTIupTnHx2VqDKpzlZLcBohnZO2Lk1KHmxA/exec';
+            var API_URL = 'https://script.google.com/macros/s/AKfycbyqpFnvScFxtKNZ3Ig9bABK-EH2bkccFtIIOBIXpbh8c1UlQUdpmTK3Lv0h8HFoEpKNXg/exec';
+            var IMG_WIN = 'https://cdn.imgurl.ir/uploads/d7569_SdlnXbvBsDzeGpo9E0ppeiGOtsY-sZLBOMrqTzS-F7ZsAm2fTQ.png';
+            var IMG_LOSE = 'https://cdn.imgurl.ir/uploads/h063599_nwNHMksFNfYhy_4KjF92buiid4I-7_5NRme2TZyRlB9Ek8YBxQ.png';
+            var IMG_DRAW = 'https://cdn.imgurl.ir/uploads/c44955_RXKwRTR4RXAXv-bftIWrthaOW8o-EiM7ZrOGTbSQIsFh1fjuvw.png';
 
             var TOTAL_ROUNDS = 5;
             var QUESTIONS_PER_ROUND = 3;
@@ -465,9 +291,9 @@
             document.addEventListener('cut', function(e) { if (e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA') e.preventDefault(); });
 
             var translations = {
-                fa: { single:'تک‌نفره', loading:'در حال دریافت...', start_round:'شروع راند', your_turn:'نوبت توست', opponent_turn:'نوبت حریفه...', round_done:'دست تمام شد!', you:'تو', opponent:'حریف', results:'نتایج راندها', question:'سوال', of:'از', round:'راند', win:'بردی!', lose:'باختی!', draw:'مساوی شدی!', score:'امتیاز', coins:'سکه', back:'بازگشت', no_questions:'سوالی یافت نشد', remove:'۵۰', swap:'۱۰۰', skip:'۱۵۰', not_enough:'سکه کافی نداری!', exit_confirm:'مطمئنی از بازی خارج میشی؟ با اینکار بازنده حساب میشی و ۲۵ امتیاز کم میشه!' },
-                en: { single:'Single Player', loading:'Loading...', start_round:'Start Round', your_turn:'Your turn', opponent_turn:'Opponent turn...', round_done:'Round done!', you:'You', opponent:'Bot', results:'Round Results', question:'Question', of:'of', round:'Round', win:'You Win!', lose:'You Lose!', draw:'Draw!', score:'Score', coins:'Coins', back:'Back', no_questions:'No questions found', remove:'50', swap:'100', skip:'150', not_enough:'Not enough coins!', exit_confirm:'Are you sure you want to exit? You will lose and 25 points will be deducted!' },
-                ar: { single:'فردي', loading:'جار التحميل...', start_round:'ابدأ الجولة', your_turn:'دورك', opponent_turn:'دور الخصم...', round_done:'انتهت الجولة!', you:'أنت', opponent:'الخصم', results:'نتائج الجولات', question:'سؤال', of:'من', round:'جولة', win:'فزت!', lose:'خسرت!', draw:'تعادل!', score:'النقاط', coins:'عملات', back:'رجوع', no_questions:'لا توجد أسئلة', remove:'50', swap:'100', skip:'150', not_enough:'عملات غير كافية!', exit_confirm:'هل أنت متأكد من الخروج؟ ستخسر وسيتم خصم 25 نقطة!' }
+                fa: { loading:'در حال دریافت...', start_round:'شروع راند', your_turn:'نوبت توست', opponent_turn:'نوبت حریفه...', round_done:'دست تمام شد!', you:'تو', opponent:'حریف', results:'نتایج راندها', round:'راند', win:'بردی!', lose:'باختی!', draw:'مساوی شدی!', score:'امتیاز', coins:'سکه', back:'بازگشت', no_questions:'سوالی یافت نشد', remove:'۵۰', swap:'۱۰۰', skip:'۱۵۰', not_enough:'سکه کافی نداری!', exit_confirm:'مطمئنی از بازی خارج میشی؟ با اینکار بازنده حساب میشی و ۲۵ امتیاز کم میشه!' },
+                en: { loading:'Loading...', start_round:'Start Round', your_turn:'Your turn', opponent_turn:'Opponent turn...', round_done:'Round done!', you:'You', opponent:'Bot', results:'Round Results', round:'Round', win:'You Win!', lose:'You Lose!', draw:'Draw!', score:'Score', coins:'Coins', back:'Back', no_questions:'No questions found', remove:'50', swap:'100', skip:'150', not_enough:'Not enough coins!', exit_confirm:'Are you sure you want to exit? You will lose and 25 points will be deducted!' },
+                ar: { loading:'جار التحميل...', start_round:'ابدأ الجولة', your_turn:'دورك', opponent_turn:'دور الخصم...', round_done:'انتهت الجولة!', you:'أنت', opponent:'الخصم', results:'نتائج الجولات', round:'جولة', win:'فزت!', lose:'خسرت!', draw:'تعادل!', score:'النقاط', coins:'عملات', back:'رجوع', no_questions:'لا توجد أسئلة', remove:'50', swap:'100', skip:'150', not_enough:'عملات غير كافية!', exit_confirm:'هل أنت متأكد من الخروج؟ ستخسر وسيتم خصم 25 نقطة!' }
             };
 
             var messages = {
@@ -479,14 +305,15 @@
             function getSettings() {
                 try {
                     var raw = localStorage.getItem('quizicoSettings');
-                    if (!raw) return { theme:'light', primaryColor:'#a855f7', animation:true, language:'fa' };
+                    if (!raw) return { theme:'light', primaryColor:'#a855f7', animation:true, haptic:true, language:'fa' };
                     var p = JSON.parse(raw);
                     if (!p.theme) p.theme = 'light';
                     if (!p.primaryColor) p.primaryColor = '#a855f7';
                     if (p.animation === undefined) p.animation = true;
+                    if (p.haptic === undefined) p.haptic = true;
                     if (!p.language) p.language = 'fa';
                     return p;
-                } catch(e) { return { theme:'light', primaryColor:'#a855f7', animation:true, language:'fa' }; }
+                } catch(e) { return { theme:'light', primaryColor:'#a855f7', animation:true, haptic:true, language:'fa' }; }
             }
 
             function getTranslation(k) { var t = translations[currentLang] || translations.fa; return t[k] || translations.fa[k] || k; }
@@ -495,19 +322,39 @@
             function hexToRgb(h) { var r = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(h); return r ? { r:parseInt(r[1],16), g:parseInt(r[2],16), b:parseInt(r[3],16) } : { r:168,g:85,b:247 }; }
             function shadeColor(c,p){var r=hexToRgb(c);var rr=Math.max(0,Math.min(255,r.r+p));var gg=Math.max(0,Math.min(255,r.g+p));var bb=Math.max(0,Math.min(255,r.b+p));return '#'+((1<<24)+(rr<<16)+(gg<<8)+bb).toString(16).slice(1);}
 
+            function updateHeaderTitle(lang) {
+                var titleEl = document.getElementById('headerTitle');
+                if (lang === 'en') {
+                    titleEl.innerHTML = 'Quiz<span class="t-accent">ico</span>';
+                } else {
+                    titleEl.innerHTML = 'کوییز<span class="t-accent">یکو</span>';
+                }
+            }
+
             function applyTheme() {
                 var s = getSettings();
                 currentLang = s.language || 'fa';
                 var t = s.theme || 'light';
                 var p = s.primaryColor || '#a855f7';
                 document.documentElement.setAttribute('data-theme', t);
-                if (t === 'dark') { document.documentElement.style.setProperty('--primary', shadeColor(p, 40)); }
-                else { document.documentElement.style.setProperty('--primary', p); }
+                if (t === 'dark') {
+                    var lightP = shadeColor(p, 40);
+                    document.documentElement.style.setProperty('--primary', lightP);
+                    document.documentElement.style.setProperty('--primary-dark', p);
+                    document.documentElement.style.setProperty('--primary-light', shadeColor(p, 80));
+                    document.documentElement.style.setProperty('--primary-rgb', hexToRgb(lightP).r + ',' + hexToRgb(lightP).g + ',' + hexToRgb(lightP).b);
+                } else {
+                    document.documentElement.style.setProperty('--primary', p);
+                    document.documentElement.style.setProperty('--primary-dark', shadeColor(p, -30));
+                    document.documentElement.style.setProperty('--primary-light', shadeColor(p, 50));
+                    document.documentElement.style.setProperty('--primary-rgb', hexToRgb(p).r + ',' + hexToRgb(p).g + ',' + hexToRgb(p).b);
+                }
                 if (s.animation === false) { document.documentElement.setAttribute('data-animation', 'off'); }
                 else { document.documentElement.removeAttribute('data-animation'); }
                 if (currentLang === 'en') { document.documentElement.setAttribute('dir','ltr'); document.body.style.fontFamily='Arial, sans-serif'; }
-                else if (currentLang === 'ar') { document.documentElement.setAttribute('dir','rtl'); document.body.style.fontFamily='Tahoma, sans-serif'; }
-                else { document.documentElement.setAttribute('dir','rtl'); document.body.style.fontFamily="'IRANSans', Tahoma, sans-serif"; }
+                else if (currentLang === 'ar') { document.documentElement.setAttribute('dir','rtl'); document.body.style.fontFamily="'Digi Kian Grunge', Tahoma, sans-serif"; }
+                else { document.documentElement.setAttribute('dir','rtl'); document.body.style.fontFamily="'Digi Kian Grunge', 'IRANSans', Tahoma, sans-serif"; }
+                updateHeaderTitle(currentLang);
                 document.querySelectorAll('[data-i18n]').forEach(function(el){ var k=el.getAttribute('data-i18n'); var t2=translations[currentLang]||translations.fa; if(t2[k]) el.textContent=t2[k]; });
             }
 
@@ -545,7 +392,10 @@
             function fetchData(action,params){
                 var payload={action:action,username:getUserId()};
                 if(params){for(var k in params){if(params.hasOwnProperty(k))payload[k]=params[k];}}
-                return fetch(API_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(payload)}).then(function(r){return r.json();}).catch(function(){return{ok:false};});
+                return Promise.race([
+                    fetch(API_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(payload)}).then(function(r){return r.json();}),
+                    new Promise(function(_,reject){setTimeout(function(){reject(new Error('timeout'));},10000);})
+                ]).catch(function(){return{ok:false};});
             }
             function shuffleArray(a){for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t;}return a;}
             function botAnswer(ci){return Math.random()<0.7?ci:Math.floor(Math.random()*4);}
@@ -735,10 +585,11 @@
                 userTotalScore += sc;
                 userCoins += cr;
                 fetchData('updateUser', { score: userTotalScore, coins: userCoins });
-                var gd = { id: gameId, player1: getUserId(), player2: 'bot', round1: JSON.stringify(roundResults[0]||{}), round2: JSON.stringify(roundResults[1]||{}), round3: JSON.stringify(roundResults[2]||{}), round4: JSON.stringify(roundResults[3]||{}), round5: JSON.stringify(roundResults[4]||{}), status: 'finished' };
+                var gd = { id: gameId, player1: getUserId(), player2: 'bot', round1: JSON.stringify(roundResults[0]||{}), round2: JSON.stringify(roundResults[1]||{}), round3: JSON.stringify(roundResults[2]||{}), round4: JSON.stringify(roundResults[3]||{}), round5: JSON.stringify(roundResults[4]||{}), status: 'finished', result: sc > 0 ? 'win' : sc < 0 ? 'lose' : 'draw' };
                 fetchData('saveGame', { gameData: gd });
+                var img = sc > 0 ? IMG_WIN : sc < 0 ? IMG_LOSE : IMG_DRAW;
                 var html = '<div class="result-banner">';
-                html += '<div class="result-icon">'+(sc>0?'<i class="fa-solid fa-trophy" style="color:#f59e0b;"></i>':sc<0?'<i class="fa-solid fa-face-frown" style="color:#ef4444;"></i>':'<i class="fa-solid fa-handshake" style="color:#f59e0b;"></i>')+'</div>';
+                html += '<img class="result-image" src="'+img+'" alt="" draggable="false" oncontextmenu="return false;" ondragstart="return false;">';
                 html += '<div class="result-text">'+(sc>0?t('win'):sc<0?t('lose'):t('draw'))+'</div>';
                 html += '<div class="result-score">'+t('you')+': '+yourScore+' - '+t('opponent')+': '+botScore+'</div>';
                 html += '<div class="result-score">'+t('score')+': '+(sc>=0?'+':'')+sc+'</div>';
@@ -760,7 +611,7 @@
                         var penalty = userTotalScore - 25;
                         if (penalty < 0) penalty = 0;
                         fetchData('updateUser', { score: penalty });
-                        var gd = { id: gameId, player1: getUserId(), player2: 'bot', round1: JSON.stringify(roundResults[0]||{}), round2: JSON.stringify(roundResults[1]||{}), round3: JSON.stringify(roundResults[2]||{}), round4: JSON.stringify(roundResults[3]||{}), round5: JSON.stringify(roundResults[4]||{}), status: 'finished' };
+                        var gd = { id: gameId, player1: getUserId(), player2: 'bot', round1: JSON.stringify(roundResults[0]||{}), round2: JSON.stringify(roundResults[1]||{}), round3: JSON.stringify(roundResults[2]||{}), round4: JSON.stringify(roundResults[3]||{}), round5: JSON.stringify(roundResults[4]||{}), status: 'finished', result: 'lose' };
                         fetchData('saveGame', { gameData: gd });
                         window.location.href = '../../dashboard/';
                     }
