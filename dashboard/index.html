@@ -467,7 +467,7 @@
     <script>
         (function() {
             var webApp = window.Eitaa?.WebApp;
-            var API_URL = 'https://script.google.com/macros/s/AKfycbyHQXQ0TffhGyW1MdtI-_sWlZMhLSPDCR3Az5dDkuwv9TJt1o6-f_aCOg_aHJnty_8P/exec';
+            var API_URL = 'https://script.google.com/macros/s/AKfycbyqpFnvScFxtKNZ3Ig9bABK-EH2bkccFtIIOBIXpbh8c1UlQUdpmTK3Lv0h8HFoEpKNXg/exec';
             var SAD_IMAGE = 'https://cdn.imgurl.ir/uploads/g58935_InShot_20260822_140943752.png';
             var userCoins = 0, userDiamonds = 0, currentRotation = 0, isSpinning = false, SPIN_COST = 50, currentLang = 'fa';
             var leagueMatches = [[1,2],[2,3],[1,5],[3,4],[1,4],[2,5],[1,3],[4,5],[3,5],[2,4]];
@@ -780,33 +780,37 @@
                             var now = new Date();
                             var diffMinutes = (now - created) / (1000 * 60);
                             if (diffMinutes >= 30) {
-                                var isP1 = String(g.player1) === String(myId);
-                                var isP2 = String(g.player2) === String(myId);
-                                if (isP1 || isP2) {
-                                    var latestRound = 0;
-                                    var latestRoundData = '';
-                                    for (var r = 1; r <= 5; r++) {
-                                        if (g['round' + r] && g['round' + r] !== '') {
-                                            latestRound = r;
-                                            latestRoundData = g['round' + r];
+                                if (g.status === 'waiting' && (!g.player2 || g.player2 === '')) {
+                                    await fetchData('deleteGame', {gameId: g.id});
+                                } else {
+                                    var isP1 = String(g.player1) === String(myId);
+                                    var isP2 = String(g.player2) === String(myId);
+                                    if (isP1 || isP2) {
+                                        var latestRound = 0;
+                                        var latestRoundData = '';
+                                        for (var r = 1; r <= 5; r++) {
+                                            if (g['round' + r] && g['round' + r] !== '') {
+                                                latestRound = r;
+                                                latestRoundData = g['round' + r];
+                                            }
                                         }
-                                    }
-                                    var myResult = 'draw';
-                                    if (latestRound > 0 && latestRoundData) {
-                                        var parts = latestRoundData.split('][');
-                                        var p1Ans = parts[1] ? parts[1].replace('[','').replace(']','') : 'waiting';
-                                        var p2Ans = parts[2] ? parts[2].replace('[','').replace(']','') : 'waiting';
-                                        var myAns = isP1 ? p1Ans : p2Ans;
-                                        var oppAns = isP1 ? p2Ans : p1Ans;
-                                        if (myAns === 'waiting' || myAns === '') {
-                                            myResult = 'lose';
-                                        } else if (oppAns === 'waiting' || oppAns === '') {
-                                            myResult = 'win';
-                                        } else {
-                                            myResult = 'draw';
+                                        var myResult = 'draw';
+                                        if (latestRound > 0 && latestRoundData) {
+                                            var parts = latestRoundData.split('][');
+                                            var p1Ans = parts[1] ? parts[1].replace('[','').replace(']','') : 'waiting';
+                                            var p2Ans = parts[2] ? parts[2].replace('[','').replace(']','') : 'waiting';
+                                            var myAns = isP1 ? p1Ans : p2Ans;
+                                            var oppAns = isP1 ? p2Ans : p1Ans;
+                                            if (myAns === 'waiting' || myAns === '') {
+                                                myResult = 'lose';
+                                            } else if (oppAns === 'waiting' || oppAns === '') {
+                                                myResult = 'win';
+                                            } else {
+                                                myResult = 'draw';
+                                            }
                                         }
+                                        await fetchData('updateGame', {gameId: g.id, updates: {status: 'finished', result: myResult}});
                                     }
-                                    await fetchData('updateGame', {gameId: g.id, updates: {status: 'finished', result: myResult}});
                                 }
                             }
                         }
@@ -888,14 +892,9 @@
                     
                     if (gamesData.ok && Array.isArray(gamesData.data)) {
                         var allGames = gamesData.data;
-                        var twoHoursAgo = new Date(Date.now() - 2 * 60 * 60 * 1000);
                         var onlineInProgress = allGames.filter(function(g) { 
                             if (String(g.id).startsWith('LG_')) return false;
                             if (g.status !== 'waiting' && g.status !== 'in_progress') return false;
-                            if (g.createdAt) {
-                                var created = new Date(g.createdAt);
-                                if (created < twoHoursAgo) return false;
-                            }
                             return true;
                         });
                         onlineInProgress.sort(function(a, b) {
