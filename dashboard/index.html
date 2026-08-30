@@ -209,6 +209,10 @@
         .game-status-badge.waiting { background: #fef3c7; color: #d97706; }
         .game-status-badge.live { background: #dbeafe; color: #2563eb; }
         .game-status-badge.finished { background: #d1fae5; color: #059669; }
+        .game-status-badge.win { background: #10b981; color: #fff; }
+        .game-status-badge.lose { background: #ef4444; color: #fff; }
+        .game-status-badge.draw { background: #f59e0b; color: #fff; }
+        .game-status-badge.expired { background: #94a3b8; color: #fff; }
 
         .empty-state { text-align: center; padding: 16px; color: var(--text-light); font-size: 10px; }
         .empty-state img { width: 60px; height: 60px; object-fit: contain; margin: 0 auto 6px; display: block; }
@@ -510,7 +514,11 @@
                     your_turn: 'نوبت توئه!',
                     waiting_turn: 'منتظر نوبت',
                     stage: 'مرحله',
-                    error_loading: 'خطا در دریافت اطلاعات'
+                    error_loading: 'خطا در دریافت اطلاعات',
+                    time_expired_short: 'زمان پایان یافت',
+                    win: 'برد',
+                    lose: 'باخت',
+                    draw: 'مساوی'
                 },
                 en: {
                     tagline: 'Test your knowledge',
@@ -548,7 +556,11 @@
                     your_turn: 'Your turn!',
                     waiting_turn: 'Waiting for turn',
                     stage: 'Stage',
-                    error_loading: 'Error loading data'
+                    error_loading: 'Error loading data',
+                    time_expired_short: 'Time Expired',
+                    win: 'Win',
+                    lose: 'Loss',
+                    draw: 'Draw'
                 },
                 ar: {
                     tagline: 'اختبر معلوماتك',
@@ -586,7 +598,11 @@
                     your_turn: 'دورك!',
                     waiting_turn: 'بانتظار الدور',
                     stage: 'مرحلة',
-                    error_loading: 'خطأ في تحميل البيانات'
+                    error_loading: 'خطأ في تحميل البيانات',
+                    time_expired_short: 'انتهى الوقت',
+                    win: 'فوز',
+                    lose: 'خسارة',
+                    draw: 'تعادل'
                 }
             };
 
@@ -753,6 +769,51 @@
                 return userId;
             }
 
+            async function checkExpiredGames(games) {
+                var myId = getUserId();
+                for (var i = 0; i < games.length; i++) {
+                    var g = games[i];
+                    if (String(g.id).startsWith('LG_')) continue;
+                    if (g.status === 'waiting' || g.status === 'in_progress') {
+                        if (g.createdAt) {
+                            var created = new Date(g.createdAt);
+                            var now = new Date();
+                            var diffMinutes = (now - created) / (1000 * 60);
+                            if (diffMinutes >= 30) {
+                                var isP1 = String(g.player1) === String(myId);
+                                var isP2 = String(g.player2) === String(myId);
+                                if (isP1 || isP2) {
+                                    var latestRound = 0;
+                                    var latestRoundData = '';
+                                    for (var r = 1; r <= 5; r++) {
+                                        if (g['round' + r] && g['round' + r] !== '') {
+                                            latestRound = r;
+                                            latestRoundData = g['round' + r];
+                                        }
+                                    }
+                                    var myResult = 'draw';
+                                    if (latestRound > 0 && latestRoundData) {
+                                        var parts = latestRoundData.split('][');
+                                        var p1Ans = parts[1] ? parts[1].replace('[','').replace(']','') : 'waiting';
+                                        var p2Ans = parts[2] ? parts[2].replace('[','').replace(']','') : 'waiting';
+                                        var myAns = isP1 ? p1Ans : p2Ans;
+                                        var oppAns = isP1 ? p2Ans : p1Ans;
+                                        if (myAns === 'waiting' || myAns === '') {
+                                            myResult = 'lose';
+                                        } else if (oppAns === 'waiting' || oppAns === '') {
+                                            myResult = 'win';
+                                        } else {
+                                            myResult = 'draw';
+                                        }
+                                    }
+                                    await fetchData('updateGame', {gameId: g.id, updates: {status: 'finished', result: myResult}});
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
             async function renderGameCard(g, myId, type) {
                 var isP1 = String(g.player1) === String(myId);
                 var oppId = isP1 ? g.player2 : g.player1;
@@ -764,13 +825,19 @@
                     subtitle = getTranslation('vs_opponent') + oppName;
                     statusClass = 'finished';
                     statusText = getTranslation('finished');
+                    if (g.result === 'win') { statusClass = 'win'; statusText = getTranslation('win'); }
+                    else if (g.result === 'lose') { statusClass = 'lose'; statusText = getTranslation('lose'); }
+                    else if (g.result === 'draw') { statusClass = 'draw'; statusText = getTranslation('draw'); }
+                    else if (g.result === 'expired_lose') { statusClass = 'expired'; statusText = getTranslation('time_expired_short') + ' - ' + getTranslation('lose'); }
+                    else if (g.result === 'expired_win') { statusClass = 'win'; statusText = getTranslation('time_expired_short') + ' - ' + getTranslation('win'); }
+                    else if (g.result === 'expired_draw') { statusClass = 'expired'; statusText = getTranslation('time_expired_short') + ' - ' + getTranslation('draw'); }
                 } else {
                     var oppName2 = await getPlayerName(oppId);
                     subtitle = getTranslation('vs_opponent') + oppName2;
                 }
                 var onclick = type === 'past' ? ' onclick="goToResult(\'' + g.id + '\')"' : ' onclick="continueGame(\'' + g.id + '\')"';
                 var icon = type === 'past' ? 'bi-flag' : 'bi-globe';
-                return '<div class="game-card"' + onclick + '><div class="game-icon"><i class="bi ' + icon + '"></i></div><div class="game-info"><div class="game-title">' + subtitle + '</div><div class="game-subtitle">' + (type === 'past' ? getTranslation('finished') : statusText) + '</div></div><span class="game-status-badge ' + statusClass + '">' + statusText + '</span></div>';
+                return '<div class="game-card"' + onclick + '><div class="game-icon"><i class="bi ' + icon + '"></i></div><div class="game-info"><div class="game-title">' + subtitle + '</div><div class="game-subtitle">' + (type === 'past' ? statusText : getTranslation(g.status === 'waiting' ? 'waiting' : 'live')) + '</div></div><span class="game-status-badge ' + statusClass + '">' + statusText + '</span></div>';
             }
 
             function renderLeagueCard(lg, subtitle, statusText, statusClass) {
@@ -815,6 +882,11 @@
                     var gamesData = await fetchData('getGamesByPlayer', {});
                     if (!gamesData.ok) { hasError = true; }
                     else if (Array.isArray(gamesData.data)) {
+                        await checkExpiredGames(gamesData.data);
+                        gamesData = await fetchData('getGamesByPlayer', {});
+                    }
+                    
+                    if (gamesData.ok && Array.isArray(gamesData.data)) {
                         var allGames = gamesData.data;
                         var twoHoursAgo = new Date(Date.now() - 2 * 60 * 60 * 1000);
                         var onlineInProgress = allGames.filter(function(g) { 
