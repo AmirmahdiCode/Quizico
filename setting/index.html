@@ -164,6 +164,9 @@
         }
         .toggle-switch.active::after { right: 2px; }
 
+        [dir="ltr"] .toggle-switch::after { left: 20px; right: auto; }
+        [dir="ltr"] .toggle-switch.active::after { left: 2px; right: auto; }
+
         .support-notification {
             position: fixed; top: 75px; right: 5%; left: 5%;
             max-width: 400px; margin: 0 auto;
@@ -329,7 +332,7 @@
     <nav class="bottom-nav">
         <div class="nav-item" onclick="window.location.href='../dashboard/'"><img src="https://uploadkon.ir/uploads/bdf329_26home-iconbase-1-.svg" alt="خانه" draggable="false" oncontextmenu="return false;" ondragstart="return false;"><span data-i18n="home">خانه</span></div>
         <div class="nav-item" onclick="window.location.href='../ranking/'"><img src="https://uploadkon.ir/uploads/8c9f29_26medal-1st-iconbase.svg" alt="رتبه" draggable="false" oncontextmenu="return false;" ondragstart="return false;"><span data-i18n="ranking">رتبه</span></div>
-        <div class="nav-item" onclick="window.location.href='../profile/'"><img src="https://uploadkon.ir/uploads/774429_26profile-iconbase-1-.svg" alt="پروفایل" draggable="false" oncontextmenu="return false;" ondragstart="return false;"><span data-i18n="profile">پروفایل</span></div>
+        <div class="nav-item" onclick="window.location.href='../profile/'"><img src="https://uploadkon.ir/uploads/e78130_26profile-iconbase.svg" alt="پروفایل" draggable="false" oncontextmenu="return false;" ondragstart="return false;"><span data-i18n="profile">پروفایل</span></div>
         <div class="nav-item active" onclick="window.location.href='../setting/'"><img src="https://uploadkon.ir/uploads/629f29_26setting-iconbase.svg" alt="تنظیمات" draggable="false" oncontextmenu="return false;" ondragstart="return false;"><span data-i18n="settings_nav">تنظیمات</span></div>
     </nav>
 
@@ -413,8 +416,18 @@
                 var t = s.theme || 'light';
                 var p = s.primaryColor || '#a855f7';
                 document.documentElement.setAttribute('data-theme', t);
-                if (t === 'dark') { document.documentElement.style.setProperty('--primary', shadeColor(p, 40)); }
-                else { document.documentElement.style.setProperty('--primary', p); }
+                if (t === 'dark') {
+                    var lightP = shadeColor(p, 40);
+                    document.documentElement.style.setProperty('--primary', lightP);
+                    document.documentElement.style.setProperty('--primary-dark', p);
+                    document.documentElement.style.setProperty('--primary-light', shadeColor(p, 80));
+                    document.documentElement.style.setProperty('--primary-rgb', hexToRgb(lightP).r + ',' + hexToRgb(lightP).g + ',' + hexToRgb(lightP).b);
+                } else {
+                    document.documentElement.style.setProperty('--primary', p);
+                    document.documentElement.style.setProperty('--primary-dark', shadeColor(p, -30));
+                    document.documentElement.style.setProperty('--primary-light', shadeColor(p, 50));
+                    document.documentElement.style.setProperty('--primary-rgb', hexToRgb(p).r + ',' + hexToRgb(p).g + ',' + hexToRgb(p).b);
+                }
                 if (s.animation === false) { document.documentElement.setAttribute('data-animation', 'off'); }
                 else { document.documentElement.removeAttribute('data-animation'); }
                 document.querySelectorAll('.theme-option').forEach(function(b) { b.classList.toggle('active', b.dataset.themeMode === t); });
