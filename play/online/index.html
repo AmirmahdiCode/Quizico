@@ -578,30 +578,62 @@ document.getElementById('bottomBtnContainer').style.display='none';hideLoader();
 }
 var data=gameResult.data;
 gameCreatedAt=data.createdAt||new Date().toISOString();
+
 if(String(data.player1)===String(myUserId)){
 isPlayer1=true;
-if(data.player2){var oppInfo=await getPlayerInfo(data.player2,getTranslation('opponent'));opponentName=oppInfo.name;opponentAvatar=oppInfo.avatar;}
+var oppId=data.player2;
+if(oppId&&oppId!==''){
+var oppInfo=await getPlayerInfo(oppId,getTranslation('opponent'));
+opponentName=oppInfo.name;opponentAvatar=oppInfo.avatar;
+}
 await startOnlineGame();return;
 }
+
 if(data.player2&&String(data.player2)===String(myUserId)){
 isPlayer1=false;
-var oppInfo2=await getPlayerInfo(data.player1,getTranslation('opponent'));opponentName=oppInfo2.name;opponentAvatar=oppInfo2.avatar;
+var oppInfo2=await getPlayerInfo(data.player1,getTranslation('opponent'));
+opponentName=oppInfo2.name;opponentAvatar=oppInfo2.avatar;
 await startOnlineGame();return;
 }
+
 if(!data.player2||data.player2===''){
 await fetchData('updateGame',{gameId:roomCode,updates:{player2:myUserId,status:'in_progress'}});
 isPlayer1=false;
-var oppInfo3=await getPlayerInfo(data.player1,getTranslation('opponent'));opponentName=oppInfo3.name;opponentAvatar=oppInfo3.avatar;
+var oppInfo3=await getPlayerInfo(data.player1,getTranslation('opponent'));
+opponentName=oppInfo3.name;opponentAvatar=oppInfo3.avatar;
 await startOnlineGame();return;
 }
+
 renderRoomFullScreen();
 }
 
 async function startOnlineGame(){
 if(!opponentName)opponentName=getTranslation('opponent');
 if(!myName)myName=getTranslation('you');
+
 var ud=await fetchData('getUser',{});
-if(ud.ok&&ud.data){userCoins=ud.data.coins||0;userTotalScore=ud.data.score||0;document.getElementById('coinsHeader').textContent=userCoins;}
+if(ud.ok&&ud.data){
+userCoins=ud.data.coins||0;
+userTotalScore=ud.data.score||0;
+document.getElementById('coinsHeader').textContent=userCoins;
+}
+
+var gameResult=await fetchData('getGame',{gameId:roomCode});
+if(gameResult.ok&&gameResult.data){
+var gdata=gameResult.data;
+if(gdata.status==='finished'){endGame();return;}
+var latestRound=0;
+for(var r=1;r<=5;r++){
+if(gdata['round'+r]&&gdata['round'+r]!=='')latestRound=r;
+}
+if(latestRound>0){
+currentRound=latestRound;
+var roundData=gdata['round'+latestRound]||'';
+var sheetTurn=getTurnFromSheet(roundData);
+if(sheetTurn===2){currentRound++;if(currentRound>TOTAL_ROUNDS){endGame();return;}}
+}
+}
+
 var qd=await fetchData('getQuestions',{limit:50});
 if(qd.ok&&Array.isArray(qd.data)&&qd.data.length>=QUESTIONS_PER_ROUND){
 questions=qd.data;
@@ -668,6 +700,8 @@ window.location.href='../../dashboard/';
 async function init(){
 applyTheme();
 if(webApp){webApp.ready();webApp.expand();webApp.BackButton.show();webApp.BackButton.onClick(handleBackButton);}
+var ud=await fetchData('getUser',{});
+if(ud.ok&&ud.data){userCoins=ud.data.coins||0;document.getElementById('coinsHeader').textContent=userCoins;}
 myUserId=getUserId();
 var urlParams=new URLSearchParams(window.location.search);
 var isNew=urlParams.get('new');
