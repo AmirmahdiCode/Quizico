@@ -695,7 +695,6 @@
             }
 
             function getAvatarHtml(avatarId) {
-                var iconAvatars = {'icon_game':'fa-gamepad','icon_trophy':'fa-trophy','icon_star':'fa-star','icon_bolt':'fa-bolt','icon_fire':'fa-fire','icon_crown':'fa-crown','icon_medal':'fa-medal','icon_rocket':'fa-rocket','icon_ghost':'fa-ghost','icon_dragon':'fa-dragon','icon_wand':'fa-wand-magic-sparkles','icon_hat':'fa-hat-wizard','icon_helmet':'fa-helmet-safety','icon_shield':'fa-shield-halved','icon_sword':'fa-hand-fist'};
                 var allAvatars = {};
                 avatarCategories.forEach(function(cat) {
                     cat.items.forEach(function(item) {
@@ -849,8 +848,10 @@
                             list.innerHTML = gamesData.data.slice(0, 10).map(function(g) {
                                 var isP1 = String(g.player1) === String(username);
                                 var cls = 'draw', txt = getTranslation('draw');
-                                if (g.result === 'win') { cls = 'win'; txt = getTranslation('win'); totalWins++; }
-                                else if (g.result === 'lose') { cls = 'loss'; txt = getTranslation('lose'); }
+                                if (g.status === 'finished') {
+                                    if (isP1) { cls = 'win'; txt = getTranslation('win'); totalWins++; }
+                                    else { cls = 'loss'; txt = getTranslation('lose'); }
+                                }
                                 return '<div class="game-item"><span class="game-players" id="opp-' + g.id + '"><span class="game-avatar"><i class="fa-solid fa-user"></i></span> ...</span><span class="game-score ' + cls + '">' + txt + '</span></div>';
                             }).join('');
                             for (var i = 0; i < gamesData.data.slice(0, 10).length; i++) {
