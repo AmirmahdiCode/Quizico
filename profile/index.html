@@ -25,6 +25,7 @@
             --shadow: 3px 3px 0 #000000;
             --radius: 12px;
             --border: 1px solid #000000;
+            --gold: #f59e0b;
         }
 
         [data-theme="dark"] {
@@ -441,7 +442,7 @@
             <span data-i18n="ranking">رتبه</span>
         </div>
         <div class="nav-item active" onclick="window.location.href='../profile/'">
-            <img src="https://uploadkon.ir/uploads/774429_26profile-iconbase-1-.svg" alt="پروفایل" draggable="false" oncontextmenu="return false;" ondragstart="return false;">
+            <img src="https://uploadkon.ir/uploads/e78130_26profile-iconbase.svg" alt="پروفایل" draggable="false" oncontextmenu="return false;" ondragstart="return false;">
             <span data-i18n="profile_nav">پروفایل</span>
         </div>
         <div class="nav-item" onclick="window.location.href='../setting/'">
@@ -453,10 +454,9 @@
     <script>
         (function() {
             var webApp = window.Eitaa?.WebApp;
-            var API_URL = 'https://script.google.com/macros/s/AKfycbyHQXQ0TffhGyW1MdtI-_sWlZMhLSPDCR3Az5dDkuwv9TJt1o6-f_aCOg_aHJnty_8P/exec';
+            var API_URL = 'https://script.google.com/macros/s/AKfycbyqpFnvScFxtKNZ3Ig9bABK-EH2bkccFtIIOBIXpbh8c1UlQUdpmTK3Lv0h8HFoEpKNXg/exec';
             var SAD_IMAGE = 'https://cdn.imgurl.ir/uploads/g58935_InShot_20260822_140943752.png';
             var userDiamonds = 0, currentAvatar = 'default', currentLang = 'fa';
-            var leagueMatches = [[1,2],[2,3],[1,5],[3,4],[1,4],[2,5],[1,3],[4,5],[3,5],[2,4]];
 
             document.addEventListener('contextmenu', function(e) { e.preventDefault(); });
             document.addEventListener('dragstart', function(e) { e.preventDefault(); });
@@ -614,33 +614,21 @@
             function getSettings() {
                 try {
                     var raw = localStorage.getItem('quizicoSettings');
-                    if (!raw) return {theme:'light', primaryColor:'#a855f7', animation:true, language:'fa'};
+                    if (!raw) return { theme:'light', primaryColor:'#a855f7', animation:true, haptic:true, language:'fa' };
                     var p = JSON.parse(raw);
                     if (!p.theme) p.theme = 'light';
                     if (!p.primaryColor) p.primaryColor = '#a855f7';
                     if (p.animation === undefined) p.animation = true;
+                    if (p.haptic === undefined) p.haptic = true;
                     if (!p.language) p.language = 'fa';
                     return p;
-                } catch(e) { return {theme:'light', primaryColor:'#a855f7', animation:true, language:'fa'}; }
+                } catch(e) { return { theme:'light', primaryColor:'#a855f7', animation:true, haptic:true, language:'fa' }; }
             }
 
-            function getTranslation(k) {
-                var t = translations[currentLang] || translations.fa;
-                return t[k] || translations.fa[k] || k;
-            }
+            function getTranslation(k) { var t = translations[currentLang] || translations.fa; return t[k] || translations.fa[k] || k; }
 
-            function hexToRgb(h) { 
-                var r = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(h); 
-                return r ? {r:parseInt(r[1],16), g:parseInt(r[2],16), b:parseInt(r[3],16)} : {r:168,g:85,b:247}; 
-            }
-
-            function shadeColor(c,p) {
-                var r = hexToRgb(c);
-                var rr = Math.max(0, Math.min(255, r.r+p));
-                var gg = Math.max(0, Math.min(255, r.g+p));
-                var bb = Math.max(0, Math.min(255, r.b+p));
-                return '#' + ((1<<24) + (rr<<16) + (gg<<8) + bb).toString(16).slice(1);
-            }
+            function hexToRgb(h) { var r = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(h); return r ? { r:parseInt(r[1],16), g:parseInt(r[2],16), b:parseInt(r[3],16) } : { r:168,g:85,b:247 }; }
+            function shadeColor(c,p){var r=hexToRgb(c);var rr=Math.max(0,Math.min(255,r.r+p));var gg=Math.max(0,Math.min(255,r.g+p));var bb=Math.max(0,Math.min(255,r.b+p));return '#'+((1<<24)+(rr<<16)+(gg<<8)+bb).toString(16).slice(1);}
 
             function updateHeaderTitle(lang) {
                 var titleEl = document.getElementById('headerTitle');
@@ -658,44 +646,35 @@
                 var p = s.primaryColor || '#a855f7';
                 document.documentElement.setAttribute('data-theme', t);
                 if (t === 'dark') {
-                    document.documentElement.style.setProperty('--primary', shadeColor(p, 40));
+                    var lightP = shadeColor(p, 40);
+                    document.documentElement.style.setProperty('--primary', lightP);
+                    document.documentElement.style.setProperty('--primary-dark', p);
+                    document.documentElement.style.setProperty('--primary-light', shadeColor(p, 80));
+                    document.documentElement.style.setProperty('--primary-rgb', hexToRgb(lightP).r + ',' + hexToRgb(lightP).g + ',' + hexToRgb(lightP).b);
                 } else {
                     document.documentElement.style.setProperty('--primary', p);
+                    document.documentElement.style.setProperty('--primary-dark', shadeColor(p, -30));
+                    document.documentElement.style.setProperty('--primary-light', shadeColor(p, 50));
+                    document.documentElement.style.setProperty('--primary-rgb', hexToRgb(p).r + ',' + hexToRgb(p).g + ',' + hexToRgb(p).b);
                 }
-                if (s.animation === false) {
-                    document.documentElement.setAttribute('data-animation', 'off');
-                } else {
-                    document.documentElement.removeAttribute('data-animation');
-                }
-                if (currentLang === 'en') {
-                    document.documentElement.setAttribute('dir', 'ltr');
-                    document.body.style.fontFamily = 'Arial, sans-serif';
-                } else if (currentLang === 'ar') {
-                    document.documentElement.setAttribute('dir', 'rtl');
-                    document.body.style.fontFamily = 'Tahoma, sans-serif';
-                } else {
-                    document.documentElement.setAttribute('dir', 'rtl');
-                    document.body.style.fontFamily = "'Digi Kian Grunge', 'IRANSans', Tahoma, sans-serif";
-                }
+                if (s.animation === false) { document.documentElement.setAttribute('data-animation', 'off'); }
+                else { document.documentElement.removeAttribute('data-animation'); }
+                if (currentLang === 'en') { document.documentElement.setAttribute('dir','ltr'); document.body.style.fontFamily='Arial, sans-serif'; }
+                else if (currentLang === 'ar') { document.documentElement.setAttribute('dir','rtl'); document.body.style.fontFamily="'Digi Kian Grunge', Tahoma, sans-serif"; }
+                else { document.documentElement.setAttribute('dir','rtl'); document.body.style.fontFamily="'Digi Kian Grunge', 'IRANSans', Tahoma, sans-serif"; }
                 updateHeaderTitle(currentLang);
-                document.querySelectorAll('[data-i18n]').forEach(function(el) {
-                    var k = el.getAttribute('data-i18n');
-                    var t2 = translations[currentLang] || translations.fa;
-                    if (t2[k]) el.textContent = t2[k];
-                });
+                document.querySelectorAll('[data-i18n]').forEach(function(el){ var k=el.getAttribute('data-i18n'); var t2=translations[currentLang]||translations.fa; if(t2[k]) el.textContent=t2[k]; });
             }
 
-            function getEitaaUser() { return webApp && webApp.initDataUnsafe && webApp.initDataUnsafe.user ? webApp.initDataUnsafe.user : null; }
-            function getUserId() { var u = getEitaaUser(); return u ? (typeof u.id === 'number' ? u.id.toString() : String(u.id || '')) : ''; }
-
-            function fetchData(action, params) {
-                var payload = {action: action, username: getUserId()};
-                if (params) { for (var k in params) { if (params.hasOwnProperty(k)) payload[k] = params[k]; } }
-                return fetch(API_URL, {
-                    method: 'POST',
-                    headers: {'Content-Type': 'text/plain;charset=utf-8'},
-                    body: JSON.stringify(payload)
-                }).then(function(r) { return r.json(); }).catch(function() { return {ok: false}; });
+            function getEitaaUser(){return webApp&&webApp.initDataUnsafe&&webApp.initDataUnsafe.user?webApp.initDataUnsafe.user:null;}
+            function getUserId(){var u=getEitaaUser();return u?(typeof u.id==='number'?u.id.toString():String(u.id||'')):'';}
+            function fetchData(action,params){
+                var payload={action:action,username:getUserId()};
+                if(params){for(var k in params){if(params.hasOwnProperty(k))payload[k]=params[k];}}
+                return Promise.race([
+                    fetch(API_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(payload)}).then(function(r){return r.json();}),
+                    new Promise(function(_,reject){setTimeout(function(){reject(new Error('timeout'));},10000);})
+                ]).catch(function(){return{ok:false};});
             }
 
             function animateCount(el, target, dur) {
@@ -870,10 +849,8 @@
                             list.innerHTML = gamesData.data.slice(0, 10).map(function(g) {
                                 var isP1 = String(g.player1) === String(username);
                                 var cls = 'draw', txt = getTranslation('draw');
-                                if (g.status === 'finished') {
-                                    if (isP1) { cls = 'win'; txt = getTranslation('win'); totalWins++; }
-                                    else { cls = 'loss'; txt = getTranslation('lose'); }
-                                }
+                                if (g.result === 'win') { cls = 'win'; txt = getTranslation('win'); totalWins++; }
+                                else if (g.result === 'lose') { cls = 'loss'; txt = getTranslation('lose'); }
                                 return '<div class="game-item"><span class="game-players" id="opp-' + g.id + '"><span class="game-avatar"><i class="fa-solid fa-user"></i></span> ...</span><span class="game-score ' + cls + '">' + txt + '</span></div>';
                             }).join('');
                             for (var i = 0; i < gamesData.data.slice(0, 10).length; i++) {
