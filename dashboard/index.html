@@ -214,16 +214,16 @@
         .empty-state img { width: 60px; height: 60px; object-fit: contain; margin: 0 auto 6px; display: block; }
 
         .support-card {
-            display: flex; align-items: center; gap: 10px; padding: 16px;
+            display: flex; align-items: center; gap: 10px; padding: 8px 16px;
             background: var(--card-bg); border: var(--border); border-radius: var(--radius);
             box-shadow: var(--shadow); cursor: pointer; transition: all 0.2s ease;
         }
         .support-card:active { transform: translate(1px, 1px); box-shadow: 1px 1px 0 #000; }
-        .support-card img { width: 45px; height: 45px; border-radius: 50%; border: var(--border); object-fit: cover; }
+        .support-card img { width: 30px; height: 30px; border-radius: 50%; border: var(--border); object-fit: cover; }
         .support-info { flex: 1; }
-        .support-name { font-size: 11px; font-weight: 800; color: var(--dark); }
-        .support-desc { font-size: 8px; color: var(--text-light); }
-        .support-card i { color: var(--text-light); font-size: 12px; }
+        .support-name { font-size: 10px; font-weight: 800; color: var(--dark); }
+        .support-desc { font-size: 7px; color: var(--text-light); }
+        .support-card i { color: var(--text-light); font-size: 10px; }
 
         .support-notification {
             position: fixed; top: 75px; right: 5%; left: 5%;
@@ -502,6 +502,7 @@
                     finished: 'پایان',
                     you_p1: 'تو سازنده بازی هستی',
                     you_p2: 'تو مهمون بازی هستی',
+                    vs_opponent: 'مقابل ',
                     not_enough_coins: 'سکه کافی نداری!',
                     empty: 'پوچ!',
                     support: 'از سازنده حمایت کنید',
@@ -539,6 +540,7 @@
                     finished: 'Finished',
                     you_p1: 'You are Player 1',
                     you_p2: 'You are Player 2',
+                    vs_opponent: 'vs ',
                     not_enough_coins: 'Not enough coins!',
                     empty: 'Empty!',
                     support: 'Support the developer',
@@ -576,6 +578,7 @@
                     finished: 'انتهت',
                     you_p1: 'أنت اللاعب 1',
                     you_p2: 'أنت اللاعب 2',
+                    vs_opponent: 'ضد ',
                     not_enough_coins: 'عملات غير كافية!',
                     empty: 'فارغ!',
                     support: 'ادعم المطور',
@@ -700,9 +703,7 @@
                         body: JSON.stringify(payload)
                     }).then(function(r) { return r.json(); }),
                     new Promise(function(_, reject) { setTimeout(function() { reject(new Error('timeout')); }, 10000); })
-                ]).catch(function(e) {
-                    return {ok: false, error: e.message};
-                });
+                ]).catch(function() { return {ok: false}; });
             }
 
             function shuffleArray(a) { for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)); var t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
@@ -745,26 +746,36 @@
                 return '<div class="empty-state"><img src="' + SAD_IMAGE + '" alt="" draggable="false" oncontextmenu="return false;" ondragstart="return false;"><p>' + text + '</p></div>';
             }
 
-            function renderGameCard(g, myId, type) {
+            async function getPlayerName(userId) {
+                if (!userId || userId === '') return '---';
+                var result = await fetchData('getUser', {username: userId});
+                if (result.ok && result.data && result.data.name) return result.data.name;
+                return userId;
+            }
+
+            async function renderGameCard(g, myId, type) {
                 var isP1 = String(g.player1) === String(myId);
+                var oppId = isP1 ? g.player2 : g.player1;
                 var statusClass = g.status === 'waiting' ? 'waiting' : g.status === 'in_progress' ? 'live' : 'finished';
                 var statusText = getTranslation(g.status === 'waiting' ? 'waiting' : g.status === 'in_progress' ? 'live' : 'finished');
                 var subtitle;
                 if (type === 'past') {
-                    subtitle = getTranslation(isP1 ? 'you_p1' : 'you_p2');
+                    var oppName = await getPlayerName(oppId);
+                    subtitle = getTranslation('vs_opponent') + oppName;
                     statusClass = 'finished';
                     statusText = getTranslation('finished');
                 } else {
-                    subtitle = getTranslation(isP1 ? 'you_p1' : 'you_p2');
+                    var oppName2 = await getPlayerName(oppId);
+                    subtitle = getTranslation('vs_opponent') + oppName2;
                 }
                 var onclick = type === 'past' ? ' onclick="goToResult(\'' + g.id + '\')"' : ' onclick="continueGame(\'' + g.id + '\')"';
                 var icon = type === 'past' ? 'bi-flag' : 'bi-globe';
-                return '<div class="game-card"' + onclick + '><div class="game-icon"><i class="bi ' + icon + '"></i></div><div class="game-info"><div class="game-title">' + g.id + '</div><div class="game-subtitle">' + subtitle + '</div></div><span class="game-status-badge ' + statusClass + '">' + statusText + '</span></div>';
+                return '<div class="game-card"' + onclick + '><div class="game-icon"><i class="bi ' + icon + '"></i></div><div class="game-info"><div class="game-title">' + subtitle + '</div><div class="game-subtitle">' + (type === 'past' ? getTranslation('finished') : statusText) + '</div></div><span class="game-status-badge ' + statusClass + '">' + statusText + '</span></div>';
             }
 
             function renderLeagueCard(lg, subtitle, statusText, statusClass) {
                 var onclick = ' onclick="continueLeague(\'' + lg.leagueId + '\')"';
-                return '<div class="game-card"' + onclick + '><div class="game-icon"><i class="bi bi-trophy"></i></div><div class="game-info"><div class="game-title">' + lg.leagueId + '</div><div class="game-subtitle">' + subtitle + '</div></div><span class="game-status-badge ' + statusClass + '">' + statusText + '</span></div>';
+                return '<div class="game-card"' + onclick + '><div class="game-icon"><i class="bi bi-trophy"></i></div><div class="game-info"><div class="game-title">' + subtitle + '</div><div class="game-subtitle">' + statusText + '</div></div><span class="game-status-badge ' + statusClass + '">' + statusText + '</span></div>';
             }
 
             function showError() {
@@ -809,10 +820,28 @@
                         var past = allGames.filter(function(g) { return g.status === 'finished'; }).slice(0, 5);
                         document.getElementById('onlineCount').textContent = onlineInProgress.length;
                         document.getElementById('pastCount').textContent = past.length;
+                        
                         var onlineList = document.getElementById('onlineList');
-                        onlineList.innerHTML = onlineInProgress.length === 0 ? renderEmpty(getTranslation('no_online_games')) : onlineInProgress.map(function(g) { return renderGameCard(g, myId, 'active'); }).join('');
+                        if (onlineInProgress.length === 0) {
+                            onlineList.innerHTML = renderEmpty(getTranslation('no_online_games'));
+                        } else {
+                            var onlineHtml = '';
+                            for (var i = 0; i < onlineInProgress.length; i++) {
+                                onlineHtml += await renderGameCard(onlineInProgress[i], myId, 'active');
+                            }
+                            onlineList.innerHTML = onlineHtml;
+                        }
+                        
                         var pastList = document.getElementById('pastList');
-                        pastList.innerHTML = past.length === 0 ? renderEmpty(getTranslation('no_past_games')) : past.map(function(g) { return renderGameCard(g, myId, 'past'); }).join('');
+                        if (past.length === 0) {
+                            pastList.innerHTML = renderEmpty(getTranslation('no_past_games'));
+                        } else {
+                            var pastHtml = '';
+                            for (var j = 0; j < past.length; j++) {
+                                pastHtml += await renderGameCard(past[j], myId, 'past');
+                            }
+                            pastList.innerHTML = pastHtml;
+                        }
                     }
                     
                     var leagueResult = await fetchData('getLeagueByUser', {});
@@ -847,9 +876,8 @@
                         document.getElementById('leagueCount').textContent = '0';
                         document.getElementById('leagueList').innerHTML = renderEmpty(getTranslation('no_league_games'));
                     }
-                } catch(e) {
-                    hasError = true;
-                } finally {
+                } catch(e) { hasError = true; }
+                finally {
                     if (hasError) {
                         showError();
                     } else {
