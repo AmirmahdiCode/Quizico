@@ -3,502 +3,77 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>مسابقه روزانه | Quizico</title>
-    <script src="https://developer.eitaa.com/eitaa-web-app.js"></script>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/gh/rastikerdar/iran-sans-font@v1.0.0/dist/font-face.css" rel="stylesheet">
+    <title>تست AI Apps Script</title>
     <style>
-        :root {
-            --bg: #faf5ff;
-            --bg2: #f3e8ff;
-            --bg3: #e9d5ff;
-            --primary: #a855f7;
-            --primary-dark: #9333ea;
-            --primary-light: #c084fc;
-            --primary-rgb: 168, 85, 247;
-            --dark: #1e1b2e;
-            --text: #4a4458;
-            --text-light: #6b7280;
-            --white: #ffffff;
-            --card-bg: #ffffff;
-            --shadow: 3px 3px 0 #000000;
-            --radius: 12px;
-            --border: 1px solid #000000;
-            --gold: #f59e0b;
-        }
-
-        [data-theme="dark"] {
-            --bg: #1e1b2e;
-            --bg2: #2d2a3e;
-            --bg3: #3d3a4e;
-            --primary: #c084fc;
-            --primary-dark: #a855f7;
-            --primary-light: #d8b4fe;
-            --primary-rgb: 192, 132, 252;
-            --dark: #f1f5f9;
-            --text: #e2e8f0;
-            --text-light: #94a3b8;
-            --white: #2d2a3e;
-            --card-bg: #2d2a3e;
-            --shadow: 3px 3px 0 #000000;
-            --border: 1px solid #475569;
-        }
-
-        [data-animation="off"] * { animation: none !important; transition: none !important; }
-
-        * { 
-            margin: 0; padding: 0; box-sizing: border-box;
-            -webkit-touch-callout: none; -webkit-user-select: none; user-select: none;
-            -webkit-user-drag: none; user-drag: none;
-        }
-        img { pointer-events: none; -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; -webkit-user-drag: none; user-drag: none; }
-
-        body {
-            font-family: 'Digi Kian Grunge', 'IRANSans', Tahoma, sans-serif;
-            background: var(--bg);
-            color: var(--text);
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            transition: font-family 0.3s ease;
-        }
-
-        .bg-animation { position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 0; background: linear-gradient(135deg, var(--bg) 0%, var(--bg2) 40%, var(--bg3) 80%); }
-
-        .header {
-            position: relative;
-            z-index: 10;
-            background: rgba(255, 255, 255, 0.5);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border-bottom: 1px solid var(--primary);
-            padding: 10px 20px;
-            position: sticky;
-            top: 0;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
-        }
-
-        [data-theme="dark"] .header {
-            background: rgba(45, 42, 62, 0.5);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border-bottom: 1px solid var(--primary);
-        }
-
-        .header-inner { display: flex; align-items: center; justify-content: space-between; max-width: 600px; margin: 0 auto; }
-        .header-right { display: flex; align-items: center; gap: 10px; }
-
-        .header-logo {
-            width: 44px; height: 44px;
-            border-radius: 50%;
-            background: var(--primary);
-            display: flex; align-items: center; justify-content: center;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            overflow: hidden; padding: 2px;
-            border: 1px solid var(--primary);
-        }
-        .header-logo img { width: 100%; height: 100%; object-fit: contain; }
-        .header-title { font-size: 18px; font-weight: 800; color: var(--dark); }
-        .header-title .t-accent { color: var(--primary); }
-
-        .main-container {
-            position: relative; z-index: 5;
-            max-width: 600px; width: 100%;
-            margin: 16px auto; padding: 0 12px 90px;
-            display: flex; flex-direction: column; gap: 12px;
-        }
-
-        .loader-wrapper { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 60vh; gap: 12px; }
-        .loader { width: 50px; height: 50px; border: 5px solid var(--bg3); border-top-color: var(--primary); border-radius: 50%; animation: spin .8s linear infinite; }
-        .loader-text { font-size: 12px; font-weight: 700; color: var(--text); }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Tahoma, sans-serif; background: #f5f5f5; padding: 20px; }
+        .container { max-width: 600px; margin: 0 auto; display: flex; flex-direction: column; gap: 12px; }
+        .card { background: #fff; border: 1px solid #ddd; border-radius: 12px; padding: 16px; }
+        .title { font-size: 14px; font-weight: 700; margin-bottom: 10px; color: #333; }
+        .output { font-size: 12px; line-height: 1.8; white-space: pre-wrap; word-break: break-word; background: #f9f9f9; border: 1px solid #ddd; border-radius: 8px; padding: 12px; min-height: 80px; }
+        .btn { padding: 10px 20px; background: #6366f1; color: #fff; border: 1px solid #4f46e5; border-radius: 8px; cursor: pointer; font-family: inherit; font-size: 12px; margin: 4px; }
+        .loader { width: 30px; height: 30px; border: 4px solid #e2e8f0; border-top-color: #6366f1; border-radius: 50%; animation: spin .8s linear infinite; margin: 0 auto; }
         @keyframes spin { to { transform: rotate(360deg); } }
-
-        .content { display: none; }
-        .content.show { display: flex; flex-direction: column; gap: 12px; }
-
-        .question-card { background: var(--card-bg); border: var(--border); border-radius: var(--radius); padding: 16px; box-shadow: var(--shadow); }
-        .question-title {
-            font-size: 13px; font-weight: 800; color: var(--dark); margin-bottom: 12px;
-            display: flex; align-items: center; gap: 8px;
-            border-bottom: 1px dashed var(--text-light); padding-bottom: 8px;
-        }
-        .question-title i { color: var(--gold); }
-        .question-text { font-size: 12px; font-weight: 700; color: var(--dark); line-height: 1.8; text-align: center; margin-bottom: 12px; }
-        .options-grid { display: flex; flex-direction: column; gap: 8px; }
-        .option-btn {
-            display: flex; align-items: center; gap: 8px; padding: 12px 14px;
-            border: var(--border); border-radius: 8px; background: var(--bg2);
-            cursor: pointer; transition: all .2s ease; box-shadow: 2px 2px 0 #000;
-            font-family: 'Digi Kian Grunge', 'IRANSans', Tahoma, sans-serif;
-            font-size: 11px; font-weight: 600; color: var(--dark); text-align: right;
-        }
-        .option-btn:active { transform: translate(1px, 1px); box-shadow: 1px 1px 0 #000; }
-        .option-btn.correct { background: #10b981; color: #fff; }
-        .option-btn.wrong { background: #ef4444; color: #fff; }
-        .option-btn.disabled { pointer-events: none; opacity: .7; }
-        .option-letter {
-            width: 24px; height: 24px; border-radius: 50%;
-            background: var(--primary); color: #fff;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 10px; font-weight: 800; flex-shrink: 0; border: var(--border);
-        }
-
-        .result-banner {
-            text-align: center; padding: 30px 20px;
-            background: var(--card-bg); border: var(--border); border-radius: var(--radius); box-shadow: var(--shadow);
-        }
-        .result-image { width: 100px; height: 100px; object-fit: contain; margin: 0 auto 12px; display: block; }
-        .result-text { font-size: 16px; font-weight: 800; color: var(--dark); margin-bottom: 6px; }
-        .result-score { font-size: 10px; color: var(--text-light); margin-bottom: 10px; }
-        .result-btn {
-            display: inline-block; padding: 10px 24px;
-            background: var(--primary); color: #fff; border: var(--border); border-radius: 8px;
-            font-family: 'Digi Kian Grunge', 'IRANSans', Tahoma, sans-serif;
-            font-size: 11px; font-weight: 700; cursor: pointer; box-shadow: 2px 2px 0 #000; margin: 4px;
-        }
-
-        .error-banner {
-            text-align: center; padding: 20px;
-            background: var(--card-bg); border: var(--border); border-radius: var(--radius); box-shadow: var(--shadow);
-        }
-        .error-banner i { font-size: 40px; color: #ef4444; margin-bottom: 10px; display: block; }
-        .error-text { font-size: 12px; font-weight: 700; color: var(--dark); margin-bottom: 10px; }
-        .retry-btn {
-            display: inline-block; padding: 10px 24px;
-            background: var(--gold); color: #fff; border: var(--border); border-radius: 8px;
-            font-family: 'Digi Kian Grunge', 'IRANSans', Tahoma, sans-serif;
-            font-size: 11px; font-weight: 700; cursor: pointer; box-shadow: 2px 2px 0 #000;
-        }
     </style>
 </head>
 <body>
-
-    <div class="bg-animation"></div>
-
-    <header class="header">
-        <div class="header-inner">
-            <div class="header-right">
-                <div class="header-logo"><img src="https://cdn.imgurl.ir/uploads/f30974_InShot_20260821_174101103.png" alt="Quizico" draggable="false" oncontextmenu="return false;" ondragstart="return false;"></div>
-                <div>
-                    <div class="header-title" id="headerTitle">کوییز<span class="t-accent">یکو</span></div>
-                </div>
-            </div>
+    <div class="container">
+        <div class="card">
+            <div class="title">تست Apps Script AI</div>
+            <button class="btn" onclick="testAI()">تست getQuestion</button>
+            <button class="btn" onclick="testAIPrompt()">تست getQuestionWithPrompt</button>
         </div>
-    </header>
-
-    <main class="main-container">
-        <div class="loader-wrapper" id="loaderWrapper">
-            <div class="loader"></div>
-            <div class="loader-text" id="loaderText">در حال دریافت سوال...</div>
+        <div class="card">
+            <div class="title">پاسخ:</div>
+            <div id="loaderBox" style="display:none; text-align:center; padding:20px;"><div class="loader"></div></div>
+            <div class="output" id="output">-</div>
         </div>
-        <div class="content" id="content"></div>
-    </main>
+    </div>
 
     <script>
-        (function() {
-            var webApp = window.Eitaa?.WebApp;
-            var API_URL = 'https://script.google.com/macros/s/AKfycbyqpFnvScFxtKNZ3Ig9bABK-EH2bkccFtIIOBIXpbh8c1UlQUdpmTK3Lv0h8HFoEpKNXg/exec';
-            var AI_URL = 'https://script.google.com/macros/s/AKfycbywIUnOHC6RnEMlyZXxt3yI_i1oKJEl45Af3lmOvghYxKiUq8pbMSHQEbUF4pJooBmfi-A/exec';
-            var IMG_WIN = 'https://cdn.imgurl.ir/uploads/d7569_SdlnXbvBsDzeGpo9E0ppeiGOtsY-sZLBOMrqTzS-F7ZsAm2fTQ.png';
-            var IMG_LOSE = 'https://cdn.imgurl.ir/uploads/h063599_nwNHMksFNfYhy_4KjF92buiid4I-7_5NRme2TZyRlB9Ek8YBxQ.png';
-            var IMG_WAIT = 'https://cdn.imgurl.ir/uploads/f070529_ZiVVzyG6H6JBTVARK1c2iXoOCoQ-BXQCnElKRyuk09mmEqyQcA.png';
-            var currentLang = 'fa';
-            var questionData = null;
-            var isAnswered = false;
-            var userCoins = 0, userTotalScore = 0;
+        var AI_URL = 'https://script.google.com/macros/s/AKfycbywIUnOHC6RnEMlyZXxt3yI_i1oKJEl45Af3lmOvghYxKiUq8pbMSHQEbUF4pJooBmfi-A/exec';
 
-            document.addEventListener('contextmenu', function(e) { e.preventDefault(); });
-            document.addEventListener('dragstart', function(e) { e.preventDefault(); });
-
-            var translations = {
-                fa: {
-                    loading: 'در حال دریافت سوال...',
-                    already_played: 'امروز شرکت کردی!',
-                    come_back: 'فردا دوباره بیا 🎯',
-                    daily_challenge: 'مسابقه روزانه',
-                    correct: 'آفرین! جواب درست بود! 🎉',
-                    reward: '+۵۰۰ امتیاز و +۵۰۰ سکه',
-                    wrong: 'اشتباه شد!',
-                    try_again: 'فردا شانست رو امتحان کن 💪',
-                    back: 'بازگشت',
-                    error: 'مشکلی پیش اومد! دوباره تلاش کن',
-                    retry: 'تلاش مجدد'
-                },
-                en: {
-                    loading: 'Getting question...',
-                    already_played: 'You already played today!',
-                    come_back: 'Come back tomorrow 🎯',
-                    daily_challenge: 'Daily Challenge',
-                    correct: 'Correct! 🎉',
-                    reward: '+500 points and +500 coins',
-                    wrong: 'Wrong answer!',
-                    try_again: 'Try again tomorrow 💪',
-                    back: 'Back',
-                    error: 'Something went wrong! Try again',
-                    retry: 'Retry'
-                },
-                ar: {
-                    loading: 'جار تحميل السؤال...',
-                    already_played: 'لقد شاركت اليوم!',
-                    come_back: 'عد غدًا 🎯',
-                    daily_challenge: 'التحدي اليومي',
-                    correct: 'أحسنت! إجابة صحيحة! 🎉',
-                    reward: '+500 نقطة و +500 عملة',
-                    wrong: 'إجابة خاطئة!',
-                    try_again: 'حاول مرة أخرى غدًا 💪',
-                    back: 'رجوع',
-                    error: 'حدث خطأ! حاول مرة أخرى',
-                    retry: 'إعادة المحاولة'
-                }
-            };
-
-            function getTranslation(k) {
-                var t = translations[currentLang] || translations.fa;
-                return t[k] || translations.fa[k] || k;
+        async function testAI() {
+            document.getElementById('loaderBox').style.display = 'block';
+            document.getElementById('output').textContent = 'در حال دریافت...';
+            
+            try {
+                var payload = { action: 'getQuestion', lang: 'fa' };
+                var res = await fetch(AI_URL, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'text/plain;charset=utf-8'},
+                    body: JSON.stringify(payload)
+                });
+                var data = await res.json();
+                document.getElementById('output').textContent = JSON.stringify(data, null, 2);
+            } catch(e) {
+                document.getElementById('output').textContent = 'Error: ' + e.message;
             }
+            
+            document.getElementById('loaderBox').style.display = 'none';
+        }
 
-            function getSettings() {
-                try {
-                    var raw = localStorage.getItem('quizicoSettings');
-                    if (!raw) return { theme:'light', primaryColor:'#a855f7', animation:true, haptic:true, language:'fa' };
-                    var p = JSON.parse(raw);
-                    if (!p.theme) p.theme = 'light';
-                    if (!p.primaryColor) p.primaryColor = '#a855f7';
-                    if (p.animation === undefined) p.animation = true;
-                    if (p.haptic === undefined) p.haptic = true;
-                    if (!p.language) p.language = 'fa';
-                    return p;
-                } catch(e) { return { theme:'light', primaryColor:'#a855f7', animation:true, haptic:true, language:'fa' }; }
+        async function testAIPrompt() {
+            document.getElementById('loaderBox').style.display = 'block';
+            document.getElementById('output').textContent = 'در حال دریافت...';
+            
+            var prompt = 'Say hello in Persian only, one word';
+            
+            try {
+                var payload = { action: 'getQuestionWithPrompt', prompt: prompt };
+                var res = await fetch(AI_URL, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'text/plain;charset=utf-8'},
+                    body: JSON.stringify(payload)
+                });
+                var data = await res.json();
+                document.getElementById('output').textContent = JSON.stringify(data, null, 2);
+            } catch(e) {
+                document.getElementById('output').textContent = 'Error: ' + e.message;
             }
-
-            function hexToRgb(h) { var r = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(h); return r ? { r:parseInt(r[1],16), g:parseInt(r[2],16), b:parseInt(r[3],16) } : { r:168,g:85,b:247 }; }
-            function shadeColor(c,p){var r=hexToRgb(c);var rr=Math.max(0,Math.min(255,r.r+p));var gg=Math.max(0,Math.min(255,r.g+p));var bb=Math.max(0,Math.min(255,r.b+p));return '#'+((1<<24)+(rr<<16)+(gg<<8)+bb).toString(16).slice(1);}
-
-            function updateHeaderTitle(lang) {
-                var titleEl = document.getElementById('headerTitle');
-                if (lang === 'en') {
-                    titleEl.innerHTML = 'Quiz<span class="t-accent">ico</span>';
-                } else {
-                    titleEl.innerHTML = 'کوییز<span class="t-accent">یکو</span>';
-                }
-            }
-
-            function applyTheme() {
-                var s = getSettings();
-                currentLang = s.language || 'fa';
-                var t = s.theme || 'light';
-                var p = s.primaryColor || '#a855f7';
-                document.documentElement.setAttribute('data-theme', t);
-                if (t === 'dark') {
-                    var lightP = shadeColor(p, 40);
-                    document.documentElement.style.setProperty('--primary', lightP);
-                    document.documentElement.style.setProperty('--primary-dark', p);
-                    document.documentElement.style.setProperty('--primary-light', shadeColor(p, 80));
-                    document.documentElement.style.setProperty('--primary-rgb', hexToRgb(lightP).r + ',' + hexToRgb(lightP).g + ',' + hexToRgb(lightP).b);
-                } else {
-                    document.documentElement.style.setProperty('--primary', p);
-                    document.documentElement.style.setProperty('--primary-dark', shadeColor(p, -30));
-                    document.documentElement.style.setProperty('--primary-light', shadeColor(p, 50));
-                    document.documentElement.style.setProperty('--primary-rgb', hexToRgb(p).r + ',' + hexToRgb(p).g + ',' + hexToRgb(p).b);
-                }
-                if (s.animation === false) { document.documentElement.setAttribute('data-animation', 'off'); }
-                else { document.documentElement.removeAttribute('data-animation'); }
-                if (currentLang === 'en') { document.documentElement.setAttribute('dir','ltr'); document.body.style.fontFamily='Arial, sans-serif'; }
-                else if (currentLang === 'ar') { document.documentElement.setAttribute('dir','rtl'); document.body.style.fontFamily="'Digi Kian Grunge', Tahoma, sans-serif"; }
-                else { document.documentElement.setAttribute('dir','rtl'); document.body.style.fontFamily="'Digi Kian Grunge', 'IRANSans', Tahoma, sans-serif"; }
-                updateHeaderTitle(currentLang);
-                document.getElementById('loaderText').textContent = getTranslation('loading');
-            }
-
-            function getEitaaUser(){return webApp&&webApp.initDataUnsafe&&webApp.initDataUnsafe.user?webApp.initDataUnsafe.user:null;}
-            function getUserId(){var u=getEitaaUser();return u?(typeof u.id==='number'?u.id.toString():String(u.id||'')):'';}
-            function fetchData(action,params){
-                var payload={action:action,username:getUserId()};
-                if(params){for(var k in params){if(params.hasOwnProperty(k))payload[k]=params[k];}}
-                return Promise.race([
-                    fetch(API_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(payload)}).then(function(r){return r.json();}),
-                    new Promise(function(_,reject){setTimeout(function(){reject(new Error('timeout'));},10000);})
-                ]).catch(function(){return{ok:false};});
-            }
-
-            function fetchAI(action, params) {
-                var payload = {action: action};
-                if (params) { for (var k in params) { if (params.hasOwnProperty(k)) payload[k] = params[k]; } }
-                return Promise.race([
-                    fetch(AI_URL, {method:'POST', headers:{'Content-Type':'text/plain;charset=utf-8'}, body:JSON.stringify(payload)}).then(function(r){return r.json();}),
-                    new Promise(function(_,reject){setTimeout(function(){reject(new Error('timeout'));},60000);})
-                ]).catch(function(){return{ok:false};});
-            }
-
-            function getTodayKey() {
-                var d = new Date();
-                return d.getFullYear() + '-' + (d.getMonth()+1) + '-' + d.getDate();
-            }
-
-            function hasPlayedToday() {
-                var key = 'dailyChallenge_' + getUserId() + '_' + getTodayKey();
-                return localStorage.getItem(key) === 'played';
-            }
-
-            function markPlayed() {
-                var key = 'dailyChallenge_' + getUserId() + '_' + getTodayKey();
-                localStorage.setItem(key, 'played');
-            }
-
-            async function getAIQuestion() {
-                var result = await fetchAI('getQuestion', { lang: currentLang });
-                if (result.ok && result.data && result.data.text) {
-                    return parseQuestion(result.data.text);
-                }
-                return null;
-            }
-
-            function parseQuestion(text) {
-                var lines = text.trim().split('\n');
-                var question = '', options = [], correct = 0;
-                for (var i = 0; i < lines.length; i++) {
-                    var line = lines[i].trim();
-                    if (line.startsWith('Q:')) {
-                        question = line.replace('Q:', '').trim();
-                    } else if (line.startsWith('A1:')) {
-                        options[0] = line.replace('A1:', '').trim();
-                    } else if (line.startsWith('A2:')) {
-                        options[1] = line.replace('A2:', '').trim();
-                    } else if (line.startsWith('A3:')) {
-                        options[2] = line.replace('A3:', '').trim();
-                    } else if (line.startsWith('A4:')) {
-                        options[3] = line.replace('A4:', '').trim();
-                    } else if (line.startsWith('CA:')) {
-                        correct = parseInt(line.replace('CA:', '').trim()) || 1;
-                    }
-                }
-                if (question && options.length === 4 && correct >= 1 && correct <= 4) {
-                    return { question: question, options: options, correctOption: correct };
-                }
-                return null;
-            }
-
-            function showAlreadyPlayed() {
-                var html = '<div class="result-banner">';
-                html += '<img class="result-image" src="' + IMG_WAIT + '" alt="" draggable="false" oncontextmenu="return false;" ondragstart="return false;">';
-                html += '<div class="result-text">' + getTranslation('already_played') + '</div>';
-                html += '<div class="result-score">' + getTranslation('come_back') + '</div>';
-                html += '<button class="result-btn" onclick="backToDashboard()">' + getTranslation('back') + '</button></div>';
-                document.getElementById('content').innerHTML = html;
-                document.getElementById('loaderWrapper').style.display = 'none';
-                document.getElementById('content').classList.add('show');
-            }
-
-            function showQuestion() {
-                var html = '<div class="question-card">';
-                html += '<div class="question-title"><i class="bi bi-trophy"></i> ' + getTranslation('daily_challenge') + '</div>';
-                html += '<div class="question-text">' + questionData.question + '</div>';
-                html += '<div class="options-grid">';
-                var letters = ['۱', '۲', '۳', '۴'];
-                if (currentLang === 'en') letters = ['1', '2', '3', '4'];
-                for (var i = 0; i < questionData.options.length; i++) {
-                    html += '<button class="option-btn" onclick="selectOption(' + (i+1) + ', this)"><span class="option-letter">' + letters[i] + '</span><span>' + questionData.options[i] + '</span></button>';
-                }
-                html += '</div></div>';
-                document.getElementById('content').innerHTML = html;
-                document.getElementById('loaderWrapper').style.display = 'none';
-                document.getElementById('content').classList.add('show');
-            }
-
-            function showError() {
-                var html = '<div class="error-banner">';
-                html += '<i class="bi bi-exclamation-triangle"></i>';
-                html += '<div class="error-text">' + getTranslation('error') + '</div>';
-                html += '<button class="retry-btn" onclick="retry()">' + getTranslation('retry') + '</button></div>';
-                document.getElementById('content').innerHTML = html;
-                document.getElementById('loaderWrapper').style.display = 'none';
-                document.getElementById('content').classList.add('show');
-            }
-
-            window.retry = function() {
-                document.getElementById('loaderWrapper').style.display = 'flex';
-                document.getElementById('content').classList.remove('show');
-                init();
-            };
-
-            window.selectOption = function(sel, btn) {
-                if (isAnswered) return;
-                isAnswered = true;
-                var btns = document.querySelectorAll('.option-btn');
-                btns.forEach(function(b){b.classList.add('disabled');});
-                
-                if (sel === questionData.correctOption) {
-                    btn.classList.add('correct');
-                    markPlayed();
-                    userTotalScore += 500;
-                    userCoins += 500;
-                    fetchData('updateUser', { score: userTotalScore, coins: userCoins });
-                    
-                    setTimeout(function() {
-                        var html = '<div class="result-banner">';
-                        html += '<img class="result-image" src="' + IMG_WIN + '" alt="" draggable="false" oncontextmenu="return false;" ondragstart="return false;">';
-                        html += '<div class="result-text">' + getTranslation('correct') + '</div>';
-                        html += '<div class="result-score">' + getTranslation('reward') + '</div>';
-                        html += '<button class="result-btn" onclick="backToDashboard()">' + getTranslation('back') + '</button></div>';
-                        document.getElementById('content').innerHTML = html;
-                    }, 600);
-                } else {
-                    btn.classList.add('wrong');
-                    btns.forEach(function(b, idx){
-                        if (idx === questionData.correctOption - 1) b.classList.add('correct');
-                    });
-                    markPlayed();
-                    
-                    setTimeout(function() {
-                        var html = '<div class="result-banner">';
-                        html += '<img class="result-image" src="' + IMG_LOSE + '" alt="" draggable="false" oncontextmenu="return false;" ondragstart="return false;">';
-                        html += '<div class="result-text">' + getTranslation('wrong') + '</div>';
-                        html += '<div class="result-score">' + getTranslation('try_again') + '</div>';
-                        html += '<button class="result-btn" onclick="backToDashboard()">' + getTranslation('back') + '</button></div>';
-                        document.getElementById('content').innerHTML = html;
-                    }, 600);
-                }
-            };
-
-            window.backToDashboard = function() { window.location.href = '../../dashboard/'; };
-
-            async function init() {
-                applyTheme();
-                if (webApp) {
-                    webApp.ready();
-                    webApp.expand();
-                    webApp.BackButton.show();
-                    webApp.BackButton.onClick(function(){ window.location.href = '../../dashboard/'; });
-                }
-                
-                var ud = await fetchData('getUser', {});
-                if (ud.ok && ud.data) {
-                    userCoins = ud.data.coins || 0;
-                    userTotalScore = ud.data.score || 0;
-                }
-                
-                if (hasPlayedToday()) {
-                    showAlreadyPlayed();
-                    return;
-                }
-                
-                var q = await getAIQuestion();
-                if (q) {
-                    questionData = q;
-                    showQuestion();
-                } else {
-                    q = await getAIQuestion();
-                    if (q) {
-                        questionData = q;
-                        showQuestion();
-                    } else {
-                        showError();
-                    }
-                }
-            }
-
-            init();
-        })();
+            
+            document.getElementById('loaderBox').style.display = 'none';
+        }
     </script>
 </body>
 </html>
