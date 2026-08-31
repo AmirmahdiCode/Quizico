@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>تست Hack Club AI</title>
+    <title>تست API های رایگان</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: Tahoma, sans-serif; background: #f5f5f5; padding: 20px; }
@@ -19,10 +19,11 @@
 <body>
     <div class="container">
         <div class="card">
-            <div class="title">تست Hack Club AI</div>
-            <button class="btn" onclick="testHackClub()">تست Hack Club</button>
-            <button class="btn" onclick="testPollinationsGET()">تست Pollinations GET</button>
-            <button class="btn" onclick="testPollinationsNew()">تست Pollinations enter</button>
+            <div class="title">تست API های رایگان</div>
+            <button class="btn" onclick="testOpenRouter()">تست OpenRouter Free</button>
+            <button class="btn" onclick="testGroq()">تست Groq</button>
+            <button class="btn" onclick="testHuggingFace()">تست HuggingFace</button>
+            <button class="btn" onclick="testGeminiFree()">تست Gemini Flash</button>
         </div>
         <div class="card">
             <div class="title">پاسخ:</div>
@@ -32,17 +33,26 @@
     </div>
 
     <script>
-        async function testHackClub() {
+        var API_KEYS = {
+            openrouter: 'sk-or-v1-', // باید کلید خودت رو بذاری
+            groq: '', // باید کلید خودت رو بذاری
+            gemini: '' // باید کلید خودت رو بذاری
+        };
+
+        async function testOpenRouter() {
             document.getElementById('loaderBox').style.display = 'block';
             document.getElementById('output').textContent = 'در حال دریافت...';
             
             try {
-                var res = await fetch('https://ai.hackclub.com/chat/completions', {
+                var res = await fetch('https://openrouter.ai/api/v1/chat/completions', {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + API_KEYS.openrouter
+                    },
                     body: JSON.stringify({
-                        model: 'gpt-4o-mini',
-                        messages: [{ role: 'user', content: 'Say hello in Persian only, just one word' }]
+                        model: 'meta-llama/llama-3.1-8b-instruct:free',
+                        messages: [{ role: 'user', content: 'Say hello in Persian, one word' }]
                     })
                 });
                 var data = await res.json();
@@ -54,15 +64,24 @@
             document.getElementById('loaderBox').style.display = 'none';
         }
 
-        async function testPollinationsGET() {
+        async function testGroq() {
             document.getElementById('loaderBox').style.display = 'block';
             document.getElementById('output').textContent = 'در حال دریافت...';
             
             try {
-                var url = 'https://text.pollinations.ai/' + encodeURIComponent('Say hello in Persian only, just one word');
-                var res = await fetch(url);
-                var text = await res.text();
-                document.getElementById('output').textContent = 'Status: ' + res.status + '\n\n' + text;
+                var res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+                    method: 'POST',
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + API_KEYS.groq
+                    },
+                    body: JSON.stringify({
+                        model: 'llama-3.1-8b-instant',
+                        messages: [{ role: 'user', content: 'Say hello in Persian, one word' }]
+                    })
+                });
+                var data = await res.json();
+                document.getElementById('output').textContent = 'Status: ' + res.status + '\n\n' + JSON.stringify(data, null, 2);
             } catch(e) {
                 document.getElementById('output').textContent = 'Error: ' + e.message;
             }
@@ -70,21 +89,42 @@
             document.getElementById('loaderBox').style.display = 'none';
         }
 
-        async function testPollinationsNew() {
+        async function testHuggingFace() {
             document.getElementById('loaderBox').style.display = 'block';
             document.getElementById('output').textContent = 'در حال دریافت...';
             
             try {
-                var res = await fetch('https://enter.pollinations.ai/v1/chat/completions', {
+                var res = await fetch('https://api-inference.huggingface.co/models/mistralai/Mistral-7B-Instruct-v0.2', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        model: 'openai',
-                        messages: [{ role: 'user', content: 'Say hello in Persian only, just one word' }]
+                        inputs: 'Say hello in Persian, one word',
+                        parameters: { max_new_tokens: 50 }
                     })
                 });
-                var text = await res.text();
-                document.getElementById('output').textContent = 'Status: ' + res.status + '\n\n' + text;
+                var data = await res.json();
+                document.getElementById('output').textContent = 'Status: ' + res.status + '\n\n' + JSON.stringify(data, null, 2);
+            } catch(e) {
+                document.getElementById('output').textContent = 'Error: ' + e.message;
+            }
+            
+            document.getElementById('loaderBox').style.display = 'none';
+        }
+
+        async function testGeminiFree() {
+            document.getElementById('loaderBox').style.display = 'block';
+            document.getElementById('output').textContent = 'در حال دریافت...';
+            
+            try {
+                var res = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=' + API_KEYS.gemini, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        contents: [{ parts: [{ text: 'Say hello in Persian, one word' }] }]
+                    })
+                });
+                var data = await res.json();
+                document.getElementById('output').textContent = 'Status: ' + res.status + '\n\n' + JSON.stringify(data, null, 2);
             } catch(e) {
                 document.getElementById('output').textContent = 'Error: ' + e.message;
             }
