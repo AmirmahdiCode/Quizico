@@ -198,6 +198,7 @@
         (function() {
             var webApp = window.Eitaa?.WebApp;
             var API_URL = 'https://script.google.com/macros/s/AKfycbyqpFnvScFxtKNZ3Ig9bABK-EH2bkccFtIIOBIXpbh8c1UlQUdpmTK3Lv0h8HFoEpKNXg/exec';
+            var AI_URL = 'https://script.google.com/macros/s/AKfycbywc_1sGW5OTCj0mJN2_oMFtrIucP-nq9sY6ywJjB_vea-ItKfzebVDICk2SLibcai6B8g/exec';
             var IMG_WIN = 'https://cdn.imgurl.ir/uploads/d7569_SdlnXbvBsDzeGpo9E0ppeiGOtsY-sZLBOMrqTzS-F7ZsAm2fTQ.png';
             var IMG_LOSE = 'https://cdn.imgurl.ir/uploads/h063599_nwNHMksFNfYhy_4KjF92buiid4I-7_5NRme2TZyRlB9Ek8YBxQ.png';
             var IMG_WAIT = 'https://cdn.imgurl.ir/uploads/f070529_ZiVVzyG6H6JBTVARK1c2iXoOCoQ-BXQCnElKRyuk09mmEqyQcA.png';
@@ -320,6 +321,15 @@
                 ]).catch(function(){return{ok:false};});
             }
 
+            function fetchAI(action, params) {
+                var payload = {action: action};
+                if (params) { for (var k in params) { if (params.hasOwnProperty(k)) payload[k] = params[k]; } }
+                return Promise.race([
+                    fetch(AI_URL, {method:'POST', headers:{'Content-Type':'text/plain;charset=utf-8'}, body:JSON.stringify(payload)}).then(function(r){return r.json();}),
+                    new Promise(function(_,reject){setTimeout(function(){reject(new Error('timeout'));},30000);})
+                ]).catch(function(){return{ok:false};});
+            }
+
             function getTodayKey() {
                 var d = new Date();
                 return d.getFullYear() + '-' + (d.getMonth()+1) + '-' + d.getDate();
@@ -335,31 +345,23 @@
                 localStorage.setItem(key, 'played');
             }
 
-            function generatePrompt() {
+            function generateTopics() {
                 var topics = {
                     fa: ['تاریخ ایران', 'جغرافیای جهان', 'علوم فضایی', 'زیست‌شناسی', 'فیزیک', 'شیمی', 'ریاضیات', 'ادبیات فارسی', 'فناوری', 'ورزش', 'هنر', 'موسیقی', 'فلسفه', 'روانشناسی', 'اقتصاد', 'سیاست'],
                     en: ['World History', 'Geography', 'Space Science', 'Biology', 'Physics', 'Chemistry', 'Mathematics', 'Literature', 'Technology', 'Sports', 'Art', 'Music', 'Philosophy', 'Psychology', 'Economics', 'Politics'],
                     ar: ['تاريخ العالم', 'جغرافيا', 'علوم الفضاء', 'الأحياء', 'الفيزياء', 'الكيمياء', 'الرياضيات', 'الأدب', 'التكنولوجيا', 'الرياضة', 'الفن', 'الموسيقى', 'الفلسفة', 'علم النفس', 'الاقتصاد', 'السياسة']
                 };
-                
                 var topicList = topics[currentLang] || topics.fa;
-                var topic = topicList[Math.floor(Math.random()*topicList.length)];
-                
-                var prompts = {
-                    fa: 'یک سوال ۴ گزینه خیلی سخت درباره ' + topic + ' بده، فقط حتما با فرمت زیر بده و غیر از اون هیچ چیز دیگری ننویس!\n\nQ: متن سوال\nA1: گزینه ۱\nA2: گزینه ۲\nA3: گزینه ۳\nA4: گزینه۴\nCA: شماره گزینه صحیح بصورت عدد فقط\n\nدقت کن که هیچ کلمه ای خارج از این فرمت ننویسی و با این فرمت دقیق برام سوال طرح کنی',
-                    en: 'Give me a very hard 4-option question about ' + topic + ', only in the following format and nothing else!\n\nQ: question text\nA1: option 1\nA2: option 2\nA3: option 3\nA4: option 4\nCA: correct answer number only\n\nMake sure to write nothing outside this format and create the question exactly in this format',
-                    ar: 'أعطني سؤال صعب جدًا من 4 خيارات عن ' + topic + '، فقط بالصيغة التالية ولا شيء آخر!\n\nQ: نص السؤال\nA1: خيار ۱\nA2: خيار ۲\nA3: خيار ۳\nA4: خيار ۴\nCA: رقم الإجابة الصحيحة فقط\n\nتأكد من عدم كتابة أي شيء خارج هذه الصيغة وأنشئ السؤال بهذه الصيغة بالضبط'
-                };
-                
-                return prompts[currentLang] || prompts.fa;
+                return topicList[Math.floor(Math.random()*topicList.length)];
             }
 
             async function getAIQuestion() {
-                var prompt = generatePrompt();
-                var url = 'https://text.pollinations.ai/' + encodeURIComponent(prompt);
-                var response = await fetch(url);
-                var text = await response.text();
-                return parseQuestion(text);
+                var topic = generateTopics();
+                var result = await fetchAI('getQuestion', { topic: topic, lang: currentLang });
+                if (result.ok && result.data && result.data.text) {
+                    return parseQuestion(result.data.text);
+                }
+                return null;
             }
 
             function parseQuestion(text) {
