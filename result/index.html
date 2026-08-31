@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>نتیجه بازی | Quizico</title>
+    <script src="https://developer.eitaa.com/eitaa-web-app.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/gh/rastikerdar/iran-sans-font@v1.0.0/dist/font-face.css" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #faf5ff;
+            --bg2: #f3e8ff;
+            --bg3: #e9d5ff;
+            --primary: #a855f7;
+            --primary-dark: #9333ea;
+            --primary-light: #c084fc;
+            --primary-rgb: 168, 85, 247;
+            --dark: #1e1b2e;
+            --text: #4a4458;
+            --text-light: #6b7280;
+            --white: #ffffff;
+            --card-bg: #ffffff;
+            --shadow: 3px 3px 0 #000000;
+            --radius: 12px;
+            --border: 1px solid #000000;
+            --gold: #f59e0b;
+        }
+
+        [data-theme="dark"] {
+            --bg: #1e1b2e;
+            --bg2: #2d2a3e;
+            --bg3: #3d3a4e;
+            --primary: #c084fc;
+            --primary-dark: #a855f7;
+            --primary-light: #d8b4fe;
+            --primary-rgb: 192, 132, 252;
+            --dark: #f1f5f9;
+            --text: #e2e8f0;
+            --text-light: #94a3b8;
+            --white: #2d2a3e;
+            --card-bg: #2d2a3e;
+            --shadow: 3px 3px 0 #000000;
+            --border: 1px solid #475569;
+        }
+
+        [data-animation="off"] * { animation: none !important; transition: none !important; }
+
+        * { 
+            margin: 0; padding: 0; box-sizing: border-box;
+            -webkit-touch-callout: none; -webkit-user-select: none; user-select: none;
+            -webkit-user-drag: none; user-drag: none;
+        }
+        img { pointer-events: none; -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; -webkit-user-drag: none; user-drag: none; }
+
+        body {
+            font-family: 'Digi Kian Grunge', 'IRANSans', Tahoma, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            transition: font-family 0.3s ease;
+        }
+
+        .bg-animation { position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 0; background: linear-gradient(135deg, var(--bg) 0%, var(--bg2) 40%, var(--bg3) 80%); }
+
+        .header {
+            position: relative;
+            z-index: 10;
+            background: rgba(255, 255, 255, 0.5);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--primary);
+            padding: 10px 20px;
+            position: sticky;
+            top: 0;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+        }
+
+        [data-theme="dark"] .header {
+            background: rgba(45, 42, 62, 0.5);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--primary);
+        }
+
+        .header-inner { display: flex; align-items: center; justify-content: space-between; max-width: 600px; margin: 0 auto; }
+        .header-right { display: flex; align-items: center; gap: 10px; }
+
+        .header-logo {
+            width: 44px; height: 44px;
+            border-radius: 50%;
+            background: var(--primary);
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            overflow: hidden; padding: 2px;
+            border: 1px solid var(--primary);
+        }
+        .header-logo img { width: 100%; height: 100%; object-fit: contain; }
+        .header-title { font-size: 18px; font-weight: 800; color: var(--dark); }
+        .header-title .t-accent { color: var(--primary); }
+
+        .main-container {
+            position: relative; z-index: 5;
+            max-width: 600px; width: 100%;
+            margin: 16px auto; padding: 0 12px 90px;
+            display: flex; flex-direction: column; gap: 12px;
+        }
+
+        .loader-wrapper { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 60vh; gap: 12px; }
+        .loader { width: 50px; height: 50px; border: 5px solid var(--bg3); border-top-color: var(--primary); border-radius: 50%; animation: spin .8s linear infinite; }
+        .loader-text { font-size: 12px; font-weight: 700; color: var(--text); }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .content { display: none; }
+        .content.show { display: flex; flex-direction: column; gap: 12px; }
+
+        .result-header { text-align: center; padding: 20px; background: var(--card-bg); border: var(--border); border-radius: var(--radius); box-shadow: var(--shadow); }
+        .result-image { width: 80px; height: 80px; object-fit: contain; margin: 0 auto 10px; display: block; }
+        .result-title { font-size: 16px; font-weight: 800; color: var(--dark); margin-bottom: 4px; }
+        .result-subtitle { font-size: 10px; color: var(--text-light); }
+
+        .players-row { display: flex; gap: 8px; }
+        .player-card {
+            flex: 1; background: var(--card-bg); border: var(--border); border-radius: var(--radius);
+            padding: 12px; text-align: center; box-shadow: var(--shadow);
+        }
+        .player-card.winner { border-color: #10b981; border-width: 2px; }
+        .player-card.loser { border-color: #ef4444; border-width: 2px; }
+        .player-avatar {
+            width: 35px; height: 35px; border-radius: 50%; margin: 0 auto 4px;
+            background: var(--bg2); border: var(--border);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 14px; color: var(--primary); overflow: hidden;
+        }
+        .player-avatar img { width: 100%; height: 100%; object-fit: cover; }
+        .player-name { font-size: 9px; font-weight: 800; color: var(--dark); margin-bottom: 2px; }
+        .player-score { font-size: 13px; font-weight: 800; color: var(--gold); }
+
+        .rounds-container { display: flex; flex-direction: column; gap: 8px; }
+        .round-card {
+            background: var(--card-bg); border: var(--border); border-radius: var(--radius);
+            padding: 12px; box-shadow: var(--shadow);
+        }
+        .round-title {
+            font-size: 11px; font-weight: 800; color: var(--dark); margin-bottom: 8px;
+            display: flex; align-items: center; gap: 6px;
+            border-bottom: 1px dashed var(--text-light); padding-bottom: 6px;
+        }
+        .round-title i { color: var(--primary); }
+
+        .question-item {
+            background: var(--bg2); border: var(--border); border-radius: 8px;
+            padding: 10px; margin-bottom: 6px;
+        }
+        .question-text { font-size: 9px; font-weight: 700; color: var(--dark); margin-bottom: 6px; }
+        .answers-row { display: flex; flex-direction: column; gap: 4px; }
+        .answer-item {
+            display: flex; align-items: center; justify-content: space-between;
+            font-size: 8px; padding: 4px 8px; border-radius: 6px;
+            background: var(--card-bg); border: 1px solid var(--bg3);
+        }
+        .answer-player { font-weight: 700; color: var(--dark); }
+        .answer-status { font-weight: 800; padding: 2px 6px; border-radius: 4px; font-size: 7px; }
+        .answer-status.correct { background: #10b981; color: #fff; }
+        .answer-status.wrong { background: #ef4444; color: #fff; }
+        .answer-status.waiting { background: #f59e0b; color: #fff; }
+        .answer-status.empty { background: #94a3b8; color: #fff; }
+
+        .single-round-item {
+            background: var(--bg2); border: var(--border); border-radius: 8px;
+            padding: 10px; margin-bottom: 6px;
+        }
+        .single-round-row {
+            display: flex; align-items: center; justify-content: space-between;
+            font-size: 8px; padding: 2px 0;
+        }
+        .single-round-player { font-weight: 700; color: var(--dark); }
+        .single-round-dots { display: flex; gap: 3px; flex: 1; justify-content: center; }
+        .dot {
+            width: 12px; height: 12px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 5px; font-weight: 800; border: var(--border); background: #10b981; color: #fff;
+        }
+        .dot.wrong { background: #ef4444; }
+        .single-round-score { font-weight: 800; font-size: 8px; color: var(--dark); }
+
+        .result-btn {
+            display: block; width: 100%; padding: 10px;
+            background: var(--primary); color: #fff; border: var(--border); border-radius: 25px;
+            font-family: 'Digi Kian Grunge', 'IRANSans', Tahoma, sans-serif;
+            font-size: 11px; font-weight: 800; cursor: pointer; box-shadow: 3px 3px 0 #000;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="bg-animation"></div>
+
+    <header class="header">
+        <div class="header-inner">
+            <div class="header-right">
+                <div class="header-logo"><img src="https://cdn.imgurl.ir/uploads/f30974_InShot_20260821_174101103.png" alt="Quizico" draggable="false" oncontextmenu="return false;" ondragstart="return false;"></div>
+                <div>
+                    <div class="header-title" id="headerTitle">کوییز<span class="t-accent">یکو</span></div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="main-container">
+        <div class="loader-wrapper" id="loaderWrapper">
+            <div class="loader"></div>
+            <div class="loader-text">در حال دریافت...</div>
+        </div>
+        <div class="content" id="content"></div>
+    </main>
+
+    <script>
+        (function() {
+            var webApp = window.Eitaa?.WebApp;
+            var API_URL = 'https://script.google.com/macros/s/AKfycbyqpFnvScFxtKNZ3Ig9bABK-EH2bkccFtIIOBIXpbh8c1UlQUdpmTK3Lv0h8HFoEpKNXg/exec';
+            var IMG_WIN = 'https://cdn.imgurl.ir/uploads/d7569_SdlnXbvBsDzeGpo9E0ppeiGOtsY-sZLBOMrqTzS-F7ZsAm2fTQ.png';
+            var IMG_DRAW = 'https://cdn.imgurl.ir/uploads/c44955_RXKwRTR4RXAXv-bftIWrthaOW8o-EiM7ZrOGTbSQIsFh1fjuvw.png';
+            var IMG_LOSE = 'https://cdn.imgurl.ir/uploads/h063599_nwNHMksFNfYhy_4KjF92buiid4I-7_5NRme2TZyRlB9Ek8YBxQ.png';
+            var currentLang = 'fa';
+
+            document.addEventListener('contextmenu', function(e) { e.preventDefault(); });
+            document.addEventListener('dragstart', function(e) { e.preventDefault(); });
+
+            var translations = {
+                fa: {
+                    loading: 'در حال دریافت...',
+                    back: 'بازگشت به داشبورد',
+                    win: 'برد',
+                    lose: 'باخت',
+                    draw: 'مساوی',
+                    round: 'راند',
+                    you: 'تو',
+                    opponent: 'حریف',
+                    bot: 'ربات',
+                    player1: 'بازیکن ۱',
+                    player2: 'بازیکن ۲',
+                    correct: 'درست',
+                    wrong: 'غلط',
+                    waiting: 'منتظر',
+                    empty: 'بدون جواب',
+                    final_score: 'نتیجه نهایی',
+                    game_not_found: 'بازی یافت نشد'
+                },
+                en: {
+                    loading: 'Loading...',
+                    back: 'Back to Dashboard',
+                    win: 'Win',
+                    lose: 'Loss',
+                    draw: 'Draw',
+                    round: 'Round',
+                    you: 'You',
+                    opponent: 'Opponent',
+                    bot: 'Bot',
+                    player1: 'Player 1',
+                    player2: 'Player 2',
+                    correct: 'Correct',
+                    wrong: 'Wrong',
+                    waiting: 'Waiting',
+                    empty: 'Empty',
+                    final_score: 'Final Score',
+                    game_not_found: 'Game not found'
+                },
+                ar: {
+                    loading: 'جار التحميل...',
+                    back: 'العودة للرئيسية',
+                    win: 'فوز',
+                    lose: 'خسارة',
+                    draw: 'تعادل',
+                    round: 'جولة',
+                    you: 'أنت',
+                    opponent: 'الخصم',
+                    bot: 'روبوت',
+                    player1: 'اللاعب ۱',
+                    player2: 'اللاعب ۲',
+                    correct: 'صحيح',
+                    wrong: 'خطأ',
+                    waiting: 'بانتظار',
+                    empty: 'بدون إجابة',
+                    final_score: 'النتيجة النهائية',
+                    game_not_found: 'اللعبة غير موجودة'
+                }
+            };
+
+            function getTranslation(k) {
+                var t = translations[currentLang] || translations.fa;
+                return t[k] || translations.fa[k] || k;
+            }
+
+            function getSettings() {
+                try {
+                    var raw = localStorage.getItem('quizicoSettings');
+                    if (!raw) return { theme:'light', primaryColor:'#a855f7', animation:true, haptic:true, language:'fa' };
+                    var p = JSON.parse(raw);
+                    if (!p.theme) p.theme = 'light';
+                    if (!p.primaryColor) p.primaryColor = '#a855f7';
+                    if (p.animation === undefined) p.animation = true;
+                    if (p.haptic === undefined) p.haptic = true;
+                    if (!p.language) p.language = 'fa';
+                    return p;
+                } catch(e) { return { theme:'light', primaryColor:'#a855f7', animation:true, haptic:true, language:'fa' }; }
+            }
+
+            function hexToRgb(h) { var r = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(h); return r ? { r:parseInt(r[1],16), g:parseInt(r[2],16), b:parseInt(r[3],16) } : { r:168,g:85,b:247 }; }
+            function shadeColor(c,p){var r=hexToRgb(c);var rr=Math.max(0,Math.min(255,r.r+p));var gg=Math.max(0,Math.min(255,r.g+p));var bb=Math.max(0,Math.min(255,r.b+p));return '#'+((1<<24)+(rr<<16)+(gg<<8)+bb).toString(16).slice(1);}
+
+            function updateHeaderTitle(lang) {
+                var titleEl = document.getElementById('headerTitle');
+                if (lang === 'en') {
+                    titleEl.innerHTML = 'Quiz<span class="t-accent">ico</span>';
+                } else {
+                    titleEl.innerHTML = 'کوییز<span class="t-accent">یکو</span>';
+                }
+            }
+
+            function applyTheme() {
+                var s = getSettings();
+                currentLang = s.language || 'fa';
+                var t = s.theme || 'light';
+                var p = s.primaryColor || '#a855f7';
+                document.documentElement.setAttribute('data-theme', t);
+                if (t === 'dark') {
+                    var lightP = shadeColor(p, 40);
+                    document.documentElement.style.setProperty('--primary', lightP);
+                    document.documentElement.style.setProperty('--primary-dark', p);
+                    document.documentElement.style.setProperty('--primary-light', shadeColor(p, 80));
+                    document.documentElement.style.setProperty('--primary-rgb', hexToRgb(lightP).r + ',' + hexToRgb(lightP).g + ',' + hexToRgb(lightP).b);
+                } else {
+                    document.documentElement.style.setProperty('--primary', p);
+                    document.documentElement.style.setProperty('--primary-dark', shadeColor(p, -30));
+                    document.documentElement.style.setProperty('--primary-light', shadeColor(p, 50));
+                    document.documentElement.style.setProperty('--primary-rgb', hexToRgb(p).r + ',' + hexToRgb(p).g + ',' + hexToRgb(p).b);
+                }
+                if (s.animation === false) { document.documentElement.setAttribute('data-animation', 'off'); }
+                else { document.documentElement.removeAttribute('data-animation'); }
+                if (currentLang === 'en') { document.documentElement.setAttribute('dir','ltr'); document.body.style.fontFamily='Arial, sans-serif'; }
+                else if (currentLang === 'ar') { document.documentElement.setAttribute('dir','rtl'); document.body.style.fontFamily="'Digi Kian Grunge', Tahoma, sans-serif"; }
+                else { document.documentElement.setAttribute('dir','rtl'); document.body.style.fontFamily="'Digi Kian Grunge', 'IRANSans', Tahoma, sans-serif"; }
+                updateHeaderTitle(currentLang);
+            }
+
+            function getEitaaUser(){return webApp&&webApp.initDataUnsafe&&webApp.initDataUnsafe.user?webApp.initDataUnsafe.user:null;}
+            function getUserId(){var u=getEitaaUser();return u?(typeof u.id==='number'?u.id.toString():String(u.id||'')):'';}
+            function fetchData(action,params){
+                var payload={action:action,username:getUserId()};
+                if(params){for(var k in params){if(params.hasOwnProperty(k))payload[k]=params[k];}}
+                return Promise.race([
+                    fetch(API_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(payload)}).then(function(r){return r.json();}),
+                    new Promise(function(_,reject){setTimeout(function(){reject(new Error('timeout'));},10000);})
+                ]).catch(function(){return{ok:false};});
+            }
+
+            function getAvatarHtml(avatarId) {
+                if (!avatarId || avatarId === 'default') return '<i class="fa-solid fa-user"></i>';
+                if (avatarId === 'bot') return '<i class="fa-solid fa-robot"></i>';
+                return '<i class="fa-solid fa-user"></i>';
+            }
+
+            async function getPlayerName(userId) {
+                if (userId === 'bot') return getTranslation('bot');
+                if (userId === 'player1') return getTranslation('player1');
+                if (userId === 'player2') return getTranslation('player2');
+                if (!userId || userId === '') return '---';
+                var result = await fetchData('getUser', {username: userId});
+                if (result.ok && result.data && result.data.name) return result.data.name;
+                return userId;
+            }
+
+            function parseRoundData(roundData) {
+                if (!roundData) return null;
+                try {
+                    return JSON.parse(roundData);
+                } catch(e) {
+                    var parts = roundData.split('][');
+                    if (parts.length >= 3) {
+                        var qIds = parts[0] ? parts[0].replace('[','').replace(']','') : '';
+                        var p1Ans = parts[1] ? parts[1].replace('[','').replace(']','') : '';
+                        var p2Ans = parts[2] ? parts[2].replace('[','').replace(']','') : '';
+                        return { qIds: qIds, p1Ans: p1Ans, p2Ans: p2Ans };
+                    }
+                    return null;
+                }
+            }
+
+            function renderAnswerStatus(ans, index) {
+                if (!ans || ans === '') return '<span class="answer-status empty">' + getTranslation('empty') + '</span>';
+                if (ans === 'waiting') return '<span class="answer-status waiting">' + getTranslation('waiting') + '</span>';
+                var char = ans[index] || 'F';
+                return char === 'T' ? '<span class="answer-status correct">' + getTranslation('correct') + '</span>' : '<span class="answer-status wrong">' + getTranslation('wrong') + '</span>';
+            }
+
+            async function renderOnlineResult(gameData, myId) {
+                var isP1 = String(gameData.player1) === String(myId);
+                var myName = isP1 ? await getPlayerName(gameData.player1) : await getPlayerName(gameData.player2);
+                var oppName = isP1 ? await getPlayerName(gameData.player2) : await getPlayerName(gameData.player1);
+                var myAvatar = isP1 ? gameData.player1 : gameData.player2;
+                var oppAvatar = isP1 ? gameData.player2 : gameData.player1;
+                
+                var result = gameData.result || 'draw';
+                var img = result === 'win' ? IMG_WIN : result === 'lose' ? IMG_LOSE : IMG_DRAW;
+                var title = result === 'win' ? getTranslation('win') : result === 'lose' ? getTranslation('lose') : getTranslation('draw');
+                
+                var html = '<div class="result-header">';
+                html += '<img class="result-image" src="' + img + '" alt="" draggable="false" oncontextmenu="return false;" ondragstart="return false;">';
+                html += '<div class="result-title">' + title + '</div>';
+                html += '<div class="result-subtitle">' + getTranslation('final_score') + '</div></div>';
+                
+                html += '<div class="players-row">';
+                html += '<div class="player-card ' + (result === 'win' ? 'winner' : result === 'lose' ? 'loser' : '') + '"><div class="player-avatar">' + getAvatarHtml(myAvatar) + '</div><div class="player-name">' + myName + '</div><div class="player-score">?</div></div>';
+                html += '<div class="player-card ' + (result === 'lose' ? 'winner' : result === 'win' ? 'loser' : '') + '"><div class="player-avatar">' + getAvatarHtml(oppAvatar) + '</div><div class="player-name">' + oppName + '</div><div class="player-score">?</div></div></div>';
+                
+                html += '<div class="rounds-container">';
+                var myTotal = 0, oppTotal = 0;
+                for (var r = 1; r <= 5; r++) {
+                    var roundData = parseRoundData(gameData['round' + r]);
+                    if (roundData) {
+                        var myCorrect = 0, oppCorrect = 0;
+                        var myAns = isP1 ? roundData.p1Ans : roundData.p2Ans;
+                        var oppAns = isP1 ? roundData.p2Ans : roundData.p1Ans;
+                        
+                        html += '<div class="round-card"><div class="round-title"><i class="bi bi-list-ol"></i> ' + getTranslation('round') + ' ' + r + '</div>';
+                        
+                        var qIds = roundData.qIds ? roundData.qIds.split(',') : [];
+                        for (var q = 0; q < 3; q++) {
+                            var qText = 'سوال ' + (q+1);
+                            html += '<div class="question-item"><div class="question-text">' + qText + '</div><div class="answers-row">';
+                            html += '<div class="answer-item"><span class="answer-player">' + myName + '</span>' + renderAnswerStatus(myAns, q) + '</div>';
+                            html += '<div class="answer-item"><span class="answer-player">' + oppName + '</span>' + renderAnswerStatus(oppAns, q) + '</div>';
+                            html += '</div></div>';
+                            
+                            if (myAns && myAns[q] === 'T') { myCorrect++; myTotal += 5; }
+                            if (oppAns && oppAns[q] === 'T') { oppCorrect++; oppTotal += 5; }
+                        }
+                        html += '</div>';
+                    }
+                }
+                html += '</div>';
+                html += '<button class="result-btn" onclick="backToDashboard()">' + getTranslation('back') + '</button>';
+                
+                document.getElementById('content').innerHTML = html;
+            }
+
+            async function renderSingleResult(gameData, myId) {
+                var result = gameData.result || 'draw';
+                var img = result === 'win' ? IMG_WIN : result === 'lose' ? IMG_LOSE : IMG_DRAW;
+                var title = result === 'win' ? getTranslation('win') : result === 'lose' ? getTranslation('lose') : getTranslation('draw');
+                
+                var html = '<div class="result-header">';
+                html += '<img class="result-image" src="' + img + '" alt="" draggable="false" oncontextmenu="return false;" ondragstart="return false;">';
+                html += '<div class="result-title">' + title + '</div>';
+                html += '<div class="result-subtitle">' + getTranslation('final_score') + '</div></div>';
+                
+                html += '<div class="rounds-container">';
+                for (var r = 1; r <= 5; r++) {
+                    var roundData = parseRoundData(gameData['round' + r]);
+                    if (roundData) {
+                        var yourCorrect = roundData.yourCorrect || 0;
+                        var botCorrect = roundData.botCorrect || 0;
+                        html += '<div class="round-card"><div class="round-title"><i class="bi bi-list-ol"></i> ' + getTranslation('round') + ' ' + r + '</div>';
+                        html += '<div class="single-round-item">';
+                        html += '<div class="single-round-row"><span class="single-round-player">' + getTranslation('you') + '</span><div class="single-round-dots">';
+                        for (var j=0;j<3;j++) html += '<span class="dot'+(j<yourCorrect?'':' wrong')+'">'+(j+1)+'</span>';
+                        html += '</div><span class="single-round-score">+'+(yourCorrect*5)+'</span></div>';
+                        html += '<div class="single-round-row"><span class="single-round-player">' + getTranslation('bot') + '</span><div class="single-round-dots">';
+                        for (var k=0;k<3;k++) html += '<span class="dot'+(k<botCorrect?'':' wrong')+'">'+(k+1)+'</span>';
+                        html += '</div><span class="single-round-score">+'+(botCorrect*5)+'</span></div>';
+                        html += '</div></div>';
+                    }
+                }
+                html += '</div>';
+                html += '<button class="result-btn" onclick="backToDashboard()">' + getTranslation('back') + '</button>';
+                
+                document.getElementById('content').innerHTML = html;
+            }
+
+            window.backToDashboard = function() { window.location.href = '../../dashboard/'; };
+
+            async function init() {
+                applyTheme();
+                if (webApp) {
+                    webApp.ready();
+                    webApp.expand();
+                    webApp.BackButton.show();
+                    webApp.BackButton.onClick(function(){ window.location.href = '../../dashboard/'; });
+                }
+                
+                var urlParams = new URLSearchParams(window.location.search);
+                var gameId = urlParams.get('id');
+                
+                if (!gameId) {
+                    document.getElementById('content').innerHTML = '<div class="result-header"><div class="result-title">' + getTranslation('game_not_found') + '</div><button class="result-btn" onclick="backToDashboard()">' + getTranslation('back') + '</button></div>';
+                    document.getElementById('loaderWrapper').style.display = 'none';
+                    document.getElementById('content').classList.add('show');
+                    return;
+                }
+                
+                var gameData = await fetchData('getGame', { gameId: gameId });
+                if (gameData.ok && gameData.data) {
+                    var g = gameData.data;
+                    var myId = getUserId();
+                    
+                    if (g.player2 === 'bot') {
+                        await renderSingleResult(g, myId);
+                    } else if (g.player1 === 'player1' && g.player2 === 'player2') {
+                        await renderSingleResult(g, myId);
+                    } else {
+                        await renderOnlineResult(g, myId);
+                    }
+                } else {
+                    document.getElementById('content').innerHTML = '<div class="result-header"><div class="result-title">' + getTranslation('game_not_found') + '</div><button class="result-btn" onclick="backToDashboard()">' + getTranslation('back') + '</button></div>';
+                }
+                
+                document.getElementById('loaderWrapper').style.display = 'none';
+                document.getElementById('content').classList.add('show');
+            }
+
+            init();
+        })();
+    </script>
+</body>
+</html>
