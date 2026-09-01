@@ -159,6 +159,29 @@
         .stat-value { font-size: 16px; font-weight: 800; color: var(--dark); }
         .stat-label { font-size: 8px; color: var(--text-light); }
 
+        .rank-progress-card { background: var(--card-bg); border: var(--border); border-radius: var(--radius); padding: 16px; box-shadow: var(--shadow); }
+        .rank-progress-title {
+            font-size: 13px; font-weight: 800; color: var(--dark); margin-bottom: 12px;
+            display: flex; align-items: center; gap: 8px;
+            border-bottom: 1px dashed var(--text-light); padding-bottom: 8px;
+        }
+        .rank-progress-title i { color: var(--gold); }
+        .rank-progress-bar-container {
+            background: var(--bg3); border: var(--border); border-radius: 8px;
+            height: 10px; overflow: hidden; margin-bottom: 8px;
+        }
+        .rank-progress-bar {
+            height: 100%; background: linear-gradient(90deg, var(--gold), #fbbf24);
+            border-radius: 8px; transition: width 0.5s ease;
+        }
+        .rank-progress-info {
+            display: flex; justify-content: space-between; align-items: center;
+            font-size: 8px; font-weight: 700; color: var(--text-light);
+        }
+        .rank-progress-current { color: var(--dark); font-weight: 800; }
+        .rank-progress-next { color: var(--gold); font-weight: 800; }
+        .rank-progress-percent { color: var(--primary); font-weight: 800; }
+
         .league-card { background: var(--card-bg); border: var(--border); border-radius: var(--radius); padding: 16px; box-shadow: var(--shadow); }
         .league-title {
             font-size: 13px; font-weight: 800; color: var(--dark); margin-bottom: 12px;
@@ -194,10 +217,20 @@
         .achievement-item.locked { opacity: .3; filter: grayscale(1); }
 
         .games-history-card { background: var(--card-bg); border: var(--border); border-radius: var(--radius); padding: 16px; box-shadow: var(--shadow); }
-        .games-list { display: flex; flex-direction: column; gap: 8px; max-height: 300px; overflow-y: auto; }
+        .games-list { 
+            display: flex; 
+            flex-direction: column; 
+            gap: 8px; 
+            max-height: 300px; 
+            overflow-y: auto;
+            overflow-x: hidden;
+            padding: 4px;
+            margin: 0 -4px;
+        }
         .game-item {
             display: flex; align-items: center; justify-content: space-between; padding: 10px 12px;
             border: var(--border); border-radius: 8px; background: var(--bg2); box-shadow: 2px 2px 0 #000;
+            flex-shrink: 0;
         }
         .game-players { font-size: 9px; font-weight: 700; color: var(--dark); display: flex; align-items: center; gap: 4px; }
         .game-avatar {
@@ -386,6 +419,18 @@
                 </div>
             </div>
 
+            <div class="rank-progress-card" id="rankProgressCard" style="display:none;">
+                <div class="rank-progress-title"><i class="bi bi-trophy"></i> <span data-i18n="rank_progress">فاصله تا رتبه بعدی</span></div>
+                <div class="rank-progress-bar-container">
+                    <div class="rank-progress-bar" id="rankProgressBar" style="width:0%;"></div>
+                </div>
+                <div class="rank-progress-info">
+                    <span class="rank-progress-current" id="rankCurrentScore">0</span>
+                    <span class="rank-progress-percent" id="rankProgressPercent">0%</span>
+                    <span class="rank-progress-next" id="rankNextScore">0</span>
+                </div>
+            </div>
+
             <div class="league-card">
                 <div class="league-title"><i class="bi bi-trophy"></i> <span data-i18n="league_stats">آمار لیگ</span></div>
                 <div class="league-stats">
@@ -454,7 +499,7 @@
     <script>
         (function() {
             var webApp = window.Eitaa?.WebApp;
-            var API_URL = 'https://script.google.com/macros/s/AKfycbyqpFnvScFxtKNZ3Ig9bABK-EH2bkccFtIIOBIXpbh8c1UlQUdpmTK3Lv0h8HFoEpKNXg/exec';
+            var API_URL = 'https://script.google.com/macros/s/AKfycbyHQXQ0TffhGyW1MdtI-_sWlZMhLSPDCR3Az5dDkuwv9TJt1o6-f_aCOg_aHJnty_8P/exec';
             var SAD_IMAGE = 'https://cdn.imgurl.ir/uploads/g58935_InShot_20260822_140943752.png';
             var userDiamonds = 0, currentAvatar = 'default', currentLang = 'fa';
 
@@ -469,6 +514,7 @@
                     total_score: 'امتیاز کل',
                     total_games: 'تعداد بازی',
                     win_rate: 'درصد برد',
+                    rank_progress: 'فاصله تا رتبه بعدی',
                     league_stats: 'آمار لیگ',
                     champion: 'قهرمانی',
                     runnerup: 'نایب قهرمانی',
@@ -500,6 +546,7 @@
                     total_score: 'Total Score',
                     total_games: 'Total Games',
                     win_rate: 'Win Rate',
+                    rank_progress: 'Distance to Next Rank',
                     league_stats: 'League Stats',
                     champion: 'Champion',
                     runnerup: 'Runner-up',
@@ -531,6 +578,7 @@
                     total_score: 'مجموع النقاط',
                     total_games: 'عدد الألعاب',
                     win_rate: 'نسبة الفوز',
+                    rank_progress: 'المسافة إلى الرتبة التالية',
                     league_stats: 'إحصائيات الدوري',
                     champion: 'بطل',
                     runnerup: 'وصيف',
@@ -817,6 +865,47 @@
 
             window.openSupportLink = openSupportLink;
 
+            async function updateRankProgress(myScore) {
+                var result = await fetchData('leaderboard', { limit: 100 });
+                if (result.ok && Array.isArray(result.data) && result.data.length > 0) {
+                    var board = result.data;
+                    var myRank = -1;
+                    for (var i = 0; i < board.length; i++) {
+                        if (String(board[i].username) === String(getUserId())) {
+                            myRank = i;
+                            break;
+                        }
+                    }
+                    
+                    if (myRank === 0) {
+                        document.getElementById('rankProgressCard').style.display = 'block';
+                        document.getElementById('rankProgressBar').style.width = '100%';
+                        document.getElementById('rankCurrentScore').textContent = myScore;
+                        document.getElementById('rankNextScore').textContent = '🏆 نفر اول';
+                        document.getElementById('rankProgressPercent').textContent = '100%';
+                    } else if (myRank > 0) {
+                        var nextPlayer = board[myRank - 1];
+                        var nextScore = nextPlayer.score || 0;
+                        var currentScore = myScore || 0;
+                        var diff = nextScore - currentScore;
+                        if (diff > 0) {
+                            var pct = Math.min(100, Math.round((currentScore / nextScore) * 100));
+                            document.getElementById('rankProgressCard').style.display = 'block';
+                            document.getElementById('rankProgressBar').style.width = pct + '%';
+                            document.getElementById('rankCurrentScore').textContent = currentScore + ' (تو)';
+                            document.getElementById('rankNextScore').textContent = nextScore + ' (' + (nextPlayer.name || '؟') + ')';
+                            document.getElementById('rankProgressPercent').textContent = pct + '%';
+                        } else {
+                            document.getElementById('rankProgressCard').style.display = 'block';
+                            document.getElementById('rankProgressBar').style.width = '100%';
+                            document.getElementById('rankCurrentScore').textContent = currentScore + ' (تو)';
+                            document.getElementById('rankNextScore').textContent = nextScore + ' (' + (nextPlayer.name || '؟') + ')';
+                            document.getElementById('rankProgressPercent').textContent = '100%';
+                        }
+                    }
+                }
+            }
+
             async function loadProfile() {
                 try {
                     var user = getEitaaUser();
@@ -835,6 +924,7 @@
                         animateCount(document.getElementById('coinsValue'), d.coins || 0, 800);
                         animateCount(document.getElementById('diamondsValue'), userDiamonds, 800);
                         updateProfileAvatar();
+                        await updateRankProgress(d.score || 0);
                     }
 
                     var gamesData = await fetchData('getGamesByPlayer', {});
