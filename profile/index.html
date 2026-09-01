@@ -165,22 +165,21 @@
             display: flex; align-items: center; gap: 8px;
             border-bottom: 1px dashed var(--text-light); padding-bottom: 8px;
         }
-        .rank-progress-title i { color: var(--gold); }
+        .rank-progress-title i { color: var(--primary); }
         .rank-progress-bar-container {
             background: var(--bg3); border: var(--border); border-radius: 8px;
             height: 10px; overflow: hidden; margin-bottom: 8px;
         }
         .rank-progress-bar {
-            height: 100%; background: linear-gradient(90deg, var(--gold), #fbbf24);
-            border-radius: 8px; transition: width 0.5s ease;
+            height: 100%; background: var(--primary); border-radius: 8px; transition: width 0.5s ease;
         }
         .rank-progress-info {
             display: flex; justify-content: space-between; align-items: center;
             font-size: 8px; font-weight: 700; color: var(--text-light);
         }
         .rank-progress-current { color: var(--dark); font-weight: 800; }
-        .rank-progress-next { color: var(--gold); font-weight: 800; }
-        .rank-progress-percent { color: var(--primary); font-weight: 800; }
+        .rank-progress-next { color: var(--primary); font-weight: 800; }
+        .rank-progress-percent { color: var(--gold); font-weight: 800; }
 
         .league-card { background: var(--card-bg); border: var(--border); border-radius: var(--radius); padding: 16px; box-shadow: var(--shadow); }
         .league-title {
@@ -420,7 +419,7 @@
             </div>
 
             <div class="rank-progress-card" id="rankProgressCard" style="display:none;">
-                <div class="rank-progress-title"><i class="bi bi-trophy"></i> <span data-i18n="rank_progress">فاصله تا رتبه بعدی</span></div>
+                <div class="rank-progress-title"><i class="bi bi-graph-up-arrow"></i> <span data-i18n="rank_progress">فاصله تا رتبه بعدی</span></div>
                 <div class="rank-progress-bar-container">
                     <div class="rank-progress-bar" id="rankProgressBar" style="width:0%;"></div>
                 </div>
