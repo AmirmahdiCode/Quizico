@@ -896,8 +896,7 @@
                     }
                     
                     var gamesData = await fetchData('getGamesByPlayer', {});
-                    if (!gamesData.ok) { hasError = true; }
-                    else if (Array.isArray(gamesData.data)) {
+                    if (gamesData.ok && Array.isArray(gamesData.data)) {
                         await checkExpiredGames(gamesData.data);
                         gamesData = await fetchData('getGamesByPlayer', {});
                     }
@@ -945,11 +944,15 @@
                             }
                             pastList.innerHTML = pastHtml;
                         }
+                    } else {
+                        document.getElementById('onlineCount').textContent = '0';
+                        document.getElementById('pastCount').textContent = '0';
+                        document.getElementById('onlineList').innerHTML = renderEmpty(getTranslation('no_online_games'));
+                        document.getElementById('pastList').innerHTML = renderEmpty(getTranslation('no_past_games'));
                     }
                     
                     var leagueResult = await fetchData('getLeagueByUser', {});
-                    if (!leagueResult.ok) { hasError = true; }
-                    else if (leagueResult.data && !leagueResult.data.winner) {
+                    if (leagueResult.ok && leagueResult.data && !leagueResult.data.winner) {
                         var lg = leagueResult.data;
                         var results = String(lg.results || '').split(',').filter(function(r) { return r !== ''; });
                         var currentGameNum = results.length + 1;
