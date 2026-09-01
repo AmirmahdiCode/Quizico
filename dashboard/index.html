@@ -876,12 +876,23 @@
                     }
                     
                     var userData = await fetchData('getUser', {});
-                    if (!userData.ok) { hasError = true; }
-                    else if (userData.data) {
+                    if (!userData.ok || !userData.data) {
+                        var userName = '';
+                        var eitaaUser = getEitaaUser();
+                        if (eitaaUser) {
+                            userName = (eitaaUser.first_name || '') + ' ' + (eitaaUser.last_name || '');
+                        }
+                        await fetchData('registerUser', { name: userName.trim() || 'کاربر' });
+                        userData = await fetchData('getUser', {});
+                    }
+
+                    if (userData.ok && userData.data) {
                         userCoins = userData.data.coins || 0;
                         userDiamonds = userData.data.diamonds || 0;
                         animateCount(document.getElementById('coinsHeader'), userCoins, 800);
                         animateCount(document.getElementById('diamondsHeader'), userDiamonds, 800);
+                    } else {
+                        hasError = true;
                     }
                     
                     var gamesData = await fetchData('getGamesByPlayer', {});
