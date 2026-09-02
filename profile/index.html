@@ -123,10 +123,6 @@
             flex-direction: column;
             align-items: center;
             gap: 8px;
-            background: var(--card-bg);
-            border: var(--border);
-            border-radius: var(--radius);
-            box-shadow: var(--shadow);
         }
         .section-loader-spinner {
             width: 30px;
@@ -383,7 +379,7 @@
         <div class="profile-content" id="profileContent">
             <div class="section-loader" id="headerLoader">
                 <div class="section-loader-spinner"></div>
-                <div class="section-loader-text">در حال دریافت اطلاعات کاربر...</div>
+                <div class="section-loader-text">در حال دریافت اطلاعات...</div>
             </div>
 
             <div class="profile-header-card" id="headerCard" style="display:none;">
@@ -753,14 +749,19 @@
                     updateProfileAvatar();
                     document.getElementById('headerLoader').style.display = 'none';
                     document.getElementById('headerCard').style.display = 'block';
-                    document.getElementById('statsLoader').style.display = 'none';
-                    document.getElementById('statsGrid').style.display = 'grid';
+                    document.getElementById('statsLoader').style.display = 'flex';
                 }
 
                 var gamesData = await fetchData('getGamesByPlayer', {});
                 var totalGames = 0, totalWins = 0;
                 if (gamesData.ok && Array.isArray(gamesData.data)) {
                     totalGames = gamesData.data.length;
+                    document.getElementById('totalGames').textContent = totalGames;
+                    document.getElementById('winRate').textContent = totalGames > 0 ? Math.round((totalWins/totalGames)*100) + '%' : '0%';
+                    document.getElementById('statsLoader').style.display = 'none';
+                    document.getElementById('statsGrid').style.display = 'grid';
+                    document.getElementById('rankLoader').style.display = 'flex';
+                    
                     var list = document.getElementById('gamesList');
                     if (gamesData.data.length === 0) {
                         list.innerHTML = renderEmpty('مسابقه‌ای یافت نشد');
@@ -776,15 +777,6 @@
                             return '<div class="game-item"><span class="game-players" id="opp-' + g.id + '"><span class="game-avatar"><i class="fa-solid fa-user"></i></span> ...</span><span class="game-score ' + cls + '">' + txt + '</span></div>';
                         }).join('');
                     }
-                    document.getElementById('totalGames').textContent = totalGames;
-                    document.getElementById('winRate').textContent = totalGames > 0 ? Math.round((totalWins/totalGames)*100) + '%' : '0%';
-                    document.getElementById('historyLoader').style.display = 'none';
-                    document.getElementById('historyCard').style.display = 'block';
-                    document.getElementById('leagueLoader').style.display = 'none';
-                    document.getElementById('leagueCard').style.display = 'block';
-                    document.getElementById('achievementsLoader').style.display = 'none';
-                    document.getElementById('achievementsCard').style.display = 'block';
-                    renderAchievements(totalGames, totalWins, userData.ok && userData.data ? userData.data.score || 0 : 0);
                 }
 
                 var boardData = await fetchData('leaderboard', { limit: 100 });
@@ -815,6 +807,25 @@
                         document.getElementById('rankProgressPercent').textContent = pct + '%';
                     }
                 }
+
+                document.getElementById('leagueLoader').style.display = 'flex';
+                setTimeout(function() {
+                    document.getElementById('leagueLoader').style.display = 'none';
+                    document.getElementById('leagueCard').style.display = 'block';
+                    document.getElementById('achievementsLoader').style.display = 'flex';
+                }, 500);
+
+                setTimeout(function() {
+                    document.getElementById('achievementsLoader').style.display = 'none';
+                    document.getElementById('achievementsCard').style.display = 'block';
+                    renderAchievements(totalGames, totalWins, userData.ok && userData.data ? userData.data.score || 0 : 0);
+                    document.getElementById('historyLoader').style.display = 'flex';
+                }, 1000);
+
+                setTimeout(function() {
+                    document.getElementById('historyLoader').style.display = 'none';
+                    document.getElementById('historyCard').style.display = 'block';
+                }, 1500);
 
                 if (gamesData.ok && Array.isArray(gamesData.data) && gamesData.data.length > 0) {
                     for (var j = 0; j < gamesData.data.slice(0, 5).length; j++) {
