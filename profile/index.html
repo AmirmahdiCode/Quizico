@@ -116,6 +116,33 @@
 
         .profile-content { display: flex; flex-direction: column; gap: 12px; }
 
+        .section-loader {
+            text-align: center;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            background: var(--card-bg);
+            border: var(--border);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+        }
+        .section-loader-spinner {
+            width: 30px;
+            height: 30px;
+            border: 4px solid var(--bg3);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+        .section-loader-text {
+            font-size: 9px;
+            font-weight: 700;
+            color: var(--text-light);
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
         .profile-header-card {
             background: linear-gradient(135deg, var(--primary), var(--primary-dark));
             border: var(--border); border-radius: var(--radius); padding: 16px; box-shadow: var(--shadow);
@@ -354,6 +381,11 @@
 
     <main class="main-container">
         <div class="profile-content" id="profileContent">
+            <div class="section-loader" id="headerLoader">
+                <div class="section-loader-spinner"></div>
+                <div class="section-loader-text">در حال دریافت اطلاعات کاربر...</div>
+            </div>
+
             <div class="profile-header-card" id="headerCard" style="display:none;">
                 <div class="profile-top">
                     <div class="profile-avatar" id="profileAvatar" onclick="openAvatarModal()"><i class="fa-solid fa-user"></i></div>
@@ -367,6 +399,11 @@
                     <span class="badge"><i class="bi bi-coin"></i> <span class="badge-value" id="coinsValue">0</span></span>
                     <span class="badge"><i class="bi bi-gem"></i> <span class="badge-value" id="diamondsValue">0</span></span>
                 </div>
+            </div>
+
+            <div class="section-loader" id="statsLoader" style="display:none;">
+                <div class="section-loader-spinner"></div>
+                <div class="section-loader-text">در حال دریافت آمار...</div>
             </div>
 
             <div class="stats-grid" id="statsGrid" style="display:none;">
@@ -387,6 +424,11 @@
                 </div>
             </div>
 
+            <div class="section-loader" id="rankLoader" style="display:none;">
+                <div class="section-loader-spinner"></div>
+                <div class="section-loader-text">در حال دریافت رتبه...</div>
+            </div>
+
             <div class="rank-progress-card" id="rankProgressCard" style="display:none;">
                 <div class="rank-progress-title"><i class="bi bi-graph-up-arrow"></i> فاصله تا رتبه بعدی</div>
                 <div class="rank-progress-bar-container">
@@ -397,6 +439,11 @@
                     <span id="rankProgressPercent" style="color:var(--gold);font-weight:800;">0%</span>
                     <span id="rankNextScore" style="color:var(--primary);font-weight:800;">0</span>
                 </div>
+            </div>
+
+            <div class="section-loader" id="leagueLoader" style="display:none;">
+                <div class="section-loader-spinner"></div>
+                <div class="section-loader-text">در حال دریافت لیگ...</div>
             </div>
 
             <div class="league-card" id="leagueCard" style="display:none;">
@@ -417,9 +464,19 @@
                 </div>
             </div>
 
+            <div class="section-loader" id="achievementsLoader" style="display:none;">
+                <div class="section-loader-spinner"></div>
+                <div class="section-loader-text">در حال دریافت افتخارات...</div>
+            </div>
+
             <div class="achievements-card" id="achievementsCard" style="display:none;">
                 <div class="league-title"><i class="bi bi-award"></i> افتخارات</div>
                 <div class="achievements-grid" id="achievementsGrid"></div>
+            </div>
+
+            <div class="section-loader" id="historyLoader" style="display:none;">
+                <div class="section-loader-spinner"></div>
+                <div class="section-loader-text">در حال دریافت تاریخچه...</div>
             </div>
 
             <div class="games-history-card" id="historyCard" style="display:none;">
@@ -514,11 +571,15 @@
                 {id:'first_game', name:'اولین بازی', icon:'🕹️'},
                 {id:'10_games', name:'۱۰ بازی', icon:'🎮'},
                 {id:'100_games', name:'۱۰۰ بازی', icon:'💻'},
+                {id:'1000_games', name:'۱۰۰۰ بازی', icon:'🔬'},
                 {id:'first_win', name:'اولین برد', icon:'🎉'},
                 {id:'10_wins', name:'۱۰ برد', icon:'🎈'},
                 {id:'100_wins', name:'۱۰۰ برد', icon:'🎁'},
+                {id:'1000_wins', name:'۱۰۰۰ برد', icon:'🍰'},
                 {id:'100_score', name:'۱۰۰ امتیاز', icon:'✨'},
-                {id:'1000_score', name:'۱۰۰۰ امتیاز', icon:'⭐'}
+                {id:'1000_score', name:'۱۰۰۰ امتیاز', icon:'⭐'},
+                {id:'10000_score', name:'۱۰۰۰۰ امتیاز', icon:'💫'},
+                {id:'100000_score', name:'۱۰۰۰۰۰ امتیاز', icon:'☄️'}
             ];
 
             function getSettings() {
@@ -661,11 +722,15 @@
                 if (gamesCount >= 1) earned.push('first_game');
                 if (gamesCount >= 10) earned.push('10_games');
                 if (gamesCount >= 100) earned.push('100_games');
+                if (gamesCount >= 1000) earned.push('1000_games');
                 if (winsCount >= 1) earned.push('first_win');
                 if (winsCount >= 10) earned.push('10_wins');
                 if (winsCount >= 100) earned.push('100_wins');
+                if (winsCount >= 1000) earned.push('1000_wins');
                 if (score >= 100) earned.push('100_score');
                 if (score >= 1000) earned.push('1000_score');
+                if (score >= 10000) earned.push('10000_score');
+                if (score >= 100000) earned.push('100000_score');
                 grid.innerHTML = allAchievements.map(function(a) {
                     var unlocked = earned.indexOf(a.id) !== -1;
                     return '<div class="achievement-item' + (unlocked ? '' : ' locked') + '"><span class="achievement-icon">' + a.icon + '</span><span class="achievement-name">' + a.name + '</span></div>';
@@ -686,7 +751,9 @@
                     document.getElementById('coinsValue').textContent = d.coins || 0;
                     document.getElementById('diamondsValue').textContent = userDiamonds;
                     updateProfileAvatar();
+                    document.getElementById('headerLoader').style.display = 'none';
                     document.getElementById('headerCard').style.display = 'block';
+                    document.getElementById('statsLoader').style.display = 'none';
                     document.getElementById('statsGrid').style.display = 'grid';
                 }
 
@@ -711,8 +778,11 @@
                     }
                     document.getElementById('totalGames').textContent = totalGames;
                     document.getElementById('winRate').textContent = totalGames > 0 ? Math.round((totalWins/totalGames)*100) + '%' : '0%';
+                    document.getElementById('historyLoader').style.display = 'none';
                     document.getElementById('historyCard').style.display = 'block';
+                    document.getElementById('leagueLoader').style.display = 'none';
                     document.getElementById('leagueCard').style.display = 'block';
+                    document.getElementById('achievementsLoader').style.display = 'none';
                     document.getElementById('achievementsCard').style.display = 'block';
                     renderAchievements(totalGames, totalWins, userData.ok && userData.data ? userData.data.score || 0 : 0);
                 }
@@ -728,6 +798,7 @@
                             break;
                         }
                     }
+                    document.getElementById('rankLoader').style.display = 'none';
                     if (myRank === 0) {
                         document.getElementById('rankProgressCard').style.display = 'block';
                         document.getElementById('rankProgressBar').style.width = '100%';
