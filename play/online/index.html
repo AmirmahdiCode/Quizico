@@ -387,8 +387,19 @@ var myAns=isPlayer1?p1Ans:p2Ans;
 var oppAns=isPlayer1?p2Ans:p1Ans;
 if(myAns!=='waiting'&&myAns!==''){
 var myCorrect=0;
-for(var i=0;i<myAns.length;i++){if(myAns[i]==='T')myCorrect++;}
-results.push({myCorrect:myCorrect,myScore:myCorrect*5,oppAns:oppAns});
+var myAnswersArray=[];
+for(var i=0;i<myAns.length;i++){
+var isCorrect=myAns[i]==='T';
+if(isCorrect)myCorrect++;
+myAnswersArray.push(isCorrect);
+}
+var oppAnswersArray=[];
+if(oppAns!=='waiting'&&oppAns!==''){
+for(var j=0;j<oppAns.length;j++){
+oppAnswersArray.push(oppAns[j]==='T');
+}
+}
+results.push({myCorrect:myCorrect,myScore:myCorrect*5,oppAns:oppAns,myAnswers:myAnswersArray,oppAnswers:oppAnswersArray});
 }
 }
 }
@@ -413,13 +424,19 @@ for(var i=0;i<allResults.length;i++){
 var r=allResults[i];
 html+='<div class="round-result-item"><div class="round-result-row"><span class="round-result-player">'+t('round')+' '+(i+1)+'</span></div>';
 html+='<div class="round-result-row"><span class="round-result-player">'+myName+'</span><div class="round-dots">';
-for(var j=0;j<QUESTIONS_PER_ROUND;j++)html+='<span class="result-dot'+(j<r.myCorrect?'':' wrong')+'">'+(j+1)+'</span>';
+for(var j=0;j<QUESTIONS_PER_ROUND;j++){
+var isCorrect = r.myAnswers && r.myAnswers[j] !== undefined ? r.myAnswers[j] : false;
+html+='<span class="result-dot'+(isCorrect?'':' wrong')+'">'+(j+1)+'</span>';
+}
 html+='</div><span class="round-result-count">+'+r.myScore+'</span></div>';
 if(r.oppAns!=='waiting'&&r.oppAns!==''){
 var oppCorrect=0;
 for(var k=0;k<r.oppAns.length;k++){if(r.oppAns[k]==='T')oppCorrect++;}
 html+='<div class="round-result-row"><span class="round-result-player">'+opponentName+'</span><div class="round-dots">';
-for(var l=0;l<QUESTIONS_PER_ROUND;l++)html+='<span class="result-dot'+(l<oppCorrect?'':' wrong')+'">'+(l+1)+'</span>';
+for(var l=0;l<QUESTIONS_PER_ROUND;l++){
+var isCorrect2 = r.oppAnswers && r.oppAnswers[l] !== undefined ? r.oppAnswers[l] : false;
+html+='<span class="result-dot'+(isCorrect2?'':' wrong')+'">'+(l+1)+'</span>';
+}
 html+='</div><span class="round-result-count">+'+oppCorrect*5+'</span></div>';
 }else{
 html+='<div class="round-result-row"><span class="round-result-player">'+opponentName+'</span><span class="round-result-count">...'+t('waiting_turn')+'</span></div>';
@@ -468,7 +485,7 @@ startTimer();
 
 function startTimer(){clearInterval(timerInterval);timeLeft=QUESTION_TIME;updateTimerBar();timerInterval=setInterval(function(){timeLeft--;updateTimerBar();if(timeLeft<=0){clearInterval(timerInterval);if(!isAnswered)timeOut();}},1000);}
 function updateTimerBar(){var f=document.getElementById('timerFill');var t=document.getElementById('timerText');if(!f||!t)return;var pct=(timeLeft/QUESTION_TIME)*100;f.style.width=pct+'%';t.textContent=timeLeft+'s';f.className='timer-bar-fill'+(timeLeft<=10?' danger':timeLeft<=20?' warning':'');}
-function timeOut(){isAnswered=true;var btns=document.querySelectorAll('.option-btn');btns.forEach(function(b){b.classList.add('disabled');});var q=roundQuestions[currentQuestionIndex];var ct=q.options[q.correctOption-1];document.querySelectorAll('.option-btn').forEach(function(b){if(b.getAttribute('data-text')===ct)b.classList.add('selected-correct');});setTimeout(goToNext,800);}
+function timeOut(){isAnswered=true;myAnswers.push(false);var btns=document.querySelectorAll('.option-btn');btns.forEach(function(b){b.classList.add('disabled');});var q=roundQuestions[currentQuestionIndex];var ct=q.options[q.correctOption-1];document.querySelectorAll('.option-btn').forEach(function(b){if(b.getAttribute('data-text')===ct)b.classList.add('selected-correct');});setTimeout(goToNext,800);}
 function goToNext(){currentQuestionIndex++;if(currentQuestionIndex>=QUESTIONS_PER_ROUND){finishRound();}else{renderQuestionScreen();}}
 
 window.selectOption=function(sel,ci,btn){
@@ -521,14 +538,15 @@ isInGame=false;isGameEnded=true;isPollingActive=false;
 clearInterval(timerInterval);clearInterval(checkInterval);
 var t=getTranslation;
 var sc=0,cr=0;
-if(myScore>0){sc=75;cr=300;}
-else if(myScore<0){sc=-25;}
-else{sc=25;}
+var resultType='draw';
+if(myScore>0){sc=75;cr=300;resultType='win';}
+else if(myScore<0){sc=-25;resultType='lose';}
+else{sc=25;resultType='draw';}
 fetchData('getUser',{}).then(function(ud){if(ud.ok&&ud.data){userTotalScore=ud.data.score||0;userCoins=ud.data.coins||0;userTotalScore+=sc;userCoins+=cr;fetchData('updateUser',{score:userTotalScore,coins:userCoins});}});
-var img=sc>0?IMG_WIN:sc<0?IMG_LOSE:IMG_DRAW;
+var img=resultType==='win'?IMG_WIN:resultType==='lose'?IMG_LOSE:IMG_DRAW;
 var html='<div class="result-banner">';
 html+='<img class="result-image" src="'+img+'" alt="" draggable="false" oncontextmenu="return false;" ondragstart="return false;">';
-html+='<div class="result-text">'+(sc>0?t('win'):sc<0?t('lose'):t('draw'))+'</div>';
+html+='<div class="result-text">'+t(resultType)+'</div>';
 html+='<div class="result-score">'+t('score')+': '+(sc>=0?'+':'')+sc+'</div>';
 if(cr>0)html+='<div class="result-score">'+t('coins')+': +'+cr+'</div>';
 html+='<button class="result-btn" onclick="backToDashboard()">'+t('back')+'</button></div>';
