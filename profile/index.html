@@ -756,27 +756,28 @@
                 var totalGames = 0, totalWins = 0;
                 if (gamesData.ok && Array.isArray(gamesData.data)) {
                     totalGames = gamesData.data.length;
-                    document.getElementById('totalGames').textContent = totalGames;
-                    document.getElementById('winRate').textContent = totalGames > 0 ? Math.round((totalWins/totalGames)*100) + '%' : '0%';
-                    document.getElementById('statsLoader').style.display = 'none';
-                    document.getElementById('statsGrid').style.display = 'grid';
-                    document.getElementById('rankLoader').style.display = 'flex';
-                    
                     var list = document.getElementById('gamesList');
                     if (gamesData.data.length === 0) {
                         list.innerHTML = renderEmpty('مسابقه‌ای یافت نشد');
                     } else {
-                        list.innerHTML = gamesData.data.slice(0, 5).map(function(g) {
+                        var gamesHtml = '';
+                        for (var gi = 0; gi < gamesData.data.slice(0, 5).length; gi++) {
+                            var g = gamesData.data[gi];
                             var isP1 = String(g.player1) === String(getUserId());
                             var cls = 'draw', txt = 'مساوی';
                             if (g.status === 'finished') {
                                 if (isP1) { cls = 'win'; txt = 'برد'; totalWins++; }
                                 else { cls = 'loss'; txt = 'باخت'; }
                             }
-                            var oppId = isP1 ? g.player2 : g.player1;
-                            return '<div class="game-item"><span class="game-players" id="opp-' + g.id + '"><span class="game-avatar"><i class="fa-solid fa-user"></i></span> ...</span><span class="game-score ' + cls + '">' + txt + '</span></div>';
-                        }).join('');
+                            gamesHtml += '<div class="game-item"><span class="game-players" id="opp-' + g.id + '"><span class="game-avatar"><i class="fa-solid fa-user"></i></span> ...</span><span class="game-score ' + cls + '">' + txt + '</span></div>';
+                        }
+                        list.innerHTML = gamesHtml;
                     }
+                    document.getElementById('totalGames').textContent = totalGames;
+                    document.getElementById('winRate').textContent = totalGames > 0 ? Math.round((totalWins/totalGames)*100) + '%' : '0%';
+                    document.getElementById('statsLoader').style.display = 'none';
+                    document.getElementById('statsGrid').style.display = 'grid';
+                    document.getElementById('rankLoader').style.display = 'flex';
                 }
 
                 var boardData = await fetchData('leaderboard', { limit: 100 });
