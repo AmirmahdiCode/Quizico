@@ -277,6 +277,8 @@
             var isAnswered = false;
             var userCoins = 0, userTotalScore = 0;
             var roundResults = [];
+            var yourAnswersArray = [];
+            var botAnswersArray = [];
             var isRoundActive = false;
             var timerInterval = null;
             var timeLeft = QUESTION_TIME;
@@ -421,6 +423,7 @@
             }
             function timeOut() {
                 isAnswered = true;
+                yourAnswersArray.push(false); // ← ذخیره نتیجه غلط
                 var btns = document.querySelectorAll('.option-btn');
                 btns.forEach(function(b){b.classList.add('disabled');});
                 var q = currentQuestions[currentQuestionIndex];
@@ -451,10 +454,16 @@
                         html += '<div class="round-result-item">';
                         html += '<div class="round-result-row"><span class="round-result-player">'+t('round')+' '+(i+1)+'</span></div>';
                         html += '<div class="round-result-row"><span class="round-result-player">'+t('you')+'</span><div class="round-dots">';
-                        for (var j=0;j<QUESTIONS_PER_ROUND;j++) html += '<span class="result-dot'+(j<r.yourCorrect?'':' wrong')+'">'+(j+1)+'</span>';
+                        for (var j=0;j<QUESTIONS_PER_ROUND;j++) {
+                            var isCorrect = r.yourAnswers && r.yourAnswers[j] !== undefined ? r.yourAnswers[j] : false;
+                            html += '<span class="result-dot'+(isCorrect?'':' wrong')+'">'+(j+1)+'</span>';
+                        }
                         html += '</div><span class="round-result-count">+'+r.yourScore+'</span></div>';
                         html += '<div class="round-result-row"><span class="round-result-player">'+t('opponent')+'</span><div class="round-dots">';
-                        for (var k=0;k<QUESTIONS_PER_ROUND;k++) html += '<span class="result-dot'+(k<r.botCorrect?'':' wrong')+'">'+(k+1)+'</span>';
+                        for (var k=0;k<QUESTIONS_PER_ROUND;k++) {
+                            var botIsCorrect = r.botAnswers && r.botAnswers[k] !== undefined ? r.botAnswers[k] : false;
+                            html += '<span class="result-dot'+(botIsCorrect?'':' wrong')+'">'+(k+1)+'</span>';
+                        }
                         html += '</div><span class="round-result-count">+'+r.botScore+'</span></div>';
                         html += '</div>';
                     }
@@ -493,9 +502,11 @@
                 if (isAnswered) return;
                 isAnswered = true;
                 clearInterval(timerInterval);
+                var isCorrect = (sel === ci);
+                yourAnswersArray.push(isCorrect); // ← ذخیره نتیجه
                 var btns = document.querySelectorAll('.option-btn');
                 btns.forEach(function(b){b.classList.add('disabled');});
-                if (sel === ci) { btn.classList.add('selected-correct'); yourScore += 5; yourCorrectCount++; }
+                if (isCorrect) { btn.classList.add('selected-correct'); yourScore += 5; yourCorrectCount++; }
                 else { btn.classList.add('selected-wrong'); btns[ci].classList.add('selected-correct'); }
                 setTimeout(goToNext, 800);
             };
@@ -505,12 +516,22 @@
                 document.getElementById('mainBtn').textContent = getTranslation('opponent_turn');
                 document.getElementById('mainBtn').disabled = true;
                 var brs = 0;
+                botAnswersArray = []; // ← ریست آرایه
                 for (var i = 0; i < QUESTIONS_PER_ROUND; i++) {
                     var q = currentQuestions[i];
-                    if (botAnswer(q.correctOption - 1) === q.correctOption - 1) { brs += 5; botCorrectCount++; }
+                    var botIsCorrect = botAnswer(q.correctOption - 1) === q.correctOption - 1;
+                    botAnswersArray.push(botIsCorrect); // ← ذخیره نتیجه
+                    if (botIsCorrect) { brs += 5; botCorrectCount++; }
                 }
                 botScore += brs;
-                roundResults.push({ yourScore: yourCorrectCount*5, botScore: brs, yourCorrect: yourCorrectCount, botCorrect: botCorrectCount });
+                roundResults.push({ 
+                    yourScore: yourCorrectCount*5, 
+                    botScore: brs, 
+                    yourCorrect: yourCorrectCount, 
+                    botCorrect: botCorrectCount,
+                    yourAnswers: yourAnswersArray.slice(), // ← کپی آرایه
+                    botAnswers: botAnswersArray.slice()      // ← کپی آرایه
+                });
                 currentRound++;
                 isRoundActive = false;
                 renderMainScreen();
@@ -554,6 +575,7 @@
                 document.getElementById('coinsHeader').textContent = userCoins;
                 yourScore += 5;
                 yourCorrectCount++;
+                yourAnswersArray.push(true); // ← ذخیره نتیجه درست
                 disableActions();
                 fetchData('updateUser', { coins: userCoins });
                 clearInterval(timerInterval);
@@ -568,6 +590,8 @@
                     currentQuestionIndex = 0;
                     yourCorrectCount = 0;
                     botCorrectCount = 0;
+                    yourAnswersArray = []; // ← ریست آرایه
+                    botAnswersArray = [];  // ← ریست آرایه
                     currentQuestions = shuffleArray(questions).slice(0, QUESTIONS_PER_ROUND);
                     document.getElementById('mainBtn').textContent = getTranslation('your_turn');
                     document.getElementById('mainBtn').disabled = true;
@@ -578,19 +602,20 @@
             function endGame() {
                 isGameEnded = true;
                 var sc = 0, cr = 0;
+                var resultType = 'draw'; // ← مقدار پیش‌فرض
                 var t = getTranslation;
-                if (yourScore > botScore) { sc = 75; cr = 300; }
-                else if (yourScore < botScore) { sc = -25; }
-                else { sc = 25; }
+                if (yourScore > botScore) { sc = 75; cr = 300; resultType = 'win'; }
+                else if (yourScore < botScore) { sc = -25; resultType = 'lose'; }
+                else { sc = 25; resultType = 'draw'; }
                 userTotalScore += sc;
                 userCoins += cr;
                 fetchData('updateUser', { score: userTotalScore, coins: userCoins });
-                var gd = { id: gameId, player1: getUserId(), player2: 'bot', round1: JSON.stringify(roundResults[0]||{}), round2: JSON.stringify(roundResults[1]||{}), round3: JSON.stringify(roundResults[2]||{}), round4: JSON.stringify(roundResults[3]||{}), round5: JSON.stringify(roundResults[4]||{}), status: 'finished', result: sc > 0 ? 'win' : sc < 0 ? 'lose' : 'draw' };
+                var gd = { id: gameId, player1: getUserId(), player2: 'bot', round1: JSON.stringify(roundResults[0]||{}), round2: JSON.stringify(roundResults[1]||{}), round3: JSON.stringify(roundResults[2]||{}), round4: JSON.stringify(roundResults[3]||{}), round5: JSON.stringify(roundResults[4]||{}), status: 'finished', result: resultType };
                 fetchData('saveGame', { gameData: gd });
-                var img = sc > 0 ? IMG_WIN : sc < 0 ? IMG_LOSE : IMG_DRAW;
+                var img = resultType === 'win' ? IMG_WIN : resultType === 'lose' ? IMG_LOSE : IMG_DRAW;
                 var html = '<div class="result-banner">';
                 html += '<img class="result-image" src="'+img+'" alt="" draggable="false" oncontextmenu="return false;" ondragstart="return false;">';
-                html += '<div class="result-text">'+(sc>0?t('win'):sc<0?t('lose'):t('draw'))+'</div>';
+                html += '<div class="result-text">'+t(resultType)+'</div>';
                 html += '<div class="result-score">'+t('you')+': '+yourScore+' - '+t('opponent')+': '+botScore+'</div>';
                 html += '<div class="result-score">'+t('score')+': '+(sc>=0?'+':'')+sc+'</div>';
                 if (cr>0) html += '<div class="result-score">'+t('coins')+': +'+cr+'</div>';
