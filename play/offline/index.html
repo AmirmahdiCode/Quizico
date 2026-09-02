@@ -462,10 +462,16 @@
                         html += '<div class="round-result-item">';
                         html += '<div class="round-result-row"><span class="round-result-player">'+t('round')+' '+(i+1)+'</span></div>';
                         html += '<div class="round-result-row"><span class="round-result-player">'+t('p1')+'</span><div class="round-dots">';
-                        for (var j=0;j<QUESTIONS_PER_ROUND;j++) html += '<span class="result-dot'+(j<r.p1Correct?'':' wrong')+'">'+(j+1)+'</span>';
+                        for (var j=0;j<QUESTIONS_PER_ROUND;j++) {
+                            var isCorrect = r.p1Answers && r.p1Answers[j] !== undefined ? r.p1Answers[j] : false;
+                            html += '<span class="result-dot'+(isCorrect?'':' wrong')+'">'+(j+1)+'</span>';
+                        }
                         html += '</div><span class="round-result-count">+'+r.p1Score+'</span></div>';
                         html += '<div class="round-result-row"><span class="round-result-player">'+t('p2')+'</span><div class="round-dots">';
-                        for (var k=0;k<QUESTIONS_PER_ROUND;k++) html += '<span class="result-dot'+(k<r.p2Correct?'':' wrong')+'">'+(k+1)+'</span>';
+                        for (var k=0;k<QUESTIONS_PER_ROUND;k++) {
+                            var isCorrect2 = r.p2Answers && r.p2Answers[k] !== undefined ? r.p2Answers[k] : false;
+                            html += '<span class="result-dot'+(isCorrect2?'':' wrong')+'">'+(k+1)+'</span>';
+                        }
                         html += '</div><span class="round-result-count">+'+r.p2Score+'</span></div>';
                         html += '</div>';
                     }
@@ -538,7 +544,14 @@
                     if (p1AnsweredQuestions[i] === true) p1c++;
                     if (p2AnsweredQuestions[i] === true) p2c++;
                 }
-                roundResults.push({ p1Score: p1c*5, p2Score: p2c*5, p1Correct: p1c, p2Correct: p2c });
+                roundResults.push({ 
+                    p1Score: p1c*5, 
+                    p2Score: p2c*5, 
+                    p1Correct: p1c, 
+                    p2Correct: p2c,
+                    p1Answers: p1AnsweredQuestions.slice(),
+                    p2Answers: p2AnsweredQuestions.slice()
+                });
                 p1AnsweredQuestions = [];
                 p2AnsweredQuestions = [];
                 currentRound++;
@@ -551,16 +564,16 @@
                 clearInterval(p1TimerInterval);
                 clearInterval(p2TimerInterval);
                 var t = getTranslation;
-                var result = p1Score > p2Score ? 'p1_win' : p2Score > p1Score ? 'p2_win' : 'draw';
+                var resultType = p1Score > p2Score ? 'p1_win' : p2Score > p1Score ? 'p2_win' : 'draw';
                 var img = p1Score > p2Score || p2Score > p1Score ? IMG_WIN : IMG_DRAW;
                 var html = '<div class="result-banner">';
                 html += '<img class="result-image" src="'+img+'" alt="" draggable="false" oncontextmenu="return false;" ondragstart="return false;">';
-                html += '<div class="result-text">'+t(result)+'</div>';
+                html += '<div class="result-text">'+t(resultType)+'</div>';
                 html += '<div class="result-score">'+t('p1')+': '+p1Score+' - '+t('p2')+': '+p2Score+'</div>';
                 html += '<button class="result-btn" onclick="backToDashboard()">'+t('back')+'</button></div>';
                 document.getElementById('gameContent').innerHTML = html;
                 document.getElementById('bottomBtnContainer').style.display = 'none';
-                var gd = { id: gameId, player1: 'player1', player2: 'player2', round1: JSON.stringify(roundResults[0]||{}), round2: JSON.stringify(roundResults[1]||{}), round3: JSON.stringify(roundResults[2]||{}), round4: JSON.stringify(roundResults[3]||{}), round5: JSON.stringify(roundResults[4]||{}), status: 'finished', result: p1Score > p2Score ? 'win' : p2Score > p1Score ? 'lose' : 'draw' };
+                var gd = { id: gameId, player1: 'player1', player2: 'player2', round1: JSON.stringify(roundResults[0]||{}), round2: JSON.stringify(roundResults[1]||{}), round3: JSON.stringify(roundResults[2]||{}), round4: JSON.stringify(roundResults[3]||{}), round5: JSON.stringify(roundResults[4]||{}), status: 'finished', result: resultType };
                 fetchData('saveGame', { gameData: gd });
             }
 
