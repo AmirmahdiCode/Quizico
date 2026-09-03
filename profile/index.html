@@ -752,7 +752,10 @@
                     document.getElementById('statsLoader').style.display = 'flex';
                 }
 
-                var gamesData = await fetchData('getGamesByPlayer', {});
+                var gamesPromise = fetchData('getGamesByPlayer', {});
+                var boardPromise = fetchData('leaderboard', { limit: 100 });
+
+                var gamesData = await gamesPromise;
                 var totalGames = 0, totalWins = 0;
                 if (gamesData.ok && Array.isArray(gamesData.data)) {
                     totalGames = gamesData.data.length;
@@ -777,10 +780,10 @@
                     document.getElementById('winRate').textContent = totalGames > 0 ? Math.round((totalWins/totalGames)*100) + '%' : '0%';
                     document.getElementById('statsLoader').style.display = 'none';
                     document.getElementById('statsGrid').style.display = 'grid';
-                    document.getElementById('rankLoader').style.display = 'flex';
+                    document.getElementById('leagueLoader').style.display = 'flex';
                 }
 
-                var boardData = await fetchData('leaderboard', { limit: 100 });
+                var boardData = await boardPromise;
                 if (boardData.ok && Array.isArray(boardData.data)) {
                     var myId = getUserId();
                     var myScore = userData.ok && userData.data ? userData.data.score || 0 : 0;
@@ -809,7 +812,6 @@
                     }
                 }
 
-                document.getElementById('leagueLoader').style.display = 'flex';
                 setTimeout(function() {
                     document.getElementById('leagueLoader').style.display = 'none';
                     document.getElementById('leagueCard').style.display = 'block';
