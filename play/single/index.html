@@ -7,6 +7,10 @@
     <script src="https://developer.eitaa.com/eitaa-web-app.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/gh/rastikerdar/sahel-font@v1.0.0/dist/font-face.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/gh/rastikerdar/samim-font@v1.0.0/dist/font-face.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/gh/rastikerdar/estedad-font@v1.0.0/dist/font-face.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/gh/rastikerdar/iran-sans-font@v1.0.0/dist/font-face.css" rel="stylesheet">
     <style>
         :root {
@@ -26,6 +30,7 @@
             --radius: 12px;
             --border: 1px solid #000000;
             --gold: #f59e0b;
+            --font: 'Samim', Tahoma, sans-serif;
         }
 
         [data-theme="dark"] {
@@ -53,10 +58,9 @@
             -webkit-user-drag: none; user-drag: none;
         }
         img { pointer-events: none; -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; -webkit-user-drag: none; user-drag: none; }
-        input, textarea { -webkit-user-select: text !important; user-select: text !important; -webkit-touch-callout: default !important; }
 
         body {
-            font-family: 'Digi Kian Grunge', 'IRANSans', Tahoma, sans-serif;
+            font-family: var(--font);
             background: var(--bg);
             color: var(--text);
             min-height: 100vh;
@@ -137,7 +141,6 @@
             display: flex; align-items: center; justify-content: center;
             font-size: 18px; color: var(--primary); overflow: hidden;
         }
-        .player-avatar img { width: 100%; height: 100%; object-fit: cover; }
         .player-tag { font-size: 9px; font-weight: 800; color: var(--dark); margin-bottom: 4px; }
         .player-score { font-size: 13px; font-weight: 800; color: var(--gold); }
 
@@ -179,7 +182,7 @@
             display: flex; align-items: center; gap: 8px; padding: 10px 12px;
             border: var(--border); border-radius: 8px; background: var(--bg2);
             cursor: pointer; transition: all .2s ease; box-shadow: 2px 2px 0 #000;
-            font-family: 'Digi Kian Grunge', 'IRANSans', Tahoma, sans-serif;
+            font-family: var(--font);
             font-size: 10px; font-weight: 600; color: var(--dark); text-align: right;
         }
         .option-btn:active { transform: translate(1px, 1px); box-shadow: 1px 1px 0 #000; }
@@ -198,7 +201,7 @@
             flex: 1; display: flex; align-items: center; justify-content: center; gap: 3px;
             padding: 7px; border: var(--border); border-radius: 8px; background: var(--card-bg);
             cursor: pointer; box-shadow: 2px 2px 0 #000;
-            font-family: 'Digi Kian Grunge', 'IRANSans', Tahoma, sans-serif;
+            font-family: var(--font);
             font-size: 8px; font-weight: 700; color: var(--dark);
         }
         .action-btn:disabled { opacity: .3; cursor: not-allowed; }
@@ -210,7 +213,7 @@
         .main-btn {
             width: 100%; max-width: 600px; margin: 0 auto; display: block; padding: 10px;
             background: var(--gold); color: #fff; border: var(--border); border-radius: 25px;
-            font-family: 'Digi Kian Grunge', 'IRANSans', Tahoma, sans-serif;
+            font-family: var(--font);
             font-size: 11px; font-weight: 800; cursor: pointer; box-shadow: 3px 3px 0 #000;
         }
         .main-btn:disabled { opacity: .5; cursor: not-allowed; }
@@ -226,7 +229,7 @@
         .result-btn {
             display: inline-block; padding: 10px 24px;
             background: var(--primary); color: #fff; border: var(--border); border-radius: 8px;
-            font-family: 'Digi Kian Grunge', 'IRANSans', Tahoma, sans-serif;
+            font-family: var(--font);
             font-size: 11px; font-weight: 700; cursor: pointer; box-shadow: 2px 2px 0 #000; margin: 4px;
         }
     </style>
@@ -261,7 +264,7 @@
     <script>
         (function() {
             var webApp = window.Eitaa?.WebApp;
-            var API_URL = 'https://script.google.com/macros/s/AKfycbyqpFnvScFxtKNZ3Ig9bABK-EH2bkccFtIIOBIXpbh8c1UlQUdpmTK3Lv0h8HFoEpKNXg/exec';
+            var API_URL = 'https://script.google.com/macros/s/AKfycbyHQXQ0TffhGyW1MdtI-_sWlZMhLSPDCR3Az5dDkuwv9TJt1o6-f_aCOg_aHJnty_8P/exec';
             var IMG_WIN = 'https://cdn.imgurl.ir/uploads/d7569_SdlnXbvBsDzeGpo9E0ppeiGOtsY-sZLBOMrqTzS-F7ZsAm2fTQ.png';
             var IMG_LOSE = 'https://cdn.imgurl.ir/uploads/h063599_nwNHMksFNfYhy_4KjF92buiid4I-7_5NRme2TZyRlB9Ek8YBxQ.png';
             var IMG_DRAW = 'https://cdn.imgurl.ir/uploads/c44955_RXKwRTR4RXAXv-bftIWrthaOW8o-EiM7ZrOGTbSQIsFh1fjuvw.png';
@@ -307,15 +310,11 @@
             function getSettings() {
                 try {
                     var raw = localStorage.getItem('quizicoSettings');
-                    if (!raw) return { theme:'light', primaryColor:'#a855f7', animation:true, haptic:true, language:'fa' };
+                    if (!raw) return { theme:'light', primaryColor:'#a855f7', animation:true, haptic:true, language:'fa', font:'Samim' };
                     var p = JSON.parse(raw);
-                    if (!p.theme) p.theme = 'light';
-                    if (!p.primaryColor) p.primaryColor = '#a855f7';
-                    if (p.animation === undefined) p.animation = true;
-                    if (p.haptic === undefined) p.haptic = true;
-                    if (!p.language) p.language = 'fa';
+                    if (!p.font) p.font = 'Samim';
                     return p;
-                } catch(e) { return { theme:'light', primaryColor:'#a855f7', animation:true, haptic:true, language:'fa' }; }
+                } catch(e) { return { theme:'light', primaryColor:'#a855f7', animation:true, haptic:true, language:'fa', font:'Samim' }; }
             }
 
             function getTranslation(k) { var t = translations[currentLang] || translations.fa; return t[k] || translations.fa[k] || k; }
@@ -338,6 +337,7 @@
                 currentLang = s.language || 'fa';
                 var t = s.theme || 'light';
                 var p = s.primaryColor || '#a855f7';
+                var f = s.font || 'Samim';
                 document.documentElement.setAttribute('data-theme', t);
                 if (t === 'dark') {
                     var lightP = shadeColor(p, 40);
@@ -353,12 +353,19 @@
                 }
                 if (s.animation === false) { document.documentElement.setAttribute('data-animation', 'off'); }
                 else { document.documentElement.removeAttribute('data-animation'); }
-                if (currentLang === 'en') { document.documentElement.setAttribute('dir','ltr'); document.body.style.fontFamily='Arial, sans-serif'; }
-                else if (currentLang === 'ar') { document.documentElement.setAttribute('dir','rtl'); document.body.style.fontFamily="'Digi Kian Grunge', Tahoma, sans-serif"; }
-                else { document.documentElement.setAttribute('dir','rtl'); document.body.style.fontFamily="'Digi Kian Grunge', 'IRANSans', Tahoma, sans-serif"; }
+                var fontFamily = "'Samim', Tahoma, sans-serif";
+                if (fontMap[f]) fontFamily = fontMap[f];
+                document.body.style.fontFamily = fontFamily;
                 updateHeaderTitle(currentLang);
-                document.querySelectorAll('[data-i18n]').forEach(function(el){ var k=el.getAttribute('data-i18n'); var t2=translations[currentLang]||translations.fa; if(t2[k]) el.textContent=t2[k]; });
             }
+
+            var fontMap = {
+                'Samim': "'Samim', Tahoma, sans-serif",
+                'Sahel': "'Sahel', Tahoma, sans-serif",
+                'IRANSans': "'IRANSans', Tahoma, sans-serif",
+                'Vazirmatn': "'Vazirmatn', Tahoma, sans-serif",
+                'Estedad': "'Estedad', Tahoma, sans-serif"
+            };
 
             function sleep(ms){return new Promise(function(r){setTimeout(r,ms);});}
 
@@ -423,7 +430,7 @@
             }
             function timeOut() {
                 isAnswered = true;
-                yourAnswersArray.push(false); // ← ذخیره نتیجه غلط
+                yourAnswersArray.push(false);
                 var btns = document.querySelectorAll('.option-btn');
                 btns.forEach(function(b){b.classList.add('disabled');});
                 var q = currentQuestions[currentQuestionIndex];
@@ -503,7 +510,7 @@
                 isAnswered = true;
                 clearInterval(timerInterval);
                 var isCorrect = (sel === ci);
-                yourAnswersArray.push(isCorrect); // ← ذخیره نتیجه
+                yourAnswersArray.push(isCorrect);
                 var btns = document.querySelectorAll('.option-btn');
                 btns.forEach(function(b){b.classList.add('disabled');});
                 if (isCorrect) { btn.classList.add('selected-correct'); yourScore += 5; yourCorrectCount++; }
@@ -516,11 +523,11 @@
                 document.getElementById('mainBtn').textContent = getTranslation('opponent_turn');
                 document.getElementById('mainBtn').disabled = true;
                 var brs = 0;
-                botAnswersArray = []; // ← ریست آرایه
+                botAnswersArray = [];
                 for (var i = 0; i < QUESTIONS_PER_ROUND; i++) {
                     var q = currentQuestions[i];
                     var botIsCorrect = botAnswer(q.correctOption - 1) === q.correctOption - 1;
-                    botAnswersArray.push(botIsCorrect); // ← ذخیره نتیجه
+                    botAnswersArray.push(botIsCorrect);
                     if (botIsCorrect) { brs += 5; botCorrectCount++; }
                 }
                 botScore += brs;
@@ -529,9 +536,10 @@
                     botScore: brs, 
                     yourCorrect: yourCorrectCount, 
                     botCorrect: botCorrectCount,
-                    yourAnswers: yourAnswersArray.slice(), // ← کپی آرایه
-                    botAnswers: botAnswersArray.slice()      // ← کپی آرایه
+                    yourAnswers: yourAnswersArray.slice(),
+                    botAnswers: botAnswersArray.slice()
                 });
+                fetchData('updateUser', { coins: userCoins });
                 currentRound++;
                 isRoundActive = false;
                 renderMainScreen();
@@ -545,13 +553,13 @@
                 userCoins -= 50;
                 actionUsedThisQuestion = true;
                 document.getElementById('coinsHeader').textContent = userCoins;
+                fetchData('updateUser', { coins: userCoins });
                 var q = currentQuestions[currentQuestionIndex];
                 var ct = q.options[q.correctOption - 1];
                 var wo = q.options.filter(function(o){return o!==ct;});
                 var th = shuffleArray(wo).slice(0,2);
                 document.querySelectorAll('.option-btn').forEach(function(b){ if(th.indexOf(b.getAttribute('data-text'))!==-1) b.classList.add('hidden-option'); });
                 disableActions();
-                fetchData('updateUser', { coins: userCoins });
             };
 
             window.useSwapQuestion = function() {
@@ -560,10 +568,10 @@
                 userCoins -= 100;
                 actionUsedThisQuestion = true;
                 document.getElementById('coinsHeader').textContent = userCoins;
+                fetchData('updateUser', { coins: userCoins });
                 var rem = questions.filter(function(q){return currentQuestions.indexOf(q)===-1;});
                 if (rem.length > 0) currentQuestions[currentQuestionIndex] = shuffleArray(rem)[0];
                 disableActions();
-                fetchData('updateUser', { coins: userCoins });
                 renderQuestionScreen();
             };
 
@@ -573,11 +581,11 @@
                 userCoins -= 150;
                 actionUsedThisQuestion = true;
                 document.getElementById('coinsHeader').textContent = userCoins;
+                fetchData('updateUser', { coins: userCoins });
                 yourScore += 5;
                 yourCorrectCount++;
-                yourAnswersArray.push(true); // ← ذخیره نتیجه درست
+                yourAnswersArray.push(true);
                 disableActions();
-                fetchData('updateUser', { coins: userCoins });
                 clearInterval(timerInterval);
                 setTimeout(goToNext, 300);
             };
@@ -590,8 +598,8 @@
                     currentQuestionIndex = 0;
                     yourCorrectCount = 0;
                     botCorrectCount = 0;
-                    yourAnswersArray = []; // ← ریست آرایه
-                    botAnswersArray = [];  // ← ریست آرایه
+                    yourAnswersArray = [];
+                    botAnswersArray = [];
                     currentQuestions = shuffleArray(questions).slice(0, QUESTIONS_PER_ROUND);
                     document.getElementById('mainBtn').textContent = getTranslation('your_turn');
                     document.getElementById('mainBtn').disabled = true;
@@ -602,7 +610,7 @@
             function endGame() {
                 isGameEnded = true;
                 var sc = 0, cr = 0;
-                var resultType = 'draw'; // ← مقدار پیش‌فرض
+                var resultType = 'draw';
                 var t = getTranslation;
                 if (yourScore > botScore) { sc = 75; cr = 300; resultType = 'win'; }
                 else if (yourScore < botScore) { sc = -25; resultType = 'lose'; }
@@ -635,7 +643,7 @@
                     if (confirmed) {
                         var penalty = userTotalScore - 25;
                         if (penalty < 0) penalty = 0;
-                        fetchData('updateUser', { score: penalty });
+                        fetchData('updateUser', { score: penalty, coins: userCoins });
                         var gd = { id: gameId, player1: getUserId(), player2: 'bot', round1: JSON.stringify(roundResults[0]||{}), round2: JSON.stringify(roundResults[1]||{}), round3: JSON.stringify(roundResults[2]||{}), round4: JSON.stringify(roundResults[3]||{}), round5: JSON.stringify(roundResults[4]||{}), status: 'finished', result: 'lose' };
                         fetchData('saveGame', { gameData: gd });
                         window.location.href = '../../dashboard/';
