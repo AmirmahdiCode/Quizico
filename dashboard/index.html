@@ -519,12 +519,14 @@
 
             function getAvatarHtml(avatarId) {
                 if (!avatarId || avatarId === 'default') return '<i class="fa-solid fa-user"></i>';
+                if (avatarId === 'bot') return '<i class="fa-solid fa-robot"></i>';
                 if (iconAvatars[avatarId]) return '<i class="fa-solid ' + iconAvatars[avatarId] + '"></i>';
                 return '<i class="fa-solid fa-user"></i>';
             }
 
             async function getPlayerInfo(userId) {
                 if (!userId || userId === '') return {name: '---', avatar: 'default'};
+                if (userId === 'bot') return {name: 'ربات', avatar: 'bot'};
                 var result = await fetchData('getUser', {username: userId});
                 if (result.ok && result.data) {
                     return {name: result.data.name || userId, avatar: result.data.avatar || 'default'};
@@ -623,9 +625,7 @@
                     await checkExpiredGames(gamesData.data);
                     gamesData = await fetchData('getGamesByPlayer', {});
                 }
-                document.getElementById('onlineLoader').style.display = 'none';
                 var onlineList = document.getElementById('onlineList');
-                onlineList.style.display = 'flex';
                 if (gamesData.ok && Array.isArray(gamesData.data)) {
                     var myId = getUserId();
                     var onlineInProgress = gamesData.data.filter(function(g) { 
@@ -647,23 +647,34 @@
                             var g = onlineInProgress[i];
                             var isP1 = String(g.player1) === String(myId);
                             var oppId = isP1 ? g.player2 : g.player1;
-                            var oppInfo = await getPlayerInfo(oppId);
                             html += '<div class="game-card" onclick="continueGame(\'' + g.id + '\')">' +
-                                '<div class="game-avatar">' + getAvatarHtml(oppInfo.avatar) + '</div>' +
-                                '<div class="game-info"><div class="game-title">مقابل ' + oppInfo.name + '</div>' +
+                                '<div class="game-avatar" id="online-avatar-' + i + '"><i class="fa-solid fa-user"></i></div>' +
+                                '<div class="game-info"><div class="game-title" id="online-name-' + i + '">...</div>' +
                                 '<div class="game-subtitle">در جریان</div></div>' +
                                 '<span class="game-status-badge live">در جریان</span></div>';
                         }
                         onlineList.innerHTML = html;
+                        for (var j = 0; j < onlineInProgress.length; j++) {
+                            (function(g, index) {
+                                var isP1 = String(g.player1) === String(myId);
+                                var oppId = isP1 ? g.player2 : g.player1;
+                                getPlayerInfo(oppId).then(function(info) {
+                                    var avatarEl = document.getElementById('online-avatar-' + index);
+                                    var nameEl = document.getElementById('online-name-' + index);
+                                    if (avatarEl) avatarEl.innerHTML = getAvatarHtml(info.avatar);
+                                    if (nameEl) nameEl.textContent = 'مقابل ' + info.name;
+                                });
+                            })(onlineInProgress[j], j);
+                        }
                     }
+                    document.getElementById('onlineLoader').style.display = 'none';
+                    onlineList.style.display = 'flex';
                 }
             }
 
             async function loadLeague() {
                 var leagueResult = await fetchData('getLeagueByUser', {});
-                document.getElementById('leagueLoader').style.display = 'none';
                 var leagueList = document.getElementById('leagueList');
-                leagueList.style.display = 'flex';
                 if (leagueResult.ok && leagueResult.data && !leagueResult.data.winner) {
                     var lg = leagueResult.data;
                     document.getElementById('leagueCount').textContent = '1';
@@ -676,13 +687,13 @@
                     document.getElementById('leagueCount').textContent = '0';
                     leagueList.innerHTML = renderEmpty('لیگی در جریان نیست');
                 }
+                document.getElementById('leagueLoader').style.display = 'none';
+                leagueList.style.display = 'flex';
             }
 
             async function loadPastGames() {
                 var gamesData = await fetchData('getGamesByPlayer', {});
-                document.getElementById('pastLoader').style.display = 'none';
                 var pastList = document.getElementById('pastList');
-                pastList.style.display = 'flex';
                 if (gamesData.ok && Array.isArray(gamesData.data)) {
                     var myId = getUserId();
                     var past = gamesData.data.filter(function(g) { return g.status === 'finished'; });
@@ -701,19 +712,32 @@
                             var g = past[i];
                             var isP1 = String(g.player1) === String(myId);
                             var oppId = isP1 ? g.player2 : g.player1;
-                            var oppInfo = await getPlayerInfo(oppId);
                             var cls = 'draw', txt = 'مساوی';
                             if (g.result === 'win') { cls = 'win'; txt = 'برد'; }
                             else if (g.result === 'lose') { cls = 'lose'; txt = 'باخت'; }
                             else if (g.result === 'draw') { cls = 'draw'; txt = 'مساوی'; }
                             html += '<div class="game-card" onclick="goToResult(\'' + g.id + '\')">' +
-                                '<div class="game-avatar">' + getAvatarHtml(oppInfo.avatar) + '</div>' +
-                                '<div class="game-info"><div class="game-title">مقابل ' + oppInfo.name + '</div>' +
+                                '<div class="game-avatar" id="past-avatar-' + i + '"><i class="fa-solid fa-user"></i></div>' +
+                                '<div class="game-info"><div class="game-title" id="past-name-' + i + '">...</div>' +
                                 '<div class="game-subtitle">' + txt + '</div></div>' +
                                 '<span class="game-status-badge ' + cls + '">' + txt + '</span></div>';
                         }
                         pastList.innerHTML = html;
+                        for (var j = 0; j < past.length; j++) {
+                            (function(g, index) {
+                                var isP1 = String(g.player1) === String(myId);
+                                var oppId = isP1 ? g.player2 : g.player1;
+                                getPlayerInfo(oppId).then(function(info) {
+                                    var avatarEl = document.getElementById('past-avatar-' + index);
+                                    var nameEl = document.getElementById('past-name-' + index);
+                                    if (avatarEl) avatarEl.innerHTML = getAvatarHtml(info.avatar);
+                                    if (nameEl) nameEl.textContent = 'مقابل ' + info.name;
+                                });
+                            })(past[j], j);
+                        }
                     }
+                    document.getElementById('pastLoader').style.display = 'none';
+                    pastList.style.display = 'flex';
                 }
             }
 
