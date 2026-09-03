@@ -344,7 +344,7 @@
                     <div class="banner-image"><img src="https://cdn.imgurl.ir/uploads/h142945_InShot_20260821_184807337.png" alt="" draggable="false" oncontextmenu="return false;" ondragstart="return false;"></div>
                     <div class="banner-label"><i class="bi bi-trophy"></i> مسابقه روزانه</div>
                 </div>
-                <div class="wheel-card" onclick="openWheelModal()">
+                <div class="wheel-card" onclick="goToWheel()">
                     <img src="https://cdn.imgurl.ir/uploads/m526299_InShot_20260821_182752507.png" alt="" draggable="false" oncontextmenu="return false;" ondragstart="return false;">
                     <div class="wheel-label"><i class="bi bi-stars"></i> گردونه</div>
                 </div>
@@ -545,7 +545,12 @@
                 else { window.location.href = '../play/' + mode + '/'; }
             }
 
+            function goToWheel() {
+                window.location.href = '../wheel/';
+            }
+
             window.goToPlay = goToPlay;
+            window.goToWheel = goToWheel;
 
             window.continueGame = function(id) { localStorage.setItem('onlineRoomCode', id); window.location.href = '../play/online/'; };
             window.continueLeague = function(id) { localStorage.setItem('leagueCode', id); window.location.href = '../play/league/'; };
