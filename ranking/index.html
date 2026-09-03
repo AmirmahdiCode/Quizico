@@ -3,10 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>رتبه‌بندی | Quizico</title>
+    <title>رتبه‌بندی | کوییزیکو</title>
     <script src="https://developer.eitaa.com/eitaa-web-app.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/gh/rastikerdar/sahel-font@v1.0.0/dist/font-face.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/gh/rastikerdar/samim-font@v1.0.0/dist/font-face.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/gh/rastikerdar/estedad-font@v1.0.0/dist/font-face.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/gh/rastikerdar/iran-sans-font@v1.0.0/dist/font-face.css" rel="stylesheet">
     <style>
         :root {
@@ -26,6 +30,7 @@
             --radius: 12px;
             --border: 1px solid #000000;
             --gold: #f59e0b;
+            --font: 'Samim', Tahoma, sans-serif;
         }
 
         [data-theme="dark"] {
@@ -53,10 +58,9 @@
             -webkit-user-drag: none; user-drag: none;
         }
         img { pointer-events: none; -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; -webkit-user-drag: none; user-drag: none; }
-        input, textarea { -webkit-user-select: text !important; user-select: text !important; -webkit-touch-callout: default !important; }
 
         body {
-            font-family: 'Digi Kian Grunge', 'IRANSans', Tahoma, sans-serif;
+            font-family: var(--font);
             background: var(--bg);
             color: var(--text);
             min-height: 100vh;
@@ -106,17 +110,9 @@
         .main-container {
             position: relative; z-index: 5;
             max-width: 600px; width: 100%;
-            margin: 16px auto; padding: 0 12px 90px;
+            margin: 16px auto; padding: 0 12px 160px;
             display: flex; flex-direction: column; gap: 12px;
         }
-
-        .loader-wrapper { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 60vh; gap: 12px; }
-        .loader { width: 50px; height: 50px; border: 5px solid var(--bg3); border-top-color: var(--primary); border-radius: 50%; animation: spin .8s linear infinite; }
-        .loader-text { font-size: 12px; font-weight: 700; color: var(--text); }
-        @keyframes spin { to { transform: rotate(360deg); } }
-
-        .ranking-content { display: none; }
-        .ranking-content.show { display: flex; flex-direction: column; gap: 12px; }
 
         .search-box { position: relative; }
         .search-box input {
@@ -126,7 +122,7 @@
             border-radius: var(--radius);
             background: var(--card-bg);
             color: var(--text);
-            font-family: 'Digi Kian Grunge', 'IRANSans', Tahoma, sans-serif;
+            font-family: var(--font);
             font-size: 11px;
             box-shadow: var(--shadow);
             outline: none;
@@ -204,30 +200,42 @@
             border: var(--border);
         }
 
-        .rank-empty {
+        .section-loader {
             text-align: center;
             padding: 20px;
-            color: var(--text-light);
-            font-size: 10px;
-            background: var(--card-bg);
-            border: var(--border);
-            border-radius: var(--radius);
-            box-shadow: var(--shadow);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
         }
-        .rank-empty img { width: 60px; height: 60px; object-fit: contain; margin: 0 auto 8px; display: block; }
+        .section-loader-spinner {
+            width: 30px;
+            height: 30px;
+            border: 4px solid var(--bg3);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+        .section-loader-text {
+            font-size: 9px;
+            font-weight: 700;
+            color: var(--text-light);
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
 
         .my-rank-float {
             position: fixed;
-            bottom: 65px;
+            bottom: 60px;
             right: 5%;
             left: 5%;
-            max-width: 400px;
+            width: 90%;
+            max-width: 600px;
             margin: 0 auto;
             background: rgba(255, 255, 255, 0.5);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
             border: 1px solid var(--primary);
-            border-radius: 20px;
+            border-radius: 25px;
             padding: 8px 14px;
             display: flex;
             align-items: center;
@@ -401,7 +409,7 @@
         .nav-item {
             display: flex; flex-direction: column; align-items: center; gap: 1px;
             cursor: pointer; text-decoration: none; color: var(--text-light);
-            padding: 4px 10px; font-family: 'Digi Kian Grunge', 'IRANSans', Tahoma, sans-serif; background: none; border: none; font-size: 12px;
+            padding: 4px 10px; font-family: var(--font); background: none; border: none; font-size: 12px;
         }
         .nav-item img {
             width: 20px; height: 20px;
@@ -417,6 +425,8 @@
         }
         .nav-item span { font-size: 7px; font-weight: 600; }
         .nav-item.active { color: var(--primary); }
+
+        @media(max-width:480px) { .rank-list { gap: 6px; } }
     </style>
 </head>
 <body>
@@ -426,7 +436,7 @@
     <header class="header">
         <div class="header-inner">
             <div class="header-right">
-                <div class="header-logo"><img src="https://cdn.imgurl.ir/uploads/f30974_InShot_20260821_174101103.png" alt="Quizico" draggable="false" oncontextmenu="return false;" ondragstart="return false;"></div>
+                <div class="header-logo"><img src="https://cdn.imgurl.ir/uploads/f30974_InShot_20260821_174101103.png" alt="کوییزیکو" draggable="false" oncontextmenu="return false;" ondragstart="return false;"></div>
                 <div>
                     <div class="header-title" id="headerTitle">کوییز<span class="t-accent">یکو</span></div>
                 </div>
@@ -435,18 +445,15 @@
     </header>
 
     <main class="main-container">
-        <div class="loader-wrapper" id="loaderWrapper">
-            <div class="loader"></div>
-            <div class="loader-text" data-i18n="loading">در حال دریافت...</div>
+        <div class="search-box">
+            <i class="bi bi-search"></i>
+            <input type="text" id="searchInput" placeholder="جستجوی کاربر..." oninput="filterRankings()">
         </div>
-
-        <div class="ranking-content" id="rankingContent">
-            <div class="search-box">
-                <i class="bi bi-search"></i>
-                <input type="text" id="searchInput" data-i18n-placeholder="search_placeholder" placeholder="جستجوی کاربر..." oninput="filterRankings()">
-            </div>
-            <div class="rank-list" id="rankList"></div>
+        <div class="section-loader" id="rankLoader">
+            <div class="section-loader-spinner"></div>
+            <div class="section-loader-text">در حال دریافت رتبه‌ها...</div>
         </div>
+        <div class="rank-list" id="rankList"></div>
     </main>
 
     <div class="my-rank-float" id="myRankFloat" style="display:none;" onclick="scrollToMyRank()">
@@ -465,9 +472,9 @@
                 <div class="profile-modal-name" id="modalName"></div>
                 <div class="profile-modal-username" id="modalUsername"></div>
                 <div class="profile-modal-stats">
-                    <div class="profile-modal-stat"><div class="profile-modal-stat-value" id="modalScore">0</div><div class="profile-modal-stat-label" data-i18n="score">امتیاز</div></div>
-                    <div class="profile-modal-stat"><div class="profile-modal-stat-value" id="modalCoins">0</div><div class="profile-modal-stat-label" data-i18n="coins">سکه</div></div>
-                    <div class="profile-modal-stat"><div class="profile-modal-stat-value" id="modalDiamonds">0</div><div class="profile-modal-stat-label" data-i18n="diamonds">الماس</div></div>
+                    <div class="profile-modal-stat"><div class="profile-modal-stat-value" id="modalScore">0</div><div class="profile-modal-stat-label">امتیاز</div></div>
+                    <div class="profile-modal-stat"><div class="profile-modal-stat-value" id="modalCoins">0</div><div class="profile-modal-stat-label">سکه</div></div>
+                    <div class="profile-modal-stat"><div class="profile-modal-stat-value" id="modalDiamonds">0</div><div class="profile-modal-stat-label">الماس</div></div>
                 </div>
             </div>
         </div>
@@ -484,57 +491,44 @@
     <nav class="bottom-nav">
         <div class="nav-item" onclick="window.location.href='../dashboard/'">
             <img src="https://uploadkon.ir/uploads/bdf329_26home-iconbase-1-.svg" alt="خانه" draggable="false" oncontextmenu="return false;" ondragstart="return false;">
-            <span data-i18n="home">خانه</span>
+            <span>خانه</span>
         </div>
         <div class="nav-item active" onclick="window.location.href='../ranking/'">
             <img src="https://uploadkon.ir/uploads/8c9f29_26medal-1st-iconbase.svg" alt="رتبه" draggable="false" oncontextmenu="return false;" ondragstart="return false;">
-            <span data-i18n="ranking_nav">رتبه</span>
+            <span>رتبه</span>
         </div>
         <div class="nav-item" onclick="window.location.href='../profile/'">
             <img src="https://uploadkon.ir/uploads/e78130_26profile-iconbase.svg" alt="پروفایل" draggable="false" oncontextmenu="return false;" ondragstart="return false;">
-            <span data-i18n="profile">پروفایل</span>
+            <span>پروفایل</span>
         </div>
         <div class="nav-item" onclick="window.location.href='../setting/'">
             <img src="https://uploadkon.ir/uploads/629f29_26setting-iconbase.svg" alt="تنظیمات" draggable="false" oncontextmenu="return false;" ondragstart="return false;">
-            <span data-i18n="settings_nav">تنظیمات</span>
+            <span>تنظیمات</span>
         </div>
     </nav>
 
     <script>
         (function() {
             var webApp = window.Eitaa?.WebApp;
-            var API_URL = 'https://script.google.com/macros/s/AKfycbyqpFnvScFxtKNZ3Ig9bABK-EH2bkccFtIIOBIXpbh8c1UlQUdpmTK3Lv0h8HFoEpKNXg/exec';
-            var SAD_IMAGE = 'https://cdn.imgurl.ir/uploads/g58935_InShot_20260822_140943752.png';
+            var API_URL = 'https://script.google.com/macros/s/AKfycbyHQXQ0TffhGyW1MdtI-_sWlZMhLSPDCR3Az5dDkuwv9TJt1o6-f_aCOg_aHJnty_8P/exec';
             var allRankings = [];
             var currentLang = 'fa';
+            var currentOffset = 0;
+            var batchSize = 5;
+            var isLoading = false;
+            var allLoaded = false;
 
             document.addEventListener('contextmenu', function(e) { e.preventDefault(); });
             document.addEventListener('dragstart', function(e) { e.preventDefault(); });
-            document.addEventListener('copy', function(e) { if (e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA') e.preventDefault(); });
-            document.addEventListener('cut', function(e) { if (e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA') e.preventDefault(); });
+            document.addEventListener('copy', function(e) { e.preventDefault(); });
+            document.addEventListener('cut', function(e) { e.preventDefault(); });
 
-            var translations = {
-                fa: {
-                    loading: 'در حال دریافت...',
-                    home: 'خانه', ranking_nav: 'رتبه', profile: 'پروفایل', settings_nav: 'تنظیمات',
-                    no_users: 'کاربری یافت نشد', search_placeholder: 'جستجوی کاربر...',
-                    score: 'امتیاز', you: 'شما', unknown: 'ناشناس', coins: 'سکه', diamonds: 'الماس',
-                    support: 'از سازنده حمایت کنید', error_loading: 'خطا در دریافت اطلاعات'
-                },
-                en: {
-                    loading: 'Loading...',
-                    home: 'Home', ranking_nav: 'Ranking', profile: 'Profile', settings_nav: 'Settings',
-                    no_users: 'No users found', search_placeholder: 'Search users...',
-                    score: 'Score', you: 'You', unknown: 'Unknown', coins: 'Coins', diamonds: 'Diamonds',
-                    support: 'Support the developer', error_loading: 'Error loading data'
-                },
-                ar: {
-                    loading: 'جار التحميل...',
-                    home: 'الرئيسية', ranking_nav: 'الترتيب', profile: 'الملف', settings_nav: 'الإعدادات',
-                    no_users: 'لا يوجد مستخدمين', search_placeholder: 'ابحث عن مستخدم...',
-                    score: 'النقاط', you: 'أنت', unknown: 'غير معروف', coins: 'عملات', diamonds: 'ألماس',
-                    support: 'ادعم المطور', error_loading: 'خطأ في تحميل البيانات'
-                }
+            var fontMap = {
+                'Samim': "'Samim', Tahoma, sans-serif",
+                'Sahel': "'Sahel', Tahoma, sans-serif",
+                'IRANSans': "'IRANSans', Tahoma, sans-serif",
+                'Vazirmatn': "'Vazirmatn', Tahoma, sans-serif",
+                'Estedad': "'Estedad', Tahoma, sans-serif"
             };
 
             var iconAvatars = {
@@ -545,68 +539,26 @@
                 'icon_helmet': 'fa-helmet-safety', 'icon_shield': 'fa-shield-halved', 'icon_sword': 'fa-hand-fist'
             };
 
-            var boyAvatars = {
-                'boy_1': 'https://cdn.imgurl.ir/uploads/l17100_QkCRHe00vl64Bngk74ayYmWMyWA-NjfsC7SoRbGgrkm1mS-bpQ.png',
-                'boy_2': 'https://cdn.imgurl.ir/uploads/g87708_nYSMEcudjDVvsMsfO4B6nrWGmFI-J3OzSBMOSwKo6Mt48wolyg.png',
-                'boy_3': 'https://cdn.imgurl.ir/uploads/q01044_VWzDtI4NYQ660EGTVD_xToLVOvw-DkODf3dzQq2kbk2i1b-cIQ.png',
-                'boy_4': 'https://cdn.imgurl.ir/uploads/w428496_0RBfnEt77slNmis2YlNfIjtELkE-_nTEsqjVSQafpoCS0X1pXg.png',
-                'boy_5': 'https://cdn.imgurl.ir/uploads/h099226_Kaahld11_fKS5dcGDsq-5IvBiC0-olahkKmOTsSjohG4mMsVUw.png',
-                'boy_6': 'https://cdn.imgurl.ir/uploads/k778258_pd9TZqS3DHKaaJQOygY-3WFHMAE-NzGEJ7R1Sv-r5Dfc6Zi3Ig.png',
-                'boy_7': 'https://cdn.imgurl.ir/uploads/w221825_-1Xu8BzjzGa1I7ZIBVaYpoez4BM-zdVRFGLaRJGymjrVOu_yBA.png',
-                'boy_8': 'https://cdn.imgurl.ir/uploads/o12072_rsMh7nSKjcODxjSPFWwfrlpYFe4-RHju528wRf-FCo_v2tJX7w.png',
-                'boy_9': 'https://cdn.imgurl.ir/uploads/m007403_MNhHAeXQ-_-nEMVuihCtgYXUS90-5LFmX4D7T2-1RaoN058vnw.png',
-                'boy_10': 'https://cdn.imgurl.ir/uploads/h976855_MLDYzJITIyaUkB6efcWGamXK39M-yfLRI0_7RrCmky6p-jgXFw.png'
-            };
-
-            var girlAvatars = {
-                'girl_1': 'https://cdn.imgurl.ir/uploads/h993569_G_wzhIk2ocoOPFhmmQHpUuS1mQc-IXeKOSBFSx6jn_y9tpVazg.png',
-                'girl_2': 'https://cdn.imgurl.ir/uploads/u2553__Yb1fK6xw6Di1SX-7xB5v2J7e-g-IYBMcl_wSmqXNTkmAQMGnA.png',
-                'girl_3': 'https://cdn.imgurl.ir/uploads/w03550__MlKSY3NXQ9cWkwVioa7hUpr6aI-2MRPg-L3QNOpRTm1oZTHtQ.png',
-                'girl_4': 'https://cdn.imgurl.ir/uploads/r074193_q1uxpQIZsrzslDhI1W69Su-XvbY-x5jd5EZ1SyKggCCSjbbxrg.png',
-                'girl_5': 'https://cdn.imgurl.ir/uploads/w035688_E2FfMOkE8ZGtuOZqU2q_VGTE6Yw-IU1JraRkSTub6ymIVXQuxA.png',
-                'girl_6': 'https://cdn.imgurl.ir/uploads/c895184_bt1drvChqXnDjtGhNgxJ9M2Ho4I-n1KpcnSiSXSboB5rKfBwCg.png',
-                'girl_7': 'https://cdn.imgurl.ir/uploads/u246883_b3j_B2NgyZNITErHK5c9A3dWFRA-5bV5bdzHSGi4neWTa9881A.png',
-                'girl_8': 'https://cdn.imgurl.ir/uploads/o0025_B1BkJ9n5GL25bnqG-YNn79Qvsds-Erx3uqovQtex6125wXCD7g.png',
-                'girl_9': 'https://cdn.imgurl.ir/uploads/t14047_NR8hWSzjLbSm2cXNrBnA2mEh43o-XhY5hyhBSU6s-9c4Fv5wRA.png',
-                'girl_10': 'https://cdn.imgurl.ir/uploads/v96829_FouVxzw8xOmCFvf0IEri962BmHQ-LxKzSWS_aj8dcNI5EWVw.png'
-            };
-
             function getSettings() {
                 try {
                     var raw = localStorage.getItem('quizicoSettings');
-                    if (!raw) return { theme: 'light', primaryColor: '#a855f7', animation: true, haptic: true, language: 'fa' };
+                    if (!raw) return { theme: 'light', primaryColor: '#a855f7', animation: true, haptic: true, language: 'fa', font: 'Samim' };
                     var p = JSON.parse(raw);
-                    if (!p.theme) p.theme = 'light';
-                    if (!p.primaryColor) p.primaryColor = '#a855f7';
-                    if (p.animation === undefined) p.animation = true;
-                    if (p.haptic === undefined) p.haptic = true;
-                    if (!p.language) p.language = 'fa';
+                    if (!p.font) p.font = 'Samim';
                     return p;
-                } catch(e) { return { theme: 'light', primaryColor: '#a855f7', animation: true, haptic: true, language: 'fa' }; }
+                } catch(e) { return { theme: 'light', primaryColor: '#a855f7', animation: true, haptic: true, language: 'fa', font: 'Samim' }; }
             }
 
-            function getTranslation(k) { var t = translations[currentLang] || translations.fa; return t[k] || translations.fa[k] || k; }
-
-            function hexToRgb(h) { var r = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(h); return r ? { r: parseInt(r[1],16), g: parseInt(r[2],16), b: parseInt(r[3],16) } : { r:168,g:85,b:247 }; }
+            function hexToRgb(h) { var r = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(h); return r ? { r:parseInt(r[1],16), g:parseInt(r[2],16), b:parseInt(r[3],16) } : { r:168,g:85,b:247 }; }
             function shadeColor(c,p){var r=hexToRgb(c);var rr=Math.max(0,Math.min(255,r.r+p));var gg=Math.max(0,Math.min(255,r.g+p));var bb=Math.max(0,Math.min(255,r.b+p));return '#'+((1<<24)+(rr<<16)+(gg<<8)+bb).toString(16).slice(1);}
-
-            function updateHeaderTitle(lang) {
-                var titleEl = document.getElementById('headerTitle');
-                if (lang === 'en') {
-                    titleEl.innerHTML = 'Quiz<span class="t-accent">ico</span>';
-                } else {
-                    titleEl.innerHTML = 'کوییز<span class="t-accent">یکو</span>';
-                }
-            }
 
             function applyTheme() {
                 var s = getSettings();
                 currentLang = s.language || 'fa';
                 var t = s.theme || 'light';
                 var p = s.primaryColor || '#a855f7';
-                
+                var f = s.font || 'Samim';
                 document.documentElement.setAttribute('data-theme', t);
-                
                 if (t === 'dark') {
                     var lightP = shadeColor(p, 40);
                     document.documentElement.style.setProperty('--primary', lightP);
@@ -619,28 +571,14 @@
                     document.documentElement.style.setProperty('--primary-light', shadeColor(p, 50));
                     document.documentElement.style.setProperty('--primary-rgb', hexToRgb(p).r + ',' + hexToRgb(p).g + ',' + hexToRgb(p).b);
                 }
-                
-                if (s.animation === false) {
-                    document.documentElement.setAttribute('data-animation', 'off');
-                } else {
-                    document.documentElement.removeAttribute('data-animation');
-                }
-                
-                if (currentLang === 'en') {
-                    document.documentElement.setAttribute('dir', 'ltr');
-                    document.body.style.fontFamily = 'Arial, sans-serif';
-                } else if (currentLang === 'ar') {
-                    document.documentElement.setAttribute('dir', 'rtl');
-                    document.body.style.fontFamily = "'Digi Kian Grunge', Tahoma, sans-serif";
-                } else {
-                    document.documentElement.setAttribute('dir', 'rtl');
-                    document.body.style.fontFamily = "'Digi Kian Grunge', 'IRANSans', Tahoma, sans-serif";
-                }
-                
-                updateHeaderTitle(currentLang);
-                
-                document.querySelectorAll('[data-i18n]').forEach(function(el){ var k=el.getAttribute('data-i18n'); var t2=translations[currentLang]||translations.fa; if(t2[k]) el.textContent=t2[k]; });
-                document.querySelectorAll('[data-i18n-placeholder]').forEach(function(el){ var k=el.getAttribute('data-i18n-placeholder'); var t2=translations[currentLang]||translations.fa; if(t2[k]) el.placeholder=t2[k]; });
+                if (s.animation === false) { document.documentElement.setAttribute('data-animation', 'off'); }
+                else { document.documentElement.removeAttribute('data-animation'); }
+                var fontFamily = fontMap[f] || fontMap['Samim'];
+                document.documentElement.style.setProperty('--font', fontFamily);
+                document.body.style.fontFamily = fontFamily;
+                var titleEl = document.getElementById('headerTitle');
+                if (currentLang === 'en') titleEl.innerHTML = 'Quiz<span class="t-accent">ico</span>';
+                else titleEl.innerHTML = 'کوییز<span class="t-accent">یکو</span>';
             }
 
             function getEitaaUser(){return webApp&&webApp.initDataUnsafe&&webApp.initDataUnsafe.user?webApp.initDataUnsafe.user:null;}
@@ -656,9 +594,7 @@
 
             function getAvatarHtml(avatarId) {
                 if (!avatarId || avatarId === 'default') return '<i class="fa-solid fa-user"></i>';
-                if (iconAvatars[avatarId]) return '<i class="fa-solid '+iconAvatars[avatarId]+'"></i>';
-                if (boyAvatars[avatarId]) return '<img src="'+boyAvatars[avatarId]+'" alt="" draggable="false" oncontextmenu="return false;" ondragstart="return false;">';
-                if (girlAvatars[avatarId]) return '<img src="'+girlAvatars[avatarId]+'" alt="" draggable="false" oncontextmenu="return false;" ondragstart="return false;">';
+                if (iconAvatars[avatarId]) return '<i class="fa-solid ' + iconAvatars[avatarId] + '"></i>';
                 return '<i class="fa-solid fa-user"></i>';
             }
 
@@ -675,38 +611,107 @@
                 return '';
             }
 
-            function renderRankList(list, myId) {
-                var el = document.getElementById('rankList');
-                var t = getTranslation('no_users');
-                var unknown = getTranslation('unknown');
-                var scoreLabel = getTranslation('score');
-                var youLabel = getTranslation('you');
-                if (list.length === 0) {
-                    el.innerHTML = '<div class="rank-empty"><img src="'+SAD_IMAGE+'" alt="" draggable="false" oncontextmenu="return false;" ondragstart="return false;"><p>'+t+'</p></div>';
-                    return;
-                }
-                el.innerHTML = list.map(function(item, i) {
-                    var isMe = String(item.username) === String(myId);
-                    return '<div class="rank-item'+(isMe?' is-me':'')+'" onclick="viewProfile(\''+item.username+'\')">'+
-                        '<div class="rank-number '+getRankClass(i)+'">'+getRankIcon(i)+'</div>'+
-                        '<div class="rank-avatar">'+getAvatarHtml(item.avatar)+'</div>'+
-                        '<div class="rank-info"><div class="rank-name">'+(item.name||item.username||unknown)+'</div>'+
-                        '<div class="rank-score">'+scoreLabel+': '+(item.score||0)+'</div></div>'+
-                        (isMe?'<span class="rank-badge-me">'+youLabel+'</span>':'')+
-                        '</div>';
-                }).join('');
+            function renderRankItem(item, index, myId) {
+                var isMe = String(item.username) === String(myId);
+                return '<div class="rank-item' + (isMe ? ' is-me' : '') + '" onclick="viewProfile(\'' + item.username + '\')">' +
+                    '<div class="rank-number ' + getRankClass(index) + '">' + getRankIcon(index) + '</div>' +
+                    '<div class="rank-avatar">' + getAvatarHtml(item.avatar) + '</div>' +
+                    '<div class="rank-info"><div class="rank-name">' + (item.name || item.username || '؟') + '</div>' +
+                    '<div class="rank-score">امتیاز: ' + (item.score || 0) + '</div></div>' +
+                    (isMe ? '<span class="rank-badge-me">شما</span>' : '') +
+                    '</div>';
             }
+
+            function renderBatch(batch, startIndex) {
+                var myId = getUserId();
+                var html = '';
+                for (var i = 0; i < batch.length; i++) {
+                    html += renderRankItem(batch[i], startIndex + i, myId);
+                }
+                return html;
+            }
+
+            async function loadMoreRankings() {
+                if (isLoading || allLoaded) return;
+                isLoading = true;
+                
+                var result = await fetchData('leaderboard', { limit: batchSize, offset: currentOffset });
+                if (result.ok && Array.isArray(result.data) && result.data.length > 0) {
+                    var batch = result.data;
+                    document.getElementById('rankList').insertAdjacentHTML('beforeend', renderBatch(batch, currentOffset));
+                    currentOffset += batch.length;
+                    
+                    for (var i = 0; i < batch.length; i++) {
+                        allRankings.push(batch[i]);
+                    }
+                    
+                    if (batch.length < batchSize) {
+                        allLoaded = true;
+                    }
+                } else {
+                    allLoaded = true;
+                }
+                
+                isLoading = false;
+            }
+
+            async function loadFirstRankings() {
+                var result = await fetchData('leaderboard', { limit: batchSize, offset: 0 });
+                if (result.ok && Array.isArray(result.data) && result.data.length > 0) {
+                    document.getElementById('rankLoader').style.display = 'none';
+                    var batch = result.data;
+                    document.getElementById('rankList').innerHTML = renderBatch(batch, 0);
+                    currentOffset = batch.length;
+                    
+                    allRankings = batch.slice();
+                    
+                    if (batch.length < batchSize) {
+                        allLoaded = true;
+                    }
+                    
+                    var myId = getUserId();
+                    var myRank = await fetchData('leaderboard', { limit: 1000, offset: 0 });
+                    if (myRank.ok && Array.isArray(myRank.data)) {
+                        for (var i = 0; i < myRank.data.length; i++) {
+                            if (String(myRank.data[i].username) === String(myId)) {
+                                document.getElementById('myRankFloatNumber').textContent = '#' + (i + 1);
+                                document.getElementById('myRankFloatAvatar').innerHTML = getAvatarHtml(myRank.data[i].avatar);
+                                document.getElementById('myRankFloatName').textContent = myRank.data[i].name || '؟';
+                                document.getElementById('myRankFloatScore').textContent = myRank.data[i].score || 0;
+                                document.getElementById('myRankFloat').style.display = 'flex';
+                                break;
+                            }
+                        }
+                    }
+                } else {
+                    document.getElementById('rankLoader').style.display = 'none';
+                    document.getElementById('rankList').innerHTML = '<div class="section-loader"><div class="section-loader-text">کاربری یافت نشد</div></div>';
+                }
+            }
+
+            window.addEventListener('scroll', function() {
+                var scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+                var windowHeight = window.innerHeight;
+                var docHeight = document.documentElement.scrollHeight;
+                
+                if (scrollTop + windowHeight >= docHeight - 200) {
+                    loadMoreRankings();
+                }
+            });
 
             window.filterRankings = function() {
                 var q = document.getElementById('searchInput').value.toLowerCase().trim();
                 var myId = getUserId();
-                if (!q) { renderRankList(allRankings, myId); return; }
+                if (!q) {
+                    document.getElementById('rankList').innerHTML = renderBatch(allRankings, 0);
+                    return;
+                }
                 var filtered = allRankings.filter(function(item) {
-                    var n = (item.name||'').toLowerCase();
-                    var u = String(item.username||'').toLowerCase();
+                    var n = (item.name || '').toLowerCase();
+                    var u = String(item.username || '').toLowerCase();
                     return n.includes(q) || u.includes(q);
                 });
-                renderRankList(filtered, myId);
+                document.getElementById('rankList').innerHTML = renderBatch(filtered, 0);
             };
 
             window.viewProfile = async function(username) {
@@ -720,7 +725,7 @@
                     if (result.ok && result.data) {
                         var d = result.data;
                         document.getElementById('modalAvatar').innerHTML = getAvatarHtml(d.avatar);
-                        document.getElementById('modalName').textContent = d.name || '?';
+                        document.getElementById('modalName').textContent = d.name || '؟';
                         document.getElementById('modalUsername').textContent = 'ID: ' + d.username;
                         document.getElementById('modalScore').textContent = d.score || 0;
                         document.getElementById('modalCoins').textContent = d.coins || 0;
@@ -749,62 +754,6 @@
             }
             window.openSupportLink = openSupportLink;
 
-            function showError() {
-                var loaderText = document.querySelector('.loader-text');
-                if (loaderText) {
-                    loaderText.textContent = getTranslation('error_loading');
-                    loaderText.style.color = '#ef4444';
-                }
-                var loader = document.querySelector('.loader');
-                if (loader) {
-                    loader.style.borderTopColor = '#ef4444';
-                    loader.style.animation = 'none';
-                }
-            }
-
-            async function loadRanking() {
-                var hasError = false;
-                try {
-                    var myId = getUserId();
-                    var result = await fetchData('leaderboard', { limit: 100 });
-                    if (!result.ok) { hasError = true; }
-                    else if (Array.isArray(result.data) && result.data.length > 0) {
-                        allRankings = result.data;
-                        renderRankList(allRankings, myId);
-                        
-                        var myRank = null, myScore = 0, myName = '...', myAvatar = 'default';
-                        for (var i = 0; i < allRankings.length; i++) {
-                            if (String(allRankings[i].username) === String(myId)) {
-                                myRank = i+1;
-                                myScore = allRankings[i].score||0;
-                                myName = allRankings[i].name || getTranslation('you');
-                                myAvatar = allRankings[i].avatar || 'default';
-                                break;
-                            }
-                        }
-                        
-                        if (myRank) {
-                            document.getElementById('myRankFloatNumber').textContent = '#'+myRank;
-                            document.getElementById('myRankFloatAvatar').innerHTML = getAvatarHtml(myAvatar);
-                            document.getElementById('myRankFloatName').textContent = myName;
-                            document.getElementById('myRankFloatScore').textContent = myScore;
-                            document.getElementById('myRankFloat').style.display = 'flex';
-                        }
-                    } else {
-                        var noUsers = getTranslation('no_users');
-                        document.getElementById('rankList').innerHTML = '<div class="rank-empty"><img src="'+SAD_IMAGE+'" alt="" draggable="false" oncontextmenu="return false;" ondragstart="return false;"><p>'+noUsers+'</p></div>';
-                    }
-                } catch(e) { hasError = true; }
-                finally {
-                    if (hasError) {
-                        showError();
-                    } else {
-                        document.getElementById('loaderWrapper').style.display = 'none';
-                        document.getElementById('rankingContent').classList.add('show');
-                    }
-                }
-            }
-
             if (webApp) {
                 webApp.ready();
                 webApp.BackButton.show();
@@ -812,7 +761,7 @@
             }
 
             applyTheme();
-            loadRanking();
+            loadFirstRankings();
             
             setTimeout(function() {
                 var notif = document.getElementById('supportNotification');
