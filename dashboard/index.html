@@ -3,9 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quizico</title>
+    <title>کوییزیکو</title>
     <script src="https://developer.eitaa.com/eitaa-web-app.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/gh/rastikerdar/sahel-font@v1.0.0/dist/font-face.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/gh/rastikerdar/samim-font@v1.0.0/dist/font-face.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/gh/rastikerdar/estedad-font@v1.0.0/dist/font-face.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/gh/rastikerdar/iran-sans-font@v1.0.0/dist/font-face.css" rel="stylesheet">
     <style>
         :root {
@@ -24,6 +28,8 @@
             --shadow: 3px 3px 0 #000000;
             --radius: 12px;
             --border: 1px solid #000000;
+            --gold: #f59e0b;
+            --font: 'Samim', Tahoma, sans-serif;
         }
 
         [data-theme="dark"] {
@@ -51,10 +57,9 @@
             -webkit-user-drag: none; user-drag: none;
         }
         img { pointer-events: none; -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; -webkit-user-drag: none; user-drag: none; }
-        input, textarea { -webkit-user-select: text !important; user-select: text !important; -webkit-touch-callout: default !important; }
 
         body {
-            font-family: 'Digi Kian Grunge', 'IRANSans', Tahoma, sans-serif;
+            font-family: var(--font);
             background: var(--bg);
             color: var(--text);
             min-height: 100vh;
@@ -118,13 +123,7 @@
             display: flex; flex-direction: column; gap: 12px;
         }
 
-        .loader-wrapper { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 60vh; gap: 12px; }
-        .loader { width: 50px; height: 50px; border: 5px solid var(--bg3); border-top-color: var(--primary); border-radius: 50%; animation: spin .8s linear infinite; }
-        .loader-text { font-size: 12px; font-weight: 700; color: var(--text); }
-        @keyframes spin { to { transform: rotate(360deg); } }
-
-        .dashboard-content { display: none; }
-        .dashboard-content.show { display: flex; flex-direction: column; gap: 12px; }
+        .dashboard-content { display: flex; flex-direction: column; gap: 12px; }
 
         .banner-row { display: flex; gap: 12px; }
         .banner-card {
@@ -214,20 +213,31 @@
         .game-status-badge.draw { background: #f59e0b; color: #fff; }
         .game-status-badge.expired { background: #94a3b8; color: #fff; }
 
-        .empty-state { text-align: center; padding: 16px; color: var(--text-light); font-size: 10px; }
-        .empty-state img { width: 60px; height: 60px; object-fit: contain; margin: 0 auto 6px; display: block; }
-
-        .support-card {
-            display: flex; align-items: center; gap: 10px; padding: 12px 16px;
-            background: var(--card-bg); border: var(--border); border-radius: var(--radius);
-            box-shadow: var(--shadow); cursor: pointer; transition: all 0.2s ease;
+        .section-loader {
+            text-align: center;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
         }
-        .support-card:active { transform: translate(1px, 1px); box-shadow: 1px 1px 0 #000; }
-        .support-card img { width: 38px; height: 38px; border-radius: 50%; border: var(--border); object-fit: cover; }
-        .support-info { flex: 1; }
-        .support-name { font-size: 10px; font-weight: 800; color: var(--dark); }
-        .support-desc { font-size: 8px; color: var(--text-light); }
-        .support-card i { color: var(--text-light); font-size: 11px; }
+        .section-loader-spinner {
+            width: 25px;
+            height: 25px;
+            border: 3px solid var(--bg3);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+        .section-loader-text {
+            font-size: 8px;
+            font-weight: 700;
+            color: var(--text-light);
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .empty-state { text-align: center; padding: 16px; color: var(--text-light); font-size: 10px; }
+        .empty-state i { font-size: 35px; color: var(--primary); margin-bottom: 8px; display: block; }
 
         .support-notification {
             position: fixed; top: 75px; right: 5%; left: 5%;
@@ -279,7 +289,7 @@
         .nav-item {
             display: flex; flex-direction: column; align-items: center; gap: 1px;
             cursor: pointer; text-decoration: none; color: var(--text-light);
-            padding: 4px 10px; font-family: 'Digi Kian Grunge', 'IRANSans', Tahoma, sans-serif; background: none; border: none; font-size: 12px;
+            padding: 4px 10px; font-family: var(--font); background: none; border: none; font-size: 12px;
         }
         .nav-item img {
             width: 20px; height: 20px;
@@ -296,37 +306,7 @@
         .nav-item span { font-size: 7px; font-weight: 600; }
         .nav-item.active { color: var(--primary); }
 
-        .wheel-modal-overlay {
-            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0,0,0,.7); z-index: 1000;
-            display: none; align-items: center; justify-content: center;
-        }
-        .wheel-modal-overlay.show { display: flex; }
-        .wheel-modal {
-            background: var(--card-bg); border: var(--border); border-radius: var(--radius);
-            padding: 20px; box-shadow: 5px 5px 0 #000;
-            max-width: 380px; width: 90%; position: relative;
-        }
-        .wheel-modal-close {
-            position: absolute; top: 10px; left: 10px;
-            width: 28px; height: 28px; border: var(--border); border-radius: 50%;
-            background: var(--bg2); cursor: pointer;
-            display: flex; align-items: center; justify-content: center;
-        }
-        .wheel-modal-title { text-align: center; font-size: 15px; font-weight: 800; margin-bottom: 14px; color: var(--dark); }
-        .wheel-container { position: relative; width: 260px; height: 260px; margin: 0 auto 14px; }
-        .wheel-canvas { width: 100%; height: 100%; border-radius: 50%; border: 4px solid #000; transition: transform 4s cubic-bezier(.17,.67,.12,.99); }
-        .wheel-pointer { position: absolute; top: -8px; left: 50%; transform: translateX(-50%); font-size: 30px; color: #f59e0b; z-index: 5; }
-        .wheel-center-btn {
-            position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
-            width: 55px; height: 55px; border-radius: 50%;
-            background: var(--primary); border: 3px solid #000; color: #fff;
-            font-size: 11px; font-weight: 800; cursor: pointer; z-index: 5;
-        }
-        .wheel-cost-info { text-align: center; font-size: 10px; font-weight: 700; color: var(--text); }
-        .wheel-result { text-align: center; font-size: 13px; font-weight: 800; color: var(--primary); min-height: 25px; margin-top: 8px; }
-
-        @media(max-width:480px) { .game-modes-grid { grid-template-columns: repeat(2,1fr); } }
+        @media(max-width: 480px) { .game-modes-grid { grid-template-columns: repeat(4, 1fr); } }
     </style>
 </head>
 <body>
@@ -335,10 +315,10 @@
     <header class="header">
         <div class="header-inner">
             <div class="header-right">
-                <div class="header-logo"><img src="https://cdn.imgurl.ir/uploads/f30974_InShot_20260821_174101103.png" alt="Quizico" draggable="false" oncontextmenu="return false;" ondragstart="return false;"></div>
+                <div class="header-logo"><img src="https://cdn.imgurl.ir/uploads/f30974_InShot_20260821_174101103.png" alt="کوییزیکو" draggable="false" oncontextmenu="return false;" ondragstart="return false;"></div>
                 <div>
                     <div class="header-title" id="headerTitle">کوییز<span class="t-accent">یکو</span></div>
-                    <div class="header-subtitle" data-i18n="tagline">اطلاعات خودت رو محک بزن</div>
+                    <div class="header-subtitle">اطلاعات خودت رو محک بزن</div>
                 </div>
             </div>
             <div class="header-currency">
@@ -349,76 +329,74 @@
     </header>
 
     <main class="main-container">
-        <div class="loader-wrapper" id="loaderWrapper">
-            <div class="loader"></div>
-            <div class="loader-text" data-i18n="loading">در حال دریافت...</div>
-        </div>
-        
         <div class="dashboard-content" id="dashboardContent">
             <div class="banner-row">
                 <div class="banner-card" onclick="goToPlay('challenge')">
                     <div class="banner-image"><img src="https://cdn.imgurl.ir/uploads/h142945_InShot_20260821_184807337.png" alt="" draggable="false" oncontextmenu="return false;" ondragstart="return false;"></div>
-                    <div class="banner-label"><i class="bi bi-trophy"></i> <span data-i18n="daily_challenge_text">مسابقه روزانه</span></div>
+                    <div class="banner-label"><i class="bi bi-trophy"></i> مسابقه روزانه</div>
                 </div>
                 <div class="wheel-card" onclick="openWheelModal()">
                     <img src="https://cdn.imgurl.ir/uploads/m526299_InShot_20260821_182752507.png" alt="" draggable="false" oncontextmenu="return false;" ondragstart="return false;">
-                    <div class="wheel-label"><i class="bi bi-stars"></i> <span data-i18n="wheel">گردونه</span></div>
+                    <div class="wheel-label"><i class="bi bi-stars"></i> گردونه</div>
                 </div>
             </div>
 
             <div class="game-modes-wrapper">
-                <div class="game-modes-header"><i class="bi bi-joystick"></i> <span data-i18n="start_game">شروع مسابقه</span></div>
+                <div class="game-modes-header"><i class="bi bi-joystick"></i> شروع مسابقه</div>
                 <div class="game-modes-grid">
                     <div class="game-mode-card" onclick="goToPlay('single')">
                         <img src="https://cdn.imgurl.ir/uploads/f711120_InShot_20260821_200930706.jpg" alt="" draggable="false" oncontextmenu="return false;" ondragstart="return false;">
-                        <div class="game-mode-label" data-i18n="single">تک‌نفره</div>
+                        <div class="game-mode-label">تک‌نفره</div>
                     </div>
                     <div class="game-mode-card" onclick="goToPlay('offline')">
                         <img src="https://cdn.imgurl.ir/uploads/k5971_InShot_20260821_201008883.jpg" alt="" draggable="false" oncontextmenu="return false;" ondragstart="return false;">
-                        <div class="game-mode-label" data-i18n="offline">دوستانه</div>
+                        <div class="game-mode-label">دوستانه</div>
                     </div>
                     <div class="game-mode-card" onclick="goToPlay('online')">
                         <img src="https://cdn.imgurl.ir/uploads/h2464_InShot_20260821_201207943.jpg" alt="" draggable="false" oncontextmenu="return false;" ondragstart="return false;">
-                        <div class="game-mode-label" data-i18n="online">آنلاین</div>
+                        <div class="game-mode-label">آنلاین</div>
                     </div>
                     <div class="game-mode-card" onclick="goToPlay('league')">
                         <img src="https://cdn.imgurl.ir/uploads/e135154_InShot_20260821_201323323.jpg" alt="" draggable="false" oncontextmenu="return false;" ondragstart="return false;">
-                        <div class="game-mode-label" data-i18n="league">لیگ</div>
+                        <div class="game-mode-label">لیگ</div>
                     </div>
                 </div>
             </div>
 
             <div class="games-section">
                 <div class="games-section-header">
-                    <span class="games-section-title"><i class="bi bi-globe"></i> <span data-i18n="online_games">بازی‌های آنلاین نیمه‌تمام</span></span>
+                    <span class="games-section-title"><i class="bi bi-globe"></i> بازی های آنلاین در جریان</span>
                     <span class="games-section-badge" id="onlineCount">0</span>
                 </div>
-                <div class="games-list" id="onlineList"></div>
+                <div class="section-loader" id="onlineLoader">
+                    <div class="section-loader-spinner"></div>
+                    <div class="section-loader-text">در حال دریافت بازی‌های آنلاین...</div>
+                </div>
+                <div class="games-list" id="onlineList" style="display:none;"></div>
             </div>
 
             <div class="games-section">
                 <div class="games-section-header">
-                    <span class="games-section-title"><i class="bi bi-trophy"></i> <span data-i18n="league_games">لیگ‌های نیمه‌تمام</span></span>
+                    <span class="games-section-title"><i class="bi bi-trophy"></i> لیگ در جریان</span>
                     <span class="games-section-badge" id="leagueCount">0</span>
                 </div>
-                <div class="games-list" id="leagueList"></div>
+                <div class="section-loader" id="leagueLoader" style="display:none;">
+                    <div class="section-loader-spinner"></div>
+                    <div class="section-loader-text">در حال دریافت لیگ...</div>
+                </div>
+                <div class="games-list" id="leagueList" style="display:none;"></div>
             </div>
 
             <div class="games-section">
                 <div class="games-section-header">
-                    <span class="games-section-title"><i class="bi bi-clock-history"></i> <span data-i18n="past_games">۵ بازی گذشته</span></span>
+                    <span class="games-section-title"><i class="bi bi-clock-history"></i> ۵ بازی گذشته</span>
                     <span class="games-section-badge" id="pastCount">0</span>
                 </div>
-                <div class="games-list" id="pastList"></div>
-            </div>
-
-            <div class="support-card" onclick="openSupportLink()">
-                <img src="https://cdn.imgurl.ir/uploads/v68396_InShot_20260817_190450653.jpg" alt="سازنده" draggable="false" oncontextmenu="return false;" ondragstart="return false;">
-                <div class="support-info">
-                    <div class="support-name">امیرمهدی | Amirmahdi</div>
-                    <div class="support-desc" data-i18n="support">از سازنده حمایت کنید</div>
+                <div class="section-loader" id="pastLoader" style="display:none;">
+                    <div class="section-loader-spinner"></div>
+                    <div class="section-loader-text">در حال دریافت بازی‌های گذشته...</div>
                 </div>
-                <i class="bi bi-chevron-left"></i>
+                <div class="games-list" id="pastList" style="display:none;"></div>
             </div>
         </div>
     </main>
@@ -434,239 +412,62 @@
     <nav class="bottom-nav">
         <div class="nav-item active" onclick="window.location.href='../dashboard/'">
             <img src="https://uploadkon.ir/uploads/bdf329_26home-iconbase-1-.svg" alt="خانه" draggable="false" oncontextmenu="return false;" ondragstart="return false;">
-            <span data-i18n="home">خانه</span>
+            <span>خانه</span>
         </div>
         <div class="nav-item" onclick="window.location.href='../ranking/'">
             <img src="https://uploadkon.ir/uploads/8c9f29_26medal-1st-iconbase.svg" alt="رتبه" draggable="false" oncontextmenu="return false;" ondragstart="return false;">
-            <span data-i18n="ranking">رتبه</span>
+            <span>رتبه</span>
         </div>
         <div class="nav-item" onclick="window.location.href='../profile/'">
             <img src="https://uploadkon.ir/uploads/e78130_26profile-iconbase.svg" alt="پروفایل" draggable="false" oncontextmenu="return false;" ondragstart="return false;">
-            <span data-i18n="profile">پروفایل</span>
+            <span>پروفایل</span>
         </div>
         <div class="nav-item" onclick="window.location.href='../setting/'">
             <img src="https://uploadkon.ir/uploads/629f29_26setting-iconbase.svg" alt="تنظیمات" draggable="false" oncontextmenu="return false;" ondragstart="return false;">
-            <span data-i18n="settings_nav">تنظیمات</span>
+            <span>تنظیمات</span>
         </div>
     </nav>
-
-    <div class="wheel-modal-overlay" id="wheelModalOverlay">
-        <div class="wheel-modal">
-            <div class="wheel-modal-close" onclick="closeWheelModal()"><i class="bi bi-x-lg"></i></div>
-            <div class="wheel-modal-title"><i class="bi bi-stars"></i> <span data-i18n="wheel">گردونه</span></div>
-            <div class="wheel-container">
-                <div class="wheel-pointer"><i class="bi bi-geo-alt-fill"></i></div>
-                <canvas class="wheel-canvas" id="wheelCanvas" width="260" height="260"></canvas>
-                <button class="wheel-center-btn" onclick="spinWheel()" data-i18n="spin">چرخش</button>
-            </div>
-            <div class="wheel-cost-info"><i class="bi bi-coin"></i> <span data-i18n="cost">هزینه</span>: <span data-i18n="coins_50">۵۰ سکه</span></div>
-            <div class="wheel-result" id="wheelResult"></div>
-        </div>
-    </div>
 
     <script>
         (function() {
             var webApp = window.Eitaa?.WebApp;
             var API_URL = 'https://script.google.com/macros/s/AKfycbyHQXQ0TffhGyW1MdtI-_sWlZMhLSPDCR3Az5dDkuwv9TJt1o6-f_aCOg_aHJnty_8P/exec';
-            var SAD_IMAGE = 'https://cdn.imgurl.ir/uploads/g58935_InShot_20260822_140943752.png';
-            var userCoins = 0, userDiamonds = 0, currentRotation = 0, isSpinning = false, SPIN_COST = 50, currentLang = 'fa';
+            var userCoins = 0, userDiamonds = 0, currentLang = 'fa';
             var leagueMatches = [[1,2],[2,3],[1,5],[3,4],[1,4],[2,5],[1,3],[4,5],[3,5],[2,4]];
 
             document.addEventListener('contextmenu', function(e) { e.preventDefault(); });
             document.addEventListener('dragstart', function(e) { e.preventDefault(); });
-            document.addEventListener('copy', function(e) { if (e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA') e.preventDefault(); });
-            document.addEventListener('cut', function(e) { if (e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA') e.preventDefault(); });
+            document.addEventListener('copy', function(e) { e.preventDefault(); });
+            document.addEventListener('cut', function(e) { e.preventDefault(); });
 
-            var translations = {
-                fa: {
-                    tagline: 'اطلاعات خودت رو محک بزن',
-                    loading: 'در حال دریافت...',
-                    daily_challenge_text: 'مسابقه روزانه',
-                    wheel: 'گردونه',
-                    start_game: 'شروع مسابقه',
-                    single: 'تک‌نفره',
-                    offline: 'دوستانه',
-                    online: 'آنلاین',
-                    league: 'لیگ',
-                    online_games: 'بازی‌های آنلاین نیمه‌تمام',
-                    league_games: 'لیگ‌های نیمه‌تمام',
-                    past_games: '۵ بازی گذشته',
-                    home: 'خانه',
-                    ranking: 'رتبه',
-                    profile: 'پروفایل',
-                    settings_nav: 'تنظیمات',
-                    spin: 'چرخش',
-                    cost: 'هزینه',
-                    coins_50: '۵۰ سکه',
-                    no_online_games: 'بازی آنلاینی در جریان نیست',
-                    no_league_games: 'لیگی در جریان نیست',
-                    no_past_games: 'بازی گذشته‌ای نیست',
-                    waiting: 'منتظر حریف',
-                    live: 'در جریان',
-                    finished: 'پایان',
-                    you_p1: 'تو سازنده بازی هستی',
-                    you_p2: 'تو مهمون بازی هستی',
-                    vs_opponent: 'مقابل ',
-                    not_enough_coins: 'سکه کافی نداری!',
-                    empty: 'پوچ!',
-                    support: 'از سازنده حمایت کنید',
-                    exit_confirm: 'مطمئن هستید که خارج می‌شوید؟',
-                    your_turn: 'نوبت توئه!',
-                    waiting_turn: 'منتظر نوبت',
-                    stage: 'مرحله',
-                    error_loading: 'خطا در دریافت اطلاعات',
-                    time_expired_short: 'زمان پایان یافت',
-                    win: 'برد',
-                    lose: 'باخت',
-                    draw: 'مساوی'
-                },
-                en: {
-                    tagline: 'Test your knowledge',
-                    loading: 'Loading...',
-                    daily_challenge_text: 'Daily Challenge',
-                    wheel: 'Wheel',
-                    start_game: 'Start Game',
-                    single: 'Single',
-                    offline: 'Friendly',
-                    online: 'Online',
-                    league: 'League',
-                    online_games: 'Online Games in Progress',
-                    league_games: 'Leagues in Progress',
-                    past_games: 'Last 5 Games',
-                    home: 'Home',
-                    ranking: 'Ranking',
-                    profile: 'Profile',
-                    settings_nav: 'Settings',
-                    spin: 'Spin',
-                    cost: 'Cost',
-                    coins_50: '50 Coins',
-                    no_online_games: 'No active online games',
-                    no_league_games: 'No active leagues',
-                    no_past_games: 'No past games',
-                    waiting: 'Waiting',
-                    live: 'Live',
-                    finished: 'Finished',
-                    you_p1: 'You are Player 1',
-                    you_p2: 'You are Player 2',
-                    vs_opponent: 'vs ',
-                    not_enough_coins: 'Not enough coins!',
-                    empty: 'Empty!',
-                    support: 'Support the developer',
-                    exit_confirm: 'Are you sure you want to exit?',
-                    your_turn: 'Your turn!',
-                    waiting_turn: 'Waiting for turn',
-                    stage: 'Stage',
-                    error_loading: 'Error loading data',
-                    time_expired_short: 'Time Expired',
-                    win: 'Win',
-                    lose: 'Loss',
-                    draw: 'Draw'
-                },
-                ar: {
-                    tagline: 'اختبر معلوماتك',
-                    loading: 'جار التحميل...',
-                    daily_challenge_text: 'التحدي اليومي',
-                    wheel: 'العجلة',
-                    start_game: 'ابدأ اللعبة',
-                    single: 'فردي',
-                    offline: 'ودي',
-                    online: 'عبر الإنترنت',
-                    league: 'الدوري',
-                    online_games: 'الألعاب الجارية عبر الإنترنت',
-                    league_games: 'الدوريات الجارية',
-                    past_games: 'آخر 5 ألعاب',
-                    home: 'الرئيسية',
-                    ranking: 'الترتيب',
-                    profile: 'الملف',
-                    settings_nav: 'الإعدادات',
-                    spin: 'تدوير',
-                    cost: 'التكلفة',
-                    coins_50: '50 عملة',
-                    no_online_games: 'لا توجد ألعاب جارية',
-                    no_league_games: 'لا توجد دوريات جارية',
-                    no_past_games: 'لا توجد ألعاب سابقة',
-                    waiting: 'بانتظار الخصم',
-                    live: 'جارية',
-                    finished: 'انتهت',
-                    you_p1: 'أنت اللاعب 1',
-                    you_p2: 'أنت اللاعب 2',
-                    vs_opponent: 'ضد ',
-                    not_enough_coins: 'عملات غير كافية!',
-                    empty: 'فارغ!',
-                    support: 'ادعم المطور',
-                    exit_confirm: 'هل أنت متأكد من الخروج؟',
-                    your_turn: 'دورك!',
-                    waiting_turn: 'بانتظار الدور',
-                    stage: 'مرحلة',
-                    error_loading: 'خطأ في تحميل البيانات',
-                    time_expired_short: 'انتهى الوقت',
-                    win: 'فوز',
-                    lose: 'خسارة',
-                    draw: 'تعادل'
-                }
+            var fontMap = {
+                'Samim': "'Samim', Tahoma, sans-serif",
+                'Sahel': "'Sahel', Tahoma, sans-serif",
+                'IRANSans': "'IRANSans', Tahoma, sans-serif",
+                'Vazirmatn': "'Vazirmatn', Tahoma, sans-serif",
+                'Estedad': "'Estedad', Tahoma, sans-serif"
             };
-
-            var wheelPrizes = [
-                {label:'پوچ', type:'empty', value:0},
-                {label:'۲۰ سکه', type:'coins', value:20},
-                {label:'پوچ', type:'empty', value:0},
-                {label:'۱۰۰ سکه', type:'coins', value:100},
-                {label:'۱ الماس', type:'diamonds', value:1},
-                {label:'۲۰۰ سکه', type:'coins', value:200},
-                {label:'۵ الماس', type:'diamonds', value:5},
-                {label:'۱۰ الماس', type:'diamonds', value:10}
-            ];
-            var wheelColors = ['#ef4444','#f59e0b','#10b981','#06b6d4','#8b5cf6','#ec4899','#84cc16','#f97316'];
 
             function getSettings() {
                 try {
                     var raw = localStorage.getItem('quizicoSettings');
-                    if (!raw) return { theme: 'light', primaryColor: '#a855f7', animation: true, haptic: true, language: 'fa' };
+                    if (!raw) return { theme: 'light', primaryColor: '#a855f7', animation: true, haptic: true, language: 'fa', font: 'Samim' };
                     var p = JSON.parse(raw);
-                    if (!p.theme) p.theme = 'light';
-                    if (!p.primaryColor) p.primaryColor = '#a855f7';
-                    if (p.animation === undefined) p.animation = true;
-                    if (p.haptic === undefined) p.haptic = true;
-                    if (!p.language) p.language = 'fa';
+                    if (!p.font) p.font = 'Samim';
                     return p;
-                } catch(e) { return { theme: 'light', primaryColor: '#a855f7', animation: true, haptic: true, language: 'fa' }; }
+                } catch(e) { return { theme: 'light', primaryColor: '#a855f7', animation: true, haptic: true, language: 'fa', font: 'Samim' }; }
             }
 
-            function getTranslation(k) {
-                var t = translations[currentLang] || translations.fa;
-                return t[k] || translations.fa[k] || k;
-            }
-
-            function hexToRgb(h) { 
-                var r = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(h); 
-                return r ? { r: parseInt(r[1],16), g: parseInt(r[2],16), b: parseInt(r[3],16) } : { r:168, g:85, b:247 }; 
-            }
-
-            function shadeColor(c, p) {
-                var r = hexToRgb(c);
-                var rr = Math.max(0, Math.min(255, r.r+p));
-                var gg = Math.max(0, Math.min(255, r.g+p));
-                var bb = Math.max(0, Math.min(255, r.b+p));
-                return '#' + ((1<<24) + (rr<<16) + (gg<<8) + bb).toString(16).slice(1);
-            }
-
-            function updateHeaderTitle(lang) {
-                var titleEl = document.getElementById('headerTitle');
-                if (lang === 'en') {
-                    titleEl.innerHTML = 'Quiz<span class="t-accent">ico</span>';
-                } else {
-                    titleEl.innerHTML = 'کوییز<span class="t-accent">یکو</span>';
-                }
-            }
+            function hexToRgb(h) { var r = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(h); return r ? { r:parseInt(r[1],16), g:parseInt(r[2],16), b:parseInt(r[3],16) } : { r:168,g:85,b:247 }; }
+            function shadeColor(c,p){var r=hexToRgb(c);var rr=Math.max(0,Math.min(255,r.r+p));var gg=Math.max(0,Math.min(255,r.g+p));var bb=Math.max(0,Math.min(255,r.b+p));return '#'+((1<<24)+(rr<<16)+(gg<<8)+bb).toString(16).slice(1);}
 
             function applyTheme() {
                 var s = getSettings();
                 currentLang = s.language || 'fa';
                 var t = s.theme || 'light';
                 var p = s.primaryColor || '#a855f7';
-                
+                var f = s.font || 'Samim';
                 document.documentElement.setAttribute('data-theme', t);
-                
                 if (t === 'dark') {
                     var lightP = shadeColor(p, 40);
                     document.documentElement.style.setProperty('--primary', lightP);
@@ -679,50 +480,30 @@
                     document.documentElement.style.setProperty('--primary-light', shadeColor(p, 50));
                     document.documentElement.style.setProperty('--primary-rgb', hexToRgb(p).r + ',' + hexToRgb(p).g + ',' + hexToRgb(p).b);
                 }
-                
-                if (s.animation === false) {
-                    document.documentElement.setAttribute('data-animation', 'off');
-                } else {
-                    document.documentElement.removeAttribute('data-animation');
-                }
-                
-                if (currentLang === 'en') {
-                    document.documentElement.setAttribute('dir', 'ltr');
-                    document.body.style.fontFamily = 'Arial, sans-serif';
-                } else if (currentLang === 'ar') {
-                    document.documentElement.setAttribute('dir', 'rtl');
-                    document.body.style.fontFamily = "'Digi Kian Grunge', Tahoma, sans-serif";
-                } else {
-                    document.documentElement.setAttribute('dir', 'rtl');
-                    document.body.style.fontFamily = "'Digi Kian Grunge', 'IRANSans', Tahoma, sans-serif";
-                }
-                
-                updateHeaderTitle(currentLang);
-                
-                document.querySelectorAll('[data-i18n]').forEach(function(el) {
-                    var k = el.getAttribute('data-i18n');
-                    var t2 = translations[currentLang] || translations.fa;
-                    if (t2[k]) el.textContent = t2[k];
-                });
+                if (s.animation === false) { document.documentElement.setAttribute('data-animation', 'off'); }
+                else { document.documentElement.removeAttribute('data-animation'); }
+                var fontFamily = fontMap[f] || fontMap['Samim'];
+                document.documentElement.style.setProperty('--font', fontFamily);
+                document.body.style.fontFamily = fontFamily;
+                var titleEl = document.getElementById('headerTitle');
+                if (currentLang === 'en') titleEl.innerHTML = 'Quiz<span class="t-accent">ico</span>';
+                else titleEl.innerHTML = 'کوییز<span class="t-accent">یکو</span>';
             }
 
-            function getEitaaUser() { return webApp && webApp.initDataUnsafe && webApp.initDataUnsafe.user ? webApp.initDataUnsafe.user : null; }
-            function getUserId() { var u = getEitaaUser(); return u ? (typeof u.id === 'number' ? u.id.toString() : String(u.id || '')) : ''; }
-
-            function fetchData(action, params) {
-                var payload = {action: action, username: getUserId()};
-                if (params) { for (var k in params) { if (params.hasOwnProperty(k)) payload[k] = params[k]; } }
+            function getEitaaUser(){return webApp&&webApp.initDataUnsafe&&webApp.initDataUnsafe.user?webApp.initDataUnsafe.user:null;}
+            function getUserId(){var u=getEitaaUser();return u?(typeof u.id==='number'?u.id.toString():String(u.id||'')):'';}
+            function fetchData(action,params){
+                var payload={action:action,username:getUserId()};
+                if(params){for(var k in params){if(params.hasOwnProperty(k))payload[k]=params[k];}}
                 return Promise.race([
-                    fetch(API_URL, {
-                        method: 'POST',
-                        headers: {'Content-Type': 'text/plain;charset=utf-8'},
-                        body: JSON.stringify(payload)
-                    }).then(function(r) { return r.json(); }),
-                    new Promise(function(_, reject) { setTimeout(function() { reject(new Error('timeout')); }, 10000); })
-                ]).catch(function() { return {ok: false}; });
+                    fetch(API_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(payload)}).then(function(r){return r.json();}),
+                    new Promise(function(_,reject){setTimeout(function(){reject(new Error('timeout'));},10000);})
+                ]).catch(function(){return{ok:false};});
             }
 
-            function shuffleArray(a) { for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)); var t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
+            function renderEmpty(text) {
+                return '<div class="empty-state"><i class="bi bi-inbox"></i><p>' + text + '</p></div>';
+            }
 
             function goToPlay(mode) {
                 if (mode === 'online') { window.location.href = '../play/online/?new=1'; }
@@ -731,367 +512,135 @@
                 else { window.location.href = '../play/' + mode + '/'; }
             }
 
-            function continueGame(id) { localStorage.setItem('onlineRoomCode', id); window.location.href = '../play/online/'; }
-            function continueLeague(id) { localStorage.setItem('leagueCode', id); window.location.href = '../play/league/'; }
-            function goToResult(id) { window.location.href = '../result/?id=' + id; }
+            window.goToPlay = goToPlay;
 
             function openSupportLink() {
                 if (webApp && webApp.openEitaaLink) { webApp.openEitaaLink('https://eitaa.com/Amirmahdi_code'); }
                 else { window.open('https://eitaa.com/Amirmahdi_code', '_blank'); }
             }
-
-            window.goToPlay = goToPlay;
-            window.continueGame = continueGame;
-            window.continueLeague = continueLeague;
-            window.goToResult = goToResult;
             window.openSupportLink = openSupportLink;
 
-            function animateCount(el, target, dur) {
-                var st = 0, stt = null;
-                function step(ts) {
-                    if (!stt) stt = ts;
-                    var p = Math.min((ts - stt) / dur, 1);
-                    var e = 1 - Math.pow(1 - p, 3);
-                    el.textContent = Math.floor(e * target);
-                    if (p < 1) requestAnimationFrame(step);
-                    else el.textContent = target;
-                }
-                requestAnimationFrame(step);
-            }
-
-            function renderEmpty(text) {
-                return '<div class="empty-state"><img src="' + SAD_IMAGE + '" alt="" draggable="false" oncontextmenu="return false;" ondragstart="return false;"><p>' + text + '</p></div>';
-            }
-
-            async function getPlayerName(userId) {
-                if (!userId || userId === '') return '---';
-                var result = await fetchData('getUser', {username: userId});
-                if (result.ok && result.data && result.data.name) return result.data.name;
-                return userId;
-            }
-
-            async function checkExpiredGames(games) {
-                var myId = getUserId();
-                for (var i = 0; i < games.length; i++) {
-                    var g = games[i];
-                    if (String(g.id).startsWith('LG_')) continue;
-                    if (g.status === 'waiting' || g.status === 'in_progress') {
-                        if (g.createdAt) {
-                            var created = new Date(g.createdAt);
-                            var now = new Date();
-                            var diffMinutes = (now - created) / (1000 * 60);
-                            if (diffMinutes >= 30) {
-                                if (g.status === 'waiting' && (!g.player2 || g.player2 === '')) {
-                                    await fetchData('deleteGame', {gameId: g.id});
-                                } else {
-                                    var isP1 = String(g.player1) === String(myId);
-                                    var isP2 = String(g.player2) === String(myId);
-                                    if (isP1 || isP2) {
-                                        var latestRound = 0;
-                                        var latestRoundData = '';
-                                        for (var r = 1; r <= 5; r++) {
-                                            if (g['round' + r] && g['round' + r] !== '') {
-                                                latestRound = r;
-                                                latestRoundData = g['round' + r];
-                                            }
-                                        }
-                                        var myResult = 'draw';
-                                        if (latestRound > 0 && latestRoundData) {
-                                            var parts = latestRoundData.split('][');
-                                            var p1Ans = parts[1] ? parts[1].replace('[','').replace(']','') : 'waiting';
-                                            var p2Ans = parts[2] ? parts[2].replace('[','').replace(']','') : 'waiting';
-                                            var myAns = isP1 ? p1Ans : p2Ans;
-                                            var oppAns = isP1 ? p2Ans : p1Ans;
-                                            if (myAns === 'waiting' || myAns === '') {
-                                                myResult = 'lose';
-                                            } else if (oppAns === 'waiting' || oppAns === '') {
-                                                myResult = 'win';
-                                            } else {
-                                                myResult = 'draw';
-                                            }
-                                        }
-                                        await fetchData('updateGame', {gameId: g.id, updates: {status: 'finished', result: myResult}});
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-
-            async function renderGameCard(g, myId, type) {
-                var isP1 = String(g.player1) === String(myId);
-                var oppId = isP1 ? g.player2 : g.player1;
-                var statusClass = g.status === 'waiting' ? 'waiting' : g.status === 'in_progress' ? 'live' : 'finished';
-                var statusText = getTranslation(g.status === 'waiting' ? 'waiting' : g.status === 'in_progress' ? 'live' : 'finished');
-                var subtitle;
-                if (type === 'past') {
-                    var oppName = await getPlayerName(oppId);
-                    subtitle = getTranslation('vs_opponent') + oppName;
-                    statusClass = 'finished';
-                    statusText = getTranslation('finished');
-                    if (g.result === 'win') { statusClass = 'win'; statusText = getTranslation('win'); }
-                    else if (g.result === 'lose') { statusClass = 'lose'; statusText = getTranslation('lose'); }
-                    else if (g.result === 'draw') { statusClass = 'draw'; statusText = getTranslation('draw'); }
-                    else if (g.result === 'expired_lose') { statusClass = 'expired'; statusText = getTranslation('time_expired_short') + ' - ' + getTranslation('lose'); }
-                    else if (g.result === 'expired_win') { statusClass = 'win'; statusText = getTranslation('time_expired_short') + ' - ' + getTranslation('win'); }
-                    else if (g.result === 'expired_draw') { statusClass = 'expired'; statusText = getTranslation('time_expired_short') + ' - ' + getTranslation('draw'); }
-                } else {
-                    var oppName2 = await getPlayerName(oppId);
-                    subtitle = getTranslation('vs_opponent') + oppName2;
-                }
-                var onclick = type === 'past' ? ' onclick="goToResult(\'' + g.id + '\')"' : ' onclick="continueGame(\'' + g.id + '\')"';
-                var icon = type === 'past' ? 'bi-flag' : 'bi-globe';
-                return '<div class="game-card"' + onclick + '><div class="game-icon"><i class="bi ' + icon + '"></i></div><div class="game-info"><div class="game-title">' + subtitle + '</div><div class="game-subtitle">' + (type === 'past' ? statusText : getTranslation(g.status === 'waiting' ? 'waiting' : 'live')) + '</div></div><span class="game-status-badge ' + statusClass + '">' + statusText + '</span></div>';
-            }
-
-            function renderLeagueCard(lg, subtitle, statusText, statusClass) {
-                var onclick = ' onclick="continueLeague(\'' + lg.leagueId + '\')"';
-                return '<div class="game-card"' + onclick + '><div class="game-icon"><i class="bi bi-trophy"></i></div><div class="game-info"><div class="game-title">' + subtitle + '</div><div class="game-subtitle">' + statusText + '</div></div><span class="game-status-badge ' + statusClass + '">' + statusText + '</span></div>';
-            }
-
-            function showError() {
-                var loaderText = document.querySelector('.loader-text');
-                if (loaderText) {
-                    loaderText.textContent = getTranslation('error_loading');
-                    loaderText.style.color = '#ef4444';
-                }
-                var loader = document.querySelector('.loader');
-                if (loader) {
-                    loader.style.borderTopColor = '#ef4444';
-                    loader.style.animation = 'none';
-                }
-            }
-
-            async function loadDashboard() {
-                var hasError = false;
-                try {
-                    var myId = getUserId();
-                    if (!myId) {
-                        document.getElementById('coinsHeader').textContent = '0';
-                        document.getElementById('diamondsHeader').textContent = '0';
-                        document.getElementById('loaderWrapper').style.display = 'none';
-                        document.getElementById('dashboardContent').classList.add('show');
-                        return;
-                    }
-                    
-                    var userData = await fetchData('getUser', {});
-                    if (!userData.ok || !userData.data) {
-                        var userName = '';
-                        var eitaaUser = getEitaaUser();
-                        if (eitaaUser) {
-                            userName = (eitaaUser.first_name || '') + ' ' + (eitaaUser.last_name || '');
-                        }
-                        await fetchData('registerUser', { name: userName.trim() || 'کاربر' });
-                        userData = await fetchData('getUser', {});
-                    }
-
-                    if (userData.ok && userData.data) {
-                        userCoins = userData.data.coins || 0;
-                        userDiamonds = userData.data.diamonds || 0;
-                        animateCount(document.getElementById('coinsHeader'), userCoins, 800);
-                        animateCount(document.getElementById('diamondsHeader'), userDiamonds, 800);
-                    } else {
-                        hasError = true;
-                    }
-                    
-                    var gamesData = await fetchData('getGamesByPlayer', {});
-                    if (gamesData.ok && Array.isArray(gamesData.data)) {
-                        await checkExpiredGames(gamesData.data);
-                        gamesData = await fetchData('getGamesByPlayer', {});
-                    }
-                    
-                    if (gamesData.ok && Array.isArray(gamesData.data)) {
-                        var allGames = gamesData.data;
-                        var onlineInProgress = allGames.filter(function(g) { 
-                            if (String(g.id).startsWith('LG_')) return false;
-                            if (g.status !== 'waiting' && g.status !== 'in_progress') return false;
-                            return true;
-                        });
-                        onlineInProgress.sort(function(a, b) {
-                            var da = a.createdAt ? new Date(a.createdAt).getTime() : 0;
-                            var db = b.createdAt ? new Date(b.createdAt).getTime() : 0;
-                            return db - da;
-                        });
-                        var past = allGames.filter(function(g) { return g.status === 'finished'; });
-                        past.sort(function(a, b) {
-                            var da = a.createdAt ? new Date(a.createdAt).getTime() : 0;
-                            var db = b.createdAt ? new Date(b.createdAt).getTime() : 0;
-                            return db - da;
-                        });
-                        past = past.slice(0, 5);
-                        document.getElementById('onlineCount').textContent = onlineInProgress.length;
-                        document.getElementById('pastCount').textContent = past.length;
-                        
-                        var onlineList = document.getElementById('onlineList');
-                        if (onlineInProgress.length === 0) {
-                            onlineList.innerHTML = renderEmpty(getTranslation('no_online_games'));
-                        } else {
-                            var onlineHtml = '';
-                            for (var i = 0; i < onlineInProgress.length; i++) {
-                                onlineHtml += await renderGameCard(onlineInProgress[i], myId, 'active');
-                            }
-                            onlineList.innerHTML = onlineHtml;
-                        }
-                        
-                        var pastList = document.getElementById('pastList');
-                        if (past.length === 0) {
-                            pastList.innerHTML = renderEmpty(getTranslation('no_past_games'));
-                        } else {
-                            var pastHtml = '';
-                            for (var j = 0; j < past.length; j++) {
-                                pastHtml += await renderGameCard(past[j], myId, 'past');
-                            }
-                            pastList.innerHTML = pastHtml;
-                        }
-                    } else {
-                        document.getElementById('onlineCount').textContent = '0';
-                        document.getElementById('pastCount').textContent = '0';
-                        document.getElementById('onlineList').innerHTML = renderEmpty(getTranslation('no_online_games'));
-                        document.getElementById('pastList').innerHTML = renderEmpty(getTranslation('no_past_games'));
-                    }
-                    
-                    var leagueResult = await fetchData('getLeagueByUser', {});
-                    if (leagueResult.ok && leagueResult.data && !leagueResult.data.winner) {
-                        var lg = leagueResult.data;
-                        var results = String(lg.results || '').split(',').filter(function(r) { return r !== ''; });
-                        var currentGameNum = results.length + 1;
-                        var match = null;
-                        if (currentGameNum <= 10) { match = leagueMatches[currentGameNum - 1]; }
-                        var myPlayerNum = -1;
-                        for (var i = 1; i <= 5; i++) {
-                            if (lg['player' + i] && String(lg['player' + i]).split(',')[0] === String(myId)) { myPlayerNum = i; break; }
-                        }
-                        var statusText = getTranslation('live');
-                        var statusClass = 'live';
-                        var subtitle = getTranslation('stage') + ' ' + currentGameNum + ' از ۱۰';
-                        if (myPlayerNum !== -1 && match) {
-                            if (match[0] === myPlayerNum || match[1] === myPlayerNum) {
-                                subtitle += ' - ' + getTranslation('your_turn');
-                                statusText = getTranslation('your_turn');
-                                statusClass = 'live';
-                            } else {
-                                subtitle += ' - ' + getTranslation('waiting_turn');
-                                statusText = getTranslation('waiting_turn');
-                                statusClass = 'waiting';
-                            }
-                        }
-                        document.getElementById('leagueCount').textContent = '1';
-                        document.getElementById('leagueList').innerHTML = renderLeagueCard(lg, subtitle, statusText, statusClass);
-                    } else {
-                        document.getElementById('leagueCount').textContent = '0';
-                        document.getElementById('leagueList').innerHTML = renderEmpty(getTranslation('no_league_games'));
-                    }
-                } catch(e) { hasError = true; }
-                finally {
-                    if (hasError) {
-                        showError();
-                    } else {
-                        document.getElementById('loaderWrapper').style.display = 'none';
-                        document.getElementById('dashboardContent').classList.add('show');
-                    }
-                }
-            }
-
-            function drawWheel() {
-                var canvas = document.getElementById('wheelCanvas');
-                if (!canvas) return;
-                var ctx = canvas.getContext('2d');
-                var cx = canvas.width / 2, cy = canvas.height / 2;
-                var radius = canvas.width / 2 - 10;
-                var seg = (2 * Math.PI) / wheelPrizes.length;
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-                for (var i = 0; i < wheelPrizes.length; i++) {
-                    var sa = i * seg, ea = sa + seg;
-                    ctx.beginPath();
-                    ctx.moveTo(cx, cy);
-                    ctx.arc(cx, cy, radius, sa, ea);
-                    ctx.closePath();
-                    ctx.fillStyle = wheelColors[i];
-                    ctx.fill();
-                    ctx.strokeStyle = '#000';
-                    ctx.lineWidth = 2;
-                    ctx.stroke();
-                    ctx.save();
-                    ctx.translate(cx, cy);
-                    ctx.rotate(sa + seg / 2);
-                    ctx.fillStyle = '#fff';
-                    ctx.font = 'bold 11px IRANSans';
-                    ctx.textAlign = 'center';
-                    ctx.fillText(wheelPrizes[i].label, radius - 35, 0);
-                    ctx.restore();
-                }
-            }
-
-            function openWheelModal() {
-                shuffleArray(wheelPrizes);
-                drawWheel();
-                document.getElementById('wheelResult').textContent = '';
-                document.getElementById('wheelModalOverlay').classList.add('show');
-            }
-
-            function closeWheelModal() {
-                if (!isSpinning) document.getElementById('wheelModalOverlay').classList.remove('show');
-            }
-
-            window.openWheelModal = openWheelModal;
-            window.closeWheelModal = closeWheelModal;
-
-            function spinWheel() {
-                if (isSpinning) return;
-                if (userCoins < SPIN_COST) {
-                    document.getElementById('wheelResult').textContent = getTranslation('not_enough_coins');
-                    return;
-                }
-                isSpinning = true;
-                document.getElementById('wheelResult').textContent = '';
-                var seg = 360 / wheelPrizes.length;
-                var ri = Math.floor(Math.random() * wheelPrizes.length);
-                var target = -90 - (ri * seg + seg / 2);
-                var ca = currentRotation % 360;
-                var rot = 1800 + (target - ca);
-                if (rot < 1800) rot += 360;
-                var nr = currentRotation + rot;
-                var canvas = document.getElementById('wheelCanvas');
-                canvas.style.transform = 'rotate(' + nr + 'deg)';
-                currentRotation = nr;
-                setTimeout(function() {
-                    var prize = wheelPrizes[ri];
-                    if (prize.type === 'empty') {
-                        userCoins -= SPIN_COST;
-                        document.getElementById('wheelResult').textContent = getTranslation('empty');
-                        fetchData('updateUser', {coins: userCoins});
-                    } else if (prize.type === 'coins') {
-                        userCoins = userCoins - SPIN_COST + prize.value;
-                        document.getElementById('wheelResult').textContent = prize.label;
-                        fetchData('updateUser', {coins: userCoins});
-                    } else {
-                        userDiamonds += prize.value;
-                        userCoins -= SPIN_COST;
-                        document.getElementById('wheelResult').textContent = prize.label;
-                        fetchData('updateUser', {coins: userCoins, diamonds: userDiamonds});
-                    }
+            async function loadUserData() {
+                var userData = await fetchData('getUser', {});
+                if (userData.ok && userData.data) {
+                    userCoins = userData.data.coins || 0;
+                    userDiamonds = userData.data.diamonds || 0;
                     document.getElementById('coinsHeader').textContent = userCoins;
                     document.getElementById('diamondsHeader').textContent = userDiamonds;
-                    isSpinning = false;
-                }, 4200);
+                }
             }
 
-            window.spinWheel = spinWheel;
+            async function loadOnlineGames() {
+                var gamesData = await fetchData('getGamesByPlayer', {});
+                if (gamesData.ok && Array.isArray(gamesData.data)) {
+                    var myId = getUserId();
+                    var onlineInProgress = gamesData.data.filter(function(g) { 
+                        if (String(g.id).startsWith('LG_')) return false;
+                        if (g.status !== 'waiting' && g.status !== 'in_progress') return false;
+                        return true;
+                    });
+                    onlineInProgress.sort(function(a, b) {
+                        var da = a.createdAt ? new Date(a.createdAt).getTime() : 0;
+                        var db = b.createdAt ? new Date(b.createdAt).getTime() : 0;
+                        return db - da;
+                    });
+                    document.getElementById('onlineCount').textContent = onlineInProgress.length;
+                    document.getElementById('onlineLoader').style.display = 'none';
+                    var onlineList = document.getElementById('onlineList');
+                    onlineList.style.display = 'flex';
+                    if (onlineInProgress.length === 0) {
+                        onlineList.innerHTML = renderEmpty('بازی آنلاینی در جریان نیست');
+                    } else {
+                        var html = '';
+                        for (var i = 0; i < onlineInProgress.length; i++) {
+                            var g = onlineInProgress[i];
+                            var isP1 = String(g.player1) === String(myId);
+                            var oppId = isP1 ? g.player2 : g.player1;
+                            html += '<div class="game-card" onclick="continueGame(\'' + g.id + '\')">' +
+                                '<div class="game-icon"><i class="bi bi-globe"></i></div>' +
+                                '<div class="game-info"><div class="game-title">مقابل ' + (oppId || '؟') + '</div>' +
+                                '<div class="game-subtitle">در جریان</div></div>' +
+                                '<span class="game-status-badge live">در جریان</span></div>';
+                        }
+                        onlineList.innerHTML = html;
+                    }
+                }
+                document.getElementById('leagueLoader').style.display = 'flex';
+                loadLeague();
+            }
+
+            async function loadLeague() {
+                var leagueResult = await fetchData('getLeagueByUser', {});
+                document.getElementById('leagueLoader').style.display = 'none';
+                var leagueList = document.getElementById('leagueList');
+                leagueList.style.display = 'flex';
+                if (leagueResult.ok && leagueResult.data && !leagueResult.data.winner) {
+                    var lg = leagueResult.data;
+                    document.getElementById('leagueCount').textContent = '1';
+                    leagueList.innerHTML = '<div class="game-card" onclick="continueLeague(\'' + lg.leagueId + '\')">' +
+                        '<div class="game-icon"><i class="bi bi-trophy"></i></div>' +
+                        '<div class="game-info"><div class="game-title">لیگ در جریان</div>' +
+                        '<div class="game-subtitle">کد: ' + lg.leagueId + '</div></div>' +
+                        '<span class="game-status-badge live">در جریان</span></div>';
+                } else {
+                    document.getElementById('leagueCount').textContent = '0';
+                    leagueList.innerHTML = renderEmpty('لیگی در جریان نیست');
+                }
+                document.getElementById('pastLoader').style.display = 'flex';
+                loadPastGames();
+            }
+
+            async function loadPastGames() {
+                var gamesData = await fetchData('getGamesByPlayer', {});
+                document.getElementById('pastLoader').style.display = 'none';
+                var pastList = document.getElementById('pastList');
+                pastList.style.display = 'flex';
+                if (gamesData.ok && Array.isArray(gamesData.data)) {
+                    var myId = getUserId();
+                    var past = gamesData.data.filter(function(g) { return g.status === 'finished'; });
+                    past.sort(function(a, b) {
+                        var da = a.createdAt ? new Date(a.createdAt).getTime() : 0;
+                        var db = b.createdAt ? new Date(b.createdAt).getTime() : 0;
+                        return db - da;
+                    });
+                    past = past.slice(0, 5);
+                    document.getElementById('pastCount').textContent = past.length;
+                    if (past.length === 0) {
+                        pastList.innerHTML = renderEmpty('بازی گذشته‌ای نیست');
+                    } else {
+                        var html = '';
+                        for (var i = 0; i < past.length; i++) {
+                            var g = past[i];
+                            var isP1 = String(g.player1) === String(myId);
+                            var cls = 'draw', txt = 'مساوی';
+                            if (g.result === 'win') { cls = 'win'; txt = 'برد'; }
+                            else if (g.result === 'lose') { cls = 'lose'; txt = 'باخت'; }
+                            else if (g.result === 'draw') { cls = 'draw'; txt = 'مساوی'; }
+                            html += '<div class="game-card" onclick="goToResult(\'' + g.id + '\')">' +
+                                '<div class="game-icon"><i class="bi bi-flag"></i></div>' +
+                                '<div class="game-info"><div class="game-title">بازی گذشته</div>' +
+                                '<div class="game-subtitle">' + txt + '</div></div>' +
+                                '<span class="game-status-badge ' + cls + '">' + txt + '</span></div>';
+                        }
+                        pastList.innerHTML = html;
+                    }
+                }
+            }
+
+            window.continueGame = function(id) { localStorage.setItem('onlineRoomCode', id); window.location.href = '../play/online/'; };
+            window.continueLeague = function(id) { localStorage.setItem('leagueCode', id); window.location.href = '../play/league/'; };
+            window.goToResult = function(id) { window.location.href = '../result/?id=' + id; };
 
             if (webApp) {
                 webApp.ready();
                 webApp.expand();
-                webApp.BackButton.show();
-                webApp.BackButton.onClick(function() {
-                    webApp.showConfirm(getTranslation('exit_confirm'), function(confirmed) {
-                        if (confirmed) { webApp.close(); }
-                    });
-                });
+                webApp.BackButton.hide();
             }
 
             applyTheme();
-            loadDashboard();
+            loadUserData();
+            loadOnlineGames();
+            
             setTimeout(function() {
                 var notif = document.getElementById('supportNotification');
                 if (notif) { notif.style.display = 'none'; }
