@@ -223,6 +223,28 @@
         }
         @keyframes spin { to { transform: rotate(360deg); } }
 
+        .bottom-loader {
+            text-align: center;
+            padding: 12px;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+        }
+        .bottom-loader-spinner {
+            width: 25px;
+            height: 25px;
+            border: 3px solid var(--bg3);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+        .bottom-loader-text {
+            font-size: 8px;
+            font-weight: 700;
+            color: var(--text-light);
+        }
+
         .my-rank-float {
             position: fixed;
             bottom: 60px;
@@ -454,6 +476,10 @@
             <div class="section-loader-text">در حال دریافت رتبه‌ها...</div>
         </div>
         <div class="rank-list" id="rankList"></div>
+        <div class="bottom-loader" id="bottomLoader">
+            <div class="bottom-loader-spinner"></div>
+            <div class="bottom-loader-text">در حال دریافت بیشتر...</div>
+        </div>
     </main>
 
     <div class="my-rank-float" id="myRankFloat" style="display:none;" onclick="scrollToMyRank()">
@@ -634,6 +660,7 @@
             async function loadMoreRankings() {
                 if (isLoading || allLoaded) return;
                 isLoading = true;
+                document.getElementById('bottomLoader').style.display = 'flex';
                 
                 var result = await fetchData('leaderboard', { limit: batchSize, offset: currentOffset });
                 if (result.ok && Array.isArray(result.data) && result.data.length > 0) {
@@ -647,11 +674,14 @@
                     
                     if (batch.length < batchSize) {
                         allLoaded = true;
+                    } else {
+                        loadMoreRankings();
                     }
                 } else {
                     allLoaded = true;
                 }
                 
+                document.getElementById('bottomLoader').style.display = 'none';
                 isLoading = false;
             }
 
@@ -662,22 +692,23 @@
                     var batch = result.data;
                     document.getElementById('rankList').innerHTML = renderBatch(batch, 0);
                     currentOffset = batch.length;
-                    
                     allRankings = batch.slice();
                     
                     if (batch.length < batchSize) {
                         allLoaded = true;
+                    } else {
+                        loadMoreRankings();
                     }
                     
                     var myId = getUserId();
-                    var myRank = await fetchData('leaderboard', { limit: 1000, offset: 0 });
-                    if (myRank.ok && Array.isArray(myRank.data)) {
-                        for (var i = 0; i < myRank.data.length; i++) {
-                            if (String(myRank.data[i].username) === String(myId)) {
+                    var myRankResult = await fetchData('leaderboard', { limit: 1000, offset: 0 });
+                    if (myRankResult.ok && Array.isArray(myRankResult.data)) {
+                        for (var i = 0; i < myRankResult.data.length; i++) {
+                            if (String(myRankResult.data[i].username) === String(myId)) {
                                 document.getElementById('myRankFloatNumber').textContent = '#' + (i + 1);
-                                document.getElementById('myRankFloatAvatar').innerHTML = getAvatarHtml(myRank.data[i].avatar);
-                                document.getElementById('myRankFloatName').textContent = myRank.data[i].name || '؟';
-                                document.getElementById('myRankFloatScore').textContent = myRank.data[i].score || 0;
+                                document.getElementById('myRankFloatAvatar').innerHTML = getAvatarHtml(myRankResult.data[i].avatar);
+                                document.getElementById('myRankFloatName').textContent = myRankResult.data[i].name || '؟';
+                                document.getElementById('myRankFloatScore').textContent = myRankResult.data[i].score || 0;
                                 document.getElementById('myRankFloat').style.display = 'flex';
                                 break;
                             }
@@ -688,16 +719,6 @@
                     document.getElementById('rankList').innerHTML = '<div class="section-loader"><div class="section-loader-text">کاربری یافت نشد</div></div>';
                 }
             }
-
-            window.addEventListener('scroll', function() {
-                var scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-                var windowHeight = window.innerHeight;
-                var docHeight = document.documentElement.scrollHeight;
-                
-                if (scrollTop + windowHeight >= docHeight - 200) {
-                    loadMoreRankings();
-                }
-            });
 
             window.filterRankings = function() {
                 var q = document.getElementById('searchInput').value.toLowerCase().trim();
