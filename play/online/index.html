@@ -497,9 +497,9 @@ else{btn.classList.add('selected-wrong');btns[ci].classList.add('selected-correc
 setTimeout(goToNext,800);
 };
 
-window.useRemove50=function(){if(isAnswered||actionUsedThisQuestion)return;if(userCoins<50){if(webApp)webApp.showAlert(getTranslation('not_enough'));return;}userCoins-=50;actionUsedThisQuestion=true;document.getElementById('coinsHeader').textContent=userCoins;var q=roundQuestions[currentQuestionIndex];var ct=q.options[q.correctOption-1];var wo=q.options.filter(function(o){return o!==ct;});var th=shuffleArray(wo).slice(0,2);document.querySelectorAll('.option-btn').forEach(function(b){if(th.indexOf(b.getAttribute('data-text'))!==-1)b.classList.add('hidden-option');});disableActions();fetchData('updateUser',{coins:userCoins});};
-window.useSwapQuestion=function(){if(isAnswered||actionUsedThisQuestion)return;if(userCoins<100){if(webApp)webApp.showAlert(getTranslation('not_enough'));return;}userCoins-=100;actionUsedThisQuestion=true;document.getElementById('coinsHeader').textContent=userCoins;var rem=questions.filter(function(q){return roundQuestions.indexOf(q)===-1;});if(rem.length>0)roundQuestions[currentQuestionIndex]=shuffleArray(rem)[0];disableActions();fetchData('updateUser',{coins:userCoins});renderQuestionScreen();};
-window.useSkipQuestion=function(){if(isAnswered||actionUsedThisQuestion)return;if(userCoins<150){if(webApp)webApp.showAlert(getTranslation('not_enough'));return;}userCoins-=150;actionUsedThisQuestion=true;document.getElementById('coinsHeader').textContent=userCoins;myScore+=5;myCorrectCount++;myAnswers.push(true);disableActions();fetchData('updateUser',{coins:userCoins});clearInterval(timerInterval);setTimeout(goToNext,300);};
+window.useRemove50=async function(){if(isAnswered||actionUsedThisQuestion)return;if(userCoins<50){if(webApp)webApp.showAlert(getTranslation('not_enough'));return;}userCoins-=50;actionUsedThisQuestion=true;document.getElementById('coinsHeader').textContent=userCoins;var q=roundQuestions[currentQuestionIndex];var ct=q.options[q.correctOption-1];var wo=q.options.filter(function(o){return o!==ct;});var th=shuffleArray(wo).slice(0,2);document.querySelectorAll('.option-btn').forEach(function(b){if(th.indexOf(b.getAttribute('data-text'))!==-1)b.classList.add('hidden-option');});disableActions();await fetchData('updateUser',{coins:userCoins});};
+window.useSwapQuestion=async function(){if(isAnswered||actionUsedThisQuestion)return;if(userCoins<100){if(webApp)webApp.showAlert(getTranslation('not_enough'));return;}userCoins-=100;actionUsedThisQuestion=true;document.getElementById('coinsHeader').textContent=userCoins;var rem=questions.filter(function(q){return roundQuestions.indexOf(q)===-1;});if(rem.length>0)roundQuestions[currentQuestionIndex]=shuffleArray(rem)[0];disableActions();await fetchData('updateUser',{coins:userCoins});renderQuestionScreen();};
+window.useSkipQuestion=async function(){if(isAnswered||actionUsedThisQuestion)return;if(userCoins<150){if(webApp)webApp.showAlert(getTranslation('not_enough'));return;}userCoins-=150;actionUsedThisQuestion=true;document.getElementById('coinsHeader').textContent=userCoins;myScore+=5;myCorrectCount++;myAnswers.push(true);disableActions();await fetchData('updateUser',{coins:userCoins});clearInterval(timerInterval);setTimeout(goToNext,300);};
 function disableActions(){document.querySelectorAll('.action-btn').forEach(function(b){b.disabled=true;});}
 
 function showSubmittingScreen(){
@@ -709,7 +709,28 @@ if(isInGame){
 webApp.showConfirm(getTranslation('exit_confirm'),function(confirmed){
 if(confirmed){
 clearInterval(timerInterval);
+fetchData('getUser',{}).then(function(ud){
+if(ud.ok&&ud.data){
+userTotalScore=ud.data.score||0;
+userCoins=ud.data.coins||0;
+var penalty=Math.max(0,userTotalScore-25);
+return fetchData('updateUser',{score:penalty,coins:userCoins});
+}
+return Promise.resolve();
+}).then(function(){
+return fetchData('getGame',{gameId:roomCode});
+}).then(function(gameResult){
+if(gameResult.ok&&gameResult.data){
+var gdata=gameResult.data;
+var updates={status:'finished',result:'lose'};
+return fetchData('updateGame',{gameId:roomCode,updates:updates});
+}
+return Promise.resolve();
+}).then(function(){
 window.location.href='../../dashboard/';
+}).catch(function(){
+window.location.href='../../dashboard/';
+});
 }
 });
 }else{window.location.href='../../dashboard/';}
