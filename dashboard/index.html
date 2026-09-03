@@ -389,7 +389,7 @@
                     <span class="games-section-title"><i class="bi bi-trophy"></i> لیگ در جریان</span>
                     <span class="games-section-badge" id="leagueCount">0</span>
                 </div>
-                <div class="section-loader" id="leagueLoader" style="display:none;">
+                <div class="section-loader" id="leagueLoader">
                     <div class="section-loader-spinner"></div>
                     <div class="section-loader-text">در حال دریافت لیگ...</div>
                 </div>
@@ -401,7 +401,7 @@
                     <span class="games-section-title"><i class="bi bi-clock-history"></i> ۵ بازی گذشته</span>
                     <span class="games-section-badge" id="pastCount">0</span>
                 </div>
-                <div class="section-loader" id="pastLoader" style="display:none;">
+                <div class="section-loader" id="pastLoader">
                     <div class="section-loader-spinner"></div>
                     <div class="section-loader-text">در حال دریافت بازی‌های گذشته...</div>
                 </div>
@@ -623,6 +623,9 @@
                     await checkExpiredGames(gamesData.data);
                     gamesData = await fetchData('getGamesByPlayer', {});
                 }
+                document.getElementById('onlineLoader').style.display = 'none';
+                var onlineList = document.getElementById('onlineList');
+                onlineList.style.display = 'flex';
                 if (gamesData.ok && Array.isArray(gamesData.data)) {
                     var myId = getUserId();
                     var onlineInProgress = gamesData.data.filter(function(g) { 
@@ -636,9 +639,6 @@
                         return db - da;
                     });
                     document.getElementById('onlineCount').textContent = onlineInProgress.length;
-                    document.getElementById('onlineLoader').style.display = 'none';
-                    var onlineList = document.getElementById('onlineList');
-                    onlineList.style.display = 'flex';
                     if (onlineInProgress.length === 0) {
                         onlineList.innerHTML = renderEmpty('بازی آنلاینی در جریان نیست');
                     } else {
@@ -657,8 +657,6 @@
                         onlineList.innerHTML = html;
                     }
                 }
-                document.getElementById('leagueLoader').style.display = 'flex';
-                loadLeague();
             }
 
             async function loadLeague() {
@@ -678,8 +676,6 @@
                     document.getElementById('leagueCount').textContent = '0';
                     leagueList.innerHTML = renderEmpty('لیگی در جریان نیست');
                 }
-                document.getElementById('pastLoader').style.display = 'flex';
-                loadPastGames();
             }
 
             async function loadPastGames() {
@@ -730,6 +726,8 @@
             applyTheme();
             loadUserData();
             loadOnlineGames();
+            loadLeague();
+            loadPastGames();
             
             setTimeout(function() {
                 var notif = document.getElementById('supportNotification');
