@@ -6,6 +6,7 @@
     <title>کوییزیکو</title>
     <script src="https://developer.eitaa.com/eitaa-web-app.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/gh/rastikerdar/sahel-font@v1.0.0/dist/font-face.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/gh/rastikerdar/samim-font@v1.0.0/dist/font-face.css" rel="stylesheet">
@@ -112,9 +113,20 @@
             background: var(--bg2); border: var(--border); border-radius: 8px;
             padding: 4px 10px; font-size: 10px; font-weight: 700;
             color: var(--dark); box-shadow: 2px 2px 0 #000;
+            min-width: 50px;
+            justify-content: center;
         }
         .currency-badge.coins i { color: #f59e0b; }
         .currency-badge.diamonds i { color: #06b6d4; }
+        .mini-spinner {
+            width: 12px; height: 12px;
+            border: 2px solid var(--bg3);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            display: inline-block;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
 
         .main-container {
             position: relative; z-index: 5;
@@ -192,12 +204,13 @@
             cursor: pointer; transition: all 0.2s ease; box-shadow: 2px 2px 0 #000;
         }
         .game-card:active { transform: translate(1px, 1px); box-shadow: 1px 1px 0 #000; }
-        .game-icon {
+        .game-avatar {
             width: 32px; height: 32px; border-radius: 50%;
             background: var(--primary); color: #fff;
             display: flex; align-items: center; justify-content: center;
-            font-size: 14px; flex-shrink: 0; border: var(--border);
+            font-size: 14px; flex-shrink: 0; border: var(--border); overflow: hidden;
         }
+        .game-avatar img { width: 100%; height: 100%; object-fit: cover; }
         .game-info { flex: 1; min-width: 0; }
         .game-title { font-size: 10px; font-weight: 700; color: var(--dark); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .game-subtitle { font-size: 8px; color: var(--text-light); }
@@ -205,13 +218,10 @@
             font-size: 8px; font-weight: 700; padding: 3px 10px; border-radius: 10px;
             border: var(--border); flex-shrink: 0;
         }
-        .game-status-badge.waiting { background: #fef3c7; color: #d97706; }
         .game-status-badge.live { background: #dbeafe; color: #2563eb; }
-        .game-status-badge.finished { background: #d1fae5; color: #059669; }
         .game-status-badge.win { background: #10b981; color: #fff; }
         .game-status-badge.lose { background: #ef4444; color: #fff; }
         .game-status-badge.draw { background: #f59e0b; color: #fff; }
-        .game-status-badge.expired { background: #94a3b8; color: #fff; }
 
         .section-loader {
             text-align: center;
@@ -234,7 +244,6 @@
             font-weight: 700;
             color: var(--text-light);
         }
-        @keyframes spin { to { transform: rotate(360deg); } }
 
         .empty-state { text-align: center; padding: 16px; color: var(--text-light); font-size: 10px; }
         .empty-state i { font-size: 35px; color: var(--primary); margin-bottom: 8px; display: block; }
@@ -322,8 +331,8 @@
                 </div>
             </div>
             <div class="header-currency">
-                <span class="currency-badge coins"><i class="bi bi-coin"></i> <span id="coinsHeader">0</span></span>
-                <span class="currency-badge diamonds"><i class="bi bi-gem"></i> <span id="diamondsHeader">0</span></span>
+                <span class="currency-badge coins"><i class="bi bi-coin"></i> <span id="coinsHeader"><span class="mini-spinner"></span></span></span>
+                <span class="currency-badge diamonds"><i class="bi bi-gem"></i> <span id="diamondsHeader"><span class="mini-spinner"></span></span></span>
             </div>
         </div>
     </header>
@@ -433,7 +442,6 @@
             var webApp = window.Eitaa?.WebApp;
             var API_URL = 'https://script.google.com/macros/s/AKfycbyHQXQ0TffhGyW1MdtI-_sWlZMhLSPDCR3Az5dDkuwv9TJt1o6-f_aCOg_aHJnty_8P/exec';
             var userCoins = 0, userDiamonds = 0, currentLang = 'fa';
-            var leagueMatches = [[1,2],[2,3],[1,5],[3,4],[1,4],[2,5],[1,3],[4,5],[3,5],[2,4]];
 
             document.addEventListener('contextmenu', function(e) { e.preventDefault(); });
             document.addEventListener('dragstart', function(e) { e.preventDefault(); });
@@ -446,6 +454,14 @@
                 'IRANSans': "'IRANSans', Tahoma, sans-serif",
                 'Vazirmatn': "'Vazirmatn', Tahoma, sans-serif",
                 'Estedad': "'Estedad', Tahoma, sans-serif"
+            };
+
+            var iconAvatars = {
+                'icon_game': 'fa-gamepad', 'icon_trophy': 'fa-trophy', 'icon_star': 'fa-star',
+                'icon_bolt': 'fa-bolt', 'icon_fire': 'fa-fire', 'icon_crown': 'fa-crown',
+                'icon_medal': 'fa-medal', 'icon_rocket': 'fa-rocket', 'icon_ghost': 'fa-ghost',
+                'icon_dragon': 'fa-dragon', 'icon_wand': 'fa-wand-magic-sparkles', 'icon_hat': 'fa-hat-wizard',
+                'icon_helmet': 'fa-helmet-safety', 'icon_shield': 'fa-shield-halved', 'icon_sword': 'fa-hand-fist'
             };
 
             function getSettings() {
@@ -501,6 +517,21 @@
                 ]).catch(function(){return{ok:false};});
             }
 
+            function getAvatarHtml(avatarId) {
+                if (!avatarId || avatarId === 'default') return '<i class="fa-solid fa-user"></i>';
+                if (iconAvatars[avatarId]) return '<i class="fa-solid ' + iconAvatars[avatarId] + '"></i>';
+                return '<i class="fa-solid fa-user"></i>';
+            }
+
+            async function getPlayerInfo(userId) {
+                if (!userId || userId === '') return {name: '---', avatar: 'default'};
+                var result = await fetchData('getUser', {username: userId});
+                if (result.ok && result.data) {
+                    return {name: result.data.name || userId, avatar: result.data.avatar || 'default'};
+                }
+                return {name: userId, avatar: 'default'};
+            }
+
             function renderEmpty(text) {
                 return '<div class="empty-state"><i class="bi bi-inbox"></i><p>' + text + '</p></div>';
             }
@@ -514,11 +545,64 @@
 
             window.goToPlay = goToPlay;
 
+            window.continueGame = function(id) { localStorage.setItem('onlineRoomCode', id); window.location.href = '../play/online/'; };
+            window.continueLeague = function(id) { localStorage.setItem('leagueCode', id); window.location.href = '../play/league/'; };
+            window.goToResult = function(id) { window.location.href = '../result/?id=' + id; };
+
             function openSupportLink() {
                 if (webApp && webApp.openEitaaLink) { webApp.openEitaaLink('https://eitaa.com/Amirmahdi_code'); }
                 else { window.open('https://eitaa.com/Amirmahdi_code', '_blank'); }
             }
             window.openSupportLink = openSupportLink;
+
+            async function checkExpiredGames(games) {
+                var myId = getUserId();
+                for (var i = 0; i < games.length; i++) {
+                    var g = games[i];
+                    if (String(g.id).startsWith('LG_')) continue;
+                    if (g.status === 'waiting' || g.status === 'in_progress') {
+                        if (g.createdAt) {
+                            var created = new Date(g.createdAt);
+                            var now = new Date();
+                            var diffMinutes = (now - created) / (1000 * 60);
+                            if (diffMinutes >= 30) {
+                                if (g.status === 'waiting' && (!g.player2 || g.player2 === '')) {
+                                    await fetchData('deleteGame', {gameId: g.id});
+                                } else {
+                                    var isP1 = String(g.player1) === String(myId);
+                                    var isP2 = String(g.player2) === String(myId);
+                                    if (isP1 || isP2) {
+                                        var latestRound = 0;
+                                        var latestRoundData = '';
+                                        for (var r = 1; r <= 5; r++) {
+                                            if (g['round' + r] && g['round' + r] !== '') {
+                                                latestRound = r;
+                                                latestRoundData = g['round' + r];
+                                            }
+                                        }
+                                        var myResult = 'draw';
+                                        if (latestRound > 0 && latestRoundData) {
+                                            var parts = latestRoundData.split('][');
+                                            var p1Ans = parts[1] ? parts[1].replace('[','').replace(']','') : 'waiting';
+                                            var p2Ans = parts[2] ? parts[2].replace('[','').replace(']','') : 'waiting';
+                                            var myAns = isP1 ? p1Ans : p2Ans;
+                                            var oppAns = isP1 ? p2Ans : p1Ans;
+                                            if (myAns === 'waiting' || myAns === '') {
+                                                myResult = 'lose';
+                                            } else if (oppAns === 'waiting' || oppAns === '') {
+                                                myResult = 'win';
+                                            } else {
+                                                myResult = 'draw';
+                                            }
+                                        }
+                                        await fetchData('updateGame', {gameId: g.id, updates: {status: 'finished', result: myResult}});
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
 
             async function loadUserData() {
                 var userData = await fetchData('getUser', {});
@@ -527,11 +611,18 @@
                     userDiamonds = userData.data.diamonds || 0;
                     document.getElementById('coinsHeader').textContent = userCoins;
                     document.getElementById('diamondsHeader').textContent = userDiamonds;
+                } else {
+                    document.getElementById('coinsHeader').textContent = '0';
+                    document.getElementById('diamondsHeader').textContent = '0';
                 }
             }
 
             async function loadOnlineGames() {
                 var gamesData = await fetchData('getGamesByPlayer', {});
+                if (gamesData.ok && Array.isArray(gamesData.data)) {
+                    await checkExpiredGames(gamesData.data);
+                    gamesData = await fetchData('getGamesByPlayer', {});
+                }
                 if (gamesData.ok && Array.isArray(gamesData.data)) {
                     var myId = getUserId();
                     var onlineInProgress = gamesData.data.filter(function(g) { 
@@ -556,9 +647,10 @@
                             var g = onlineInProgress[i];
                             var isP1 = String(g.player1) === String(myId);
                             var oppId = isP1 ? g.player2 : g.player1;
+                            var oppInfo = await getPlayerInfo(oppId);
                             html += '<div class="game-card" onclick="continueGame(\'' + g.id + '\')">' +
-                                '<div class="game-icon"><i class="bi bi-globe"></i></div>' +
-                                '<div class="game-info"><div class="game-title">مقابل ' + (oppId || '؟') + '</div>' +
+                                '<div class="game-avatar">' + getAvatarHtml(oppInfo.avatar) + '</div>' +
+                                '<div class="game-info"><div class="game-title">مقابل ' + oppInfo.name + '</div>' +
                                 '<div class="game-subtitle">در جریان</div></div>' +
                                 '<span class="game-status-badge live">در جریان</span></div>';
                         }
@@ -578,7 +670,7 @@
                     var lg = leagueResult.data;
                     document.getElementById('leagueCount').textContent = '1';
                     leagueList.innerHTML = '<div class="game-card" onclick="continueLeague(\'' + lg.leagueId + '\')">' +
-                        '<div class="game-icon"><i class="bi bi-trophy"></i></div>' +
+                        '<div class="game-avatar"><i class="bi bi-trophy"></i></div>' +
                         '<div class="game-info"><div class="game-title">لیگ در جریان</div>' +
                         '<div class="game-subtitle">کد: ' + lg.leagueId + '</div></div>' +
                         '<span class="game-status-badge live">در جریان</span></div>';
@@ -612,13 +704,15 @@
                         for (var i = 0; i < past.length; i++) {
                             var g = past[i];
                             var isP1 = String(g.player1) === String(myId);
+                            var oppId = isP1 ? g.player2 : g.player1;
+                            var oppInfo = await getPlayerInfo(oppId);
                             var cls = 'draw', txt = 'مساوی';
                             if (g.result === 'win') { cls = 'win'; txt = 'برد'; }
                             else if (g.result === 'lose') { cls = 'lose'; txt = 'باخت'; }
                             else if (g.result === 'draw') { cls = 'draw'; txt = 'مساوی'; }
                             html += '<div class="game-card" onclick="goToResult(\'' + g.id + '\')">' +
-                                '<div class="game-icon"><i class="bi bi-flag"></i></div>' +
-                                '<div class="game-info"><div class="game-title">بازی گذشته</div>' +
+                                '<div class="game-avatar">' + getAvatarHtml(oppInfo.avatar) + '</div>' +
+                                '<div class="game-info"><div class="game-title">مقابل ' + oppInfo.name + '</div>' +
                                 '<div class="game-subtitle">' + txt + '</div></div>' +
                                 '<span class="game-status-badge ' + cls + '">' + txt + '</span></div>';
                         }
@@ -626,10 +720,6 @@
                     }
                 }
             }
-
-            window.continueGame = function(id) { localStorage.setItem('onlineRoomCode', id); window.location.href = '../play/online/'; };
-            window.continueLeague = function(id) { localStorage.setItem('leagueCode', id); window.location.href = '../play/league/'; };
-            window.goToResult = function(id) { window.location.href = '../result/?id=' + id; };
 
             if (webApp) {
                 webApp.ready();
