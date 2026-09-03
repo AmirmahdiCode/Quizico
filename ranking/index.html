@@ -223,28 +223,6 @@
         }
         @keyframes spin { to { transform: rotate(360deg); } }
 
-        .bottom-loader {
-            text-align: center;
-            padding: 12px;
-            display: none;
-            flex-direction: column;
-            align-items: center;
-            gap: 6px;
-        }
-        .bottom-loader-spinner {
-            width: 25px;
-            height: 25px;
-            border: 3px solid var(--bg3);
-            border-top-color: var(--primary);
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
-        }
-        .bottom-loader-text {
-            font-size: 8px;
-            font-weight: 700;
-            color: var(--text-light);
-        }
-
         .my-rank-float {
             position: fixed;
             bottom: 60px;
@@ -476,10 +454,6 @@
             <div class="section-loader-text">در حال دریافت رتبه‌ها...</div>
         </div>
         <div class="rank-list" id="rankList"></div>
-        <div class="bottom-loader" id="bottomLoader">
-            <div class="bottom-loader-spinner"></div>
-            <div class="bottom-loader-text">در حال دریافت بیشتر...</div>
-        </div>
     </main>
 
     <div class="my-rank-float" id="myRankFloat" style="display:none;" onclick="scrollToMyRank()">
@@ -539,10 +513,6 @@
             var API_URL = 'https://script.google.com/macros/s/AKfycbyHQXQ0TffhGyW1MdtI-_sWlZMhLSPDCR3Az5dDkuwv9TJt1o6-f_aCOg_aHJnty_8P/exec';
             var allRankings = [];
             var currentLang = 'fa';
-            var currentOffset = 0;
-            var batchSize = 5;
-            var isLoading = false;
-            var allLoaded = false;
 
             document.addEventListener('contextmenu', function(e) { e.preventDefault(); });
             document.addEventListener('dragstart', function(e) { e.preventDefault(); });
@@ -648,71 +618,39 @@
                     '</div>';
             }
 
-            function renderBatch(batch, startIndex) {
-                var myId = getUserId();
+            function renderRankList(list, myId) {
+                if (list.length === 0) {
+                    return '<div class="section-loader"><div class="section-loader-text">کاربری یافت نشد</div></div>';
+                }
                 var html = '';
-                for (var i = 0; i < batch.length; i++) {
-                    html += renderRankItem(batch[i], startIndex + i, myId);
+                for (var i = 0; i < list.length; i++) {
+                    html += renderRankItem(list[i], i, myId);
                 }
                 return html;
             }
 
-            async function loadMoreRankings() {
-                if (isLoading || allLoaded) return;
-                isLoading = true;
-                document.getElementById('bottomLoader').style.display = 'flex';
-                
-                var result = await fetchData('leaderboard', { limit: batchSize, offset: currentOffset });
+            async function loadRankings() {
+                var result = await fetchData('leaderboard', { limit: 1000 });
                 if (result.ok && Array.isArray(result.data) && result.data.length > 0) {
-                    var batch = result.data;
-                    document.getElementById('rankList').insertAdjacentHTML('beforeend', renderBatch(batch, currentOffset));
-                    currentOffset += batch.length;
-                    
-                    for (var i = 0; i < batch.length; i++) {
-                        allRankings.push(batch[i]);
-                    }
-                    
-                    if (batch.length < batchSize) {
-                        allLoaded = true;
-                    } else {
-                        loadMoreRankings();
-                    }
-                } else {
-                    allLoaded = true;
-                }
-                
-                document.getElementById('bottomLoader').style.display = 'none';
-                isLoading = false;
-            }
-
-            async function loadFirstRankings() {
-                var result = await fetchData('leaderboard', { limit: batchSize, offset: 0 });
-                if (result.ok && Array.isArray(result.data) && result.data.length > 0) {
+                    allRankings = result.data;
                     document.getElementById('rankLoader').style.display = 'none';
-                    var batch = result.data;
-                    document.getElementById('rankList').innerHTML = renderBatch(batch, 0);
-                    currentOffset = batch.length;
-                    allRankings = batch.slice();
-                    
-                    if (batch.length < batchSize) {
-                        allLoaded = true;
-                    } else {
-                        loadMoreRankings();
-                    }
+                    document.getElementById('rankList').innerHTML = renderRankList(allRankings, getUserId());
                     
                     var myId = getUserId();
-                    var myRankResult = await fetchData('leaderboard', { limit: 1000, offset: 0 });
-                    if (myRankResult.ok && Array.isArray(myRankResult.data)) {
-                        for (var i = 0; i < myRankResult.data.length; i++) {
-                            if (String(myRankResult.data[i].username) === String(myId)) {
-                                document.getElementById('myRankFloatNumber').textContent = '#' + (i + 1);
-                                document.getElementById('myRankFloatAvatar').innerHTML = getAvatarHtml(myRankResult.data[i].avatar);
-                                document.getElementById('myRankFloatName').textContent = myRankResult.data[i].name || '؟';
-                                document.getElementById('myRankFloatScore').textContent = myRankResult.data[i].score || 0;
-                                document.getElementById('myRankFloat').style.display = 'flex';
-                                break;
-                            }
+                    var myRank = -1;
+                    for (var i = 0; i < allRankings.length; i++) {
+                        if (String(allRankings[i].username) === String(myId)) {
+                            myRank = i;
+                            break;
                         }
+                    }
+                    
+                    if (myRank >= 0) {
+                        document.getElementById('myRankFloatNumber').textContent = '#' + (myRank + 1);
+                        document.getElementById('myRankFloatAvatar').innerHTML = getAvatarHtml(allRankings[myRank].avatar);
+                        document.getElementById('myRankFloatName').textContent = allRankings[myRank].name || '؟';
+                        document.getElementById('myRankFloatScore').textContent = allRankings[myRank].score || 0;
+                        document.getElementById('myRankFloat').style.display = 'flex';
                     }
                 } else {
                     document.getElementById('rankLoader').style.display = 'none';
@@ -724,7 +662,7 @@
                 var q = document.getElementById('searchInput').value.toLowerCase().trim();
                 var myId = getUserId();
                 if (!q) {
-                    document.getElementById('rankList').innerHTML = renderBatch(allRankings, 0);
+                    document.getElementById('rankList').innerHTML = renderRankList(allRankings, myId);
                     return;
                 }
                 var filtered = allRankings.filter(function(item) {
@@ -732,7 +670,7 @@
                     var u = String(item.username || '').toLowerCase();
                     return n.includes(q) || u.includes(q);
                 });
-                document.getElementById('rankList').innerHTML = renderBatch(filtered, 0);
+                document.getElementById('rankList').innerHTML = renderRankList(filtered, myId);
             };
 
             window.viewProfile = async function(username) {
@@ -782,7 +720,7 @@
             }
 
             applyTheme();
-            loadFirstRankings();
+            loadRankings();
             
             setTimeout(function() {
                 var notif = document.getElementById('supportNotification');
