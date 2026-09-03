@@ -404,7 +404,7 @@
             background: rgba(45, 42, 62, 0.5);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
-            border: 1px solid var(--primary);
+            border: 1px solid var(--255, 255, 255, 0.1);
         }
         .nav-item {
             display: flex; flex-direction: column; align-items: center; gap: 1px;
@@ -630,45 +630,59 @@
             }
 
             async function loadRankings() {
-                var result = await fetchData('leaderboard', { limit: 1000 });
-                if (result.ok && Array.isArray(result.data)) {
-                    allRankings = result.data;
+                try {
+                    var result = await fetchData('leaderboard', { limit: 1000 });
+                    if (result.ok && Array.isArray(result.data) && result.data.length > 0) {
+                        allRankings = result.data;
+                        document.getElementById('rankLoader').style.display = 'none';
+                        
+                        var myId = getUserId();
+                        var myRank = -1;
+                        for (var i = 0; i < allRankings.length; i++) {
+                            if (String(allRankings[i].username) === String(myId)) {
+                                myRank = i;
+                                break;
+                            }
+                        }
+                        
+                        if (myRank >= 0) {
+                            document.getElementById('myRankFloatNumber').textContent = '#' + (myRank + 1);
+                            document.getElementById('myRankFloatAvatar').innerHTML = getAvatarHtml(allRankings[myRank].avatar);
+                            document.getElementById('myRankFloatName').textContent = allRankings[myRank].name || '؟';
+                            document.getElementById('myRankFloatScore').textContent = allRankings[myRank].score || 0;
+                            document.getElementById('myRankFloat').style.display = 'flex';
+                        }
+                        
+                        var firstBatch = allRankings.slice(0, batchSize);
+                        document.getElementById('rankList').innerHTML = renderBatch(firstBatch, 0);
+                        currentOffset = batchSize;
+                        
+                        var loading = false;
+                        window.addEventListener('scroll', function() {
+                            if (loading) return;
+                            if (currentOffset >= allRankings.length) return;
+                            
+                            var scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+                            var windowHeight = window.innerHeight;
+                            var docHeight = document.documentElement.scrollHeight;
+                            
+                            if (scrollTop + windowHeight >= docHeight - 200) {
+                                loading = true;
+                                var nextBatch = allRankings.slice(currentOffset, currentOffset + batchSize);
+                                if (nextBatch.length > 0) {
+                                    document.getElementById('rankList').insertAdjacentHTML('beforeend', renderBatch(nextBatch, currentOffset));
+                                    currentOffset += batchSize;
+                                }
+                                loading = false;
+                            }
+                        });
+                    } else {
+                        document.getElementById('rankLoader').style.display = 'none';
+                        document.getElementById('rankList').innerHTML = '<div class="section-loader"><div class="section-loader-text">کاربری یافت نشد</div></div>';
+                    }
+                } catch(e) {
                     document.getElementById('rankLoader').style.display = 'none';
-                    
-                    var myId = getUserId();
-                    var myRank = -1;
-                    for (var i = 0; i < allRankings.length; i++) {
-                        if (String(allRankings[i].username) === String(myId)) {
-                            myRank = i;
-                            break;
-                        }
-                    }
-                    
-                    if (myRank >= 0) {
-                        document.getElementById('myRankFloatNumber').textContent = '#' + (myRank + 1);
-                        document.getElementById('myRankFloatAvatar').innerHTML = getAvatarHtml(allRankings[myRank].avatar);
-                        document.getElementById('myRankFloatName').textContent = allRankings[myRank].name || '؟';
-                        document.getElementById('myRankFloatScore').textContent = allRankings[myRank].score || 0;
-                        document.getElementById('myRankFloat').style.display = 'flex';
-                    }
-                    
-                    var firstBatch = allRankings.slice(0, batchSize);
-                    document.getElementById('rankList').innerHTML = renderBatch(firstBatch, 0);
-                    currentOffset = batchSize;
-                    
-                    var observer = new IntersectionObserver(function(entries) {
-                        if (entries[0].isIntersecting && currentOffset < allRankings.length) {
-                            var nextBatch = allRankings.slice(currentOffset, currentOffset + batchSize);
-                            document.getElementById('rankList').insertAdjacentHTML('beforeend', renderBatch(nextBatch, currentOffset));
-                            currentOffset += batchSize;
-                        }
-                    });
-                    
-                    var sentinel = document.createElement('div');
-                    sentinel.id = 'sentinel';
-                    sentinel.style.height = '10px';
-                    document.getElementById('rankList').appendChild(sentinel);
-                    observer.observe(sentinel);
+                    document.getElementById('rankList').innerHTML = '<div class="section-loader"><div class="section-loader-text">خطا در دریافت اطلاعات</div></div>';
                 }
             }
 
