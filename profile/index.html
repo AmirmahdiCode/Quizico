@@ -275,6 +275,11 @@
             font-size: 10px; font-weight: 800; color: var(--dark); margin-bottom: 8px;
             display: flex; align-items: center; gap: 6px;
         }
+        .avatar-category-title .price-tag {
+            font-size: 8px; font-weight: 700; padding: 2px 8px; border-radius: 10px;
+            background: var(--bg2); border: var(--border); color: var(--dark);
+        }
+        .avatar-category-title .price-tag.free { background: #d1fae5; color: #059669; }
         .avatar-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; }
         .avatar-item {
             text-align: center; padding: 8px 4px; border: var(--border); border-radius: 8px;
@@ -282,6 +287,7 @@
         }
         .avatar-item:active { transform: scale(.95); }
         .avatar-item.active { border-color: #f59e0b; border-width: 2px; }
+        .avatar-item.owned { border-color: #10b981; }
         .avatar-item-img {
             width: 40px; height: 40px; border-radius: 50%; margin: 0 auto 4px;
             background: #fff; border: var(--border);
@@ -290,6 +296,8 @@
         }
         .avatar-item-img img { width: 100%; height: 100%; object-fit: cover; }
         .avatar-item-price { font-size: 7px; font-weight: 700; color: var(--text-light); }
+        .avatar-item-price.free { color: #059669; }
+        .avatar-item-price.owned { color: #10b981; }
 
         .support-notification {
             position: fixed; top: 75px; right: 5%; left: 5%;
@@ -552,14 +560,24 @@
                     {id:'boy_2', url:'https://cdn.imgurl.ir/uploads/g87708_nYSMEcudjDVvsMsfO4B6nrWGmFI-J3OzSBMOSwKo6Mt48wolyg.png'},
                     {id:'boy_3', url:'https://cdn.imgurl.ir/uploads/q01044_VWzDtI4NYQ660EGTVD_xToLVOvw-DkODf3dzQq2kbk2i1b-cIQ.png'},
                     {id:'boy_4', url:'https://cdn.imgurl.ir/uploads/w428496_0RBfnEt77slNmis2YlNfIjtELkE-_nTEsqjVSQafpoCS0X1pXg.png'},
-                    {id:'boy_5', url:'https://cdn.imgurl.ir/uploads/h099226_Kaahld11_fKS5dcGDsq-5IvBiC0-olahkKmOTsSjohG4mMsVUw.png'}
+                    {id:'boy_5', url:'https://cdn.imgurl.ir/uploads/h099226_Kaahld11_fKS5dcGDsq-5IvBiC0-olahkKmOTsSjohG4mMsVUw.png'},
+                    {id:'boy_6', url:'https://cdn.imgurl.ir/uploads/k778258_pd9TZqS3DHKaaJQOygY-3WFHMAE-NzGEJ7R1Sv-r5Dfc6Zi3Ig.png'},
+                    {id:'boy_7', url:'https://cdn.imgurl.ir/uploads/w221825_-1Xu8BzjzGa1I7ZIBVaYpoez4BM-zdVRFGLaRJGymjrVOu_yBA.png'},
+                    {id:'boy_8', url:'https://cdn.imgurl.ir/uploads/o12072_rsMh7nSKjcODxjSPFWwfrlpYFe4-RHju528wRf-FCo_v2tJX7w.png'},
+                    {id:'boy_9', url:'https://cdn.imgurl.ir/uploads/m007403_MNhHAeXQ-_-nEMVuihCtgYXUS90-5LFmX4D7T2-1RaoN058vnw.png'},
+                    {id:'boy_10', url:'https://cdn.imgurl.ir/uploads/h976855_MLDYzJITIyaUkB6efcWGamXK39M-yfLRI0_7RrCmky6p-jgXFw.png'}
                 ]},
                 {id:'girls', label:'دخترها', price:20, items:[
                     {id:'girl_1', url:'https://cdn.imgurl.ir/uploads/h993569_G_wzhIk2ocoOPFhmmQHpUuS1mQc-IXeKOSBFSx6jn_y9tpVazg.png'},
                     {id:'girl_2', url:'https://cdn.imgurl.ir/uploads/u2553__Yb1fK6xw6Di1SX-7xB5v2J7e-g-IYBMcl_wSmqXNTkmAQMGnA.png'},
                     {id:'girl_3', url:'https://cdn.imgurl.ir/uploads/w03550__MlKSY3NXQ9cWkwVioa7hUpr6aI-2MRPg-L3QNOpRTm1oZTHtQ.png'},
                     {id:'girl_4', url:'https://cdn.imgurl.ir/uploads/r074193_q1uxpQIZsrzslDhI1W69Su-XvbY-x5jd5EZ1SyKggCCSjbbxrg.png'},
-                    {id:'girl_5', url:'https://cdn.imgurl.ir/uploads/w035688_E2FfMOkE8ZGtuOZqU2q_VGTE6Yw-IU1JraRkSTub6ymIVXQuxA.png'}
+                    {id:'girl_5', url:'https://cdn.imgurl.ir/uploads/w035688_E2FfMOkE8ZGtuOZqU2q_VGTE6Yw-IU1JraRkSTub6ymIVXQuxA.png'},
+                    {id:'girl_6', url:'https://cdn.imgurl.ir/uploads/c895184_bt1drvChqXnDjtGhNgxJ9M2Ho4I-n1KpcnSiSXSboB5rKfBwCg.png'},
+                    {id:'girl_7', url:'https://cdn.imgurl.ir/uploads/u246883_b3j_B2NgyZNITErHK5c9A3dWFRA-5bV5bdzHSGi4neWTa9881A.png'},
+                    {id:'girl_8', url:'https://cdn.imgurl.ir/uploads/o0025_B1BkJ9n5GL25bnqG-YNn79Qvsds-Erx3uqovQtex6125wXCD7g.png'},
+                    {id:'girl_9', url:'https://cdn.imgurl.ir/uploads/t14047_NR8hWSzjLbSm2cXNrBnA2mEh43o-XhY5hyhBSU6s-9c4Fv5wRA.png'},
+                    {id:'girl_10', url:'https://cdn.imgurl.ir/uploads/v96829_FouVxzw8xOmCFvf0IEri962BmHQ-LxKzSWS_aj8dcNI5EWVw.png'}
                 ]}
             ];
 
@@ -658,16 +676,25 @@
                 return {name: userId, avatar: 'default'};
             }
 
+            function isAvatarOwned(itemId) {
+                try {
+                    var owned = JSON.parse(localStorage.getItem('ownedAvatars') || '[]');
+                    return owned.indexOf(itemId) !== -1;
+                } catch(e) { return false; }
+            }
+
             function renderAvatarModal() {
                 var html = '';
                 avatarCategories.forEach(function(cat) {
-                    html += '<div class="avatar-category"><div class="avatar-category-title">' + cat.label + '</div><div class="avatar-grid">';
+                    var priceText = cat.price === 0 ? 'رایگان' : cat.price + ' 💎';
+                    html += '<div class="avatar-category"><div class="avatar-category-title">' + cat.label + ' <span class="price-tag' + (cat.price === 0 ? ' free' : '') + '">' + priceText + '</span></div><div class="avatar-grid">';
                     cat.items.forEach(function(item) {
                         var isActive = currentAvatar === item.id;
+                        var isOwned = isAvatarOwned(item.id);
                         var imgHtml = item.icon ? '<i class="fa-solid ' + item.icon + '"></i>' : '<img src="' + item.url + '" alt="" draggable="false" oncontextmenu="return false;" ondragstart="return false;">';
-                        html += '<div class="avatar-item' + (isActive ? ' active' : '') + '" onclick="selectAvatar(\'' + item.id + '\',' + cat.price + ')">';
-                        html += '<div class="avatar-item-img">' + imgHtml + '</div>';
-                        html += '<span class="avatar-item-price">' + (cat.price === 0 ? 'رایگان' : cat.price + ' 💎') + '</span></div>';
+                        var priceHtml = (cat.price === 0 || isOwned) ? '<span class="avatar-item-price ' + (cat.price === 0 ? 'free' : 'owned') + '">' + (cat.price === 0 ? 'رایگان' : 'خریداری شده') + '</span>' : '<span class="avatar-item-price">' + cat.price + ' 💎</span>';
+                        html += '<div class="avatar-item' + (isActive ? ' active' : '') + (isOwned ? ' owned' : '') + '" onclick="selectAvatar(\'' + item.id + '\',' + cat.price + ')">';
+                        html += '<div class="avatar-item-img">' + imgHtml + '</div>' + priceHtml + '</div>';
                     });
                     html += '</div></div>';
                 });
@@ -683,7 +710,8 @@
             window.closeAvatarModal = closeAvatarModal;
 
             window.selectAvatar = function(itemId, price) {
-                if (price === 0) {
+                var owned = isAvatarOwned(itemId);
+                if (price === 0 || owned) {
                     currentAvatar = itemId;
                     fetchData('updateUser', {avatar: itemId});
                     updateProfileAvatar();
@@ -696,10 +724,18 @@
                 }
                 userDiamonds -= price;
                 document.getElementById('diamondsValue').textContent = userDiamonds;
-                fetchData('updateUser', {diamonds: userDiamonds, avatar: itemId});
+                fetchData('updateUser', {diamonds: userDiamonds});
+                var ownedAvatars = [];
+                try { ownedAvatars = JSON.parse(localStorage.getItem('ownedAvatars') || '[]'); } catch(e) {}
+                if (ownedAvatars.indexOf(itemId) === -1) {
+                    ownedAvatars.push(itemId);
+                    localStorage.setItem('ownedAvatars', JSON.stringify(ownedAvatars));
+                }
                 currentAvatar = itemId;
+                fetchData('updateUser', {avatar: itemId});
                 updateProfileAvatar();
                 closeAvatarModal();
+                if (webApp) webApp.showAlert('آواتار خریداری شد!');
             };
 
             function updateProfileAvatar() {
