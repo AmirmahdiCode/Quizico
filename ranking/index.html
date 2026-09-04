@@ -127,6 +127,7 @@
             box-shadow: var(--shadow);
             outline: none;
         }
+        [dir="ltr"] .search-box input { padding: 10px 12px 10px 40px; }
         .search-box i {
             position: absolute;
             top: 50%;
@@ -134,6 +135,7 @@
             transform: translateY(-50%);
             color: var(--text-light);
         }
+        [dir="ltr"] .search-box i { right: auto; left: 12px; }
 
         .rank-list { display: flex; flex-direction: column; gap: 8px; }
 
@@ -321,6 +323,8 @@
             align-items: center;
             justify-content: center;
         }
+        [dir="rtl"] .profile-modal-close { left: 10px; right: auto; }
+        [dir="ltr"] .profile-modal-close { left: auto; right: 10px; }
         .profile-modal-avatar {
             width: 60px;
             height: 60px;
@@ -447,11 +451,11 @@
     <main class="main-container">
         <div class="search-box">
             <i class="bi bi-search"></i>
-            <input type="text" id="searchInput" placeholder="جستجوی کاربر..." oninput="filterRankings()">
+            <input type="text" id="searchInput" placeholder="جستجوی کاربر..." data-i18n-placeholder="search_user" oninput="filterRankings()">
         </div>
         <div class="section-loader" id="rankLoader">
             <div class="section-loader-spinner"></div>
-            <div class="section-loader-text">در حال دریافت رتبه‌ها...</div>
+            <div class="section-loader-text" data-i18n="loading_rankings">در حال دریافت رتبه‌ها...</div>
         </div>
         <div class="rank-list" id="rankList"></div>
     </main>
@@ -472,9 +476,9 @@
                 <div class="profile-modal-name" id="modalName"></div>
                 <div class="profile-modal-username" id="modalUsername"></div>
                 <div class="profile-modal-stats">
-                    <div class="profile-modal-stat"><div class="profile-modal-stat-value" id="modalScore">0</div><div class="profile-modal-stat-label">امتیاز</div></div>
-                    <div class="profile-modal-stat"><div class="profile-modal-stat-value" id="modalCoins">0</div><div class="profile-modal-stat-label">سکه</div></div>
-                    <div class="profile-modal-stat"><div class="profile-modal-stat-value" id="modalDiamonds">0</div><div class="profile-modal-stat-label">الماس</div></div>
+                    <div class="profile-modal-stat"><div class="profile-modal-stat-value" id="modalScore">0</div><div class="profile-modal-stat-label" data-i18n="score">امتیاز</div></div>
+                    <div class="profile-modal-stat"><div class="profile-modal-stat-value" id="modalCoins">0</div><div class="profile-modal-stat-label" data-i18n="coins">سکه</div></div>
+                    <div class="profile-modal-stat"><div class="profile-modal-stat-value" id="modalDiamonds">0</div><div class="profile-modal-stat-label" data-i18n="diamonds">الماس</div></div>
                 </div>
             </div>
         </div>
@@ -491,19 +495,19 @@
     <nav class="bottom-nav">
         <div class="nav-item" onclick="window.location.href='../dashboard/'">
             <img src="https://uploadkon.ir/uploads/bdf329_26home-iconbase-1-.svg" alt="خانه" draggable="false" oncontextmenu="return false;" ondragstart="return false;">
-            <span>خانه</span>
+            <span data-i18n="home">خانه</span>
         </div>
         <div class="nav-item active" onclick="window.location.href='../ranking/'">
             <img src="https://uploadkon.ir/uploads/8c9f29_26medal-1st-iconbase.svg" alt="رتبه" draggable="false" oncontextmenu="return false;" ondragstart="return false;">
-            <span>رتبه</span>
+            <span data-i18n="ranking">رتبه</span>
         </div>
         <div class="nav-item" onclick="window.location.href='../profile/'">
             <img src="https://uploadkon.ir/uploads/e78130_26profile-iconbase.svg" alt="پروفایل" draggable="false" oncontextmenu="return false;" ondragstart="return false;">
-            <span>پروفایل</span>
+            <span data-i18n="profile">پروفایل</span>
         </div>
         <div class="nav-item" onclick="window.location.href='../setting/'">
             <img src="https://uploadkon.ir/uploads/629f29_26setting-iconbase.svg" alt="تنظیمات" draggable="false" oncontextmenu="return false;" ondragstart="return false;">
-            <span>تنظیمات</span>
+            <span data-i18n="settings_nav">تنظیمات</span>
         </div>
     </nav>
 
@@ -558,11 +562,66 @@
                 'girl_10': 'https://cdn.imgurl.ir/uploads/v96829_FouVxzw8xOmCFvf0IEri962BmHQ-LxKzSWS_aj8dcNI5EWVw.png'
             };
 
+            var translations = {
+                fa: {
+                    search_user: 'جستجوی کاربر...',
+                    loading_rankings: 'در حال دریافت رتبه‌ها...',
+                    no_users: 'کاربری یافت نشد',
+                    score: 'امتیاز',
+                    coins: 'سکه',
+                    diamonds: 'الماس',
+                    home: 'خانه',
+                    ranking: 'رتبه',
+                    profile: 'پروفایل',
+                    settings_nav: 'تنظیمات',
+                    you: 'شما',
+                    error_loading: 'خطا در دریافت اطلاعات'
+                },
+                en: {
+                    search_user: 'Search user...',
+                    loading_rankings: 'Loading rankings...',
+                    no_users: 'No users found',
+                    score: 'Score',
+                    coins: 'Coins',
+                    diamonds: 'Diamonds',
+                    home: 'Home',
+                    ranking: 'Ranking',
+                    profile: 'Profile',
+                    settings_nav: 'Settings',
+                    you: 'You',
+                    error_loading: 'Error loading data'
+                },
+                ar: {
+                    search_user: 'ابحث عن مستخدم...',
+                    loading_rankings: 'جار تحميل الترتيب...',
+                    no_users: 'لا يوجد مستخدمين',
+                    score: 'النقاط',
+                    coins: 'عملات',
+                    diamonds: 'الماس',
+                    home: 'الرئيسية',
+                    ranking: 'الترتيب',
+                    profile: 'الملف',
+                    settings_nav: 'الإعدادات',
+                    you: 'أنت',
+                    error_loading: 'خطأ في تحميل البيانات'
+                }
+            };
+
+            function getTranslation(k) {
+                var t = translations[currentLang] || translations.fa;
+                return t[k] || translations.fa[k] || k;
+            }
+
             function getSettings() {
                 try {
                     var raw = localStorage.getItem('quizicoSettings');
                     if (!raw) return { theme: 'light', primaryColor: '#a855f7', animation: true, haptic: true, language: 'fa', font: 'Samim' };
                     var p = JSON.parse(raw);
+                    if (!p.theme) p.theme = 'light';
+                    if (!p.primaryColor) p.primaryColor = '#a855f7';
+                    if (p.animation === undefined) p.animation = true;
+                    if (p.haptic === undefined) p.haptic = true;
+                    if (!p.language) p.language = 'fa';
                     if (!p.font) p.font = 'Samim';
                     return p;
                 } catch(e) { return { theme: 'light', primaryColor: '#a855f7', animation: true, haptic: true, language: 'fa', font: 'Samim' }; }
@@ -570,6 +629,23 @@
 
             function hexToRgb(h) { var r = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(h); return r ? { r:parseInt(r[1],16), g:parseInt(r[2],16), b:parseInt(r[3],16) } : { r:168,g:85,b:247 }; }
             function shadeColor(c,p){var r=hexToRgb(c);var rr=Math.max(0,Math.min(255,r.r+p));var gg=Math.max(0,Math.min(255,r.g+p));var bb=Math.max(0,Math.min(255,r.b+p));return '#'+((1<<24)+(rr<<16)+(gg<<8)+bb).toString(16).slice(1);}
+
+            function applyLanguage(lang) {
+                var t = translations[lang] || translations.fa;
+                document.querySelectorAll('[data-i18n]').forEach(function(el) {
+                    var k = el.getAttribute('data-i18n');
+                    if (t[k]) el.textContent = t[k];
+                });
+                document.querySelectorAll('[data-i18n-placeholder]').forEach(function(el) {
+                    var k = el.getAttribute('data-i18n-placeholder');
+                    if (t[k]) el.placeholder = t[k];
+                });
+                if (lang === 'en') {
+                    document.documentElement.setAttribute('dir', 'ltr');
+                } else {
+                    document.documentElement.setAttribute('dir', 'rtl');
+                }
+            }
 
             function applyTheme() {
                 var s = getSettings();
@@ -598,6 +674,7 @@
                 var titleEl = document.getElementById('headerTitle');
                 if (currentLang === 'en') titleEl.innerHTML = 'Quiz<span class="t-accent">ico</span>';
                 else titleEl.innerHTML = 'کوییز<span class="t-accent">یکو</span>';
+                applyLanguage(currentLang);
             }
 
             function getEitaaUser(){return webApp&&webApp.initDataUnsafe&&webApp.initDataUnsafe.user?webApp.initDataUnsafe.user:null;}
@@ -638,14 +715,14 @@
                     '<div class="rank-number ' + getRankClass(index) + '">' + getRankIcon(index) + '</div>' +
                     '<div class="rank-avatar">' + getAvatarHtml(avatarField) + '</div>' +
                     '<div class="rank-info"><div class="rank-name">' + (item.name || item.username || '؟') + '</div>' +
-                    '<div class="rank-score">امتیاز: ' + (item.score || 0) + '</div></div>' +
-                    (isMe ? '<span class="rank-badge-me">شما</span>' : '') +
+                    '<div class="rank-score">' + getTranslation('score') + ': ' + (item.score || 0) + '</div></div>' +
+                    (isMe ? '<span class="rank-badge-me">' + getTranslation('you') + '</span>' : '') +
                     '</div>';
             }
 
             function renderRankList(list, myId) {
                 if (list.length === 0) {
-                    return '<div class="section-loader"><div class="section-loader-text">کاربری یافت نشد</div></div>';
+                    return '<div class="section-loader"><div class="section-loader-text">' + getTranslation('no_users') + '</div></div>';
                 }
                 var html = '';
                 for (var i = 0; i < list.length; i++) {
@@ -679,7 +756,7 @@
                     }
                 } else {
                     document.getElementById('rankLoader').style.display = 'none';
-                    document.getElementById('rankList').innerHTML = '<div class="section-loader"><div class="section-loader-text">کاربری یافت نشد</div></div>';
+                    document.getElementById('rankList').innerHTML = '<div class="section-loader"><div class="section-loader-text">' + getTranslation('no_users') + '</div></div>';
                 }
             }
 
@@ -715,7 +792,7 @@
                         document.getElementById('modalCoins').textContent = d.coins || 0;
                         document.getElementById('modalDiamonds').textContent = d.diamonds || 0;
                     } else {
-                        document.getElementById('modalName').textContent = 'خطا در دریافت اطلاعات';
+                        document.getElementById('modalName').textContent = getTranslation('error_loading');
                         document.getElementById('modalUsername').textContent = 'ID: ' + username;
                         document.getElementById('modalScore').textContent = '0';
                         document.getElementById('modalCoins').textContent = '0';
