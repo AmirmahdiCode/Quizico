@@ -276,19 +276,19 @@
     <nav class="bottom-nav">
         <div class="nav-item" onclick="window.location.href='../dashboard/'">
             <img src="https://uploadkon.ir/uploads/bdf329_26home-iconbase-1-.svg" alt="خانه" draggable="false" oncontextmenu="return false;" ondragstart="return false;">
-            <span>خانه</span>
+            <span data-i18n="home">خانه</span>
         </div>
         <div class="nav-item" onclick="window.location.href='../ranking/'">
             <img src="https://uploadkon.ir/uploads/8c9f29_26medal-1st-iconbase.svg" alt="رتبه" draggable="false" oncontextmenu="return false;" ondragstart="return false;">
-            <span>رتبه</span>
+            <span data-i18n="ranking">رتبه</span>
         </div>
         <div class="nav-item" onclick="window.location.href='../profile/'">
             <img src="https://uploadkon.ir/uploads/e78130_26profile-iconbase.svg" alt="پروفایل" draggable="false" oncontextmenu="return false;" ondragstart="return false;">
-            <span>پروفایل</span>
+            <span data-i18n="profile">پروفایل</span>
         </div>
         <div class="nav-item" onclick="window.location.href='../setting/'">
             <img src="https://uploadkon.ir/uploads/629f29_26setting-iconbase.svg" alt="تنظیمات" draggable="false" oncontextmenu="return false;" ondragstart="return false;">
-            <span>تنظیمات</span>
+            <span data-i18n="settings_nav">تنظیمات</span>
         </div>
     </nav>
 
@@ -314,18 +314,112 @@
                 'Estedad': "'Estedad', Tahoma, sans-serif"
             };
 
+            var translations = {
+                fa: {
+                    home: 'خانه',
+                    ranking: 'رتبه',
+                    profile: 'پروفایل',
+                    settings_nav: 'تنظیمات',
+                    beginner: 'مبتدی',
+                    skilled: 'کاربلد',
+                    pro: 'حرفه‌ای',
+                    royal: 'اشرافی',
+                    imperial: 'سلطنتی',
+                    coins: 'سکه',
+                    diamonds: 'الماس',
+                    empty: 'پوچ',
+                    retry: 'شانس دوباره',
+                    confirm_text: 'مطمئنی می‌خوای ',
+                    spend: ' خرج کنی؟',
+                    yes: 'بله',
+                    no: 'خیر',
+                    not_enough: 'سکه یا الماس کافی نداری!',
+                    got_empty: 'پوچ!',
+                    got_coins: '+',
+                    got_diamonds: '+',
+                    got_retry: 'شانس دوباره!'
+                },
+                en: {
+                    home: 'Home',
+                    ranking: 'Ranking',
+                    profile: 'Profile',
+                    settings_nav: 'Settings',
+                    beginner: 'Beginner',
+                    skilled: 'Skilled',
+                    pro: 'Pro',
+                    royal: 'Royal',
+                    imperial: 'Imperial',
+                    coins: 'coins',
+                    diamonds: 'diamonds',
+                    empty: 'Empty',
+                    retry: 'Retry',
+                    confirm_text: 'Are you sure you want to spend ',
+                    spend: '?',
+                    yes: 'Yes',
+                    no: 'No',
+                    not_enough: 'Not enough coins or diamonds!',
+                    got_empty: 'Empty!',
+                    got_coins: '+',
+                    got_diamonds: '+',
+                    got_retry: 'Retry!'
+                },
+                ar: {
+                    home: 'الرئيسية',
+                    ranking: 'الترتيب',
+                    profile: 'الملف',
+                    settings_nav: 'الإعدادات',
+                    beginner: 'مبتدئ',
+                    skilled: 'ماهر',
+                    pro: 'محترف',
+                    royal: 'ملكي',
+                    imperial: 'إمبراطوري',
+                    coins: 'عملة',
+                    diamonds: 'الماس',
+                    empty: 'فارغ',
+                    retry: 'إعادة',
+                    confirm_text: 'هل أنت متأكد من صرف ',
+                    spend: '؟',
+                    yes: 'نعم',
+                    no: 'لا',
+                    not_enough: 'عملات أو الماس غير كافي!',
+                    got_empty: 'فارغ!',
+                    got_coins: '+',
+                    got_diamonds: '+',
+                    got_retry: 'إعادة!'
+                }
+            };
+
+            function getTranslation(k) {
+                var t = translations[currentLang] || translations.fa;
+                return t[k] || translations.fa[k] || k;
+            }
+
             function getSettings() {
                 try {
                     var raw = localStorage.getItem('quizicoSettings');
                     if (!raw) return { theme: 'light', primaryColor: '#a855f7', animation: true, haptic: true, language: 'fa', font: 'Samim' };
                     var p = JSON.parse(raw);
                     if (!p.font) p.font = 'Samim';
+                    if (!p.language) p.language = 'fa';
                     return p;
                 } catch(e) { return { theme: 'light', primaryColor: '#a855f7', animation: true, haptic: true, language: 'fa', font: 'Samim' }; }
             }
 
             function hexToRgb(h) { var r = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(h); return r ? { r:parseInt(r[1],16), g:parseInt(r[2],16), b:parseInt(r[3],16) } : { r:168,g:85,b:247 }; }
             function shadeColor(c,p){var r=hexToRgb(c);var rr=Math.max(0,Math.min(255,r.r+p));var gg=Math.max(0,Math.min(255,r.g+p));var bb=Math.max(0,Math.min(255,r.b+p));return '#'+((1<<24)+(rr<<16)+(gg<<8)+bb).toString(16).slice(1);}
+
+            function applyLanguage(lang) {
+                var t = translations[lang] || translations.fa;
+                document.querySelectorAll('[data-i18n]').forEach(function(el) {
+                    var k = el.getAttribute('data-i18n');
+                    if (t[k]) el.textContent = t[k];
+                });
+                if (lang === 'en') {
+                    document.documentElement.setAttribute('dir', 'ltr');
+                } else {
+                    document.documentElement.setAttribute('dir', 'rtl');
+                }
+            }
 
             function applyTheme() {
                 var s = getSettings();
@@ -337,8 +431,14 @@
                 if (t === 'dark') {
                     var lightP = shadeColor(p, 40);
                     document.documentElement.style.setProperty('--primary', lightP);
+                    document.documentElement.style.setProperty('--primary-dark', p);
+                    document.documentElement.style.setProperty('--primary-light', shadeColor(p, 80));
+                    document.documentElement.style.setProperty('--primary-rgb', hexToRgb(lightP).r + ',' + hexToRgb(lightP).g + ',' + hexToRgb(lightP).b);
                 } else {
                     document.documentElement.style.setProperty('--primary', p);
+                    document.documentElement.style.setProperty('--primary-dark', shadeColor(p, -30));
+                    document.documentElement.style.setProperty('--primary-light', shadeColor(p, 50));
+                    document.documentElement.style.setProperty('--primary-rgb', hexToRgb(p).r + ',' + hexToRgb(p).g + ',' + hexToRgb(p).b);
                 }
                 if (s.animation === false) { document.documentElement.setAttribute('data-animation', 'off'); }
                 else { document.documentElement.removeAttribute('data-animation'); }
@@ -348,6 +448,7 @@
                 var titleEl = document.getElementById('headerTitle');
                 if (currentLang === 'en') titleEl.innerHTML = 'Quiz<span class="t-accent">ico</span>';
                 else titleEl.innerHTML = 'کوییز<span class="t-accent">یکو</span>';
+                applyLanguage(currentLang);
             }
 
             function getEitaaUser(){return webApp&&webApp.initDataUnsafe&&webApp.initDataUnsafe.user?webApp.initDataUnsafe.user:null;}
@@ -363,84 +464,92 @@
 
             var wheels = {
                 beginner: {
-                    name: 'مبتدی',
+                    nameKey: 'beginner',
                     costType: 'coins',
                     cost: 30,
                     prizes: [
-                        {label:'پوچ', type:'empty', value:0},
-                        {label:'۲۰ سکه', type:'coins', value:20},
-                        {label:'پوچ', type:'empty', value:0},
-                        {label:'۱۰۰ سکه', type:'coins', value:100},
-                        {label:'۱ الماس', type:'diamonds', value:1},
-                        {label:'۲۰۰ سکه', type:'coins', value:200},
-                        {label:'۵ الماس', type:'diamonds', value:5},
-                        {label:'۱۰ الماس', type:'diamonds', value:10}
+                        {labelKey:'empty', type:'empty', value:0},
+                        {label:'۲۰', labelUnit:'coins', type:'coins', value:20},
+                        {labelKey:'empty', type:'empty', value:0},
+                        {label:'۱۰۰', labelUnit:'coins', type:'coins', value:100},
+                        {label:'۱', labelUnit:'diamonds', type:'diamonds', value:1},
+                        {label:'۲۰۰', labelUnit:'coins', type:'coins', value:200},
+                        {label:'۵', labelUnit:'diamonds', type:'diamonds', value:5},
+                        {label:'۱۰', labelUnit:'diamonds', type:'diamonds', value:10}
                     ]
                 },
                 skilled: {
-                    name: 'کاربلد',
+                    nameKey: 'skilled',
                     costType: 'coins',
                     cost: 100,
                     prizes: [
-                        {label:'پوچ', type:'empty', value:0},
-                        {label:'پوچ', type:'empty', value:0},
-                        {label:'۱۰۰ سکه', type:'coins', value:100},
-                        {label:'۱۰۰۰ سکه', type:'coins', value:1000},
-                        {label:'۵ الماس', type:'diamonds', value:5},
-                        {label:'۱۰ الماس', type:'diamonds', value:10},
-                        {label:'۵۰ الماس', type:'diamonds', value:50},
-                        {label:'شانس دوباره', type:'retry', value:0}
+                        {labelKey:'empty', type:'empty', value:0},
+                        {labelKey:'empty', type:'empty', value:0},
+                        {label:'۱۰۰', labelUnit:'coins', type:'coins', value:100},
+                        {label:'۱۰۰۰', labelUnit:'coins', type:'coins', value:1000},
+                        {label:'۵', labelUnit:'diamonds', type:'diamonds', value:5},
+                        {label:'۱۰', labelUnit:'diamonds', type:'diamonds', value:10},
+                        {label:'۵۰', labelUnit:'diamonds', type:'diamonds', value:50},
+                        {labelKey:'retry', type:'retry', value:0}
                     ]
                 },
                 pro: {
-                    name: 'حرفه‌ای',
+                    nameKey: 'pro',
                     costType: 'coins',
                     cost: 500,
                     prizes: [
-                        {label:'پوچ', type:'empty', value:0},
-                        {label:'۴۰۰ سکه', type:'coins', value:400},
-                        {label:'۷۰۰ سکه', type:'coins', value:700},
-                        {label:'۱۰۰۰ سکه', type:'coins', value:1000},
-                        {label:'۲۰۰۰ سکه', type:'coins', value:2000},
-                        {label:'۳۰ الماس', type:'diamonds', value:30},
-                        {label:'۵۰ الماس', type:'diamonds', value:50},
-                        {label:'شانس دوباره', type:'retry', value:0}
+                        {labelKey:'empty', type:'empty', value:0},
+                        {label:'۴۰۰', labelUnit:'coins', type:'coins', value:400},
+                        {label:'۷۰۰', labelUnit:'coins', type:'coins', value:700},
+                        {label:'۱۰۰۰', labelUnit:'coins', type:'coins', value:1000},
+                        {label:'۲۰۰۰', labelUnit:'coins', type:'coins', value:2000},
+                        {label:'۳۰', labelUnit:'diamonds', type:'diamonds', value:30},
+                        {label:'۵۰', labelUnit:'diamonds', type:'diamonds', value:50},
+                        {labelKey:'retry', type:'retry', value:0}
                     ]
                 },
                 royal: {
-                    name: 'اشرافی',
+                    nameKey: 'royal',
                     costType: 'both',
                     costCoins: 1000,
                     costDiamonds: 50,
                     prizes: [
-                        {label:'۸۰۰ سکه', type:'coins', value:800},
-                        {label:'۱۵۰۰ سکه', type:'coins', value:1500},
-                        {label:'۲۰۰۰ سکه', type:'coins', value:2000},
-                        {label:'۳۰۰۰ سکه', type:'coins', value:3000},
-                        {label:'۵۰ الماس', type:'diamonds', value:50},
-                        {label:'۱۰۰ الماس', type:'diamonds', value:100},
-                        {label:'۱۵۰ الماس', type:'diamonds', value:150},
-                        {label:'شانس دوباره', type:'retry', value:0}
+                        {label:'۸۰۰', labelUnit:'coins', type:'coins', value:800},
+                        {label:'۱۵۰۰', labelUnit:'coins', type:'coins', value:1500},
+                        {label:'۲۰۰۰', labelUnit:'coins', type:'coins', value:2000},
+                        {label:'۳۰۰۰', labelUnit:'coins', type:'coins', value:3000},
+                        {label:'۵۰', labelUnit:'diamonds', type:'diamonds', value:50},
+                        {label:'۱۰۰', labelUnit:'diamonds', type:'diamonds', value:100},
+                        {label:'۱۵۰', labelUnit:'diamonds', type:'diamonds', value:150},
+                        {labelKey:'retry', type:'retry', value:0}
                     ]
                 },
                 imperial: {
-                    name: 'سلطنتی',
+                    nameKey: 'imperial',
                     costType: 'diamonds',
                     cost: 200,
                     prizes: [
-                        {label:'۱۰۰۰۰ سکه', type:'coins', value:10000},
-                        {label:'۲۰۰۰۰ سکه', type:'coins', value:20000},
-                        {label:'۳۰۰۰۰ سکه', type:'coins', value:30000},
-                        {label:'۵۰۰۰۰ سکه', type:'coins', value:50000},
-                        {label:'۱۵۰ الماس', type:'diamonds', value:150},
-                        {label:'۲۵۰ الماس', type:'diamonds', value:250},
-                        {label:'۳۵۰ الماس', type:'diamonds', value:350},
-                        {label:'۵۰۰ الماس', type:'diamonds', value:500}
+                        {label:'۱۰۰۰۰', labelUnit:'coins', type:'coins', value:10000},
+                        {label:'۲۰۰۰۰', labelUnit:'coins', type:'coins', value:20000},
+                        {label:'۳۰۰۰۰', labelUnit:'coins', type:'coins', value:30000},
+                        {label:'۵۰۰۰۰', labelUnit:'coins', type:'coins', value:50000},
+                        {label:'۱۵۰', labelUnit:'diamonds', type:'diamonds', value:150},
+                        {label:'۲۵۰', labelUnit:'diamonds', type:'diamonds', value:250},
+                        {label:'۳۵۰', labelUnit:'diamonds', type:'diamonds', value:350},
+                        {label:'۵۰۰', labelUnit:'diamonds', type:'diamonds', value:500}
                     ]
                 }
             };
 
             var wheelColors = ['#ef4444','#f59e0b','#10b981','#06b6d4','#8b5cf6','#ec4899','#84cc16','#f97316'];
+
+            function getPrizeLabel(prize) {
+                if (prize.labelKey) return getTranslation(prize.labelKey);
+                if (prize.label && prize.labelUnit) {
+                    return prize.label + ' ' + getTranslation(prize.labelUnit);
+                }
+                return prize.label || '';
+            }
 
             function renderAllWheels() {
                 var container = document.getElementById('wheelsContainer');
@@ -448,18 +557,18 @@
                 for (var key in wheels) {
                     var w = wheels[key];
                     html += '<div class="wheel-card" id="wheel-' + key + '">';
-                    html += '<div class="wheel-title">' + w.name + '</div>';
+                    html += '<div class="wheel-title">' + getTranslation(w.nameKey) + '</div>';
                     html += '<div class="wheel-container">';
                     html += '<div class="wheel-pointer"><i class="bi bi-geo-alt-fill"></i></div>';
                     html += '<canvas class="wheel-canvas" id="canvas-' + key + '" width="250" height="250"></canvas>';
                     html += '</div>';
                     if (w.costType === 'both') {
-                        html += '<button class="spin-btn" onclick="askSpin(\'' + key + '\',\'coins\')">' + w.costCoins + ' سکه</button>';
-                        html += '<button class="spin-btn diamond-btn" style="margin-top:6px;" onclick="askSpin(\'' + key + '\',\'diamonds\')">' + w.costDiamonds + ' الماس</button>';
+                        html += '<button class="spin-btn" onclick="askSpin(\'' + key + '\',\'coins\')">' + w.costCoins + ' ' + getTranslation('coins') + '</button>';
+                        html += '<button class="spin-btn diamond-btn" style="margin-top:6px;" onclick="askSpin(\'' + key + '\',\'diamonds\')">' + w.costDiamonds + ' ' + getTranslation('diamonds') + '</button>';
                     } else if (w.costType === 'coins') {
-                        html += '<button class="spin-btn" onclick="askSpin(\'' + key + '\',\'coins\')">' + w.cost + ' سکه</button>';
+                        html += '<button class="spin-btn" onclick="askSpin(\'' + key + '\',\'coins\')">' + w.cost + ' ' + getTranslation('coins') + '</button>';
                     } else {
-                        html += '<button class="spin-btn diamond-btn" onclick="askSpin(\'' + key + '\',\'diamonds\')">' + w.cost + ' الماس</button>';
+                        html += '<button class="spin-btn diamond-btn" onclick="askSpin(\'' + key + '\',\'diamonds\')">' + w.cost + ' ' + getTranslation('diamonds') + '</button>';
                     }
                     html += '<div class="wheel-result" id="result-' + key + '"></div>';
                     html += '</div>';
@@ -498,7 +607,7 @@
                     ctx.fillStyle = '#fff';
                     ctx.font = 'bold 9px Samim, Tahoma';
                     ctx.textAlign = 'center';
-                    ctx.fillText(w.prizes[i].label, radius - 35, 0);
+                    ctx.fillText(getPrizeLabel(w.prizes[i]), radius - 35, 0);
                     ctx.restore();
                 }
                 var state = wheelStates[key];
@@ -513,15 +622,17 @@
                 var costText = '';
                 
                 if (payType === 'coins') {
-                    if (w.costType === 'both') costText = w.costCoins + ' سکه';
-                    else costText = w.cost + ' سکه';
+                    if (w.costType === 'both') costText = w.costCoins + ' ' + getTranslation('coins');
+                    else costText = w.cost + ' ' + getTranslation('coins');
                 } else {
-                    if (w.costType === 'both') costText = w.costDiamonds + ' الماس';
-                    else costText = w.cost + ' الماس';
+                    if (w.costType === 'both') costText = w.costDiamonds + ' ' + getTranslation('diamonds');
+                    else costText = w.cost + ' ' + getTranslation('diamonds');
                 }
                 
-                document.getElementById('confirmText').textContent = 'مطمئنی می‌خوای ' + costText + ' خرج کنی؟';
+                document.getElementById('confirmText').textContent = getTranslation('confirm_text') + costText + getTranslation('spend');
                 document.getElementById('confirmOverlay').classList.add('show');
+                document.getElementById('confirmYes').textContent = getTranslation('yes');
+                document.querySelector('.confirm-btn.no').textContent = getTranslation('no');
                 pendingSpin = {key: key, payType: payType};
                 window._pendingSpin = pendingSpin;
             };
@@ -554,7 +665,7 @@
                 }
                 
                 if (!canSpin) {
-                    document.getElementById('result-' + key).textContent = 'سکه یا الماس کافی نداری!';
+                    document.getElementById('result-' + key).textContent = getTranslation('not_enough');
                     return;
                 }
                 
@@ -589,17 +700,17 @@
                     var prize = w.prizes[ri];
                     var resultText = '';
                     if (prize.type === 'empty') {
-                        resultText = 'پوچ!';
+                        resultText = getTranslation('got_empty');
                     } else if (prize.type === 'coins') {
                         userCoins += prize.value;
-                        resultText = '+' + prize.value + ' سکه';
+                        resultText = getTranslation('got_coins') + prize.value + ' ' + getTranslation('coins');
                         fetchData('updateUser', {coins: userCoins, diamonds: userDiamonds});
                     } else if (prize.type === 'diamonds') {
                         userDiamonds += prize.value;
-                        resultText = '+' + prize.value + ' الماس';
+                        resultText = getTranslation('got_diamonds') + prize.value + ' ' + getTranslation('diamonds');
                         fetchData('updateUser', {coins: userCoins, diamonds: userDiamonds});
                     } else if (prize.type === 'retry') {
-                        resultText = 'شانس دوباره!';
+                        resultText = getTranslation('got_retry');
                         if (w.costType === 'coins') userCoins += w.cost;
                         else if (w.costType === 'diamonds') userDiamonds += w.cost;
                         else if (w.costType === 'both') {
