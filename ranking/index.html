@@ -535,6 +535,29 @@
                 'icon_helmet': 'fa-helmet-safety', 'icon_shield': 'fa-shield-halved', 'icon_sword': 'fa-hand-fist'
             };
 
+            var allAvatarUrls = {
+                'boy_1': 'https://cdn.imgurl.ir/uploads/l17100_QkCRHe00vl64Bngk74ayYmWMyWA-NjfsC7SoRbGgrkm1mS-bpQ.png',
+                'boy_2': 'https://cdn.imgurl.ir/uploads/g87708_nYSMEcudjDVvsMsfO4B6nrWGmFI-J3OzSBMOSwKo6Mt48wolyg.png',
+                'boy_3': 'https://cdn.imgurl.ir/uploads/q01044_VWzDtI4NYQ660EGTVD_xToLVOvw-DkODf3dzQq2kbk2i1b-cIQ.png',
+                'boy_4': 'https://cdn.imgurl.ir/uploads/w428496_0RBfnEt77slNmis2YlNfIjtELkE-_nTEsqjVSQafpoCS0X1pXg.png',
+                'boy_5': 'https://cdn.imgurl.ir/uploads/h099226_Kaahld11_fKS5dcGDsq-5IvBiC0-olahkKmOTsSjohG4mMsVUw.png',
+                'boy_6': 'https://cdn.imgurl.ir/uploads/k778258_pd9TZqS3DHKaaJQOygY-3WFHMAE-NzGEJ7R1Sv-r5Dfc6Zi3Ig.png',
+                'boy_7': 'https://cdn.imgurl.ir/uploads/w221825_-1Xu8BzjzGa1I7ZIBVaYpoez4BM-zdVRFGLaRJGymjrVOu_yBA.png',
+                'boy_8': 'https://cdn.imgurl.ir/uploads/o12072_rsMh7nSKjcODxjSPFWwfrlpYFe4-RHju528wRf-FCo_v2tJX7w.png',
+                'boy_9': 'https://cdn.imgurl.ir/uploads/m007403_MNhHAeXQ-_-nEMVuihCtgYXUS90-5LFmX4D7T2-1RaoN058vnw.png',
+                'boy_10': 'https://cdn.imgurl.ir/uploads/h976855_MLDYzJITIyaUkB6efcWGamXK39M-yfLRI0_7RrCmky6p-jgXFw.png',
+                'girl_1': 'https://cdn.imgurl.ir/uploads/h993569_G_wzhIk2ocoOPFhmmQHpUuS1mQc-IXeKOSBFSx6jn_y9tpVazg.png',
+                'girl_2': 'https://cdn.imgurl.ir/uploads/u2553__Yb1fK6xw6Di1SX-7xB5v2J7e-g-IYBMcl_wSmqXNTkmAQMGnA.png',
+                'girl_3': 'https://cdn.imgurl.ir/uploads/w03550__MlKSY3NXQ9cWkwVioa7hUpr6aI-2MRPg-L3QNOpRTm1oZTHtQ.png',
+                'girl_4': 'https://cdn.imgurl.ir/uploads/r074193_q1uxpQIZsrzslDhI1W69Su-XvbY-x5jd5EZ1SyKggCCSjbbxrg.png',
+                'girl_5': 'https://cdn.imgurl.ir/uploads/w035688_E2FfMOkE8ZGtuOZqU2q_VGTE6Yw-IU1JraRkSTub6ymIVXQuxA.png',
+                'girl_6': 'https://cdn.imgurl.ir/uploads/c895184_bt1drvChqXnDjtGhNgxJ9M2Ho4I-n1KpcnSiSXSboB5rKfBwCg.png',
+                'girl_7': 'https://cdn.imgurl.ir/uploads/u246883_b3j_B2NgyZNITErHK5c9A3dWFRA-5bV5bdzHSGi4neWTa9881A.png',
+                'girl_8': 'https://cdn.imgurl.ir/uploads/o0025_B1BkJ9n5GL25bnqG-YNn79Qvsds-Erx3uqovQtex6125wXCD7g.png',
+                'girl_9': 'https://cdn.imgurl.ir/uploads/t14047_NR8hWSzjLbSm2cXNrBnA2mEh43o-XhY5hyhBSU6s-9c4Fv5wRA.png',
+                'girl_10': 'https://cdn.imgurl.ir/uploads/v96829_FouVxzw8xOmCFvf0IEri962BmHQ-LxKzSWS_aj8dcNI5EWVw.png'
+            };
+
             function getSettings() {
                 try {
                     var raw = localStorage.getItem('quizicoSettings');
@@ -591,6 +614,7 @@
             function getAvatarHtml(avatarId) {
                 if (!avatarId || avatarId === 'default') return '<i class="fa-solid fa-user"></i>';
                 if (iconAvatars[avatarId]) return '<i class="fa-solid ' + iconAvatars[avatarId] + '"></i>';
+                if (allAvatarUrls[avatarId]) return '<img src="' + allAvatarUrls[avatarId] + '" alt="" draggable="false" oncontextmenu="return false;" ondragstart="return false;">';
                 return '<i class="fa-solid fa-user"></i>';
             }
 
@@ -609,9 +633,10 @@
 
             function renderRankItem(item, index, myId) {
                 var isMe = String(item.username) === String(myId);
+                var avatarField = item.avatar || item.avatarId || 'default';
                 return '<div class="rank-item' + (isMe ? ' is-me' : '') + '" onclick="viewProfile(\'' + item.username + '\')">' +
                     '<div class="rank-number ' + getRankClass(index) + '">' + getRankIcon(index) + '</div>' +
-                    '<div class="rank-avatar">' + getAvatarHtml(item.avatar) + '</div>' +
+                    '<div class="rank-avatar">' + getAvatarHtml(avatarField) + '</div>' +
                     '<div class="rank-info"><div class="rank-name">' + (item.name || item.username || '؟') + '</div>' +
                     '<div class="rank-score">امتیاز: ' + (item.score || 0) + '</div></div>' +
                     (isMe ? '<span class="rank-badge-me">شما</span>' : '') +
@@ -647,7 +672,7 @@
                     
                     if (myRank >= 0) {
                         document.getElementById('myRankFloatNumber').textContent = '#' + (myRank + 1);
-                        document.getElementById('myRankFloatAvatar').innerHTML = getAvatarHtml(allRankings[myRank].avatar);
+                        document.getElementById('myRankFloatAvatar').innerHTML = getAvatarHtml(allRankings[myRank].avatar || allRankings[myRank].avatarId || 'default');
                         document.getElementById('myRankFloatName').textContent = allRankings[myRank].name || '؟';
                         document.getElementById('myRankFloatScore').textContent = allRankings[myRank].score || 0;
                         document.getElementById('myRankFloat').style.display = 'flex';
@@ -677,18 +702,24 @@
                 document.getElementById('modalLoader').style.display = 'block';
                 document.getElementById('modalContent').style.display = 'none';
                 document.getElementById('profileModalOverlay').classList.add('show');
-                var result = await fetchData('getUser', { username: username });
+                var result = await fetchData('getUser', { username: String(username) });
                 setTimeout(function() {
                     document.getElementById('modalLoader').style.display = 'none';
                     document.getElementById('modalContent').style.display = 'block';
                     if (result.ok && result.data) {
                         var d = result.data;
-                        document.getElementById('modalAvatar').innerHTML = getAvatarHtml(d.avatar);
-                        document.getElementById('modalName').textContent = d.name || '؟';
-                        document.getElementById('modalUsername').textContent = 'ID: ' + d.username;
+                        document.getElementById('modalAvatar').innerHTML = getAvatarHtml(d.avatar || d.avatarId || 'default');
+                        document.getElementById('modalName').textContent = d.name || 'کاربر';
+                        document.getElementById('modalUsername').textContent = 'ID: ' + (d.username || username);
                         document.getElementById('modalScore').textContent = d.score || 0;
                         document.getElementById('modalCoins').textContent = d.coins || 0;
                         document.getElementById('modalDiamonds').textContent = d.diamonds || 0;
+                    } else {
+                        document.getElementById('modalName').textContent = 'خطا در دریافت اطلاعات';
+                        document.getElementById('modalUsername').textContent = 'ID: ' + username;
+                        document.getElementById('modalScore').textContent = '0';
+                        document.getElementById('modalCoins').textContent = '0';
+                        document.getElementById('modalDiamonds').textContent = '0';
                     }
                 }, 500);
             };
