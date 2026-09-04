@@ -587,7 +587,13 @@
                     '100_score': '۱۰۰ امتیاز',
                     '1000_score': '۱۰۰۰ امتیاز',
                     '10000_score': '۱۰۰۰۰ امتیاز',
-                    '100000_score': '۱۰۰۰۰۰ امتیاز'
+                    '100000_score': '۱۰۰۰۰۰ امتیاز',
+                    draw: 'مساوی',
+                    win: 'برد',
+                    lose: 'باخت',
+                    you: 'تو',
+                    first_place: 'نفر اول',
+                    no_games: 'مسابقه‌ای یافت نشد'
                 },
                 en: {
                     loading: 'Loading...',
@@ -629,7 +635,13 @@
                     '100_score': '100 Score',
                     '1000_score': '1000 Score',
                     '10000_score': '10000 Score',
-                    '100000_score': '100000 Score'
+                    '100000_score': '100000 Score',
+                    draw: 'Draw',
+                    win: 'Win',
+                    lose: 'Loss',
+                    you: 'You',
+                    first_place: 'First Place',
+                    no_games: 'No games found'
                 },
                 ar: {
                     loading: 'جار التحميل...',
@@ -671,7 +683,13 @@
                     '100_score': '۱۰۰ نقطة',
                     '1000_score': '۱۰۰۰ نقطة',
                     '10000_score': '۱۰۰۰۰ نقطة',
-                    '100000_score': '۱۰۰۰۰۰ نقطة'
+                    '100000_score': '۱۰۰۰۰۰ نقطة',
+                    draw: 'تعادل',
+                    win: 'فوز',
+                    lose: 'خسارة',
+                    you: 'أنت',
+                    first_place: 'المركز الأول',
+                    no_games: 'لا توجد مباريات'
                 }
             };
 
@@ -824,11 +842,13 @@
             }
 
             async function getPlayerInfo(userId) {
-                var result = await fetchData('getUser', {username: userId});
+                if (userId === 'bot') return {name: 'ربات', avatar: 'bot'};
+                if (!userId || userId === '') return {name: '---', avatar: 'default'};
+                var result = await fetchData('getUser', {username: String(userId)});
                 if (result.ok && result.data) {
                     return {name: result.data.name || userId, avatar: result.data.avatar || 'default'};
                 }
-                return {name: userId, avatar: 'default'};
+                return {name: String(userId), avatar: 'default'};
             }
 
             function isAvatarOwned(itemId) {
@@ -875,7 +895,7 @@
                     return;
                 }
                 if (userDiamonds < price) {
-                    if (webApp) webApp.showAlert(getTranslation('not_enough_diamonds') || 'الماس کافی نداری!');
+                    if (webApp) webApp.showAlert('الماس کافی نداری!');
                     return;
                 }
                 userDiamonds -= price;
@@ -891,7 +911,7 @@
                 fetchData('updateUser', {avatar: itemId});
                 updateProfileAvatar();
                 closeAvatarModal();
-                if (webApp) webApp.showAlert(getTranslation('avatar_purchased') || 'آواتار خریداری شد!');
+                if (webApp) webApp.showAlert('آواتار خریداری شد!');
             };
 
             function updateProfileAvatar() {
@@ -903,6 +923,50 @@
                 else { window.open('https://eitaa.com/Amirmahdi_code', '_blank'); }
             }
             window.openSupportLink = openSupportLink;
+
+            function calculateGameResult(g, myId) {
+                var isP1 = String(g.player1) === String(myId);
+                
+                if (g.result && (g.result === 'win' || g.result === 'lose' || g.result === 'draw')) {
+                    return g.result;
+                }
+                
+                var myTotalScore = 0;
+                var oppTotalScore = 0;
+                
+                for (var r = 1; r <= 5; r++) {
+                    var roundData = g['round' + r];
+                    if (roundData) {
+                        var parts = String(roundData).split('][');
+                        if (parts.length >= 3) {
+                            var p1Ans = parts[1] ? parts[1].replace('[','').replace(']','').replace(/\s/g,'') : '';
+                            var p2Ans = parts[2] ? parts[2].replace('[','').replace(']','').replace(/\s/g,'') : '';
+                            
+                            var p1Correct = 0;
+                            var p2Correct = 0;
+                            
+                            for (var i = 0; i < p1Ans.length; i++) {
+                                if (p1Ans[i] === 'T') p1Correct++;
+                            }
+                            for (var j = 0; j < p2Ans.length; j++) {
+                                if (p2Ans[j] === 'T') p2Correct++;
+                            }
+                            
+                            if (isP1) {
+                                myTotalScore += p1Correct;
+                                oppTotalScore += p2Correct;
+                            } else {
+                                myTotalScore += p2Correct;
+                                oppTotalScore += p1Correct;
+                            }
+                        }
+                    }
+                }
+                
+                if (myTotalScore > oppTotalScore) return 'win';
+                if (myTotalScore < oppTotalScore) return 'lose';
+                return 'draw';
+            }
 
             function renderAchievements(gamesCount, winsCount, score) {
                 var grid = document.getElementById('achievementsGrid');
@@ -928,13 +992,15 @@
             async function loadProfile() {
                 document.getElementById('profileContent').classList.add('show');
                 
+                var myId = getUserId();
+                
                 var userData = await fetchData('getUser', {});
                 if (userData.ok && userData.data) {
                     var d = userData.data;
                     userDiamonds = d.diamonds || 0;
                     currentAvatar = d.avatar || 'default';
                     document.getElementById('profileName').textContent = d.name || 'کاربر';
-                    document.getElementById('profileUsername').textContent = 'ID: ' + getUserId();
+                    document.getElementById('profileUsername').textContent = 'ID: ' + myId;
                     document.getElementById('totalScore').textContent = d.score || 0;
                     document.getElementById('coinsValue').textContent = d.coins || 0;
                     document.getElementById('diamondsValue').textContent = userDiamonds;
@@ -949,28 +1015,62 @@
 
                 var gamesData = await gamesPromise;
                 var totalGames = 0, totalWins = 0;
+                
                 if (gamesData.ok && Array.isArray(gamesData.data)) {
-                    totalGames = gamesData.data.length;
+                    var myGames = gamesData.data.filter(function(g) {
+                        return String(g.player1) === String(myId) || String(g.player2) === String(myId);
+                    });
+                    
+                    var finishedGames = myGames.filter(function(g) { return g.status === 'finished'; });
+                    
+                    totalGames = finishedGames.length;
+                    totalWins = 0;
+                    
+                    for (var wi = 0; wi < finishedGames.length; wi++) {
+                        var gr = calculateGameResult(finishedGames[wi], myId);
+                        if (gr === 'win') totalWins++;
+                    }
+                    
+                    document.getElementById('totalGames').textContent = totalGames;
+                    document.getElementById('winRate').textContent = totalGames > 0 ? Math.round((totalWins/totalGames)*100) + '%' : '0%';
+                    
                     var list = document.getElementById('gamesList');
-                    if (gamesData.data.length === 0) {
-                        list.innerHTML = renderEmpty(getTranslation('no_games') || 'مسابقه‌ای یافت نشد');
+                    
+                    var recentGames = finishedGames.slice(-5).reverse();
+                    
+                    if (recentGames.length === 0) {
+                        list.innerHTML = renderEmpty(getTranslation('no_games'));
                     } else {
                         var gamesHtml = '';
-                        for (var gi = 0; gi < gamesData.data.slice(0, 5).length; gi++) {
-                            var g = gamesData.data[gi];
-                            var isP1 = String(g.player1) === String(getUserId());
-                            var cls = 'draw', txt = getTranslation('draw') || 'مساوی';
-                            if (g.status === 'finished') {
-                                if (g.result === 'win') { cls = 'win'; txt = getTranslation('win') || 'برد'; totalWins++; }
-                                else if (g.result === 'lose') { cls = 'loss'; txt = getTranslation('lose') || 'باخت'; }
-                                else { cls = 'draw'; txt = getTranslation('draw') || 'مساوی'; }
+                        for (var gi = 0; gi < recentGames.length; gi++) {
+                            var g = recentGames[gi];
+                            var gameResult = calculateGameResult(g, myId);
+                            var cls = 'draw', txt = getTranslation('draw');
+                            
+                            if (gameResult === 'win') {
+                                cls = 'win';
+                                txt = getTranslation('win');
+                            } else if (gameResult === 'lose') {
+                                cls = 'loss';
+                                txt = getTranslation('lose');
                             }
+                            
                             gamesHtml += '<div class="game-item"><span class="game-players" id="opp-' + g.id + '"><span class="game-avatar"><i class="fa-solid fa-user"></i></span> ...</span><span class="game-score ' + cls + '">' + txt + '</span></div>';
                         }
                         list.innerHTML = gamesHtml;
+                        
+                        for (var j = 0; j < recentGames.length; j++) {
+                            (function(g) {
+                                var isP1 = String(g.player1) === String(myId);
+                                var oppId = isP1 ? g.player2 : g.player1;
+                                getPlayerInfo(oppId).then(function(info) {
+                                    var el = document.getElementById('opp-' + g.id);
+                                    if (el) el.innerHTML = '<span class="game-avatar">' + getAvatarHtml(info.avatar) + '</span> ' + info.name;
+                                });
+                            })(recentGames[j]);
+                        }
                     }
-                    document.getElementById('totalGames').textContent = totalGames;
-                    document.getElementById('winRate').textContent = totalGames > 0 ? Math.round((totalWins/totalGames)*100) + '%' : '0%';
+                    
                     document.getElementById('statsLoader').style.display = 'none';
                     document.getElementById('statsGrid').style.display = 'grid';
                     document.getElementById('leagueLoader').style.display = 'flex';
@@ -978,7 +1078,6 @@
 
                 var boardData = await boardPromise;
                 if (boardData.ok && Array.isArray(boardData.data)) {
-                    var myId = getUserId();
                     var myScore = userData.ok && userData.data ? userData.data.score || 0 : 0;
                     var myRank = -1;
                     for (var i = 0; i < boardData.data.length; i++) {
@@ -992,14 +1091,14 @@
                         document.getElementById('rankProgressCard').style.display = 'block';
                         document.getElementById('rankProgressBar').style.width = '100%';
                         document.getElementById('rankCurrentScore').textContent = myScore;
-                        document.getElementById('rankNextScore').textContent = '🏆 ' + (getTranslation('first_place') || 'نفر اول');
+                        document.getElementById('rankNextScore').textContent = '🏆 ' + getTranslation('first_place');
                         document.getElementById('rankProgressPercent').textContent = '100%';
                     } else if (myRank > 0) {
                         var nextPlayer = boardData.data[myRank - 1];
                         var pct = Math.min(100, Math.round((myScore / (nextPlayer.score || 1)) * 100));
                         document.getElementById('rankProgressCard').style.display = 'block';
                         document.getElementById('rankProgressBar').style.width = pct + '%';
-                        document.getElementById('rankCurrentScore').textContent = myScore + ' (' + (getTranslation('you') || 'تو') + ')';
+                        document.getElementById('rankCurrentScore').textContent = myScore + ' (' + getTranslation('you') + ')';
                         document.getElementById('rankNextScore').textContent = (nextPlayer.score || 0) + ' (' + (nextPlayer.name || '؟') + ')';
                         document.getElementById('rankProgressPercent').textContent = pct + '%';
                     }
@@ -1022,19 +1121,6 @@
                     document.getElementById('historyLoader').style.display = 'none';
                     document.getElementById('historyCard').style.display = 'block';
                 }, 1500);
-
-                if (gamesData.ok && Array.isArray(gamesData.data) && gamesData.data.length > 0) {
-                    for (var j = 0; j < gamesData.data.slice(0, 5).length; j++) {
-                        (function(g) {
-                            var isP1 = String(g.player1) === String(getUserId());
-                            var oppId = isP1 ? g.player2 : g.player1;
-                            getPlayerInfo(oppId).then(function(info) {
-                                var el = document.getElementById('opp-' + g.id);
-                                if (el) el.innerHTML = '<span class="game-avatar">' + getAvatarHtml(info.avatar) + '</span> ' + info.name;
-                            });
-                        })(gamesData.data[j]);
-                    }
-                }
             }
 
             if (webApp) {
