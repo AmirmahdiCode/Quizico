@@ -145,11 +145,14 @@
         }
         .banner-card .banner-image { position: absolute; left: 0; bottom: 0; width: 90%; height: 120%; pointer-events: none; }
         .banner-card .banner-image img { width: 100%; height: 100%; object-fit: contain; object-position: left bottom; }
+        [dir="ltr"] .banner-card .banner-image { left: auto; right: 0; }
+        [dir="ltr"] .banner-card .banner-image img { object-position: right bottom; }
         .banner-card .banner-label {
             position: absolute; bottom: 8px; right: 8px;
             background: rgba(255,255,255,.2); color: #fff;
             font-size: 9px; font-weight: 700; padding: 4px 12px; border-radius: 20px;
         }
+        [dir="ltr"] .banner-card .banner-label { right: auto; left: 8px; }
         .wheel-card {
             background: linear-gradient(135deg, var(--primary), var(--primary-dark));
             border: var(--border); border-radius: var(--radius); box-shadow: var(--shadow);
@@ -327,7 +330,7 @@
                 <div class="header-logo"><img src="https://cdn.imgurl.ir/uploads/f30974_InShot_20260821_174101103.png" alt="کوییزیکو" draggable="false" oncontextmenu="return false;" ondragstart="return false;"></div>
                 <div>
                     <div class="header-title" id="headerTitle">کوییز<span class="t-accent">یکو</span></div>
-                    <div class="header-subtitle">اطلاعات خودت رو محک بزن</div>
+                    <div class="header-subtitle" data-i18n="subtitle">اطلاعات خودت رو محک بزن</div>
                 </div>
             </div>
             <div class="header-currency">
@@ -342,68 +345,68 @@
             <div class="banner-row">
                 <div class="banner-card" onclick="goToPlay('challenge')">
                     <div class="banner-image"><img src="https://cdn.imgurl.ir/uploads/h142945_InShot_20260821_184807337.png" alt="" draggable="false" oncontextmenu="return false;" ondragstart="return false;"></div>
-                    <div class="banner-label"><i class="bi bi-trophy"></i> مسابقه روزانه</div>
+                    <div class="banner-label"><i class="bi bi-trophy"></i> <span data-i18n="daily_challenge">مسابقه روزانه</span></div>
                 </div>
                 <div class="wheel-card" onclick="goToWheel()">
                     <img src="https://cdn.imgurl.ir/uploads/m526299_InShot_20260821_182752507.png" alt="" draggable="false" oncontextmenu="return false;" ondragstart="return false;">
-                    <div class="wheel-label"><i class="bi bi-stars"></i> گردونه</div>
+                    <div class="wheel-label"><i class="bi bi-stars"></i> <span data-i18n="wheel">گردونه</span></div>
                 </div>
             </div>
 
             <div class="game-modes-wrapper">
-                <div class="game-modes-header"><i class="bi bi-joystick"></i> شروع مسابقه</div>
+                <div class="game-modes-header"><i class="bi bi-joystick"></i> <span data-i18n="start_match">شروع مسابقه</span></div>
                 <div class="game-modes-grid">
                     <div class="game-mode-card" onclick="goToPlay('single')">
                         <img src="https://cdn.imgurl.ir/uploads/f711120_InShot_20260821_200930706.jpg" alt="" draggable="false" oncontextmenu="return false;" ondragstart="return false;">
-                        <div class="game-mode-label">تک‌نفره</div>
+                        <div class="game-mode-label" data-i18n="single">تک‌نفره</div>
                     </div>
                     <div class="game-mode-card" onclick="goToPlay('offline')">
                         <img src="https://cdn.imgurl.ir/uploads/k5971_InShot_20260821_201008883.jpg" alt="" draggable="false" oncontextmenu="return false;" ondragstart="return false;">
-                        <div class="game-mode-label">دوستانه</div>
+                        <div class="game-mode-label" data-i18n="friendly">دوستانه</div>
                     </div>
                     <div class="game-mode-card" onclick="goToPlay('online')">
                         <img src="https://cdn.imgurl.ir/uploads/h2464_InShot_20260821_201207943.jpg" alt="" draggable="false" oncontextmenu="return false;" ondragstart="return false;">
-                        <div class="game-mode-label">آنلاین</div>
+                        <div class="game-mode-label" data-i18n="online">آنلاین</div>
                     </div>
                     <div class="game-mode-card" onclick="goToPlay('league')">
                         <img src="https://cdn.imgurl.ir/uploads/e135154_InShot_20260821_201323323.jpg" alt="" draggable="false" oncontextmenu="return false;" ondragstart="return false;">
-                        <div class="game-mode-label">لیگ</div>
+                        <div class="game-mode-label" data-i18n="league">لیگ</div>
                     </div>
                 </div>
             </div>
 
             <div class="games-section">
                 <div class="games-section-header">
-                    <span class="games-section-title"><i class="bi bi-globe"></i> بازی های آنلاین در جریان</span>
+                    <span class="games-section-title"><i class="bi bi-globe"></i> <span data-i18n="online_games">بازی های آنلاین در جریان</span></span>
                     <span class="games-section-badge" id="onlineCount">0</span>
                 </div>
                 <div class="section-loader" id="onlineLoader">
                     <div class="section-loader-spinner"></div>
-                    <div class="section-loader-text">در حال دریافت بازی‌های آنلاین...</div>
+                    <div class="section-loader-text" data-i18n="loading_online">در حال دریافت بازی‌های آنلاین...</div>
                 </div>
                 <div class="games-list" id="onlineList" style="display:none;"></div>
             </div>
 
             <div class="games-section">
                 <div class="games-section-header">
-                    <span class="games-section-title"><i class="bi bi-trophy"></i> لیگ در جریان</span>
+                    <span class="games-section-title"><i class="bi bi-trophy"></i> <span data-i18n="active_league">لیگ در جریان</span></span>
                     <span class="games-section-badge" id="leagueCount">0</span>
                 </div>
                 <div class="section-loader" id="leagueLoader">
                     <div class="section-loader-spinner"></div>
-                    <div class="section-loader-text">در حال دریافت لیگ...</div>
+                    <div class="section-loader-text" data-i18n="loading_league">در حال دریافت لیگ...</div>
                 </div>
                 <div class="games-list" id="leagueList" style="display:none;"></div>
             </div>
 
             <div class="games-section">
                 <div class="games-section-header">
-                    <span class="games-section-title"><i class="bi bi-clock-history"></i> ۵ بازی گذشته</span>
+                    <span class="games-section-title"><i class="bi bi-clock-history"></i> <span data-i18n="last_5_games">۵ بازی گذشته</span></span>
                     <span class="games-section-badge" id="pastCount">0</span>
                 </div>
                 <div class="section-loader" id="pastLoader">
                     <div class="section-loader-spinner"></div>
-                    <div class="section-loader-text">در حال دریافت بازی‌های گذشته...</div>
+                    <div class="section-loader-text" data-i18n="loading_past">در حال دریافت بازی‌های گذشته...</div>
                 </div>
                 <div class="games-list" id="pastList" style="display:none;"></div>
             </div>
@@ -421,19 +424,19 @@
     <nav class="bottom-nav">
         <div class="nav-item active" onclick="window.location.href='../dashboard/'">
             <img src="https://uploadkon.ir/uploads/bdf329_26home-iconbase-1-.svg" alt="خانه" draggable="false" oncontextmenu="return false;" ondragstart="return false;">
-            <span>خانه</span>
+            <span data-i18n="home">خانه</span>
         </div>
         <div class="nav-item" onclick="window.location.href='../ranking/'">
             <img src="https://uploadkon.ir/uploads/8c9f29_26medal-1st-iconbase.svg" alt="رتبه" draggable="false" oncontextmenu="return false;" ondragstart="return false;">
-            <span>رتبه</span>
+            <span data-i18n="ranking">رتبه</span>
         </div>
         <div class="nav-item" onclick="window.location.href='../profile/'">
             <img src="https://uploadkon.ir/uploads/e78130_26profile-iconbase.svg" alt="پروفایل" draggable="false" oncontextmenu="return false;" ondragstart="return false;">
-            <span>پروفایل</span>
+            <span data-i18n="profile">پروفایل</span>
         </div>
         <div class="nav-item" onclick="window.location.href='../setting/'">
             <img src="https://uploadkon.ir/uploads/629f29_26setting-iconbase.svg" alt="تنظیمات" draggable="false" oncontextmenu="return false;" ondragstart="return false;">
-            <span>تنظیمات</span>
+            <span data-i18n="settings_nav">تنظیمات</span>
         </div>
     </nav>
 
@@ -464,11 +467,117 @@
                 'icon_helmet': 'fa-helmet-safety', 'icon_shield': 'fa-shield-halved', 'icon_sword': 'fa-hand-fist'
             };
 
+            var translations = {
+                fa: {
+                    subtitle: 'اطلاعات خودت رو محک بزن',
+                    daily_challenge: 'مسابقه روزانه',
+                    wheel: 'گردونه',
+                    start_match: 'شروع مسابقه',
+                    single: 'تک‌نفره',
+                    friendly: 'دوستانه',
+                    online: 'آنلاین',
+                    league: 'لیگ',
+                    online_games: 'بازی های آنلاین در جریان',
+                    active_league: 'لیگ در جریان',
+                    last_5_games: '۵ بازی گذشته',
+                    loading_online: 'در حال دریافت بازی‌های آنلاین...',
+                    loading_league: 'در حال دریافت لیگ...',
+                    loading_past: 'در حال دریافت بازی‌های گذشته...',
+                    no_online_games: 'بازی آنلاینی در جریان نیست',
+                    no_active_league: 'لیگی در جریان نیست',
+                    no_past_games: 'بازی گذشته‌ای نیست',
+                    in_progress: 'در جریان',
+                    versus: 'مقابل',
+                    home: 'خانه',
+                    ranking: 'رتبه',
+                    profile: 'پروفایل',
+                    settings_nav: 'تنظیمات',
+                    bot: 'ربات',
+                    win: 'برد',
+                    lose: 'باخت',
+                    draw: 'مساوی',
+                    league_code: 'کد',
+                    online_in_progress: 'در جریان'
+                },
+                en: {
+                    subtitle: 'Test your knowledge',
+                    daily_challenge: 'Daily Challenge',
+                    wheel: 'Wheel',
+                    start_match: 'Start Match',
+                    single: 'Single',
+                    friendly: 'Friendly',
+                    online: 'Online',
+                    league: 'League',
+                    online_games: 'Online Games In Progress',
+                    active_league: 'Active League',
+                    last_5_games: 'Last 5 Games',
+                    loading_online: 'Loading online games...',
+                    loading_league: 'Loading league...',
+                    loading_past: 'Loading past games...',
+                    no_online_games: 'No online games in progress',
+                    no_active_league: 'No active league',
+                    no_past_games: 'No past games',
+                    in_progress: 'In Progress',
+                    versus: 'vs',
+                    home: 'Home',
+                    ranking: 'Ranking',
+                    profile: 'Profile',
+                    settings_nav: 'Settings',
+                    bot: 'Bot',
+                    win: 'Win',
+                    lose: 'Loss',
+                    draw: 'Draw',
+                    league_code: 'Code',
+                    online_in_progress: 'In Progress'
+                },
+                ar: {
+                    subtitle: 'اختبر معلوماتك',
+                    daily_challenge: 'تحدي اليوم',
+                    wheel: 'العجلة',
+                    start_match: 'ابدأ المباراة',
+                    single: 'فردي',
+                    friendly: 'ودي',
+                    online: 'أونلاين',
+                    league: 'الدوري',
+                    online_games: 'المباريات الجارية',
+                    active_league: 'الدوري الجاري',
+                    last_5_games: 'آخر ٥ مباريات',
+                    loading_online: 'جار تحميل المباريات...',
+                    loading_league: 'جار تحميل الدوري...',
+                    loading_past: 'جار تحميل المباريات السابقة...',
+                    no_online_games: 'لا توجد مباريات جارية',
+                    no_active_league: 'لا يوجد دوري جاري',
+                    no_past_games: 'لا توجد مباريات سابقة',
+                    in_progress: 'جارية',
+                    versus: 'ضد',
+                    home: 'الرئيسية',
+                    ranking: 'الترتيب',
+                    profile: 'الملف',
+                    settings_nav: 'الإعدادات',
+                    bot: 'روبوت',
+                    win: 'فوز',
+                    lose: 'خسارة',
+                    draw: 'تعادل',
+                    league_code: 'الرمز',
+                    online_in_progress: 'جارية'
+                }
+            };
+
+            function getTranslation(k) {
+                var t = translations[currentLang] || translations.fa;
+                return t[k] || translations.fa[k] || k;
+            }
+
             function getSettings() {
                 try {
                     var raw = localStorage.getItem('quizicoSettings');
                     if (!raw) return { theme: 'light', primaryColor: '#a855f7', animation: true, haptic: true, language: 'fa', font: 'Samim' };
                     var p = JSON.parse(raw);
+                    if (!p.theme) p.theme = 'light';
+                    if (!p.primaryColor) p.primaryColor = '#a855f7';
+                    if (p.animation === undefined) p.animation = true;
+                    if (p.haptic === undefined) p.haptic = true;
+                    if (!p.language) p.language = 'fa';
                     if (!p.font) p.font = 'Samim';
                     return p;
                 } catch(e) { return { theme: 'light', primaryColor: '#a855f7', animation: true, haptic: true, language: 'fa', font: 'Samim' }; }
@@ -476,6 +585,19 @@
 
             function hexToRgb(h) { var r = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(h); return r ? { r:parseInt(r[1],16), g:parseInt(r[2],16), b:parseInt(r[3],16) } : { r:168,g:85,b:247 }; }
             function shadeColor(c,p){var r=hexToRgb(c);var rr=Math.max(0,Math.min(255,r.r+p));var gg=Math.max(0,Math.min(255,r.g+p));var bb=Math.max(0,Math.min(255,r.b+p));return '#'+((1<<24)+(rr<<16)+(gg<<8)+bb).toString(16).slice(1);}
+
+            function applyLanguage(lang) {
+                var t = translations[lang] || translations.fa;
+                document.querySelectorAll('[data-i18n]').forEach(function(el) {
+                    var k = el.getAttribute('data-i18n');
+                    if (t[k]) el.textContent = t[k];
+                });
+                if (lang === 'en') {
+                    document.documentElement.setAttribute('dir', 'ltr');
+                } else {
+                    document.documentElement.setAttribute('dir', 'rtl');
+                }
+            }
 
             function applyTheme() {
                 var s = getSettings();
@@ -504,6 +626,7 @@
                 var titleEl = document.getElementById('headerTitle');
                 if (currentLang === 'en') titleEl.innerHTML = 'Quiz<span class="t-accent">ico</span>';
                 else titleEl.innerHTML = 'کوییز<span class="t-accent">یکو</span>';
+                applyLanguage(currentLang);
             }
 
             function getEitaaUser(){return webApp&&webApp.initDataUnsafe&&webApp.initDataUnsafe.user?webApp.initDataUnsafe.user:null;}
@@ -526,7 +649,7 @@
 
             async function getPlayerInfo(userId) {
                 if (!userId || userId === '') return {name: '---', avatar: 'default'};
-                if (userId === 'bot') return {name: 'ربات', avatar: 'bot'};
+                if (userId === 'bot') return {name: getTranslation('bot'), avatar: 'bot'};
                 var result = await fetchData('getUser', {username: userId});
                 if (result.ok && result.data) {
                     return {name: result.data.name || userId, avatar: result.data.avatar || 'default'};
@@ -633,7 +756,7 @@
                     
                     if (!gamesData.ok || !Array.isArray(gamesData.data)) {
                         document.getElementById('onlineCount').textContent = '0';
-                        onlineList.innerHTML = renderEmpty('بازی آنلاینی در جریان نیست');
+                        onlineList.innerHTML = renderEmpty(getTranslation('no_online_games'));
                         onlineLoader.style.display = 'none';
                         onlineList.style.display = 'flex';
                         return;
@@ -644,7 +767,7 @@
                     
                     if (!gamesData.ok || !Array.isArray(gamesData.data)) {
                         document.getElementById('onlineCount').textContent = '0';
-                        onlineList.innerHTML = renderEmpty('بازی آنلاینی در جریان نیست');
+                        onlineList.innerHTML = renderEmpty(getTranslation('no_online_games'));
                         onlineLoader.style.display = 'none';
                         onlineList.style.display = 'flex';
                         return;
@@ -666,7 +789,7 @@
                     document.getElementById('onlineCount').textContent = onlineInProgress.length;
                     
                     if (onlineInProgress.length === 0) {
-                        onlineList.innerHTML = renderEmpty('بازی آنلاینی در جریان نیست');
+                        onlineList.innerHTML = renderEmpty(getTranslation('no_online_games'));
                     } else {
                         var html = '';
                         for (var i = 0; i < onlineInProgress.length; i++) {
@@ -676,8 +799,8 @@
                             html += '<div class="game-card" onclick="continueGame(\'' + g.id + '\')">' +
                                 '<div class="game-avatar" id="online-avatar-' + i + '"><i class="fa-solid fa-user"></i></div>' +
                                 '<div class="game-info"><div class="game-title" id="online-name-' + i + '">...</div>' +
-                                '<div class="game-subtitle">در جریان</div></div>' +
-                                '<span class="game-status-badge live">در جریان</span></div>';
+                                '<div class="game-subtitle">' + getTranslation('online_in_progress') + '</div></div>' +
+                                '<span class="game-status-badge live">' + getTranslation('online_in_progress') + '</span></div>';
                         }
                         onlineList.innerHTML = html;
                         
@@ -689,7 +812,7 @@
                                     var avatarEl = document.getElementById('online-avatar-' + index);
                                     var nameEl = document.getElementById('online-name-' + index);
                                     if (avatarEl) avatarEl.innerHTML = getAvatarHtml(info.avatar);
-                                    if (nameEl) nameEl.textContent = 'مقابل ' + info.name;
+                                    if (nameEl) nameEl.textContent = getTranslation('versus') + ' ' + info.name;
                                 });
                             })(onlineInProgress[j], j);
                         }
@@ -699,7 +822,7 @@
                     onlineList.style.display = 'flex';
                 } catch(e) {
                     document.getElementById('onlineCount').textContent = '0';
-                    onlineList.innerHTML = renderEmpty('بازی آنلاینی در جریان نیست');
+                    onlineList.innerHTML = renderEmpty(getTranslation('no_online_games'));
                     onlineLoader.style.display = 'none';
                     onlineList.style.display = 'flex';
                 }
@@ -717,19 +840,19 @@
                         document.getElementById('leagueCount').textContent = '1';
                         leagueList.innerHTML = '<div class="game-card" onclick="continueLeague(\'' + lg.leagueId + '\')">' +
                             '<div class="game-avatar"><i class="bi bi-trophy"></i></div>' +
-                            '<div class="game-info"><div class="game-title">لیگ در جریان</div>' +
-                            '<div class="game-subtitle">کد: ' + lg.leagueId + '</div></div>' +
-                            '<span class="game-status-badge live">در جریان</span></div>';
+                            '<div class="game-info"><div class="game-title">' + getTranslation('active_league') + '</div>' +
+                            '<div class="game-subtitle">' + getTranslation('league_code') + ': ' + lg.leagueId + '</div></div>' +
+                            '<span class="game-status-badge live">' + getTranslation('online_in_progress') + '</span></div>';
                     } else {
                         document.getElementById('leagueCount').textContent = '0';
-                        leagueList.innerHTML = renderEmpty('لیگی در جریان نیست');
+                        leagueList.innerHTML = renderEmpty(getTranslation('no_active_league'));
                     }
                     
                     leagueLoader.style.display = 'none';
                     leagueList.style.display = 'flex';
                 } catch(e) {
                     document.getElementById('leagueCount').textContent = '0';
-                    leagueList.innerHTML = renderEmpty('لیگی در جریان نیست');
+                    leagueList.innerHTML = renderEmpty(getTranslation('no_active_league'));
                     leagueLoader.style.display = 'none';
                     leagueList.style.display = 'flex';
                 }
@@ -752,17 +875,17 @@
                         past = past.slice(0, 5);
                         document.getElementById('pastCount').textContent = past.length;
                         if (past.length === 0) {
-                            pastList.innerHTML = renderEmpty('بازی گذشته‌ای نیست');
+                            pastList.innerHTML = renderEmpty(getTranslation('no_past_games'));
                         } else {
                             var html = '';
                             for (var i = 0; i < past.length; i++) {
                                 var g = past[i];
                                 var isP1 = String(g.player1) === String(myId);
                                 var oppId = isP1 ? g.player2 : g.player1;
-                                var cls = 'draw', txt = 'مساوی';
-                                if (g.result === 'win') { cls = 'win'; txt = 'برد'; }
-                                else if (g.result === 'lose') { cls = 'lose'; txt = 'باخت'; }
-                                else if (g.result === 'draw') { cls = 'draw'; txt = 'مساوی'; }
+                                var cls = 'draw', txt = getTranslation('draw');
+                                if (g.result === 'win') { cls = 'win'; txt = getTranslation('win'); }
+                                else if (g.result === 'lose') { cls = 'lose'; txt = getTranslation('lose'); }
+                                else if (g.result === 'draw') { cls = 'draw'; txt = getTranslation('draw'); }
                                 html += '<div class="game-card" onclick="goToResult(\'' + g.id + '\')">' +
                                     '<div class="game-avatar" id="past-avatar-' + i + '"><i class="fa-solid fa-user"></i></div>' +
                                     '<div class="game-info"><div class="game-title" id="past-name-' + i + '">...</div>' +
@@ -778,21 +901,21 @@
                                         var avatarEl = document.getElementById('past-avatar-' + index);
                                         var nameEl = document.getElementById('past-name-' + index);
                                         if (avatarEl) avatarEl.innerHTML = getAvatarHtml(info.avatar);
-                                        if (nameEl) nameEl.textContent = 'مقابل ' + info.name;
+                                        if (nameEl) nameEl.textContent = getTranslation('versus') + ' ' + info.name;
                                     });
                                 })(past[j], j);
                             }
                         }
                     } else {
                         document.getElementById('pastCount').textContent = '0';
-                        pastList.innerHTML = renderEmpty('بازی گذشته‌ای نیست');
+                        pastList.innerHTML = renderEmpty(getTranslation('no_past_games'));
                     }
                     
                     pastLoader.style.display = 'none';
                     pastList.style.display = 'flex';
                 } catch(e) {
                     document.getElementById('pastCount').textContent = '0';
-                    pastList.innerHTML = renderEmpty('بازی گذشته‌ای نیست');
+                    pastList.innerHTML = renderEmpty(getTranslation('no_past_games'));
                     pastLoader.style.display = 'none';
                     pastList.style.display = 'flex';
                 }
