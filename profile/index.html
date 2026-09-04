@@ -593,7 +593,8 @@
                     lose: 'باخت',
                     you: 'تو',
                     first_place: 'نفر اول',
-                    no_games: 'مسابقه‌ای یافت نشد'
+                    no_games: 'مسابقه‌ای یافت نشد',
+                    bot: 'ربات'
                 },
                 en: {
                     loading: 'Loading...',
@@ -641,7 +642,8 @@
                     lose: 'Loss',
                     you: 'You',
                     first_place: 'First Place',
-                    no_games: 'No games found'
+                    no_games: 'No games found',
+                    bot: 'Bot'
                 },
                 ar: {
                     loading: 'جار التحميل...',
@@ -689,7 +691,8 @@
                     lose: 'خسارة',
                     you: 'أنت',
                     first_place: 'المركز الأول',
-                    no_games: 'لا توجد مباريات'
+                    no_games: 'لا توجد مباريات',
+                    bot: 'روبوت'
                 }
             };
 
@@ -828,6 +831,7 @@
 
             function getAvatarHtml(avatarId) {
                 if (!avatarId || avatarId === 'default') return '<i class="fa-solid fa-user"></i>';
+                if (avatarId === 'bot') return '<i class="fa-solid fa-robot"></i>';
                 var found = null;
                 avatarCategories.forEach(function(cat) {
                     cat.items.forEach(function(item) {
@@ -842,7 +846,7 @@
             }
 
             async function getPlayerInfo(userId) {
-                if (userId === 'bot') return {name: 'ربات', avatar: 'bot'};
+                if (userId === 'bot') return {name: getTranslation('bot'), avatar: 'bot'};
                 if (!userId || userId === '') return {name: '---', avatar: 'default'};
                 var result = await fetchData('getUser', {username: String(userId)});
                 if (result.ok && result.data) {
@@ -931,40 +935,58 @@
                     return g.result;
                 }
                 
-                var myTotalScore = 0;
-                var oppTotalScore = 0;
+                var myTotalCorrect = 0;
+                var oppTotalCorrect = 0;
                 
                 for (var r = 1; r <= 5; r++) {
                     var roundData = g['round' + r];
                     if (roundData) {
-                        var parts = String(roundData).split('][');
-                        if (parts.length >= 3) {
-                            var p1Ans = parts[1] ? parts[1].replace('[','').replace(']','').replace(/\s/g,'') : '';
-                            var p2Ans = parts[2] ? parts[2].replace('[','').replace(']','').replace(/\s/g,'') : '';
-                            
-                            var p1Correct = 0;
-                            var p2Correct = 0;
-                            
-                            for (var i = 0; i < p1Ans.length; i++) {
-                                if (p1Ans[i] === 'T') p1Correct++;
+                        try {
+                            var parsed = JSON.parse(roundData);
+                            if (parsed && typeof parsed === 'object') {
+                                if (parsed.yourCorrect !== undefined && parsed.botCorrect !== undefined) {
+                                    myTotalCorrect += parsed.yourCorrect || 0;
+                                    oppTotalCorrect += parsed.botCorrect || 0;
+                                } else if (parsed.p1Correct !== undefined && parsed.p2Correct !== undefined) {
+                                    if (isP1) {
+                                        myTotalCorrect += parsed.p1Correct || 0;
+                                        oppTotalCorrect += parsed.p2Correct || 0;
+                                    } else {
+                                        myTotalCorrect += parsed.p2Correct || 0;
+                                        oppTotalCorrect += parsed.p1Correct || 0;
+                                    }
+                                }
                             }
-                            for (var j = 0; j < p2Ans.length; j++) {
-                                if (p2Ans[j] === 'T') p2Correct++;
-                            }
-                            
-                            if (isP1) {
-                                myTotalScore += p1Correct;
-                                oppTotalScore += p2Correct;
-                            } else {
-                                myTotalScore += p2Correct;
-                                oppTotalScore += p1Correct;
+                        } catch(e) {
+                            var parts = String(roundData).split('][');
+                            if (parts.length >= 3) {
+                                var p1Ans = parts[1] ? parts[1].replace('[','').replace(']','').replace(/\s/g,'') : '';
+                                var p2Ans = parts[2] ? parts[2].replace('[','').replace(']','').replace(/\s/g,'') : '';
+                                
+                                var p1Correct = 0;
+                                var p2Correct = 0;
+                                
+                                for (var i = 0; i < p1Ans.length; i++) {
+                                    if (p1Ans[i] === 'T') p1Correct++;
+                                }
+                                for (var j = 0; j < p2Ans.length; j++) {
+                                    if (p2Ans[j] === 'T') p2Correct++;
+                                }
+                                
+                                if (isP1) {
+                                    myTotalCorrect += p1Correct;
+                                    oppTotalCorrect += p2Correct;
+                                } else {
+                                    myTotalCorrect += p2Correct;
+                                    oppTotalCorrect += p1Correct;
+                                }
                             }
                         }
                     }
                 }
                 
-                if (myTotalScore > oppTotalScore) return 'win';
-                if (myTotalScore < oppTotalScore) return 'lose';
+                if (myTotalCorrect > oppTotalCorrect) return 'win';
+                if (myTotalCorrect < oppTotalCorrect) return 'lose';
                 return 'draw';
             }
 
