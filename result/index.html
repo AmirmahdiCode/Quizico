@@ -8,6 +8,10 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/gh/rastikerdar/iran-sans-font@v1.0.0/dist/font-face.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/gh/rastikerdar/sahel-font@v1.0.0/dist/font-face.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/gh/rastikerdar/samim-font@v1.0.0/dist/font-face.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/gh/rastikerdar/estedad-font@v1.0.0/dist/font-face.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet">
     <style>
         :root {
             --bg: #faf5ff;
@@ -26,6 +30,7 @@
             --radius: 12px;
             --border: 1px solid #000000;
             --gold: #f59e0b;
+            --font: 'Samim', Tahoma, sans-serif;
         }
 
         [data-theme="dark"] {
@@ -55,7 +60,7 @@
         img { pointer-events: none; -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; -webkit-user-drag: none; user-drag: none; }
 
         body {
-            font-family: 'Digi Kian Grunge', 'IRANSans', Tahoma, sans-serif;
+            font-family: var(--font);
             background: var(--bg);
             color: var(--text);
             min-height: 100vh;
@@ -137,7 +142,6 @@
         }
         .player-avatar img { width: 100%; height: 100%; object-fit: cover; }
         .player-name { font-size: 9px; font-weight: 800; color: var(--dark); margin-bottom: 2px; }
-        .player-score { font-size: 13px; font-weight: 800; color: var(--gold); }
 
         .rounds-container { display: flex; flex-direction: column; gap: 8px; }
         .round-card {
@@ -154,9 +158,12 @@
         .answers-row {
             display: flex; gap: 6px; align-items: center; padding: 6px 8px;
             background: var(--bg2); border: var(--border); border-radius: 6px;
+            margin-bottom: 4px;
         }
-        .answers-player { font-weight: 800; font-size: 8px; color: var(--dark); min-width: 35px; }
-        .answers-dots { display: flex; gap: 3px; flex: 1; justify-content: center; }
+        .answers-player { font-weight: 800; font-size: 8px; color: var(--dark); min-width: 35px; flex-shrink: 0; }
+        .answers-dots { display: flex; gap: 3px; flex: 1; justify-content: flex-end; }
+        [dir="ltr"] .answers-dots { justify-content: flex-start; }
+
         .answer-dot {
             width: 18px; height: 18px; border-radius: 50%;
             display: flex; align-items: center; justify-content: center;
@@ -213,7 +220,8 @@
             font-size: 8px; padding: 2px 0;
         }
         .single-round-player { font-weight: 700; color: var(--dark); }
-        .single-round-dots { display: flex; gap: 3px; flex: 1; justify-content: center; }
+        .single-round-dots { display: flex; gap: 3px; flex: 1; justify-content: flex-end; }
+        [dir="ltr"] .single-round-dots { justify-content: flex-start; }
         .dot {
             width: 12px; height: 12px; border-radius: 50%;
             display: flex; align-items: center; justify-content: center;
@@ -241,7 +249,7 @@
     <main class="main-container">
         <div class="loader-wrapper" id="loaderWrapper">
             <div class="loader"></div>
-            <div class="loader-text">در حال دریافت...</div>
+            <div class="loader-text" id="loaderText">در حال دریافت...</div>
         </div>
         <div class="content" id="content"></div>
     </main>
@@ -249,7 +257,7 @@
     <div class="questions-modal-overlay" id="questionsModalOverlay">
         <div class="questions-modal">
             <div class="questions-modal-close" onclick="closeQuestionsModal()"><i class="bi bi-x-lg"></i></div>
-            <div class="questions-modal-title">سوالات</div>
+            <div class="questions-modal-title" id="questionsModalTitle">سوالات</div>
             <div id="questionsModalContent"></div>
         </div>
     </div>
@@ -266,6 +274,16 @@
 
             document.addEventListener('contextmenu', function(e) { e.preventDefault(); });
             document.addEventListener('dragstart', function(e) { e.preventDefault(); });
+            document.addEventListener('copy', function(e) { e.preventDefault(); });
+            document.addEventListener('cut', function(e) { e.preventDefault(); });
+
+            var fontMap = {
+                'Samim': "'Samim', Tahoma, sans-serif",
+                'Sahel': "'Sahel', Tahoma, sans-serif",
+                'IRANSans': "'IRANSans', Tahoma, sans-serif",
+                'Vazirmatn': "'Vazirmatn', Tahoma, sans-serif",
+                'Estedad': "'Estedad', Tahoma, sans-serif"
+            };
 
             var translations = {
                 fa: {
@@ -338,15 +356,16 @@
             function getSettings() {
                 try {
                     var raw = localStorage.getItem('quizicoSettings');
-                    if (!raw) return { theme:'light', primaryColor:'#a855f7', animation:true, haptic:true, language:'fa' };
+                    if (!raw) return { theme:'light', primaryColor:'#a855f7', animation:true, haptic:true, language:'fa', font:'Samim' };
                     var p = JSON.parse(raw);
                     if (!p.theme) p.theme = 'light';
                     if (!p.primaryColor) p.primaryColor = '#a855f7';
                     if (p.animation === undefined) p.animation = true;
                     if (p.haptic === undefined) p.haptic = true;
                     if (!p.language) p.language = 'fa';
+                    if (!p.font) p.font = 'Samim';
                     return p;
-                } catch(e) { return { theme:'light', primaryColor:'#a855f7', animation:true, haptic:true, language:'fa' }; }
+                } catch(e) { return { theme:'light', primaryColor:'#a855f7', animation:true, haptic:true, language:'fa', font:'Samim' }; }
             }
 
             function hexToRgb(h) { var r = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(h); return r ? { r:parseInt(r[1],16), g:parseInt(r[2],16), b:parseInt(r[3],16) } : { r:168,g:85,b:247 }; }
@@ -366,6 +385,7 @@
                 currentLang = s.language || 'fa';
                 var t = s.theme || 'light';
                 var p = s.primaryColor || '#a855f7';
+                var f = s.font || 'Samim';
                 document.documentElement.setAttribute('data-theme', t);
                 if (t === 'dark') {
                     var lightP = shadeColor(p, 40);
@@ -381,10 +401,17 @@
                 }
                 if (s.animation === false) { document.documentElement.setAttribute('data-animation', 'off'); }
                 else { document.documentElement.removeAttribute('data-animation'); }
-                if (currentLang === 'en') { document.documentElement.setAttribute('dir','ltr'); document.body.style.fontFamily='Arial, sans-serif'; }
-                else if (currentLang === 'ar') { document.documentElement.setAttribute('dir','rtl'); document.body.style.fontFamily="'Digi Kian Grunge', Tahoma, sans-serif"; }
-                else { document.documentElement.setAttribute('dir','rtl'); document.body.style.fontFamily="'Digi Kian Grunge', 'IRANSans', Tahoma, sans-serif"; }
+                var fontFamily = fontMap[f] || fontMap['Samim'];
+                document.documentElement.style.setProperty('--font', fontFamily);
+                document.body.style.fontFamily = fontFamily;
+                if (currentLang === 'en') {
+                    document.documentElement.setAttribute('dir', 'ltr');
+                } else {
+                    document.documentElement.setAttribute('dir', 'rtl');
+                }
                 updateHeaderTitle(currentLang);
+                document.getElementById('loaderText').textContent = getTranslation('loading');
+                document.getElementById('questionsModalTitle').textContent = getTranslation('questions');
             }
 
             function getEitaaUser(){return webApp&&webApp.initDataUnsafe&&webApp.initDataUnsafe.user?webApp.initDataUnsafe.user:null;}
@@ -398,21 +425,53 @@
                 ]).catch(function(){return{ok:false};});
             }
 
+            var iconAvatars = {
+                'icon_game': 'fa-gamepad', 'icon_trophy': 'fa-trophy', 'icon_star': 'fa-star',
+                'icon_bolt': 'fa-bolt', 'icon_fire': 'fa-fire', 'icon_crown': 'fa-crown',
+                'icon_medal': 'fa-medal', 'icon_rocket': 'fa-rocket', 'icon_ghost': 'fa-ghost',
+                'icon_dragon': 'fa-dragon', 'icon_wand': 'fa-wand-magic-sparkles', 'icon_hat': 'fa-hat-wizard',
+                'icon_helmet': 'fa-helmet-safety', 'icon_shield': 'fa-shield-halved', 'icon_sword': 'fa-hand-fist'
+            };
+
+            var allAvatarUrls = {
+                'boy_1': 'https://cdn.imgurl.ir/uploads/l17100_QkCRHe00vl64Bngk74ayYmWMyWA-NjfsC7SoRbGgrkm1mS-bpQ.png',
+                'boy_2': 'https://cdn.imgurl.ir/uploads/g87708_nYSMEcudjDVvsMsfO4B6nrWGmFI-J3OzSBMOSwKo6Mt48wolyg.png',
+                'boy_3': 'https://cdn.imgurl.ir/uploads/q01044_VWzDtI4NYQ660EGTVD_xToLVOvw-DkODf3dzQq2kbk2i1b-cIQ.png',
+                'boy_4': 'https://cdn.imgurl.ir/uploads/w428496_0RBfnEt77slNmis2YlNfIjtELkE-_nTEsqjVSQafpoCS0X1pXg.png',
+                'boy_5': 'https://cdn.imgurl.ir/uploads/h099226_Kaahld11_fKS5dcGDsq-5IvBiC0-olahkKmOTsSjohG4mMsVUw.png',
+                'boy_6': 'https://cdn.imgurl.ir/uploads/k778258_pd9TZqS3DHKaaJQOygY-3WFHMAE-NzGEJ7R1Sv-r5Dfc6Zi3Ig.png',
+                'boy_7': 'https://cdn.imgurl.ir/uploads/w221825_-1Xu8BzjzGa1I7ZIBVaYpoez4BM-zdVRFGLaRJGymjrVOu_yBA.png',
+                'boy_8': 'https://cdn.imgurl.ir/uploads/o12072_rsMh7nSKjcODxjSPFWwfrlpYFe4-RHju528wRf-FCo_v2tJX7w.png',
+                'boy_9': 'https://cdn.imgurl.ir/uploads/m007403_MNhHAeXQ-_-nEMVuihCtgYXUS90-5LFmX4D7T2-1RaoN058vnw.png',
+                'boy_10': 'https://cdn.imgurl.ir/uploads/h976855_MLDYzJITIyaUkB6efcWGamXK39M-yfLRI0_7RrCmky6p-jgXFw.png',
+                'girl_1': 'https://cdn.imgurl.ir/uploads/h993569_G_wzhIk2ocoOPFhmmQHpUuS1mQc-IXeKOSBFSx6jn_y9tpVazg.png',
+                'girl_2': 'https://cdn.imgurl.ir/uploads/u2553__Yb1fK6xw6Di1SX-7xB5v2J7e-g-IYBMcl_wSmqXNTkmAQMGnA.png',
+                'girl_3': 'https://cdn.imgurl.ir/uploads/w03550__MlKSY3NXQ9cWkwVioa7hUpr6aI-2MRPg-L3QNOpRTm1oZTHtQ.png',
+                'girl_4': 'https://cdn.imgurl.ir/uploads/r074193_q1uxpQIZsrzslDhI1W69Su-XvbY-x5jd5EZ1SyKggCCSjbbxrg.png',
+                'girl_5': 'https://cdn.imgurl.ir/uploads/w035688_E2FfMOkE8ZGtuOZqU2q_VGTE6Yw-IU1JraRkSTub6ymIVXQuxA.png',
+                'girl_6': 'https://cdn.imgurl.ir/uploads/c895184_bt1drvChqXnDjtGhNgxJ9M2Ho4I-n1KpcnSiSXSboB5rKfBwCg.png',
+                'girl_7': 'https://cdn.imgurl.ir/uploads/u246883_b3j_B2NgyZNITErHK5c9A3dWFRA-5bV5bdzHSGi4neWTa9881A.png',
+                'girl_8': 'https://cdn.imgurl.ir/uploads/o0025_B1BkJ9n5GL25bnqG-YNn79Qvsds-Erx3uqovQtex6125wXCD7g.png',
+                'girl_9': 'https://cdn.imgurl.ir/uploads/t14047_NR8hWSzjLbSm2cXNrBnA2mEh43o-XhY5hyhBSU6s-9c4Fv5wRA.png',
+                'girl_10': 'https://cdn.imgurl.ir/uploads/v96829_FouVxzw8xOmCFvf0IEri962BmHQ-LxKzSWS_aj8dcNI5EWVw.png'
+            };
+
             function getAvatarHtml(avatarId) {
                 if (!avatarId || avatarId === 'default') return '<i class="fa-solid fa-user"></i>';
                 if (avatarId === 'bot') return '<i class="fa-solid fa-robot"></i>';
-                if (avatarId === 'player1' || avatarId === 'player2') return '<i class="fa-solid fa-user"></i>';
+                if (iconAvatars[avatarId]) return '<i class="fa-solid ' + iconAvatars[avatarId] + '"></i>';
+                if (allAvatarUrls[avatarId]) return '<img src="' + allAvatarUrls[avatarId] + '" alt="" draggable="false" oncontextmenu="return false;" ondragstart="return false;">';
                 return '<i class="fa-solid fa-user"></i>';
             }
 
-            async function getPlayerName(userId) {
-                if (userId === 'bot') return getTranslation('bot');
-                if (userId === 'player1') return getTranslation('player1');
-                if (userId === 'player2') return getTranslation('player2');
-                if (!userId || userId === '') return '---';
-                var result = await fetchData('getUser', {username: userId});
-                if (result.ok && result.data && result.data.name) return result.data.name;
-                return userId;
+            async function getPlayerInfo(userId) {
+                if (userId === 'bot') return {name: getTranslation('bot'), avatar: 'bot'};
+                if (!userId || userId === '') return {name: '---', avatar: 'default'};
+                var result = await fetchData('getUser', {username: String(userId)});
+                if (result.ok && result.data) {
+                    return {name: result.data.name || userId, avatar: result.data.avatar || 'default'};
+                }
+                return {name: String(userId), avatar: 'default'};
             }
 
             async function loadAllQuestions() {
@@ -420,7 +479,7 @@
                 if (result.ok && Array.isArray(result.data)) {
                     allQuestionsMap = {};
                     result.data.forEach(function(q) {
-                        allQuestionsMap[String(q.id)] = q;
+                        allQuestionsMap[String(q.id).trim()] = q;
                     });
                 }
             }
@@ -430,11 +489,11 @@
                 try {
                     return JSON.parse(roundData);
                 } catch(e) {
-                    var parts = roundData.split('][');
+                    var parts = String(roundData).split('][');
                     if (parts.length >= 3) {
-                        var qIds = parts[0] ? parts[0].replace('[','').replace(']','') : '';
-                        var p1Ans = parts[1] ? parts[1].replace('[','').replace(']','') : '';
-                        var p2Ans = parts[2] ? parts[2].replace('[','').replace(']','') : '';
+                        var qIds = parts[0] ? parts[0].replace('[','').replace(']','').replace(/\s/g,'') : '';
+                        var p1Ans = parts[1] ? parts[1].replace('[','').replace(']','').replace(/\s/g,'') : '';
+                        var p2Ans = parts[2] ? parts[2].replace('[','').replace(']','').replace(/\s/g,'') : '';
                         return { qIds: qIds, p1Ans: p1Ans, p2Ans: p2Ans };
                     }
                     return null;
@@ -450,16 +509,23 @@
 
             function showQuestionsModal(qIds) {
                 var html = '';
-                var ids = qIds.split(',');
+                var ids = String(qIds).split(',');
                 for (var i = 0; i < ids.length; i++) {
-                    var q = allQuestionsMap[String(ids[i].trim())];
+                    var qid = String(ids[i]).trim();
+                    var q = allQuestionsMap[qid];
                     if (q) {
                         html += '<div class="modal-question-item">';
                         html += '<div class="modal-question-text">' + (i+1) + '. ' + q.question + '</div>';
                         html += '<div class="modal-options">';
-                        for (var j = 0; j < q.options.length; j++) {
-                            var isCorrect = (j+1) === q.correctOption;
-                            html += '<div class="modal-option' + (isCorrect ? ' correct-option' : '') + '">' + q.options[j] + (isCorrect ? ' ✓' : '') + '</div>';
+                        var opts = q.options;
+                        if (typeof opts === 'string') {
+                            try { opts = JSON.parse(opts); } catch(e) { opts = []; }
+                        }
+                        if (Array.isArray(opts)) {
+                            for (var j = 0; j < opts.length; j++) {
+                                var isCorrect = (j+1) === q.correctOption;
+                                html += '<div class="modal-option' + (isCorrect ? ' correct-option' : '') + '">' + opts[j] + (isCorrect ? ' ✓' : '') + '</div>';
+                            }
                         }
                         html += '</div></div>';
                     }
@@ -467,6 +533,7 @@
                 document.getElementById('questionsModalContent').innerHTML = html;
                 document.getElementById('questionsModalOverlay').classList.add('show');
             }
+            window.showQuestionsModal = showQuestionsModal;
 
             window.closeQuestionsModal = function() {
                 document.getElementById('questionsModalOverlay').classList.remove('show');
@@ -474,10 +541,12 @@
 
             async function renderOnlineResult(gameData, myId) {
                 var isP1 = String(gameData.player1) === String(myId);
-                var myName = isP1 ? await getPlayerName(gameData.player1) : await getPlayerName(gameData.player2);
-                var oppName = isP1 ? await getPlayerName(gameData.player2) : await getPlayerName(gameData.player1);
-                var myAvatar = isP1 ? gameData.player1 : gameData.player2;
-                var oppAvatar = isP1 ? gameData.player2 : gameData.player1;
+                var myInfo = await getPlayerInfo(isP1 ? gameData.player1 : gameData.player2);
+                var oppInfo = await getPlayerInfo(isP1 ? gameData.player2 : gameData.player1);
+                var myName = myInfo.name;
+                var oppName = oppInfo.name;
+                var myAvatar = myInfo.avatar;
+                var oppAvatar = oppInfo.avatar;
                 
                 var result = gameData.result || 'draw';
                 var img = result === 'win' ? IMG_WIN : result === 'lose' ? IMG_LOSE : IMG_DRAW;
@@ -535,8 +604,24 @@
                 for (var r = 1; r <= 5; r++) {
                     var roundData = parseRoundData(gameData['round' + r]);
                     if (roundData) {
-                        var yourCorrect = roundData.yourCorrect || 0;
-                        var botCorrect = roundData.botCorrect || 0;
+                        var yourCorrect = 0;
+                        var botCorrect = 0;
+                        if (typeof roundData.yourCorrect === 'number') {
+                            yourCorrect = roundData.yourCorrect;
+                        } else if (roundData.p1Ans) {
+                            var ansStr = String(roundData.p1Ans);
+                            for (var ci = 0; ci < ansStr.length; ci++) {
+                                if (ansStr[ci] === 'T') yourCorrect++;
+                            }
+                        }
+                        if (typeof roundData.botCorrect === 'number') {
+                            botCorrect = roundData.botCorrect;
+                        } else if (roundData.p2Ans) {
+                            var ansStr2 = String(roundData.p2Ans);
+                            for (var cj = 0; cj < ansStr2.length; cj++) {
+                                if (ansStr2[cj] === 'T') botCorrect++;
+                            }
+                        }
                         html += '<div class="round-card"><div class="round-title"><i class="bi bi-list-ol"></i> ' + getTranslation('round') + ' ' + r + '</div>';
                         html += '<div class="single-round-item">';
                         html += '<div class="single-round-row"><span class="single-round-player">' + getTranslation('you') + '</span><div class="single-round-dots">';
@@ -579,7 +664,7 @@
                     var g = gameData.data;
                     var myId = getUserId();
                     
-                    if (g.player2 === 'bot' || (g.player1 === 'player1' && g.player2 === 'player2')) {
+                    if (g.player2 === 'bot') {
                         await renderSingleResult(g, myId);
                     } else {
                         await renderOnlineResult(g, myId);
